@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andara FleetWatch · Client Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #061a3a;
+  --navy2:  #0a2d5e;
+  --navy3:  #103572;
+  --accent: #4a9eff;
+  --gold:   #c8a84b;
+  --gold2:  #e8c96a;
+  --white:  #ffffff;
+  --green:  #00c896;
+  --amber:  #f5a623;
+  --red:    #e63946;
+  --bg:     #07101f;
+  --card:   rgba(255,255,255,0.033);
+  --b:      rgba(255,255,255,0.08);
+  --bL:     rgba(10,45,94,0.12);
+  --dim:    rgba(255,255,255,0.4);
+  --dimmer: rgba(255,255,255,0.22);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{
+  /* Layout-aware upscale similar to browser 120% zoom */
+  zoom:1.2;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;}
+
+/* ── TOP BAR ── */
+.topbar{
+  height:54px;
+  background:rgba(6,26,58,0.96);
+  border-bottom:1px solid var(--b);
+  backdrop-filter:blur(16px);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  position:sticky;top:0;z-index:100;
+}
+.tb-brand{display:flex;align-items:center;gap:12px;}
+.tb-logo{
+  height:24px;
+  width:auto;
+  display:block;
+  filter: brightness(0) invert(1);
+}
+.tb-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;}
+.tb-prod{font-size:9px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;}
+.tb-right{display:flex;align-items:center;gap:18px;}
+.tb-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--green);font-weight:500;letter-spacing:1px;}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.tb-time{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.28);}
+.tb-client{font-size:10px;color:rgba(255,255,255,0.28);font-family:'DM Mono',monospace;letter-spacing:0.5px;}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--navy3);border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--accent);}
+.tb-menu-btn{
+  display:none;
+  width:30px;height:30px;border-radius:6px;
+  border:1px solid var(--b);background:transparent;color:var(--white);
+  cursor:pointer;font-size:16px;line-height:1;
+}
+
+/* ── LAYOUT ── */
+.layout{display:flex;min-height:calc(100vh - 54px);}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:200px;flex-shrink:0;
+  background:rgba(6,26,58,0.55);
+  border-right:1px solid var(--b);
+  padding:20px 0;
+  position:sticky;top:54px;
+  height:calc(100vh - 54px);
+  overflow-y:auto;
+}
+.sb-section{margin-bottom:26px;}
+.sb-lbl{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--dimmer);padding:0 16px;margin-bottom:6px;font-weight:600;font-family:'DM Mono',monospace;}
+.sb-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 16px;font-size:12px;
+  color:var(--dim);cursor:pointer;
+  transition:all 0.15s;border-left:2px solid transparent;
+}
+.sb-item:hover{color:var(--white);background:rgba(255,255,255,0.04);}
+.sb-item.active{color:var(--white);border-left-color:var(--accent);background:rgba(74,158,255,0.07);}
+.sb-item svg{opacity:0.55;flex-shrink:0;}
+.sb-item.active svg{opacity:1;}
+.sb-tag{
+  margin-left:auto;font-size:7px;font-weight:700;
+  padding:1px 5px;border-radius:8px;letter-spacing:0.5px;
+}
+.sb-tag.red{background:rgba(230,57,70,0.2);color:var(--red);}
+.sb-tag.amber{background:rgba(245,166,35,0.2);color:var(--amber);}
+
+/* ── MAIN ── */
+.main{flex:1;padding:24px 26px;overflow-y:auto;}
+
+/* ── SCREENS ── */
+.screen{display:none;animation:fadeUp 0.4s ease both;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ──────────────────────────────────────
+   SCREEN: PORTFOLIO HEALTH
+────────────────────────────────────── */
+/* greeting */
+.greeting{
+  background:linear-gradient(130deg,var(--navy2),var(--navy3));
+  border:1px solid var(--b);border-radius:10px;
+  padding:20px 24px;margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.greeting::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:28px 28px;}
+.greeting::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent);}
+.gr-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;}
+.gr-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;margin-bottom:3px;}
+.gr-sub{font-size:11px;color:var(--dim);}
+.gr-right{text-align:right;}
+.gr-week{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);font-weight:500;}
+.gr-date{font-size:9px;color:var(--dimmer);margin-top:3px;font-family:'DM Mono',monospace;}
+
+/* health KPIs */
+.health-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.hkpi{
+  background:var(--card);border:1px solid var(--b);border-radius:8px;
+  padding:14px 16px;position:relative;overflow:hidden;
+  transition:border-color 0.2s;
+}
+.hkpi:hover{border-color:rgba(255,255,255,0.16);}
+.hkpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.hkpi.green::before{background:var(--green);}
+.hkpi.amber::before{background:var(--amber);}
+.hkpi.red::before{background:var(--red);}
+.hkpi.blue::before{background:var(--accent);}
+.hkpi-lbl{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:7px;font-weight:500;}
+.hkpi-val{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:2px;line-height:1;}
+.hkpi-sub{font-size:9px;color:var(--dimmer);margin-top:3px;font-family:'DM Mono',monospace;}
+.hkpi-trend{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:8px;font-weight:600;margin-top:5px;
+  padding:2px 7px;border-radius:2px;
+}
+.hkpi-trend.up{background:rgba(0,200,150,0.1);color:var(--green);}
+.hkpi-trend.down{background:rgba(230,57,70,0.1);color:var(--red);}
+.hkpi-trend.flat{background:rgba(255,255,255,0.05);color:var(--dim);}
+
+/* two-col */
+.two-col{display:grid;grid-template-columns:1fr 300px;gap:14px;margin-bottom:18px;}
+
+/* panel */
+.panel{background:var(--card);border:1px solid var(--b);border-radius:8px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--b);}
+.ph-ttl{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;}
+.ph-act{font-size:10px;color:var(--accent);cursor:pointer;letter-spacing:0.5px;}
+
+/* aircraft health table */
+.ht{width:100%;border-collapse:collapse;}
+.ht th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dimmer);padding:8px 16px;text-align:left;border-bottom:1px solid var(--b);font-weight:600;}
+.ht td{padding:12px 16px;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--dim);}
+.ht tr:last-child td{border-bottom:none;}
+.ht tr{cursor:pointer;transition:background 0.12s;}
+.ht tr:hover td{background:rgba(255,255,255,0.025);color:var(--white);}
+.ht-reg{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);font-weight:500;letter-spacing:1px;}
+
+/* health score bar */
+.hbar-wrap{display:flex;align-items:center;gap:7px;}
+.hbar{width:64px;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.hbar-fill{height:100%;border-radius:2px;}
+.hbar-num{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);}
+
+/* value indicator */
+.val-ind{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;
+}
+.val-ind.stable{background:rgba(0,200,150,0.1);color:var(--green);}
+.val-ind.eroding{background:rgba(230,57,70,0.1);color:var(--red);}
+.val-ind.watch{background:rgba(245,166,35,0.1);color:var(--amber);}
+
+/* watch items */
+.watch-items{padding:0;}
+.wi{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.03);}
+.wi:last-child{border-bottom:none;}
+.wi-sev{width:3px;border-radius:2px;align-self:stretch;flex-shrink:0;}
+.wi-sev.red{background:var(--red);}
+.wi-sev.amber{background:var(--amber);}
+.wi-sev.blue{background:var(--accent);}
+.wi-body{flex:1;}
+.wi-reg{font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);margin-bottom:2px;font-weight:500;}
+.wi-text{font-size:11px;color:rgba(255,255,255,0.72);line-height:1.45;}
+.wi-time{font-size:8px;color:var(--dimmer);margin-top:2px;font-family:'DM Mono',monospace;}
+
+/* ──────────────────────────────────────
+   SCREEN: PREDICTIVE INTELLIGENCE
+────────────────────────────────────── */
+.pred-intro{
+  background:rgba(74,158,255,0.05);
+  border:1px solid rgba(74,158,255,0.14);
+  border-left:3px solid var(--accent);
+  border-radius:6px;padding:13px 16px;
+  margin-bottom:18px;
+  font-size:12px;color:rgba(255,255,255,0.65);line-height:1.6;
+}
+.pred-intro strong{color:var(--white);}
+
+/* timeline */
+.pred-timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+.pt-card{
+  background:var(--card);border:1px solid var(--b);border-radius:8px;
+  padding:16px;position:relative;overflow:hidden;transition:border-color 0.2s;
+}
+.pt-card:hover{border-color:rgba(255,255,255,0.16);}
+.pt-horizon{
+  font-size:8px;letter-spacing:2px;text-transform:uppercase;
+  font-weight:700;margin-bottom:10px;font-family:'DM Mono',monospace;
+  display:flex;align-items:center;gap:6px;
+}
+.pt-horizon::before{content:'';width:8px;height:8px;border-radius:50%;}
+.pt-card.now .pt-horizon{color:var(--red);}
+.pt-card.now .pt-horizon::before{background:var(--red);box-shadow:0 0 6px var(--red);}
+.pt-card.near .pt-horizon{color:var(--amber);}
+.pt-card.near .pt-horizon::before{background:var(--amber);}
+.pt-card.future .pt-horizon{color:var(--accent);}
+.pt-card.future .pt-horizon::before{background:var(--accent);}
+.pt-items{display:flex;flex-direction:column;gap:7px;}
+.pt-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:8px 10px;border-radius:5px;background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.05);
+  cursor:pointer;transition:all 0.15s;
+}
+.pt-item:hover{background:rgba(255,255,255,0.06);}
+.pt-reg{font-family:'DM Mono',monospace;font-size:8px;color:var(--accent);flex-shrink:0;width:48px;margin-top:1px;}
+.pt-body{flex:1;}
+.pt-event{font-size:11px;color:rgba(255,255,255,0.75);line-height:1.35;font-weight:500;}
+.pt-due{font-size:9px;color:var(--dimmer);margin-top:2px;font-family:'DM Mono',monospace;}
+.pt-impact{
+  font-size:7.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:1px 5px;border-radius:2px;white-space:nowrap;margin-top:3px;display:inline-block;
+}
+.pt-impact.high{background:rgba(230,57,70,0.12);color:var(--red);}
+.pt-impact.medium{background:rgba(245,166,35,0.12);color:var(--amber);}
+.pt-impact.low{background:rgba(0,200,150,0.1);color:var(--green);}
+
+/* value at risk */
+.var-panel{background:var(--card);border:1px solid var(--b);border-radius:8px;padding:18px;margin-bottom:18px;}
+.var-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px;}
+.var-card{
+  background:rgba(255,255,255,0.025);border:1px solid var(--b);border-radius:6px;
+  padding:12px 14px;
+}
+.var-reg{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:6px;}
+.var-val{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;margin-bottom:3px;}
+.var-label{font-size:8px;color:var(--dimmer);margin-bottom:8px;font-family:'DM Mono',monospace;}
+.var-risk-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;margin-bottom:4px;}
+.var-risk-fill{height:100%;border-radius:2px;}
+.var-risk-lbl{font-size:8px;color:var(--dimmer);}
+
+/* ──────────────────────────────────────
+   SCREEN: AIRCRAFT DETAIL
+────────────────────────────────────── */
+.ac-detail-hdr{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  margin-bottom:16px;
+}
+.acd-reg{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:4px;color:var(--accent);line-height:1;}
+.acd-info{font-size:11px;color:var(--dim);margin-top:4px;}
+.acd-right{text-align:right;}
+.health-score-big{
+  display:flex;flex-direction:column;align-items:center;
+}
+.hs-num{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:2px;line-height:1;color:var(--amber);}
+.hs-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);font-weight:600;}
+
+.acd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.acd-stat{background:var(--card);border:1px solid var(--b);border-radius:7px;padding:12px 14px;}
+.acd-stat-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dimmer);margin-bottom:5px;font-family:'DM Mono',monospace;}
+.acd-stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;line-height:1;}
+.acd-stat-sub{font-size:8px;color:var(--dimmer);margin-top:2px;font-family:'DM Mono',monospace;}
+
+/* health dimensions */
+.health-dims{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px;}
+.hdim{background:var(--card);border:1px solid var(--b);border-radius:7px;padding:12px 10px;text-align:center;}
+.hdim-score{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;margin-bottom:2px;}
+.hdim-bar-wrap{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;margin:5px 0;}
+.hdim-bar{height:100%;border-radius:2px;}
+.hdim-name{font-size:8px;color:var(--dimmer);letter-spacing:1px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+
+/* observations */
+.obs-list{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+.obs{
+  display:flex;gap:0;border-radius:5px;overflow:hidden;border:1px solid rgba(255,255,255,0.05);
+}
+.obs-bar{width:3px;flex-shrink:0;}
+.obs-bar.red{background:var(--red);}
+.obs-bar.amber{background:var(--amber);}
+.obs-bar.green{background:var(--green);}
+.obs-bar.blue{background:var(--accent);}
+.obs-body{flex:1;padding:10px 14px;background:rgba(255,255,255,0.025);}
+.obs-zone{font-size:8px;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:3px;}
+.obs.red .obs-zone{color:var(--red);}
+.obs.amber .obs-zone{color:var(--amber);}
+.obs.green .obs-zone{color:var(--green);}
+.obs.blue .obs-zone{color:var(--accent);}
+.obs-text{font-size:11px;color:rgba(255,255,255,0.7);line-height:1.5;}
+.obs-pred{font-size:10px;color:var(--dimmer);margin-top:4px;font-style:italic;}
+
+/* ──────────────────────────────────────
+   SCREEN: REPORTS
+────────────────────────────────────── */
+.reports-list{display:flex;flex-direction:column;gap:8px;}
+.report-card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1px solid var(--b);border-radius:8px;
+  padding:14px 16px;cursor:pointer;transition:all 0.15s;
+}
+.report-card:hover{border-color:rgba(74,158,255,0.3);background:rgba(74,158,255,0.04);}
+.rc-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rc-icon.q{background:rgba(200,168,75,0.12);border:1px solid rgba(200,168,75,0.2);}
+.rc-icon.m{background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.18);}
+.rc-icon.a{background:rgba(0,200,150,0.1);border:1px solid rgba(0,200,150,0.18);}
+.rc-info{flex:1;}
+.rc-name{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;}
+.rc-meta{font-size:10px;color:var(--dimmer);font-family:'DM Mono',monospace;}
+.rc-new{
+  font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  background:rgba(74,158,255,0.15);color:var(--accent);
+  border:1px solid rgba(74,158,255,0.3);border-radius:2px;padding:2px 7px;
+  flex-shrink:0;
+}
+.rc-dl{font-size:10px;color:var(--accent);flex-shrink:0;letter-spacing:0.5px;}
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 900px){
+  html{zoom:1;}
+  .topbar{padding:0 14px;}
+  .tb-client,.tb-time{display:none;}
+  .tb-right{gap:10px;}
+  .tb-menu-btn{display:inline-flex;align-items:center;justify-content:center;}
+
+  .layout{display:block;min-height:auto;}
+  .sidebar{
+    position:fixed;
+    top:54px;
+    left:0;
+    width:min(280px,84vw);
+    height:calc(100vh - 54px);
+    z-index:220;
+    transform:translateX(-102%);
+    transition:transform .22s ease;
+    background:rgba(6,26,58,0.98);
+    backdrop-filter:blur(10px);
+    box-shadow:10px 0 28px rgba(0,0,0,0.38);
+  }
+  .sidebar.mobile-open{transform:translateX(0);}
+  .main{padding:14px;}
+
+  .gr-inner,
+  .ac-detail-hdr{flex-direction:column;align-items:flex-start;gap:10px;}
+  .gr-right,.acd-right{text-align:left;}
+
+  .health-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .two-col,
+  .pred-timeline,
+  .var-grid,
+  .report-grid{grid-template-columns:1fr;}
+  .panel{overflow-x:auto;}
+  .ht{min-width:700px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <img class="tb-logo" src="/Andara%20Systems%20-%20light%20mode.svg" alt="Andara Systems logo" />
+    <div>
+      <div class="tb-name">FleetWatch</div>
+      <div class="tb-prod">Asset Intelligence</div>
+    </div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-status"><div class="tb-dot"></div>Live</div>
+    <div class="tb-client">Fidelity Bank · FW-FBN-2026</div>
+    <div class="tb-time" id="tbtime"></div>
+    <div class="avatar">FB</div>
+    <button class="tb-menu-btn" type="button" aria-label="Toggle menu" onclick="toggleSidebar()">☰</button>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sb-section">
+      <div class="sb-lbl">Fleet Health</div>
+      <div class="sb-item active" onclick="show('s-portfolio',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Portfolio Overview
+      </div>
+      <div class="sb-item" onclick="show('s-predictive',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Predictive Intelligence
+        <span class="sb-tag amber">6</span>
+      </div>
+      <div class="sb-item" onclick="show('s-aircraft',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Aircraft Detail
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-lbl">Reports</div>
+      <div class="sb-item" onclick="show('s-reports',this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Intelligence Reports
+        <span class="sb-tag red">2</span>
+      </div>
+      <div class="sb-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Document Archive
+      </div>
+    </div>
+    <div class="sb-section">
+      <div class="sb-lbl">Account</div>
+      <div class="sb-item">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Contact Andara
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ══════════════════════════
+         PORTFOLIO OVERVIEW
+    ══════════════════════════ -->
+    <div class="screen active" id="s-portfolio">
+
+      <div class="greeting">
+        <div class="gr-inner">
+          <div>
+            <div class="gr-title">Fidelity Bank · Fleet Health Overview</div>
+            <div class="gr-sub">17 aircraft monitored · Field scans current through Week 13</div>
+          </div>
+          <div class="gr-right">
+            <div class="gr-week">W13 · 2026</div>
+            <div class="gr-date">Last updated 28 Mar 2026 · 06:14</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="health-row">
+        <div class="hkpi green">
+          <div class="hkpi-lbl">Fleet Health Score</div>
+          <div class="hkpi-val" style="color:var(--amber)">71</div>
+          <div class="hkpi-sub">Portfolio average / 100</div>
+          <div class="hkpi-trend flat">→ Stable vs W12</div>
+        </div>
+        <div class="hkpi green">
+          <div class="hkpi-lbl">Value Intact</div>
+          <div class="hkpi-val">12</div>
+          <div class="hkpi-sub">of 17 aircraft</div>
+          <div class="hkpi-trend up">↑ +1 from W12</div>
+        </div>
+        <div class="hkpi amber">
+          <div class="hkpi-lbl">Value at Risk</div>
+          <div class="hkpi-val" style="color:var(--amber)">4</div>
+          <div class="hkpi-sub">Condition trending down</div>
+          <div class="hkpi-trend down">↓ Monitor closely</div>
+        </div>
+        <div class="hkpi red">
+          <div class="hkpi-lbl">Immediate Attention</div>
+          <div class="hkpi-val" style="color:var(--red)">1</div>
+          <div class="hkpi-sub">Action required</div>
+          <div class="hkpi-trend down">↑ New this week</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="panel">
+          <div class="ph"><span class="ph-ttl">Aircraft Health & Value Status</span><span class="ph-act" onclick="show('s-aircraft',document.querySelectorAll('.sb-item')[2])">Detail view →</span></div>
+          <table class="ht">
+            <thead>
+              <tr>
+                <th>Registration</th>
+                <th>Type / Operator</th>
+                <th>Health Score</th>
+                <th>Value Trend</th>
+                <th>Watch Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="show('s-aircraft',document.querySelectorAll('.sb-item')[2])">
+                <td><span class="ht-reg">5N-BVE</span></td>
+                <td>B737-800 · Air Peace</td>
+                <td>
+                  <div class="hbar-wrap">
+                    <div class="hbar"><div class="hbar-fill" style="width:64%;background:var(--amber);"></div></div>
+                    <div class="hbar-num" style="color:var(--amber)">64</div>
+                  </div>
+                </td>
+                <td><span class="val-ind watch">⚠ Watching</span></td>
+                <td style="color:var(--amber);font-weight:600;">3</td>
+              </tr>
+              <tr>
+                <td><span class="ht-reg">5N-MHF</span></td>
+                <td>A320neo · Ibom Air</td>
+                <td>
+                  <div class="hbar-wrap">
+                    <div class="hbar"><div class="hbar-fill" style="width:82%;background:var(--green);"></div></div>
+                    <div class="hbar-num" style="color:var(--green)">82</div>
+                  </div>
+                </td>
+                <td><span class="val-ind stable">✓ Stable</span></td>
+                <td style="color:var(--dimmer);">0</td>
+              </tr>
+              <tr>
+                <td><span class="ht-reg">5N-FGT</span></td>
+                <td>ATR 72-600 · Overland</td>
+                <td>
+                  <div class="hbar-wrap">
+                    <div class="hbar"><div class="hbar-fill" style="width:41%;background:var(--red);"></div></div>
+                    <div class="hbar-num" style="color:var(--red)">41</div>
+                  </div>
+                </td>
+                <td><span class="val-ind eroding">↓ Eroding</span></td>
+                <td style="color:var(--red);font-weight:600;">7</td>
+              </tr>
+              <tr>
+                <td><span class="ht-reg">5N-SPC</span></td>
+                <td>B737-700 · Air Peace</td>
+                <td>
+                  <div class="hbar-wrap">
+                    <div class="hbar"><div class="hbar-fill" style="width:78%;background:var(--green);"></div></div>
+                    <div class="hbar-num" style="color:var(--green)">78</div>
+                  </div>
+                </td>
+                <td><span class="val-ind stable">✓ Stable</span></td>
+                <td style="color:var(--dimmer);">1</td>
+              </tr>
+              <tr>
+                <td><span class="ht-reg">5N-MHE</span></td>
+                <td>E175 · United Nigeria</td>
+                <td>
+                  <div class="hbar-wrap">
+                    <div class="hbar"><div class="hbar-fill" style="width:67%;background:var(--amber);"></div></div>
+                    <div class="hbar-num" style="color:var(--amber)">67</div>
+                  </div>
+                </td>
+                <td><span class="val-ind watch">⚠ Watching</span></td>
+                <td style="color:var(--amber);font-weight:600;">2</td>
+              </tr>
+              <tr>
+                <td><span class="ht-reg">5N-GKC</span></td>
+                <td>A220-300 · Green Africa</td>
+                <td>
+                  <div class="hbar-wrap">
+                    <div class="hbar"><div class="hbar-fill" style="width:88%;background:var(--green);"></div></div>
+                    <div class="hbar-num" style="color:var(--green)">88</div>
+                  </div>
+                </td>
+                <td><span class="val-ind stable">✓ Stable</span></td>
+                <td style="color:var(--dimmer);">0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="ph"><span class="ph-ttl">This Week's Watch Items</span><span class="ph-act" onclick="show('s-predictive',document.querySelectorAll('.sb-item')[1])">All →</span></div>
+          <div class="watch-items">
+            <div class="wi">
+              <div class="wi-sev red"></div>
+              <div class="wi-body">
+                <div class="wi-reg">5N-FGT</div>
+                <div class="wi-text">Deferred defect count now at 7. Hydraulic system item outstanding 42 days. Value impact estimated at 8–12% if unresolved within 30 days.</div>
+                <div class="wi-time">Action required · W13</div>
+              </div>
+            </div>
+            <div class="wi">
+              <div class="wi-sev amber"></div>
+              <div class="wi-body">
+                <div class="wi-reg">5N-BVE</div>
+                <div class="wi-text">Engine oil consumption trending up 3 consecutive weeks. Currently 0.19qt/hr vs 0.14qt/hr baseline. Pattern consistent with early seal degradation.</div>
+                <div class="wi-time">Monitor weekly · W13</div>
+              </div>
+            </div>
+            <div class="wi">
+              <div class="wi-sev amber"></div>
+              <div class="wi-body">
+                <div class="wi-reg">5N-MHE</div>
+                <div class="wi-text">APU utilisation unusually high — possible main engine start issues. If confirmed, indicates operator maintenance gap affecting engine life.</div>
+                <div class="wi-time">Flagged W12 · Ongoing</div>
+              </div>
+            </div>
+            <div class="wi">
+              <div class="wi-sev blue"></div>
+              <div class="wi-body">
+                <div class="wi-reg">5N-BVE</div>
+                <div class="wi-text">C-Check due in approximately 14 months. Recommend planning conversation with operator now to confirm facility and funding.</div>
+                <div class="wi-time">Predictive · 14 months</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════
+         PREDICTIVE INTELLIGENCE
+    ══════════════════════════ -->
+    <div class="screen" id="s-predictive">
+
+      <div class="pred-intro">
+        <strong>Andara Predictive Intelligence</strong> — Based on 13 weeks of field-verified data across your 17-aircraft portfolio, these are the events and trends Andara anticipates over the next 12 months. Act early. Value is always easier to protect than recover.
+      </div>
+
+      <div class="pred-timeline">
+        <div class="pt-card now">
+          <div class="pt-horizon">0 – 30 days · Act Now</div>
+          <div class="pt-items">
+            <div class="pt-item">
+              <div class="pt-reg">5N-FGT</div>
+              <div class="pt-body">
+                <div class="pt-event">Hydraulic defect unresolved — value erosion in progress</div>
+                <div class="pt-due">Outstanding 42 days · Escalating</div>
+                <div class="pt-impact high">High value impact</div>
+              </div>
+            </div>
+            <div class="pt-item">
+              <div class="pt-reg">5N-BVE</div>
+              <div class="pt-body">
+                <div class="pt-event">Engine oil trend — borescope inspection recommended</div>
+                <div class="pt-due">3-week pattern · Recommend W14 inspection</div>
+                <div class="pt-impact medium">Medium · Preventive</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-card near">
+          <div class="pt-horizon">1 – 6 months · Plan Now</div>
+          <div class="pt-items">
+            <div class="pt-item">
+              <div class="pt-reg">5N-MHE</div>
+              <div class="pt-body">
+                <div class="pt-event">APU life limit approaching — replacement or overhaul needed</div>
+                <div class="pt-due">Est. 4 months remaining life</div>
+                <div class="pt-impact high">High cost event</div>
+              </div>
+            </div>
+            <div class="pt-item">
+              <div class="pt-reg">5N-FGT</div>
+              <div class="pt-body">
+                <div class="pt-event">Landing gear overhaul due — calendar limit</div>
+                <div class="pt-due">Due May 2026 · Plan facility now</div>
+                <div class="pt-impact medium">Scheduled event</div>
+              </div>
+            </div>
+            <div class="pt-item">
+              <div class="pt-reg">5N-SPC</div>
+              <div class="pt-body">
+                <div class="pt-event">AD 2025-14 compliance window closes</div>
+                <div class="pt-due">Deadline Jun 2026 · Operator must act</div>
+                <div class="pt-impact medium">Regulatory</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-card future">
+          <div class="pt-horizon">6 – 12 months · Aware</div>
+          <div class="pt-items">
+            <div class="pt-item">
+              <div class="pt-reg">5N-BVE</div>
+              <div class="pt-body">
+                <div class="pt-event">C-Check due — plan facility and funding now</div>
+                <div class="pt-due">Est. Aug 2027 · ~14 months out</div>
+                <div class="pt-impact low">Plan ahead</div>
+              </div>
+            </div>
+            <div class="pt-item">
+              <div class="pt-reg">5N-MHF</div>
+              <div class="pt-body">
+                <div class="pt-event">Engine LLP limit — Stage 1 LPT blade set</div>
+                <div class="pt-due">~900 cycles remaining · ~8 months</div>
+                <div class="pt-impact medium">High cost event</div>
+              </div>
+            </div>
+            <div class="pt-item">
+              <div class="pt-reg">5N-GKC</div>
+              <div class="pt-body">
+                <div class="pt-event">AOC renewal — operator licence periodic audit</div>
+                <div class="pt-due">Due Q4 2026 · Monitor operator compliance</div>
+                <div class="pt-impact low">Regulatory watch</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Value at Risk -->
+      <div class="var-panel">
+        <div class="ph" style="padding:0 0 14px;border:none;"><span class="ph-ttl">Asset Value at Risk — Portfolio View</span><span style="font-size:10px;color:var(--dimmer);font-family:'DM Mono',monospace;">Based on current condition trends</span></div>
+        <div class="var-grid">
+          <div class="var-card">
+            <div class="var-reg">5N-FGT · ATR 72-600</div>
+            <div class="var-val" style="color:var(--red)">$1.1M</div>
+            <div class="var-label">Estimated value at risk</div>
+            <div class="var-risk-bar"><div class="var-risk-fill" style="width:72%;background:var(--red);"></div></div>
+            <div class="var-risk-lbl" style="color:var(--red);">High — immediate action needed</div>
+          </div>
+          <div class="var-card">
+            <div class="var-reg">5N-BVE · B737-800</div>
+            <div class="var-val" style="color:var(--amber)">$420K</div>
+            <div class="var-label">Estimated value at risk</div>
+            <div class="var-risk-bar"><div class="var-risk-fill" style="width:34%;background:var(--amber);"></div></div>
+            <div class="var-risk-lbl" style="color:var(--amber);">Medium — monitor and act</div>
+          </div>
+          <div class="var-card">
+            <div class="var-reg">5N-MHE · E175</div>
+            <div class="var-val" style="color:var(--amber)">$290K</div>
+            <div class="var-label">Estimated value at risk</div>
+            <div class="var-risk-bar"><div class="var-risk-fill" style="width:24%;background:var(--amber);"></div></div>
+            <div class="var-risk-lbl" style="color:var(--amber);">Medium — APU event upcoming</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ══════════════════════════
+         AIRCRAFT DETAIL — 5N-BVE
+    ══════════════════════════ -->
+    <div class="screen" id="s-aircraft">
+
+      <div class="ac-detail-hdr">
+        <div>
+          <div class="acd-reg">5N-BVE</div>
+          <div class="acd-info">Boeing 737-800 · Air Peace · Murtala Muhammed International · MSN 34302 · 18,204 hrs TSN</div>
+        </div>
+        <div class="acd-right">
+          <div class="health-score-big">
+            <div class="hs-num">64</div>
+            <div class="hs-lbl">Health Score</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acd-grid">
+        <div class="acd-stat"><div class="acd-stat-lbl">Total Hours</div><div class="acd-stat-val">18,204</div><div class="acd-stat-sub">+312 this quarter</div></div>
+        <div class="acd-stat"><div class="acd-stat-lbl">Cycles</div><div class="acd-stat-val">12,441</div><div class="acd-stat-sub">Avg 28/week</div></div>
+        <div class="acd-stat"><div class="acd-stat-lbl">Open Defects</div><div class="acd-stat-val" style="color:var(--amber)">4</div><div class="acd-stat-sub">2 deferred · 2 in work</div></div>
+        <div class="acd-stat"><div class="acd-stat-lbl">AD Compliance</div><div class="acd-stat-val" style="color:var(--green)">100%</div><div class="acd-stat-sub">All directives current</div></div>
+        <div class="acd-stat"><div class="acd-stat-lbl">Last C-Check</div><div class="acd-stat-val">14Mo</div><div class="acd-stat-sub">Lagos MRO</div></div>
+        <div class="acd-stat"><div class="acd-stat-lbl">Weeks of data</div><div class="acd-stat-val">13</div><div class="acd-stat-sub">847 docs ingested</div></div>
+        <div class="acd-stat"><div class="acd-stat-lbl">Value Estimate</div><div class="acd-stat-val">$19.2M</div><div class="acd-stat-sub">Current market</div></div>
+        <div class="acd-stat"><div class="acd-stat-lbl">Value Trend</div><div class="acd-stat-val" style="color:var(--amber)">⚠</div><div class="acd-stat-sub">Watching oil trend</div></div>
+      </div>
+
+      <!-- Health Dimensions -->
+      <div class="health-dims">
+        <div class="hdim">
+          <div class="hdim-score" style="color:var(--green)">78</div>
+          <div class="hdim-bar-wrap"><div class="hdim-bar" style="width:78%;background:var(--green);"></div></div>
+          <div class="hdim-name">Structural</div>
+        </div>
+        <div class="hdim">
+          <div class="hdim-score" style="color:var(--amber)">61</div>
+          <div class="hdim-bar-wrap"><div class="hdim-bar" style="width:61%;background:var(--amber);"></div></div>
+          <div class="hdim-name">Powerplant</div>
+        </div>
+        <div class="hdim">
+          <div class="hdim-score" style="color:var(--green)">74</div>
+          <div class="hdim-bar-wrap"><div class="hdim-bar" style="width:74%;background:var(--green);"></div></div>
+          <div class="hdim-name">Systems</div>
+        </div>
+        <div class="hdim">
+          <div class="hdim-score" style="color:var(--green)">82</div>
+          <div class="hdim-bar-wrap"><div class="hdim-bar" style="width:82%;background:var(--green);"></div></div>
+          <div class="hdim-name">Compliance</div>
+        </div>
+        <div class="hdim">
+          <div class="hdim-score" style="color:var(--amber)">55</div>
+          <div class="hdim-bar-wrap"><div class="hdim-bar" style="width:55%;background:var(--amber);"></div></div>
+          <div class="hdim-name">Maintenance</div>
+        </div>
+      </div>
+
+      <!-- Observations -->
+      <div class="ph" style="padding:0 0 12px;border:none;"><span class="ph-ttl">Field Intelligence Observations · W13</span></div>
+      <div class="obs-list">
+        <div class="obs amber">
+          <div class="obs-bar amber"></div>
+          <div class="obs-body">
+            <div class="obs-zone">⚠ Powerplant · Engine Oil Consumption</div>
+            <div class="obs-text">Engine 1 oil consumption has trended upward across 3 consecutive weekly scans — 0.14, 0.17, 0.19 qt/hr. Current rate exceeds operator baseline by 36%. Not yet at rejection limit but direction is clear.</div>
+            <div class="obs-pred">Andara prediction: If trend continues at current rate, oil consumption will breach P&W maintenance limit within 8–10 weeks. Recommend borescope inspection at W15 to rule out seal degradation before it becomes a shop visit event.</div>
+          </div>
+        </div>
+        <div class="obs amber">
+          <div class="obs-bar amber"></div>
+          <div class="obs-body">
+            <div class="obs-zone">⚠ Maintenance Posture · Deferred Defects</div>
+            <div class="obs-text">4 open items on defect sheet this week. 2 deferred under MEL: cabin pressurisation monitor (non-critical) and nose wheel steering feedback sensor. Both within permitted deferral periods.</div>
+            <div class="obs-pred">Andara prediction: MEL deferral on pressurisation monitor expires W17. Operator must action by then. Flag in planning now to avoid AOG risk.</div>
+          </div>
+        </div>
+        <div class="obs green">
+          <div class="obs-bar green"></div>
+          <div class="obs-body">
+            <div class="obs-zone">✓ Structural · Airframe</div>
+            <div class="obs-text">No structural anomalies identified across 13 weeks of inspection records. Last C-Check findings all closed. No SB compliance gaps for structural items.</div>
+            <div class="obs-pred">C-Check due approximately August 2027. Recommend initiating facility selection by Q1 2027 to ensure slot availability in Lagos or regional MRO.</div>
+          </div>
+        </div>
+        <div class="obs green">
+          <div class="obs-bar green"></div>
+          <div class="obs-body">
+            <div class="obs-zone">✓ Regulatory · AD & SB Compliance</div>
+            <div class="obs-text">All applicable Airworthiness Directives confirmed compliant as of W13 scan. No outstanding mandatory SBs. NCAA certifications current. CRS valid and properly signed each week.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ══════════════════════════
+         REPORTS
+    ══════════════════════════ -->
+    <div class="screen" id="s-reports">
+      <div class="ph" style="padding:0 0 16px;border:none;margin-bottom:16px;border-bottom:1px solid var(--b);">
+        <span class="ph-ttl">Intelligence Reports</span>
+        <span style="font-size:10px;color:var(--dimmer);">Fidelity Bank · Portfolio FW-FBN-2026</span>
+      </div>
+      <div class="reports-list">
+        <div class="report-card">
+          <div class="rc-icon q"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8a84b" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="rc-info">
+            <div class="rc-name">Q1 2026 Fleet Health & Value Intelligence Report</div>
+            <div class="rc-meta">17 aircraft · 13 weeks of field data · Full condition and value analysis · 28 Mar 2026</div>
+          </div>
+          <div class="rc-new">New</div>
+          <div class="rc-dl">Download PDF →</div>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon m"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="rc-info">
+            <div class="rc-name">W13 Weekly Intelligence Summary</div>
+            <div class="rc-meta">14 of 17 aircraft scanned · 3 watch items raised · 28 Mar 2026</div>
+          </div>
+          <div class="rc-new">New</div>
+          <div class="rc-dl">Download PDF →</div>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon m"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="rc-info">
+            <div class="rc-name">W12 Weekly Intelligence Summary</div>
+            <div class="rc-meta">15 of 17 aircraft scanned · 2 watch items raised · 21 Mar 2026</div>
+          </div>
+          <div class="rc-dl">Download PDF →</div>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00c896" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="rc-info">
+            <div class="rc-name">5N-FGT · Special Alert — Defect Escalation</div>
+            <div class="rc-meta">Single aircraft · Hydraulic system · Value impact notice · 25 Mar 2026</div>
+          </div>
+          <div class="rc-dl">Download PDF →</div>
+        </div>
+        <div class="report-card">
+          <div class="rc-icon m"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="rc-info">
+            <div class="rc-name">W11 Weekly Intelligence Summary</div>
+            <div class="rc-meta">16 of 17 aircraft scanned · 1 watch item raised · 14 Mar 2026</div>
+          </div>
+          <div class="rc-dl">Download PDF →</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// clock
+function tick(){
+  const el=document.getElementById('tbtime');
+  if(el){const n=new Date();el.textContent=n.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase()+' · '+n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+}
+tick();setInterval(tick,30000);
+
+// navigation
+function show(id,item){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(item){
+    document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+  }
+  closeSidebar();
+}
+
+function toggleSidebar(){
+  const sb = document.querySelector('.sidebar');
+  if(!sb) return;
+  sb.classList.toggle('mobile-open');
+}
+
+function closeSidebar(){
+  const sb = document.querySelector('.sidebar');
+  if(!sb) return;
+  sb.classList.remove('mobile-open');
+}
+
+// sidebar clicks
+document.querySelectorAll('.sb-item').forEach(item=>{
+  item.addEventListener('click',function(){
+    document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+    this.classList.add('active');
+    closeSidebar();
+  });
+});
+</script>
+</body>
+</html>

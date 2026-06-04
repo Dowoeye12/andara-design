@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/continental", "destination": "/continental/index.html" },
+    { "source": "/continental/(.*)", "destination": "/continental/$1" },
+    { "source": "/fidelity", "destination": "/fidelity/index.html" },
+    { "source": "/fidelity/(.*)", "destination": "/fidelity/$1" },
+    { "source": "/intelligence", "destination": "/intelligence/index.html" },
+    { "source": "/intelligence/(.*)", "destination": "/intelligence/$1" },
+    { "source": "/credit-intelligence/africa", "destination": "/credit-intelligence/africa/index.html" },
+    { "source": "/credit-intelligence/africa/(.*)", "destination": "/credit-intelligence/africa/$1" },
+    { "source": "/(.*)", "destination": "/" }
+  ]
+}

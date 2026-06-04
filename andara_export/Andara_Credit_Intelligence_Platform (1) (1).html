@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="canonical" href="https://andarasystems.com/credit-intelligence/nigeria"/>
+<title>Andara Credit Intelligence — Nigeria | Aviation Finance Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=JetBrains+Mono:wght@300;400;500;600&family=Inter+Tight:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#003C6E;--deep:#28328C;--pink:#E63C78;
+  --bg:#070912;--bg2:#0C1020;--bg3:#141A33;
+  --line:rgba(255,255,255,0.06);--line2:rgba(255,255,255,0.10);--line3:rgba(255,255,255,0.18);
+  --t1:#E8EBF5;--t2:#A4ABC4;--t3:#6B7396;
+  --deploy:#3DD68C;--watch:#F5B947;--dnd:#FF5478;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --serif:'Fraunces',Georgia,serif;
+  --sans:'Inter Tight',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;min-height:100dvh;height:100%;background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px;line-height:1.5;overflow:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:3px}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;color:inherit}
+
+/* LOGIN */
+#login{position:fixed;inset:0;background:radial-gradient(ellipse at 30% 40%,rgba(40,50,140,.4) 0%,transparent 55%),radial-gradient(ellipse at 75% 70%,rgba(230,60,120,.2) 0%,transparent 50%),#04060E;z-index:100;display:flex;align-items:center;justify-content:center;padding:max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));min-height:100vh;min-height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#login::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%);-webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%)}
+.ls{display:grid;grid-template-columns:1.1fr 1fr;width:100%;max-width:900px;border:1px solid var(--line2);background:rgba(12,16,32,.8);backdrop-filter:blur(18px);min-height:520px;position:relative}
+.ll{padding:40px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--line2)}
+.bm{display:flex;align-items:center;gap:12px}
+.brand-logo{height:28px;width:auto;max-width:220px;display:block;flex-shrink:0;object-fit:contain;object-position:left center}
+.tb .brand-logo{height:22px;max-width:180px}
+.bmt{font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase}
+.bmt small{display:block;color:var(--t3);margin-top:2px}
+.lh{font-family:var(--serif);font-size:38px;line-height:1.05;letter-spacing:-.02em;color:#fff;margin-top:24px}
+.lh em{font-style:italic;color:var(--pink)}
+.lsub{color:var(--t2);font-size:13px;margin-top:14px;line-height:1.55;max-width:360px}
+.lmeta{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase}
+.lmr{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:7px;margin-top:7px}
+.lmr strong{color:var(--t2)}
+.lr{padding:40px;display:flex;flex-direction:column;justify-content:center}
+.lr h2{font-family:var(--serif);font-size:22px;font-weight:500;color:#fff;margin-bottom:4px}
+.lr p{color:var(--t2);font-size:12px;margin-bottom:28px}
+.fld{margin-bottom:16px}
+.fld label{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);margin-bottom:7px}
+.fld input{width:100%;background:transparent;border:none;border-bottom:1px solid var(--line3);padding:8px 0;font-size:14px;color:#fff;outline:none;transition:border-color .2s}
+.fld input:focus{border-color:var(--pink)}
+.lbtn{margin-top:12px;width:100%;background:var(--pink);color:#fff;padding:13px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;font-weight:500;transition:background .15s;border:none;cursor:pointer}
+.lbtn:hover{background:#ff4d8a}
+.lerr{margin-top:10px;color:var(--dnd);font-family:var(--mono);font-size:10px;display:none}
+
+/* APP */
+#app{display:none;position:relative;min-height:100vh;min-height:100dvh;height:100vh;height:100dvh;grid-template-columns:260px 1fr;grid-template-rows:46px 1fr;grid-template-areas:"tb tb" "sb mn"}
+.tb{grid-area:tb;display:flex;align-items:center;padding:0 max(16px, env(safe-area-inset-right)) 0 max(16px, env(safe-area-inset-left));border-bottom:1px solid var(--line);background:#04060E;gap:14px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;position:relative;z-index:92}
+.tbr{margin-left:auto;display:flex;align-items:center;gap:12px;color:var(--t3);font-size:10px}
+.pulse{display:flex;align-items:center;gap:5px;color:var(--deploy)}
+.pulse-short{display:none}
+.dot{width:5px;height:5px;background:var(--deploy);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.ubox{display:flex;align-items:center;gap:7px;padding:3px 9px;border:1px solid var(--line2);color:var(--t2)}
+.sb{grid-area:sb;border-right:1px solid var(--line);background:#06090F;overflow-y:auto;display:flex;flex-direction:column;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.slbl{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--t3);text-transform:uppercase;padding:10px 12px 5px}
+.sitem{display:flex;align-items:center;gap:9px;padding:7px 11px;font-size:12.5px;color:var(--t2);cursor:pointer;border-left:2px solid transparent;transition:background .1s,color .1s,border-color .1s}
+.sitem:hover{color:var(--t1);background:rgba(255,255,255,.02)}
+.sitem.active{color:var(--t1);background:rgba(230,60,120,.06);border-left-color:var(--pink)}
+.sitem svg{width:13px;height:13px;flex-shrink:0;opacity:.65}
+.sitem.active svg{opacity:1}
+.sitem .cnt{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--t3)}
+.sdiv{height:1px;background:var(--line);margin:7px 12px}
+.arow{display:grid;grid-template-columns:1fr auto auto;align-items:center;padding:6px 11px;cursor:pointer;border-left:2px solid transparent;gap:7px;transition:background .1s}
+.arow:hover{background:rgba(255,255,255,.02)}
+.arow.active{background:rgba(230,60,120,.06);border-left-color:var(--pink)}
+.anm{font-size:12px;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.asc{font-family:var(--mono);font-size:10px;color:var(--t2)}
+.vdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.vd{background:var(--deploy)}.vw{background:var(--watch)}.vx{background:var(--dnd)}
+.sfoot{margin-top:auto;padding:12px;border-top:1px solid var(--line);font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.1em;line-height:1.6}
+.sfoot strong{color:var(--t2)}
+.mn{grid-area:mn;overflow-y:auto;background:var(--bg);-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-bottom:max(60px, env(safe-area-inset-bottom))}
+.view{padding:24px max(32px, env(safe-area-inset-right)) 40px max(32px, env(safe-area-inset-left));display:none;animation:fade .25s}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+.crumb{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.vtitle{font-family:var(--serif);font-size:32px;font-weight:400;letter-spacing:-.02em;line-height:1.1;color:#fff;margin-bottom:5px}
+.vtitle em{font-style:italic;color:var(--pink)}
+.vsub{color:var(--t2);font-size:12.5px;max-width:740px;margin-bottom:22px;line-height:1.6}
+.panel{background:var(--bg2);border:1px solid var(--line);margin-bottom:12px}
+.ph{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.ph h3{font-size:10.5px;font-family:var(--mono);font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--t1)}
+.ph .meta{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.1em}
+.pb{padding:16px}
+.g{display:grid;gap:12px}
+.g12{grid-template-columns:repeat(12,1fr)}
+.c3{grid-column:span 3}.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}
+.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin-bottom:12px}
+.hcard{background:linear-gradient(135deg,#0E1330 0%,#06090F 100%);border:1px solid var(--line2);padding:26px;position:relative;overflow:hidden}
+.hcard::after{content:"";position:absolute;top:-30%;right:-15%;width:350px;height:350px;background:radial-gradient(circle,rgba(230,60,120,.10),transparent 60%);pointer-events:none}
+.hcard-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.hsc{font-family:var(--serif);font-size:80px;line-height:.9;letter-spacing:-.04em;color:#fff}
+.hsc sub{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.1em}
+.vbadge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;border:1px solid;font-weight:500;margin-bottom:10px}
+.bw{color:var(--watch);border-color:rgba(245,185,71,.4);background:rgba(245,185,71,.06)}
+.bd{color:var(--deploy);border-color:rgba(61,214,140,.4);background:rgba(61,214,140,.06)}
+.bx{color:var(--dnd);border-color:rgba(255,84,120,.4);background:rgba(255,84,120,.06)}
+.hhl{font-family:var(--serif);font-size:21px;line-height:1.2;letter-spacing:-.01em;color:#fff;margin-bottom:8px;position:relative;z-index:2}
+.hhl em{font-style:italic;color:var(--pink)}
+.hdesc{color:var(--t2);font-size:12px;line-height:1.55;position:relative;z-index:2}
+.kpis{display:grid;grid-template-rows:1fr 1fr;gap:12px}
+.kpi{background:var(--bg2);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;justify-content:space-between;min-height:130px}
+.kpi-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+.kpi-val{font-family:var(--serif);font-size:34px;letter-spacing:-.02em;color:#fff;line-height:1}
+.kpi-d{font-family:var(--mono);font-size:10px;color:var(--deploy);letter-spacing:.04em}
+.kpi-bar{height:3px;background:var(--bg3);margin-top:7px;overflow:hidden}
+.kpi-bar>div{height:100%;background:linear-gradient(90deg,var(--deep),var(--pink))}
+.kpi-ft{font-size:10px;color:var(--t3);font-family:var(--mono);letter-spacing:.05em;margin-top:5px}
+.rt{width:100%;border-collapse:collapse;font-size:12px}
+.rt th{text-align:left;padding:7px 12px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:500;border-bottom:1px solid var(--line)}
+.rt td{padding:8px 12px;border-bottom:1px solid var(--line);color:var(--t2);font-family:var(--mono);font-size:11px}
+.rt tr:hover td{background:rgba(255,255,255,.02);cursor:pointer}
+.rt tr:last-child td{border-bottom:none}
+.rt .nm{color:var(--t1);font-family:var(--sans);font-size:12.5px}
+.rt .sc{color:#fff;font-weight:600}
+.dup{color:var(--deploy)}.ddn{color:var(--dnd)}.dfl{color:var(--t3)}
+.heat{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.hcell{aspect-ratio:1.6/1;padding:8px;border:1px solid var(--line);cursor:pointer;transition:border-color .13s;display:flex;flex-direction:column;justify-content:space-between}
+.hcell .hn{font-size:10.5px;color:#fff;font-weight:500;line-height:1.15}
+.hcell .hs{font-family:var(--mono);font-size:12px;font-weight:600;color:#fff}
+.ilist{display:flex;flex-direction:column}
+.iitem{padding:12px 16px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:88px 1fr;gap:14px;cursor:pointer;transition:background .1s}
+.iitem:hover{background:rgba(255,255,255,.02)}
+.iitem:last-child{border-bottom:none}
+.itime{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.06em;line-height:1.5}
+.itime strong{display:block;color:var(--t2);font-size:10px}
+.ibody h4{font-size:13px;color:var(--t1);margin-bottom:3px;line-height:1.35;font-weight:500}
+.ibody p{font-size:11px;color:var(--t2);line-height:1.45}
+.itags{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.itag{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;padding:2px 5px;border:1px solid var(--line2);color:var(--t3)}
+.itag.public{color:#7DABE3;border-color:rgba(125,171,227,.3)}
+.itag.private{color:var(--pink);border-color:rgba(230,60,120,.3);background:rgba(230,60,120,.05)}
+.itag.regulatory{color:var(--watch);border-color:rgba(245,185,71,.3)}
+.itag.financial{color:var(--deploy);border-color:rgba(61,214,140,.3)}
+.itag.legal{color:#C19EFF;border-color:rgba(193,158,255,.3)}
+.itag.ops{color:#FF9E64;border-color:rgba(255,158,100,.3)}
+.itag.macro{color:#7DABE3;border-color:rgba(125,171,227,.3)}
+.phero{display:grid;grid-template-columns:2fr 1fr;gap:12px;margin-bottom:16px}
+.pmain{background:linear-gradient(135deg,#0E1330 0%,#06090F 100%);border:1px solid var(--line2);padding:26px;position:relative;overflow:hidden}
+.pmain::after{content:"";position:absolute;top:-30%;right:-10%;width:280px;height:280px;background:radial-gradient(circle,rgba(230,60,120,.12),transparent 60%);pointer-events:none}
+.pid{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.14em;margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap}
+.pid strong{color:var(--t2)}
+.pname{font-family:var(--serif);font-size:38px;font-weight:400;letter-spacing:-.025em;line-height:1;color:#fff;margin-bottom:7px;position:relative;z-index:2}
+.psub{color:var(--t2);font-size:13px;margin-bottom:15px;line-height:1.5;max-width:520px;position:relative;z-index:2}
+.prow{display:flex;gap:28px;flex-wrap:wrap;position:relative;z-index:2}
+.pstat .l{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:3px}
+.pstat .v{font-family:var(--serif);font-size:16px;color:#fff;line-height:1.2}
+.pscore{background:var(--bg2);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.psnum{font-family:var(--serif);font-size:72px;font-weight:400;letter-spacing:-.03em;line-height:.9;color:#fff}
+.psnum sub{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.1em}
+.pslbl{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--t3)}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:16px;gap:1px;overflow-x:auto}
+.tab{padding:9px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);border-bottom:1px solid transparent;cursor:pointer;white-space:nowrap;transition:color .1s,border-color .1s}
+.tab:hover{color:var(--t2)}
+.tab.active{color:var(--pink);border-bottom-color:var(--pink)}
+.tp{display:none}.tp.active{display:block;animation:fade .25s}
+.sgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.scard{background:var(--bg2);border:1px solid var(--line);padding:16px;position:relative;overflow:hidden}
+.scard::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;background:var(--bc)}
+.scard[data-t="h"]{--bc:var(--deploy)}.scard[data-t="m"]{--bc:var(--watch)}.scard[data-t="l"]{--bc:var(--dnd)}
+.scode{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em}
+.sname{font-size:11px;color:var(--t2);margin:5px 0 10px;line-height:1.4}
+.sval{font-family:var(--serif);font-size:32px;color:#fff;line-height:1}
+.sval small{font-size:13px;color:var(--t3);font-family:var(--mono)}
+.swt{font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:7px}
+.sbar{height:2px;background:var(--bg3);margin-top:9px;overflow:hidden}
+.sbar>div{height:100%;background:var(--bc)}
+.tl{position:relative;padding-left:22px}
+.tl::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:var(--line2)}
+.tlitem{position:relative;padding-bottom:16px}
+.tlitem::before{content:"";position:absolute;left:-19px;top:5px;width:8px;height:8px;border-radius:50%;background:var(--bg);border:2px solid var(--t3)}
+.tlitem.public::before{border-color:#7DABE3}
+.tlitem.private::before{border-color:var(--pink);background:var(--pink)}
+.tlitem.regulatory::before{border-color:var(--watch)}
+.tlitem.financial::before{border-color:var(--deploy)}
+.tlitem.legal::before{border-color:#C19EFF}
+.tlitem.ops::before{border-color:#FF9E64}
+.tld{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+.tlt{font-size:13px;color:var(--t1);font-weight:500;margin-bottom:3px;line-height:1.35}
+.tldesc{font-size:11.5px;color:var(--t2);line-height:1.5}
+.rlist{display:flex;flex-direction:column;gap:12px}
+.rrow{display:grid;grid-template-columns:150px 1fr 45px;align-items:center;gap:12px}
+.rname{font-size:12px;color:var(--t1)}
+.rbo{height:7px;background:var(--bg3);border:1px solid var(--line);overflow:hidden}
+.rbi{height:100%;transition:width .8s}
+.rl{background:var(--deploy)}.rm{background:var(--watch)}.rx{background:var(--dnd)}
+.rval{font-family:var(--mono);font-size:10px;color:var(--t2);text-align:right}
+.cpks{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:16px}
+.cpk{background:var(--bg2);border:1px dashed var(--line3);padding:12px;cursor:pointer;transition:border-color .1s;min-height:80px;position:relative}
+.cpk:hover{border-color:var(--pink)}
+.cpk.filled{border-style:solid;border-color:var(--line2)}
+.cpk-l{font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;color:var(--t3);text-transform:uppercase;margin-bottom:5px}
+.cpk-v{font-family:var(--serif);font-size:16px;color:#fff;line-height:1.2}
+.cpk .xbtn{position:absolute;top:7px;right:9px;font-family:var(--mono);font-size:10px;color:var(--t3);cursor:pointer;background:none;border:none}
+.cpk .xbtn:hover{color:var(--pink)}
+.ctbl{width:100%;border-collapse:collapse}
+.ctbl th,.ctbl td{padding:9px 12px;font-size:12px;border-bottom:1px solid var(--line);text-align:left}
+.ctbl th{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:500;background:var(--bg3)}
+.ctbl td{color:var(--t2)}
+.ctbl td.mt{color:var(--t3);font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+.ctbl tr:last-child td{border-bottom:none}
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.mcard{background:var(--bg2);border:1px solid var(--line);padding:17px;position:relative;overflow:hidden}
+.mcard::before{content:"";position:absolute;top:0;left:0;height:100%;width:3px;background:var(--ac)}
+.mcard[data-c=svs]{--ac:#7DABE3}.mcard[data-c=pps]{--ac:var(--pink)}.mcard[data-c=aps]{--ac:#FF9E64}.mcard[data-c=rcs]{--ac:var(--watch)}.mcard[data-c=ras]{--ac:#C19EFF}
+.mcode{font-family:var(--mono);font-size:10px;color:var(--ac);letter-spacing:.16em;font-weight:600}
+.mname{font-family:var(--serif);font-size:16px;color:#fff;margin:5px 0 3px;line-height:1.2}
+.mw{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;margin-bottom:9px}
+.mq{font-size:11px;color:var(--t2);font-style:italic;line-height:1.45;margin-bottom:11px;padding-bottom:11px;border-bottom:1px solid var(--line)}
+.ml{list-style:none;font-size:11px;color:var(--t2);line-height:1.65}
+.ml li{padding-left:12px;position:relative}
+.ml li::before{content:"·";position:absolute;left:3px;color:var(--ac);font-weight:700}
+.ttbl{width:100%;border-collapse:collapse;margin-top:12px}
+.ttbl td{padding:12px 16px;border:1px solid var(--line);font-size:12.5px;color:var(--t2)}
+.ttbl td:first-child{font-family:var(--mono);font-size:13px;font-weight:600;color:#fff;width:130px;text-align:center}
+.tdt{background:rgba(61,214,140,.06);color:var(--deploy);border-color:rgba(61,214,140,.25)!important}
+.twt{background:rgba(245,185,71,.06);color:var(--watch);border-color:rgba(245,185,71,.25)!important}
+.txt{background:rgba(255,84,120,.06);color:var(--dnd);border-color:rgba(255,84,120,.25)!important}
+.wsform{display:grid;gap:12px;max-width:720px}
+.wsf{display:flex;flex-direction:column;gap:5px}
+.wsf label{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+.wsf input,.wsf select,.wsf textarea{background:var(--bg2);border:1px solid var(--line);padding:9px 11px;color:var(--t1);font-size:12.5px;outline:none;transition:border-color .1s}
+.wsf input:focus,.wsf select:focus,.wsf textarea:focus{border-color:var(--pink)}
+.wsf textarea{min-height:90px;resize:vertical}
+.wsr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.warn{padding:12px 14px;background:rgba(245,185,71,.06);border:1px solid rgba(245,185,71,.2);font-size:11.5px;color:var(--watch);line-height:1.5;font-family:var(--mono);letter-spacing:.03em;margin-bottom:16px}
+.warn strong{color:#fff;display:block;margin-bottom:5px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+.atbl{width:100%;border-collapse:collapse;font-size:11px}
+.atbl th{padding:9px 12px;text-align:left;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:500;background:var(--bg3);border-bottom:1px solid var(--line)}
+.atbl td{padding:8px 12px;border-bottom:1px solid var(--line);color:var(--t2);font-family:var(--mono);font-size:10.5px}
+.atbl tr:hover td{background:rgba(255,255,255,.02)}
+.af{color:var(--dnd)}.at{color:var(--deploy)}
+.rptg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rptc{background:var(--bg2);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:9px;cursor:pointer;transition:border-color .1s,transform .1s}
+.rptc:hover{border-color:var(--pink);transform:translateY(-2px)}
+.rptc h4{font-family:var(--serif);font-size:17px;font-weight:500;color:#fff}
+.rptc p{font-size:11.5px;color:var(--t2);line-height:1.5;flex:1}
+.rptm{font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase;border-top:1px solid var(--line);padding-top:9px;display:flex;justify-content:space-between}
+.evlist{display:flex;flex-direction:column;gap:7px}
+.evitem{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:9px 13px;border:1px solid var(--line);background:var(--bg2)}
+.evicon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--t2);font-family:var(--mono);font-size:9px;letter-spacing:.05em}
+.evinfo h5{font-size:12.5px;color:var(--t1);font-weight:500;margin-bottom:1px}
+.evinfo p{font-size:10px;color:var(--t3);font-family:var(--mono);letter-spacing:.04em}
+.fb{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.fp{padding:5px 10px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line2);color:var(--t3);cursor:pointer;transition:all .1s;background:none}
+.fp:hover{color:var(--t2)}
+.fp.active{color:#fff;border-color:var(--pink);background:rgba(230,60,120,.1)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line3);color:var(--t1);background:transparent;transition:all .1s;cursor:pointer}
+.btn:hover{border-color:var(--pink);color:var(--pink)}
+.btn-p{background:var(--pink);border-color:var(--pink);color:#fff}
+.btn-p:hover{background:#ff4d8a;color:#fff;border-color:#ff4d8a}
+.btn-sm{padding:4px 9px;font-size:9px}
+.mback{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:120;align-items:center;justify-content:center;padding:max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left))}
+.mback.open{display:flex}
+.mbox{background:var(--bg2);border:1px solid var(--line2);max-width:480px;width:100%;max-height:75vh;display:flex;flex-direction:column}
+.mhd{padding:16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.mhd h3{font-family:var(--serif);font-size:18px;font-weight:500;color:#fff}
+.mhd button{color:var(--t3);font-size:20px;cursor:pointer;background:none;border:none;min-width:44px;min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+.mlist{overflow-y:auto;flex:1}
+.mrow{padding:10px 16px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.mrow:hover{background:rgba(255,255,255,.03)}
+.mrow .mnm{font-size:12.5px;color:var(--t1)}
+.mrow .mmeta{font-family:var(--mono);font-size:9px;color:var(--t3)}
+.toast{position:fixed;bottom:max(20px, env(safe-area-inset-bottom));right:max(20px, env(safe-area-inset-right));left:auto;background:var(--bg2);border:1px solid var(--line2);padding:12px 16px;font-size:12px;color:var(--t1);max-width:min(300px, calc(100vw - 32px - env(safe-area-inset-left) - env(safe-area-inset-right)));z-index:200;box-shadow:0 6px 20px rgba(0,0,0,.4);opacity:0;transform:translateY(6px);transition:opacity .2s,transform .2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast strong{color:var(--pink);display:block;margin-bottom:1px;font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase}
+.bk-matrix td,.bk-matrix th{padding:9px 12px;border-bottom:1px solid var(--line);font-size:11.5px}
+.bk-matrix th{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);background:var(--bg3)}
+.bk-matrix td{color:var(--t2)}
+.bk-matrix tr:last-child td{border-bottom:none}
+
+/* Mobile nav chrome */
+.nav-backdrop{display:none}
+.nav-toggle{display:none;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:1px solid var(--line2);border-radius:6px;background:var(--bg2);color:var(--t1);flex-shrink:0;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.nav-toggle .ni{display:flex;flex-direction:column;gap:5px;pointer-events:none}
+.nav-toggle .ni span{display:block;width:18px;height:2px;background:var(--t1);border-radius:1px}
+.tb-div{width:1px;height:16px;background:var(--line2);flex-shrink:0}
+.tb-ci{color:var(--pink);font-family:var(--mono);font-size:10px;letter-spacing:.1em;white-space:nowrap}
+.tb #gsearch{background:var(--bg2);border:1px solid var(--line);padding:8px 10px;color:var(--t1);font-size:11.5px;outline:none;flex:1;min-width:0;max-width:420px}
+.table-scroll{-webkit-overflow-scrolling:touch;overflow-x:auto;max-width:100%;margin:0 -1px}
+.table-scroll .rt,.table-scroll .ctbl,.table-scroll .atbl{min-width:max(100%, 520px)}
+.table-scroll.bk-wrap .bk-matrix{min-width:720px}
+.bk-matrix th:first-child,.bk-matrix td:first-child{position:sticky;left:0;z-index:1}
+.bk-matrix th:first-child{background:var(--bg3)}
+.bk-matrix td:first-child{background:var(--bg2);box-shadow:1px 0 0 var(--line)}
+
+@media (max-width:900px){
+  #app{--app-tb-offset:52px}
+  .bk-matrix th:first-child,.bk-matrix td:first-child{position:static;box-shadow:none}
+  .nav-backdrop{display:block;position:fixed;left:0;right:0;bottom:0;top:0;z-index:80;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s ease}
+  #app.nav-open .nav-backdrop{opacity:1;pointer-events:auto;top:var(--app-tb-offset, 56px)}
+  .nav-toggle{display:flex}
+  #app{display:grid;grid-template-columns:1fr;grid-template-rows:auto 1fr;grid-template-areas:"tb" "mn";height:100dvh;height:100vh;min-height:100dvh}
+  .sb{position:fixed;left:0;width:min(320px, 88vw);top:var(--app-tb-offset, 56px);bottom:0;z-index:85;border-right:1px solid var(--line2);transform:translateX(-100%);transition:transform .22s ease;box-shadow:8px 0 24px rgba(0,0,0,.35)}
+  #app.nav-open .sb{transform:translateX(0)}
+  .mn{grid-area:mn;padding-left:env(safe-area-inset-left)}
+  .sb{padding-left:max(0px, env(safe-area-inset-left));padding-bottom:env(safe-area-inset-bottom)}
+  .tb{flex-wrap:wrap;row-gap:6px}
+  .tb #gsearch{max-width:none;flex:1;min-width:140px}
+}
+
+@media (max-width:640px){
+  #app{--app-tb-offset:72px}
+  .tb{flex-wrap:wrap;row-gap:8px;column-gap:10px;padding-top:max(8px, env(safe-area-inset-top));padding-bottom:10px;min-height:72px;align-content:center}
+  .nav-toggle{order:0}
+  .tb .brand-logo{order:1;height:20px;max-width:140px}
+  .tb-ci{order:2;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .tb-div.tb-div--after-ci,.tb-div.tb-div--search{display:none}
+  .tb #gsearch{order:10;flex-basis:100%;max-width:none;width:100%;margin-top:4px}
+  .tbr{order:3;margin-left:auto;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+  .toast{bottom:max(16px, env(safe-area-inset-bottom));right:16px;left:16px;max-width:none;width:auto}
+  .pulse-full{display:none}
+  .pulse-short{display:inline}
+}
+
+@media (max-width:768px){
+  #login{align-items:flex-start;padding-top:max(16px, env(safe-area-inset-top))}
+  .ls{grid-template-columns:1fr;min-height:0}
+  .ll{border-right:none;border-bottom:1px solid var(--line2);padding:24px 20px}
+  .lr{padding:24px 20px}
+  .lh{font-size:clamp(26px, 7vw, 38px);margin-top:16px}
+  .lsub{max-width:none}
+}
+
+@media (max-width:900px){
+  .g12{grid-template-columns:1fr}
+  .g12 .c3,.g12 .c4,.g12 .c5,.g12 .c6,.g12 .c7,.g12 .c8,.g12 .c12{grid-column:1/-1}
+  .hero{grid-template-columns:1fr}
+  .hsc{font-size:clamp(40px, 14vw, 80px)}
+  .hcard,.pmain{padding:18px}
+  .vtitle{font-size:clamp(22px, 6vw, 32px)}
+  .view{padding:16px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left))}
+  .heat{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  .mgrid,.sgrid{grid-template-columns:1fr}
+  .cpks{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  .rptg{grid-template-columns:1fr}
+  .phero{grid-template-columns:1fr}
+  .pname{font-size:clamp(24px, 7vw, 38px)}
+  .psnum{font-size:clamp(40px, 12vw, 72px)}
+  .iitem{grid-template-columns:1fr;gap:8px}
+  .itime strong{display:inline;margin-right:8px}
+  .rrow{grid-template-columns:1fr auto;gap:8px}
+  .rrow .rbo{grid-column:1/-1;order:3}
+  .rrow .rval{order:2}
+  .wsr{grid-template-columns:1fr}
+  .evitem{grid-template-columns:36px 1fr auto;align-items:start}
+  .mbox{max-height:min(85dvh, 85vh)}
+  .sitem,.arow{padding:11px 12px;min-height:44px;align-items:center}
+  .tab{padding:11px 14px;min-height:44px;display:inline-flex;align-items:center}
+  .fp{min-height:40px;padding:8px 12px}
+  .btn{min-height:40px}
+  .mrow{min-height:48px;padding:12px 14px}
+}
+
+@media (min-width:641px) and (max-width:900px){
+  .heat{grid-template-columns:repeat(3, minmax(0, 1fr))}
+  .cpks{grid-template-columns:repeat(2, minmax(0, 1fr))}
+}
+
+@media (min-width:901px) and (max-width:1100px){
+  .g12 .c4,.g12 .c5,.g12 .c6{grid-column:span 6}
+  .g12 .c7{grid-column:span 12}
+  .heat{grid-template-columns:repeat(4, minmax(0, 1fr))}
+  .mgrid{grid-template-columns:repeat(2, minmax(0, 1fr))}
+  .sgrid{grid-template-columns:repeat(3, minmax(0, 1fr))}
+  .rptg{grid-template-columns:repeat(2, minmax(0, 1fr))}
+}
+
+@media (hover:hover){
+  .hcell:hover{transform:scale(1.05);border-color:var(--t2);z-index:5}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hcell{transition:none}
+  .hcell:hover{transform:none}
+  .toast{transition:none}
+  .dot{animation:none}
+  #app .sb,#app .nav-backdrop{transition:none!important}
+  .tp.active{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <div class="ls">
+    <div class="ll">
+      <div class="bm">
+        <img class="brand-logo" src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems"/>
+        <div class="bmt">ANDARA SYSTEMS<small>Credit Intelligence · Africa</small></div>
+      </div>
+      <div>
+        <div class="lh">Capital is not the constraint.<br><em>Intelligence is.</em></div>
+        <p class="lsub">Africa's independent aviation credit intelligence platform. 5-Score methodology, anonymous airline ratings, institutional-grade Deploy / Watch / Do Not Deploy verdicts.</p>
+      </div>
+      <div class="lmeta">
+        <div class="lmr"><span>Coverage</span><strong>18 carriers + 1 asset entity</strong></div>
+        <div class="lmr"><span>Methodology</span><strong>5-Score · v1.5</strong></div>
+        <div class="lmr"><span>Last update</span><strong>30 Apr 2026 · 14:22 WAT</strong></div>
+        <div class="lmr"><span>Classification</span><strong>Restricted · Subscriber</strong></div>
+      </div>
+    </div>
+    <div class="lr">
+      <h2>Subscriber sign-in</h2>
+      <p>Andara Credit Intelligence terminal. Authorised users only.</p>
+      <div class="fld"><label>Institutional email</label><input id="em" type="email" placeholder="name@institution.com"/></div>
+      <div class="fld"><label>Access key</label><input id="pw" type="password" placeholder="•••••••••"/></div>
+      <button class="lbtn" id="lbtn">Enter terminal →</button>
+      <div id="lerr" class="lerr">Access key not recognised. Verify credentials.</div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+  <div class="tb">
+    <button type="button" class="nav-toggle" id="navToggle" aria-controls="sidebar" aria-expanded="false" aria-label="Open menu"><span class="ni" aria-hidden="true"><span></span><span></span><span></span></span></button>
+    <img class="brand-logo" src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems"/>
+    <span class="tb-ci">Credit Intelligence</span>
+    <div class="tb-div tb-div--after-ci" aria-hidden="true"></div>
+    <input id="gsearch" type="text" placeholder="Search airlines, verdicts, sources… (press Enter)" autocomplete="off"/>
+    <div class="tb-div tb-div--search" aria-hidden="true"></div>
+    <div class="tbr">
+      <div class="pulse"><span class="dot"></span><span class="pulse-short">LIVE</span><span class="pulse-full"> · NIGERIA AVIATION</span></div>
+      <span id="clk"></span>
+      <div class="tb-div" aria-hidden="true"></div>
+      <div class="ubox"><span style="width:16px;height:16px;background:var(--deep);border-radius:50%;display:inline-block"></span><span id="uname">Subscriber</span></div>
+    </div>
+  </div>
+
+  <aside class="sb" id="sidebar">
+    <div style="padding:12px 12px 5px">
+      <div class="slbl">Terminal</div>
+      <div class="sitem active" data-v="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>Market Overview</div>
+      <div class="sitem" data-v="intel"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h12"/></svg>Intelligence Feed<span class="cnt">16</span></div>
+      <div class="sitem" data-v="compare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M16 3h5v5M14 10l7-7M8 21H3v-5M10 14l-7 7"/></svg>Comparison Tool</div>
+      <div class="sitem" data-v="method"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M2 12h20M5 5l14 14M19 5 5 19"/></svg>Methodology</div>
+      <div class="sitem" data-v="workspace"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Analyst Workspace</div>
+      <div class="sitem" data-v="audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 8v4l3 3M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>Audit Trail</div>
+      <div class="sitem" data-v="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>Report Centre</div>
+    </div>
+    <div class="sdiv"></div>
+    <div style="padding:0 12px 5px">
+      <div class="slbl">Carriers <span style="color:var(--pink)">19</span></div>
+      <div id="alist"></div>
+    </div>
+    <div class="sfoot"><strong>v1.5</strong> · 30 Apr 2026<br>Andara doctrine · 5-Score<br><span style="color:var(--pink)">●</span> Internal · Restricted</div>
+  </aside>
+
+  <main class="mn">
+
+    <!-- DASHBOARD -->
+    <div class="view active" id="vw-dashboard">
+      <div class="crumb">Terminal / Market Overview</div>
+      <h1 class="vtitle">Nigerian Aviation <em>Credit Climate</em></h1>
+      <p class="vsub">Live institutional financeability picture for the Nigerian commercial aviation sector. 5-Score methodology across 18 active carriers and one state-owned aircraft asset entity.</p>
+      <div class="hero">
+        <div class="hcard">
+          <div class="hcard-lbl">Composite market score · weighted</div>
+          <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:16px;position:relative;z-index:2">
+            <div class="hsc">48.2<sub>/100</sub></div>
+            <div><div class="vbadge bw">● Sector outlook · Mixed</div><div class="kpi-ft" style="color:var(--t2)">2 WATCH-high · 1 mid · 6 mid-low · 10 DND</div></div>
+          </div>
+          <div class="hhl">No carrier currently meets <em>Deploy</em>.<br>Two are within one tightening of the line.</div>
+          <p class="hdesc">Ibom Air (73.0) and Overland (70.0) sit at the top of WATCH. Allied Air enters v1.5 as the highest-scoring private carrier. The DND cohort dominates — capital deployment requires structured protections, not standard covenants.</p>
+        </div>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="kpi-lbl">Cape Town · IDERA enforceability</div>
+            <div style="display:flex;align-items:flex-end;gap:12px"><div class="kpi-val">75.5%</div><div class="kpi-d">▲ Off watchlist</div></div>
+            <div><div class="kpi-bar"><div style="width:75.5%"></div></div><div class="kpi-ft">AWG Index · Oct 2024 · Alt A 30-day</div></div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-lbl">FX · CBN reserves cover</div>
+            <div style="display:flex;align-items:flex-end;gap:12px"><div class="kpi-val">$49.4B</div><div class="kpi-d">▲ ~7mo CXP</div></div>
+            <div><div class="kpi-bar"><div style="width:62%"></div></div><div class="kpi-ft">IATA blocked-funds cleared Jun 2024</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="g g12" style="margin-bottom:12px">
+        <div class="panel c4"><div class="ph"><h3>Strongest carriers</h3><span class="meta">By composite</span></div><div class="pb table-scroll" style="padding:0"><table class="rt" id="topRank"></table></div></div>
+        <div class="panel c4"><div class="ph"><h3>Weakest carriers</h3><span class="meta">By composite</span></div><div class="pb table-scroll" style="padding:0"><table class="rt" id="botRank"></table></div></div>
+        <div class="panel c4"><div class="ph"><h3>Score movement · 90d</h3><span class="meta">Methodology output</span></div><div class="pb table-scroll" style="padding:0"><table class="rt" id="mvRank"></table></div></div>
+      </div>
+      <div class="g g12" style="margin-bottom:12px">
+        <div class="panel c7">
+          <div class="ph"><h3>Carrier credit heat-map</h3><span class="meta">Click to drill</span></div>
+          <div class="pb">
+            <div class="heat" id="heatGrid"></div>
+            <div style="display:flex;gap:16px;margin-top:12px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--t3);text-transform:uppercase">
+              <span><span style="display:inline-block;width:9px;height:9px;background:var(--deploy);margin-right:5px"></span>Deploy ≥75</span>
+              <span><span style="display:inline-block;width:9px;height:9px;background:var(--watch);margin-right:5px"></span>Watch 50–74</span>
+              <span><span style="display:inline-block;width:9px;height:9px;background:var(--dnd);margin-right:5px"></span>DND &lt;50</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel c5">
+          <div class="ph"><h3>Sector environment</h3><span class="meta">Macro · v1.5</span></div>
+          <div class="pb" style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;align-items:center;gap:14px">
+              <svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#11162B" stroke-width="9"/><circle cx="50" cy="50" r="38" fill="none" stroke="#3DD68C" stroke-width="9" stroke-dasharray="218 999" transform="rotate(-90 50 50)"/><text x="50" y="55" text-anchor="middle" font-family="Fraunces" font-size="17" fill="#fff">91.45</text></svg>
+              <div><div style="font-size:12px;color:var(--t1);margin-bottom:3px;font-weight:500">Regulatory environment</div><p style="font-size:11px;color:var(--t3);line-height:1.45">NCAA/NSIB ICVM EI 91.45% Apr 2026. Up from 70.23% in 2023. No SSCs. Above global avg 70.4%.</p></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#11162B" stroke-width="9"/><circle cx="50" cy="50" r="38" fill="none" stroke="#F5B947" stroke-width="9" stroke-dasharray="150 999" transform="rotate(-90 50 50)"/><text x="50" y="53" text-anchor="middle" font-family="Fraunces" font-size="15" fill="#fff">B/B3</text></svg>
+              <div><div style="font-size:12px;color:var(--t1);margin-bottom:3px;font-weight:500">Sovereign risk</div><p style="font-size:11px;color:var(--t3);line-height:1.45">Fitch B/Stable · Moody's B3/Stable · S&amp;P B−/Stable. Both upgraded 2025 on FX liberalisation.</p></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px">
+              <svg width="90" height="90" viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="none" stroke="#11162B" stroke-width="9"/><circle cx="50" cy="50" r="38" fill="none" stroke="#E63C78" stroke-width="9" stroke-dasharray="158 999" transform="rotate(-90 50 50)"/><text x="50" y="55" text-anchor="middle" font-family="Fraunces" font-size="18" fill="#fff">66%</text></svg>
+              <div><div style="font-size:12px;color:var(--t1);margin-bottom:3px;font-weight:500">Financing environment</div><p style="font-size:11px;color:var(--t3);line-height:1.45">5 named NGN banks active, concentrated on state carriers. Foreign export-credit dominates highest-quality fleet financing.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="g g12">
+        <div class="panel c7"><div class="ph"><h3>Market alerts</h3><span class="meta">Live · auto-classified</span></div><div class="pb" style="padding:0"><div class="ilist" id="alertFeed"></div></div></div>
+        <div class="panel c5">
+          <div class="ph"><h3>Cohort distribution</h3><span class="meta">19 entities</span></div>
+          <div class="pb">
+            <svg viewBox="0 0 340 180" width="100%" style="display:block">
+              <defs>
+                <linearGradient id="g2" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#F5B947" stop-opacity=".9"/><stop offset="100%" stop-color="#F5B947" stop-opacity=".4"/></linearGradient>
+                <linearGradient id="g3" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#FF5478" stop-opacity=".9"/><stop offset="100%" stop-color="#FF5478" stop-opacity=".4"/></linearGradient>
+              </defs>
+              <rect x="10" y="155" width="40" height="0" fill="rgba(61,214,140,.5)"/>
+              <rect x="80" y="110" width="40" height="45" fill="url(#g2)"/>
+              <rect x="150" y="140" width="40" height="15" fill="url(#g2)"/>
+              <rect x="220" y="70" width="40" height="85" fill="url(#g2)"/>
+              <rect x="290" y="10" width="40" height="145" fill="url(#g3)"/>
+              <g font-family="Fraunces" font-size="18" fill="#fff" text-anchor="middle"><text x="30" y="148">0</text><text x="100" y="103">2</text><text x="170" y="133">1</text><text x="240" y="63">6</text><text x="310" y="3">10</text></g>
+              <g font-family="JetBrains Mono" font-size="8" fill="#6B7396" text-anchor="middle" letter-spacing="1"><text x="30" y="175">DEPLOY</text><text x="100" y="175">WATCH-HI</text><text x="170" y="175">WATCH-MID</text><text x="240" y="175">WATCH-LO</text><text x="310" y="175">DND</text></g>
+              <line x1="0" x2="340" y1="155" y2="155" stroke="rgba(255,255,255,.06)"/>
+            </svg>
+            <p style="margin-top:12px;font-size:11.5px;color:var(--t2);line-height:1.5">No carrier currently scores above 75. Ibom Air (73.0) and Overland (70.0) sit closest to Deploy — both held back by absence of audited statements.</p>
+          </div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <div class="ph"><h3>Nigerian bank aviation footprint matrix</h3><span class="meta">Public record · v1.5</span></div>
+        <div class="pb table-scroll bk-wrap" style="padding:0;overflow-x:auto">
+          <table class="bk-matrix" style="width:100%;border-collapse:collapse">
+            <thead><tr><th>Bank</th><th>Named carrier exposure</th><th>Structure</th><th>Source standard</th></tr></thead>
+            <tbody>
+              <tr><td style="color:#fff;font-weight:500">Fidelity Bank</td><td>Ibom Air · Enugu Air · Air Peace</td><td>A220 majority financier · E170/E190/E195 anchor · facility (size NDA)</td><td>AGM, state launch event, FNAC speech</td></tr>
+              <tr><td style="color:#fff;font-weight:500">Zenith Bank</td><td>Ibom Air · United Nigeria · Arik Air</td><td>1st A220 financier · 6×B737-800 NG underwrite · ₦37bn legacy</td><td>AGM, ground intelligence, AMCON</td></tr>
+              <tr><td style="color:#fff;font-weight:500">Union Bank</td><td>Ibom Air · Arik Air</td><td>Minority A220 co-financier · NG Eagle/Super Bravo voided counterparty</td><td>AGM, FHC judgment text</td></tr>
+              <tr><td style="color:#fff;font-weight:500">Access Bank</td><td>Green Africa</td><td>Post-IDERA financier · 5N-GAB &amp; 5N-GAC owned-fleet facilities</td><td>ch-aviation, trade press</td></tr>
+              <tr><td style="color:#fff;font-weight:500">Premium Trust Bank</td><td>Bayelsa Air</td><td>ATR-72/600 acquisition (₦25bn plan disclosed)</td><td>State publication, FRCN</td></tr>
+              <tr><td style="color:#fff;font-weight:500">Optimus Bank</td><td>ValueJet</td><td>Related-party (Soname co-founder); no public aviation facility</td><td>CAC filings, trade press</td></tr>
+              <tr><td style="color:#fff;font-weight:500">AMCON / Skye legacy</td><td>Aero Contractors · Arik Air</td><td>Receivership since 2016 / 2017 · ₦227.6bn Arik group ₦455.17bn</td><td>AMCON statements</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- AIRLINE PROFILE -->
+    <div class="view" id="vw-airline">
+      <div class="crumb"><span id="crumbA">Airlines / —</span></div>
+      <div id="airlineProfile"></div>
+    </div>
+
+    <!-- INTEL FEED -->
+    <div class="view" id="vw-intel">
+      <div class="crumb">Terminal / Intelligence Feed</div>
+      <h1 class="vtitle">Intelligence <em>Feed</em></h1>
+      <p class="vsub">Public-domain and private-source intelligence flowing into the Andara database. Each entry is timestamped, source-classified, and mapped to a scoring criterion.</p>
+      <div class="fb">
+        <span style="font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px">FILTER</span>
+        <button class="fp active" data-f="all">All</button>
+        <button class="fp" data-f="public">Public</button>
+        <button class="fp" data-f="private">Private</button>
+        <button class="fp" data-f="regulatory">Regulatory</button>
+        <button class="fp" data-f="financial">Financial</button>
+        <button class="fp" data-f="legal">Legal</button>
+        <button class="fp" data-f="ops">Operational</button>
+        <button class="fp" data-f="macro">Macro</button>
+      </div>
+      <div class="panel"><div class="ph"><h3>Last 30 days</h3><span class="meta" id="fcount">16 entries</span></div><div class="pb" style="padding:0"><div class="ilist" id="fullFeed"></div></div></div>
+    </div>
+
+    <!-- COMPARISON -->
+    <div class="view" id="vw-compare">
+      <div class="crumb">Terminal / Comparison Tool</div>
+      <h1 class="vtitle">Carrier <em>Comparison</em></h1>
+      <p class="vsub">Side-by-side comparative scoring across up to four carriers. Useful for institutional concentration analysis and Credit Committee sub-cohort review.</p>
+      <div class="cpks" id="cpks"></div>
+      <div class="panel"><div class="ph"><h3>Comparative scorecard</h3><span class="meta">5-Score · weighted</span></div><div class="pb table-scroll" style="padding:0;overflow-x:auto"><table class="ctbl" id="ctbl"></table></div></div>
+    </div>
+
+    <!-- METHODOLOGY -->
+    <div class="view" id="vw-method">
+      <div class="crumb">Terminal / Methodology</div>
+      <h1 class="vtitle">The 5-Score <em>Methodology</em></h1>
+      <p class="vsub">Five weighted dimensions, five distinct questions. Weighted average produces a 0–100 composite. Verdicts are calculated outputs — never analyst opinions.</p>
+      <div class="mgrid">
+        <div class="mcard" data-c="svs"><div class="mcode">SVS · 15%</div><div class="mname">Strategic Value</div><div class="mw">Weight 15 percent</div><div class="mq">Does this airline make African aviation stronger?</div><ul class="ml"><li>Network strategic importance</li><li>Route monopoly / connectivity</li><li>Employment footprint</li><li>Government / sovereign relationship</li><li>Brand equity and recognition</li><li>Years in continuous operation</li><li>Domestic market share</li><li>IATA, AFRAA membership</li><li>SAATM / ICAO contribution</li></ul></div>
+        <div class="mcard" data-c="pps"><div class="mcode">PPS · 25%</div><div class="mname">Payment Priority</div><div class="mw">Primary creditworthiness</div><div class="mq">When times are hard, will they pay first?</div><ul class="ml"><li>Lessor payment history</li><li>MRO vendor payment</li><li>Fuel supplier payment</li><li>FAAN / NAMA charges</li><li>NCAA fee compliance</li><li>Tax / PAYE compliance</li><li>Bank facility servicing</li><li>Cash position / buffers</li><li>Revenue trend (3–5 yr)</li></ul></div>
+        <div class="mcard" data-c="aps"><div class="mcode">APS · 20%</div><div class="mname">Airline Performance</div><div class="mw">Operating discipline</div><div class="mq">Are they running a tight operation?</div><ul class="ml"><li>IOSA registration</li><li>AOC currency</li><li>USOAP CMA proxy</li><li>Accident / incident record</li><li>Average fleet age</li><li>Fleet commonality</li><li>NCAA enforcement record</li><li>SAFA / SACA findings</li><li>In-house ATO / AMO</li></ul></div>
+        <div class="mcard" data-c="rcs"><div class="mcode">RCS · 25%</div><div class="mname">Risk Containment</div><div class="mw">Structural protections</div><div class="mq">If things go wrong, how protected are we?</div><ul class="ml"><li>Cape Town Convention</li><li>IDERA practice</li><li>Repossession case law</li><li>FX repatriation risk</li><li>Ownership transparency</li><li>Audited financials</li><li>Insurance coverage</li><li>Regulatory backstop</li><li>Lessor enforcement</li></ul></div>
+        <div class="mcard" data-c="ras"><div class="mcode">RAS · 15%</div><div class="mname">Redeployment Suitability</div><div class="mw">Asset liquidity</div><div class="mq">If they default, how fast can we move the asset?</div><ul class="ml"><li>Aircraft type liquidity</li><li>Engine type liquidity</li><li>Configuration heaviness</li><li>AD / SB compliance</li><li>Technical records</li><li>C-check / D-check status</li><li>African operator demand</li><li>Re-export timeline</li></ul></div>
+      </div>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="ph"><h3>Verdict thresholds</h3><span class="meta">Hard floors apply</span></div>
+        <div class="pb">
+          <table class="ttbl">
+            <tr><td class="tdt">≥75</td><td><strong style="color:#fff">DEPLOY</strong> — Counterparty meets institutional standard. Standard covenant package suffices.</td></tr>
+            <tr><td class="twt">50–74</td><td><strong style="color:#fff">WATCH</strong> — Conditional support. Structured protections, monitoring triggers, and reduced tenor required.</td></tr>
+            <tr><td class="txt">&lt;50</td><td><strong style="color:#fff">DO NOT DEPLOY</strong> — Decline. Explanatory memo to Credit Committee mandatory.</td></tr>
+          </table>
+          <div class="warn" style="margin-top:12px"><strong>Hard floor</strong>Composite cannot exceed 65 if PPS &lt; 40 or RCS &lt; 40, regardless of other scores. This prevents averaging away creditworthiness or structural risk.</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><h3>Scoring scale</h3><span class="meta">0–10 anchored</span></div>
+        <div class="pb table-scroll" style="padding:0;overflow-x:auto">
+          <table class="ctbl">
+            <thead><tr><th>Score</th><th>Anchor</th><th>Confidence</th></tr></thead>
+            <tbody>
+              <tr><td>9–10</td><td>Best-in-class globally; verifiable primary evidence</td><td style="color:var(--deploy)">High — two+ sources</td></tr>
+              <tr><td>7–8</td><td>Above African peer average; solid evidence</td><td style="color:var(--watch)">Medium — one reputable trade source</td></tr>
+              <tr><td>5–6</td><td>At African peer average; mixed evidence</td><td style="color:var(--dnd)">Low — single secondary</td></tr>
+              <tr><td>3–4</td><td>Below African peer average; concerning evidence</td><td>—</td></tr>
+              <tr><td>1–2</td><td>Materially deficient; documented failures</td><td>—</td></tr>
+              <tr><td>0</td><td>Absent, refused, or actively adverse</td><td style="color:var(--t3);font-style:italic">Non-cooperation is itself scored</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKSPACE -->
+    <div class="view" id="vw-workspace">
+      <div class="crumb">Terminal / Analyst Workspace</div>
+      <h1 class="vtitle">Analyst <em>Workspace</em></h1>
+      <p class="vsub">Submit new evidence to the Andara database. Scores update only through the approved methodology engine — never manually.</p>
+      <div class="warn"><strong>Scoring governance · v1.5</strong>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes. You may enter data, upload evidence, classify information, tag source type, annotate observations, and validate inputs.</div>
+      <div class="panel">
+        <div class="ph"><h3>New evidence submission</h3><span class="meta">Audited · attributable</span></div>
+        <div class="pb">
+          <form class="wsform" id="wsForm">
+            <div class="wsr">
+              <div class="wsf"><label>Affected carrier</label><select id="evC"><option value="">— Select —</option></select></div>
+              <div class="wsf"><label>Source classification</label><select><option>Public-domain</option><option>Private Andara intelligence</option><option>Regulatory filing</option><option>Financial / lender</option><option>Legal / court</option><option>Operational</option><option>Macroeconomic</option></select></div>
+            </div>
+            <div class="wsr">
+              <div class="wsf"><label>Mapped scoring criterion</label><select><option>SVS — Strategic Value</option><option>PPS — Payment Priority</option><option>APS — Airline Performance</option><option>RCS — Risk Containment</option><option>RAS — Redeployment Suitability</option></select></div>
+              <div class="wsf"><label>Confidence level</label><select><option>High · two+ sources</option><option>Medium · one reputable trade source</option><option>Low · single secondary</option></select></div>
+            </div>
+            <div class="wsf"><label>Headline</label><input type="text" placeholder="e.g. Carrier X executes second A220 facility with [Bank]"/></div>
+            <div class="wsf"><label>Source citation</label><input type="text" placeholder="https://… or NCAA Bulletin 2026/04/xxx"/></div>
+            <div class="wsf"><label>Analyst observation</label><textarea placeholder="What the source says. What it means for the score. What confidence the analyst attaches. What should be triangulated against this."></textarea></div>
+            <div style="display:flex;gap:9px;margin-top:6px">
+              <button type="button" class="btn btn-p" id="subEv">Submit to methodology engine</button>
+              <button type="button" class="btn">Save draft</button>
+              <button type="button" class="btn">Attach document</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIT -->
+    <div class="view" id="vw-audit">
+      <div class="crumb">Terminal / Audit Trail</div>
+      <h1 class="vtitle">Version History &amp; <em>Audit Trail</em></h1>
+      <p class="vsub">Every score movement, every evidence submission, every methodology run. Institutional-grade audit integrity is non-negotiable.</p>
+      <div class="panel"><div class="ph"><h3>Audit log</h3><span class="meta">Last 50 events · v1.5</span></div><div class="pb table-scroll" style="padding:0;overflow-x:auto"><table class="atbl" id="atbl"></table></div></div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="view" id="vw-reports">
+      <div class="crumb">Terminal / Report Centre</div>
+      <h1 class="vtitle">Report <em>Export Centre</em></h1>
+      <p class="vsub">Generate institutional-grade briefings and Credit Committee summaries. Reports automatically reflect the latest validated data and methodology outputs.</p>
+      <div class="rptg">
+        <div class="rptc"><h4>Individual carrier brief</h4><p>Single-carrier deep dive. Scorecard, intelligence timeline, risk breakdown, supporting evidence and provisional verdict — formatted for institutional credit committee consumption.</p><div class="rptm"><span>~14 pages</span><span>PDF · DOCX</span></div></div>
+        <div class="rptc"><h4>Market summary</h4><p>Country-level credit climate, cohort distribution, sector trends, regulatory environment, FX outlook and macro context. Quarterly cadence with intra-quarter alerts.</p><div class="rptm"><span>~22 pages</span><span>PDF · PPTX</span></div></div>
+        <div class="rptc"><h4>Comparative analysis</h4><p>Side-by-side analysis across selected carriers. Designed for portfolio-concentration review, lessor counterparty selection or Credit Committee sub-cohort assessment.</p><div class="rptm"><span>~10 pages</span><span>PDF · XLSX</span></div></div>
+        <div class="rptc"><h4>IC summary</h4><p>Single-pager for IC consumption. Verdict, key strengths, weaknesses, conditions for upgrade, hard-floor checks, signing recommendation framework.</p><div class="rptm"><span>1 page</span><span>PDF</span></div></div>
+        <div class="rptc"><h4>Bank concentration memo</h4><p>Bank-specific aviation footprint analysis drawn from the Nigerian-bank exposure matrix, focused on the engaging institution's portfolio.</p><div class="rptm"><span>~8 pages</span><span>PDF</span></div></div>
+        <div class="rptc"><h4>Lessor concentration memo</h4><p>Lessor-side counterparty analysis. Cross-references active Nigerian operator base, fleet structure, repossession-event history and CTC enforceability evidence.</p><div class="rptm"><span>~12 pages</span><span>PDF</span></div></div>
+      </div>
+      <div class="panel" style="margin-top:20px">
+        <div class="ph"><h3>Recent exports</h3><span class="meta">Last generated</span></div>
+        <div class="pb"><div class="evlist">
+          <div class="evitem"><div class="evicon">PDF</div><div class="evinfo"><h5>Ibom Air · IC Summary</h5><p>2026-05-04 · 14:22 · v1.5 · Internal</p></div><button class="btn btn-sm">Download</button></div>
+          <div class="evitem"><div class="evicon">PDF</div><div class="evinfo"><h5>Nigerian Aviation · Q1 2026 Market Brief</h5><p>2026-04-30 · 09:15 · v1.5 · Subscriber distribution</p></div><button class="btn btn-sm">Download</button></div>
+          <div class="evitem"><div class="evicon">XLSX</div><div class="evinfo"><h5>Compare · Air Peace × UNA × ValueJet × XEJet</h5><p>2026-04-28 · 17:48 · v1.5</p></div><button class="btn btn-sm">Download</button></div>
+          <div class="evitem"><div class="evicon">PDF</div><div class="evinfo"><h5>Allied Air · Carrier Brief (NEW v1.5)</h5><p>2026-04-25 · 11:02 · v1.5</p></div><button class="btn btn-sm">Download</button></div>
+        </div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="mback" id="cmpModal">
+  <div class="mbox">
+    <div class="mhd"><h3>Select carrier</h3><button id="closeModal">✕</button></div>
+    <div class="mlist" id="mlist"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const AL=[
+  {id:'airpeace',name:'Air Peace',code:'P4·APK',founded:'2013·AOC 2014',hq:'Ikeja, Lagos',hubs:'LOS·ABV',own:'Onyema family',c:56.6,v:'WATCH',svs:8.4,pps:3.8,aps:5.6,rcs:5.2,ras:5.5,conf:'High',
+    sum:"Nigeria's dominant private airline: 3.11M domestic pax 2024 (~27% national share), sole Nigerian carrier on UK trunk routes, OAG #1 fastest-growing African carrier by seat capacity (+53.4% YoY).",
+    str:['27% domestic market share','Sole Nigerian UK-trunk operator','IOSA continuous since 2016 · 6 renewals','LIAT 2020 70% Caribbean platform','OAG #1 fastest-growing in Africa Dec 2025'],
+    wk:['Unresolved US DOJ 36-count indictment (Onyema · Eghagha)','SmartLynx Nov 2025: $15M+ losses, $5M+ deposits stuck','Aging fleet avg 20.6y (13 in heavy mtc Q4 2025)','Only African E2 operator (RAS hit)','UK CAA SAFA EFB and refuelling findings'],
+    dr:['Key-person criminal litigation overhang','Lessor-counterparty default pattern','Fleet-age stress','Currency / DOJ funds-flow regulatory exposure']},
+  {id:'ibom',name:'Ibom Air',code:'QI·IAN',founded:'AOC 2019',hq:'Uyo (QUO)',hubs:'Uyo·LOS·ABV',own:'100% Akwa Ibom State',c:73.0,v:'WATCH',svs:7.0,pps:8.2,aps:7.8,rcs:7.0,ras:5.6,conf:'High',
+    sum:"Cleanest credit story among Nigerian carriers. FY24 disclosed at first public AGM: revenue ₦96bn (+43%), PBT ₦16.6bn, PAT ₦6.8bn. Africa's reference-class state-owned airline outside Ethiopia and RwandAir.",
+    str:['First public AGM disclosure FY24 (PAT ₦6.8bn)','First sub-Saharan A220 customer','IOSA registered since 2023','Full IATA member since Aug 2023','Akwa Ibom State guarantee + shareholder loans'],
+    wk:['No audited financials publicly available','State guarantee instrument not stress-tested','FX exposure on A220 USD obligations','CRJ900 medium African liquidity'],
+    dr:['Sub-sovereign cyclicality of state appropriation','FX naira-USD slippage on lease covenants','Concentration on single state political cycle']},
+  {id:'una',name:'United Nigeria Airlines',code:'U5·NUA',founded:'AOC 2021',hq:'Enugu/Lagos',hubs:'ENU',own:'100% Prof. Okonkwo OFR',c:54.8,v:'WATCH',svs:5.6,pps:6.0,aps:4.6,rcs:5.4,ras:5.8,conf:'High',
+    sum:"Upgraded v1.4 DND→WATCH on three independently verified counterparty relationships: Fly2Sky multi-year A320 wet-lease, CemAir CRJ900 lessor, and Zenith Bank institutional underwrite of 6×Boeing 737-800 NG from Southwest Airlines.",
+    str:['IOSA awarded 2023','Zenith Bank institutional underwrite Sep 2025','Fly2Sky multi-year A320 wet-lease','CemAir CRJ900 ongoing lessor relationship','AMO migration announced (5th anniversary)'],
+    wk:['No audited financials publicly disclosed','NSIB engine-maintenance findings (5N-BWW)','Asaba diversion record (Nov/Dec 2023)','Single-shareholder PEP risk (Anambra gubernatorial)'],
+    dr:['Single-shareholder political concentration','Owner electoral outcome (Anambra Nov 2025)','Boeing 737 fleet delivery execution risk']},
+  {id:'overland',name:'Overland Airways',code:'OF·OLA',founded:'1998·ops 2002',hq:'Ikeja',hubs:'LOS·ABV',own:'100% Landover (Capt. Boyo)',c:70.0,v:'WATCH',svs:6.6,pps:7.6,aps:7.4,rcs:6.4,ras:6.5,conf:'High',
+    sum:"Strongest-managed independent Nigerian carrier on underwriting facts. IOSA 5x renewed (Oct 2024). NCAA-certified AMO. Largely owned fleet, OEM-direct E175 induction. 24-year continuous AOC.",
+    str:['IOSA 5x renewed (Oct 2024)','NCAA-certified AMO 2023–24 hangar at MMIA','Largely owned fleet (low lessor concentration)','SAATM Ambassador for West/Central Africa','Lagos–Banjul via Freetown SAATM execution'],
+    wk:['No audited financials disclosed','Single-shareholder concentration (Boyo)','Aging turboprop fleet (avg ~26.6y)','No external equity / PE'],
+    dr:['Founder key-person concentration','E175 financing structure DATA GAP','Older ATR fleet RAS pressure']},
+  {id:'maxair',name:'Max Air',code:'VM·NGL',founded:'2008',hq:'Kano (KAN)',hubs:'KAN',own:'100% Mangal (AFDIN Group)',c:46.2,v:'DO NOT DEPLOY',svs:5.4,pps:4.4,aps:3.6,rcs:4.6,ras:5.6,conf:'High',isNew:true,
+    sum:"Nigeria's largest annual Hajj operator. NAHCON appointment is functionally institutional revenue. Persistent and publicly visible safety record dominates the credit profile. 11 incidents since 2019 (3 serious).",
+    str:['NAHCON Hajj franchise (annual re-appointment)','Substantive Mangal promoter base (AFDIN Group)','17 years operating history','Northern Nigeria dominant brand'],
+    wk:['11 incidents since 2019 (3 serious) per ch-aviation','Jul 2023 NCAA fleet grounding','Jan 2025 90-day voluntary suspension','Fleet age extreme (B737CL 25–32y, B747 25+y)','No IOSA · No IATA · No AFRAA'],
+    dr:['Safety culture reform post-March 2025 resumption','NAHCON contract continuity','B737CL teardown-economics on RAS']},
+  {id:'green',name:'Green Africa Airways',code:'Q9·GWG',founded:'2015·ops 2021',hq:'Lagos',hubs:'LOS',own:'Afolabi · Kuramo Capital · Leadway',c:40.4,v:'DO NOT DEPLOY',svs:3.6,pps:2.6,aps:4.0,rcs:4.2,ras:8.0,conf:'High',
+    sum:"Defining credit event: 31 March 2025 ACIA Aero Leasing IDERA repossession of all three ATR 72-600s — Nigeria's first Cape Town Convention IDERA repossession executed in practice. Rebuilt with Access Bank financing.",
+    str:['ATR72 high African operator base liquidity (RAS positive)','Access Bank financing post-default','Recovered to operational status (5N-GAB Apr 2025, 5N-GAC Feb 2026)','Institutional backers (Kuramo, Leadway, PAR)'],
+    wk:['Definitive IDERA precedent against carrier (ACIA, Mar 2025)','Pending USD 30.25M co-founder lawsuit (Awosika)','Unrefunded customer complaints early 2025','No IOSA · No IATA'],
+    dr:['Lessor-reputation rebuild duration','Working capital strain in customer refunds','Single-fleet-type concentration']},
+  {id:'arik',name:'Arik Air',code:'W3·ARA',founded:'2002·ops 2006',hq:'Lagos',hubs:'LOS·ABV',own:'AMCON receiver (since 2017)',c:21.3,v:'DO NOT DEPLOY',svs:3.4,pps:0.5,aps:2.5,rcs:2.0,ras:4.5,conf:'High',hf:true,
+    sum:"Technically insolvent since 2014 (PwC), in continuous receivership for 9 years, criminally indicted at receivership-management level (EFCC ID/24942C/24), debt-stack ~₦227.6bn to AMCON alone. Hard floor triggered.",
+    str:['No fatal accidents in 20-year history','First successful CTC repossession in Nigeria (EDC v EFCC Nov 2024)','7 domestic destinations still operating'],
+    wk:['~₦227.6bn AMCON · ₦37bn Zenith · ~₦30bn aviation agencies','EFCC criminal trial of receivership management','11 Feb 2026 5N-MJF uncontained CFM56 engine failure','No new financing since 2017','Spares inventory eroded ~90%'],
+    dr:['Liquidation track flagged by AMCON Jan 2025','Active criminal proceedings against management','Hull/engine-shop integrity erosion','Hard floor permanent']},
+  {id:'ngeagle',name:'NG Eagle',code:'2N·—',founded:'2019',hq:'Lagos',hubs:'ABV',own:'AMCON-controlled',c:39.7,v:'DO NOT DEPLOY',svs:3.6,pps:4.4,aps:4.0,rcs:3.4,ras:4.5,conf:'Medium',hf:true,isNew:true,
+    sum:"AMCON spinoff vehicle established to receive Arik Air's serviceable assets. FHC voided the underlying asset transfer (Mar 2023). NCAA AOC standing was not invalidated. Hard floor triggered (RCS<40).",
+    str:['NCAA five-phase certification confirmed','ATO certified Jun 2025','AMCON parental backing','Active B737 leased to Max Air'],
+    wk:['FHC voided 2023 asset transfer','EFCC criminal trial of Omokide','No own scheduled commercial network','Sparse fleet (1×B737, 1×E145 parked)'],
+    dr:['Political-cycle dependence on AMCON posture','Related-party Omokide overlap with Arik receivership']},
+  {id:'valuejet',name:'ValueJet Airlines',code:'VK·VJN',founded:'AOC Sep 2022',hq:'Lagos',hubs:'LOS',own:'100% Soname (Bet9ja, Optimus Bank)',c:55.0,v:'WATCH',svs:5.4,pps:6.4,aps:5.2,rcs:5.4,ras:4.5,conf:'Medium',
+    sum:"Credible private new-entrant anchored by promoter financial depth (Bet9ja ~$600M historical turnover, Optimus Bank). Holds formal lease on Cally Air's 2×CRJ1000ERs from August 2025.",
+    str:['Promoter depth (Bet9ja ~$600M historical turnover)','Owned CRJ900 fleet (5N-BXS, 5N-BXT)','Cally CRJ1000ER mandate from AFG (Aug 2025)','Regional expansion: Banjul May 2025, Accra Mar 2026'],
+    wk:['Not IOSA registered · Not IATA member','5 Aug 2025 KWAM-1 tarmac dispute (pilot suspensions)','11 Oct 2025 Super Eagles charter windscreen crack','High lessor concentration on Regional One'],
+    dr:['Single principal Soname concentration','Lessor concentration (Regional One)','State-asset operating obligations (Cally, Gateway via VJN AOC)']},
+  {id:'azman',name:'Azman Air',code:'ZQ·AZM',founded:'2010·ops 2014',hq:'Kano (KAN)',hubs:'KAN',own:'100% Sarina (AON Pres)',c:16.5,v:'DO NOT DEPLOY',svs:2.4,pps:0.5,aps:1.5,rcs:1.0,ras:4.0,conf:'High',hf:true,
+    sum:"Functionally non-operational since 12 August 2024 (indefinite suspension; staff except 8 managers furloughed). Excluded from 2024 and 2025 NAHCON Hajj. OFAC secondary-sanctions risk for any Nigerian institution.",
+    str:['AON Presidency (Sarina) — political access only'],
+    wk:['Nov–Dec 2024 alleged transfer of A340/B737 to Mahan Air (US OFAC SDN)','French interception of A340 at Châteauroux Dec 2024','₦1.2bn TSC/CSC statutory arrears','Staff on unpaid leave since Aug 2023'],
+    dr:['Sanctions exposure cascade','Functional cessation of operations','Statutory arrears']},
+  {id:'xejet',name:'XEJet',code:'4U·XEJ',founded:'AOC Jan 2022',hq:'Lagos',hubs:'LOS',own:'Iza (sister entity Air Sierra Leone)',c:54.2,v:'WATCH',svs:4.4,pps:6.6,aps:6.0,rcs:5.4,ras:4.5,conf:'Medium',
+    sum:"Premium charter-plus-business-scheduled model. Sept 2024 AOC scope upgrade to scheduled passenger services; 2 Nov 2024 inaugural all-business-class Abuja–Lagos. Air Sierra Leone subsidiary launched Jan 2025.",
+    str:['AOC scope upgrade Sep 2024 (scheduled passenger)','Clean ASN / AeroInside record','40,000m² Abuja MRO under construction','ASL Sierra Leone subsidiary launched Jan 2025'],
+    wk:['Not IOSA registered','Not IATA member','Single principal (Iza) concentration','CRJ200 low African liquidity'],
+    dr:['Engineering build-out execution','UK wet-lease counterparty discipline']},
+  {id:'enugu',name:'Enugu Air',code:'—·—',founded:'AOC 10 Mar 2026',hq:'Enugu',hubs:'ENU',own:'100% Enugu State Government',c:51.6,v:'WATCH',svs:4.4,pps:5.6,aps:5.0,rcs:5.6,ras:5.0,conf:'Medium',
+    sum:"Launched as virtual carrier under XEJet's AOC, then graduated to its own AOC on 10 March 2026 — among the fastest NCAA certifications on record. Aircraft acquisition financed by Fidelity Bank.",
+    str:['Independent AOC issued Mar 2026','State funded · Fidelity Bank publicly thanked','Enugu–Lagos–Abuja golden triangle network','GCEO Iza dual-hat (XEJet experience)'],
+    wk:['<2 months independent operating track record','Aircraft 17–18+ years (E170LR ex-CIAF)','5N-ENR parked Asaba (utilisation gap)','Loan terms with Fidelity Bank not disclosed'],
+    dr:['State 2026 budget appropriation visibility','Second-term political risk material']},
+  {id:'gateway',name:'Gateway Air',code:'—·—',founded:'Apr 2026',hq:'Iperu, Ogun',hubs:'GWI/DNOG',own:'Ogun State (operator: ValueJet)',c:41.6,v:'DO NOT DEPLOY',svs:3.6,pps:4.4,aps:4.4,rcs:4.0,ras:4.5,conf:'Low',
+    sum:"Ogun State's virtual carrier on ValueJet's AOC. Operations days old as at this dossier. No own AOC, no dedicated public management team.",
+    str:['Sub-sovereign comfort (Ogun State)','GWI airport ARC 3C, 4,000m runway','Mon/Tue/Wed/Fri rotations published'],
+    wk:['No own AOC','Same operator (ValueJet) holds Cally CRJ1000ER mandate','Aircraft registrations not independently confirmed'],
+    dr:['Operator-AOC concentration risk at ValueJet','Governance opacity flag']},
+  {id:'bayelsa',name:'Bayelsa Air',code:'—·—',founded:'Inaugural Nov 2025',hq:'Yenagoa',hubs:'YEN',own:'Bayelsa State (op: Pioneer/7Star)',c:39.5,v:'DO NOT DEPLOY',svs:3.0,pps:4.0,aps:3.4,rcs:3.4,ras:8.0,conf:'Medium',
+    sum:"Most regulatorily fragile of the new state carriers. No own AOC, and operating partner Pioneer Airlines does not hold its own AOC — operations sit on 7Star Global Hangar's AOC. Single-aircraft. Financed by Premium Trust Bank.",
+    str:['ATR72 high African operator base (RAS strong)','Premium Trust Bank financing','Sub-sovereign Bayelsa State backing'],
+    wk:['No own AOC · Double-virtual chain','Pioneer Airlines does not hold its own AOC','Single-aircraft (no spare lift)','Brand registration pending'],
+    dr:['Triple-AOC dependency chain','Captain Ungbuku · Gov. Diri related-party exposure']},
+  {id:'aero',name:'Aero Contractors',code:'N2·NIG',founded:'1959 · oldest active',hq:'Lagos',hubs:'LOS·ABV',own:'AMCON receiver (since 2016)',c:53.2,v:'WATCH',svs:6.0,pps:5.4,aps:6.6,rcs:4.6,ras:4.0,conf:'High',
+    sum:"Nigeria's institutional aviation memory. Founded 1959 — one year before independence. Only Nigerian operator running a third-party C-check facility. NCAA-certified AMO. Capt. Ado Sanusi returned as MD/CEO in 2024.",
+    str:["Aero MRO — first NCAA C-check facility in Nigeria","67 years institutional aviation memory","Helicopter division USD-denominated IOC revenue","Capt. Ado Sanusi return 2024"],
+    wk:['AMCON receivership since 2016','IOSA registration status DATA GAP','12 Nov 2023 5N-BYQ runway excursion (Cally metal)','Aging B737CL fleet (25–32y)'],
+    dr:['Receivership / sale process duration','Helicopter contract pricing pressure','MRO third-party customer pipeline']},
+  {id:'umza',name:'Umza Air',code:'UY·UMZ',founded:'2019·indep AOC Dec 2024',hq:'Abuja',hubs:'ABV·KAN',own:'Umza Aviation Services Ltd',c:45.8,v:'DO NOT DEPLOY',svs:4.0,pps:4.4,aps:4.6,rcs:4.6,ras:5.5,conf:'Medium',
+    sum:"Low-fare turboprop new entrant operating three Bombardier Q400s. Graduated from multi-year incubation under Aero Contractors' AOC into independent NCAA certification on 12 December 2024.",
+    str:['Aero MRO maintenance access heritage','Q400 single-type fleet simplicity','Clean own-AOC slate (no incidents)','Low-fare structural pricing (~60% below incumbents)'],
+    wk:['No audited financials','No IOSA · No IATA','Single-aircraft-type concentration (3×Q400)','Q400 financing structure DATA GAP'],
+    dr:['Q400 financing structure clarification','Owner / promoter base mapping']},
+  {id:'rano',name:'Rano Air',code:'R4·RAN',founded:'2019·AOC Apr 2023',hq:'Kano (KAN)',hubs:'KAN·ABV',own:'AA Rano Nigeria Ltd (OON)',c:46.6,v:'DO NOT DEPLOY',svs:4.0,pps:5.6,aps:4.4,rcs:5.0,ras:4.5,conf:'Medium',
+    sum:"AA Rano-promoted Kano-based entrant. Holds 5-aircraft fully-owned ERJ-145 fleet — no lessor exposure on the asset side. Distinguished from Azman by being currently operational, owned-fleet-only, and free of sanctions overlay.",
+    str:['Owned fleet (no lessor cash burn)','Substantive AA Rano promoter base (oil & gas, OON)','Clean sanctions screen','12-city domestic network'],
+    wk:['29 Jun 2025 5N-BZY engine failure / cabin smoke / NCAA grounding','2 of 5 aircraft AOG since Feb/May 2024','No IOSA · No IATA','ERJ-145 ageing (18–25y)'],
+    dr:['NSIB closure on 5N-BZY','AOG aircraft return-to-service']},
+  {id:'allied',name:'Allied Air',code:'4W·AJK',founded:'1998 · cargo',hq:'Lagos (LOS)',hubs:'LOS',own:'Capt. Val Tongo (sole)',c:61.5,v:'WATCH',svs:6.6,pps:6.0,aps:6.4,rcs:5.6,ras:6.5,conf:'High',isNew:true,
+    sum:"Only Nigerian-registered scheduled cargo airline and largest operator of B737 freighters in West/Central Africa. First African all-cargo airline to attain IOSA. 25-year continuous GSA with Network Aviation Group (UK).",
+    str:['27 years AOC continuity','IOSA pioneer (first African all-cargo)','25-year continuous Network Aviation GSA (UK)','Lagos–Liège intercontinental scheduled','USD revenue base from international cargo'],
+    wk:['No audited financials publicly disclosed','Dec 2024 B737-400F serious incident','2 Jun 2012 fatal accident at Accra (B727 retired post)','IOSA renewal current status DATA GAP'],
+    dr:['IOSA renewal confirmation','Audited financials publication','Dec 2024 incident closure']},
+  {id:'cally',name:'Cally Air [asset entity]',code:'—·—',founded:'2021',hq:'Calabar',hubs:'CBQ/LOS/ABV',own:'Cross River State Government',c:43.2,v:'DO NOT DEPLOY',svs:3.6,pps:5.0,aps:4.4,rcs:4.0,ras:4.5,conf:'Medium',
+    sum:"Not an airline — a state-owned aircraft asset entity. Cross River State places airframes operated commercially by Aero Contractors and ValueJet under their respective AOCs. Most properly evaluated as a lessor counterparty embedded in operator credit assessments.",
+    str:['Sub-sovereign Cross River State backing','AFG Aviation Ireland CRJ1000ER lease structure','Aero Contractors operator-AOC heritage','Independent AOC management hire (Jun 2025)'],
+    wk:['No own AOC','12 Nov 2023 5N-BYQ Abuja runway excursion','B737-300 teardown-economic (RAS very low)','CRJ1000ER only African operator post-Arik 2018'],
+    dr:['Independent AOC issuance pending','AFG lease-payment discipline DATA GAP']}
+];
+
+const FEED=[
+  {date:'2026-04-30',time:'14:22',cid:'allied',title:'Allied Air enters dossier as highest-scoring private carrier',desc:'v1.5 addition. 27 years AOC continuity, IOSA pioneer, 25-year GSA with Network Aviation Group (UK). WATCH verdict conditional on audited financials and IOSA renewal.',cls:['private','financial']},
+  {date:'2026-04-25',time:'09:30',cid:'una',title:'UNA upgrade to WATCH on three counterparty relationships',desc:'Fly2Sky multi-year A320 wet-lease, CemAir CRJ900 lessor, Zenith Bank underwrite of 6×B737-800 NG from Southwest Airlines. Composite moves 44.3 (DND) → 54.8 (WATCH).',cls:['private','financial']},
+  {date:'2026-04-22',time:'11:08',cid:null,title:'NCAA / NSIB ICVM EI scores 91.45% in April 2026 audit',desc:'ICAO USOAP CMA score up from 70.23% in 2023 — well above global average 70.4% and West African average 61.1%. No SSCs flagged.',cls:['public','regulatory','macro']},
+  {date:'2026-04-15',time:'16:55',cid:'enugu',title:'Enugu Air independent AOC issued by NCAA',desc:'Among fastest NCAA certifications on record. Aircraft acquisition publicly attributed to Fidelity Bank financing.',cls:['public','regulatory','financial']},
+  {date:'2026-04-12',time:'08:22',cid:'arik',title:'Uncontained CFM56 engine failure on 5N-MJF',desc:'Lagos–PHC descent, nacelle destroyed, vertical-fin damage; 80 souls disembarked safely. NSIB investigating.',cls:['public','ops','legal']},
+  {date:'2026-04-08',time:'13:00',cid:null,title:'CBN external reserves $49.4bn end-March 2026',desc:'Approximately 7 months current external payments cover. IATA blocked-funds list: Nigeria off since June 2024.',cls:['public','macro','financial']},
+  {date:'2026-04-04',time:'10:15',cid:'gateway',title:'Gateway Air commissioning by President Tinubu',desc:'Ogun State virtual carrier on ValueJet AOC. Commercial operations from 13 April 2026.',cls:['public','ops']},
+  {date:'2026-04-01',time:'17:40',cid:null,title:'NAAIS summit · Lagos — Federal Palace Hotel',desc:'CBN Deputy Governor chaired Investment in Aviation Assets panel. Andara on panel alongside Access Holdings, Fidelity Bank, Zenith Bank UK, AFG Aviation Ireland and Airbus.',cls:['public','financial']},
+  {date:'2026-03-30',time:'12:00',cid:'una',title:'Akonanya disability discrimination — staff suspended',desc:'UNA staff suspended pending investigation. Reputational, not safety.',cls:['public','legal']},
+  {date:'2026-03-25',time:'09:00',cid:null,title:'NSIB Aviation Stakeholder Engagement Workshop · Marriott Ikeja',desc:'200+ attendees. International keynotes from former NTSB MD Dennis Jones and IPAAC Chair Capt. David Fielding.',cls:['public','regulatory']},
+  {date:'2026-03-15',time:'15:42',cid:'airpeace',title:'NCAA summons Air Peace over LHR–ABV passenger stranding',desc:'Disposition pending. Adds to FCCPC summons disposition trail.',cls:['public','regulatory','legal']},
+  {date:'2026-03-10',time:'10:48',cid:'enugu',title:'Enugu Air takes E195 ex-Breeze Airways',desc:'~17-year-old airframe added Feb 2026; two more imminent per GCEO Iza. ADS-B confirms only 5N-ENU active flying.',cls:['public','ops','financial']},
+  {date:'2026-02-28',time:'11:11',cid:'green',title:'Access Bank finances 5N-GAC ATR 72-600',desc:'Recovery from 31 Mar 2025 IDERA repossession by ACIA Aero Leasing. Owned-fleet model rebuilt via Access Bank.',cls:['public','financial']},
+  {date:'2026-02-12',time:'09:30',cid:'una',title:'5th Anniversary — AMO migration announcement',desc:'Chairman: NCAA-approved AMO migration from equivalent maintenance system. MRO facility within 3 years.',cls:['public','ops','regulatory']},
+  {date:'2026-02-06',time:'14:00',cid:null,title:'NCAA DG Capt. Chris Najomo confirmed substantive by Senate',desc:'Succeeded Capt. Musa Nuhu. Doctrinal continuity on IDERA Advisory Circular AC-AWS001A.',cls:['public','regulatory']},
+  {date:'2026-01-25',time:'08:15',cid:'una',title:'Boeing 737-800 NG deliveries begin from Southwest Airlines',desc:'First 2 frames Feb/Mar 2026. Balance end-Q2 2026. Total 6 firm + 4 option. Zenith Bank institutional underwrite confirmed.',cls:['private','financial','ops']}
+];
+
+const AUDIT=[
+  {ts:'2026-04-30 14:22',user:'lead.analyst',carrier:'Allied Air',crit:'Composite',fr:'—',to:'61.5',src:'private+public',status:'Approved · CCC',note:'New v1.5 addition'},
+  {ts:'2026-04-25 09:30',user:'lead.analyst',carrier:'United Nigeria',crit:'PPS',fr:'4.2',to:'6.0',src:'private',status:'Approved · CCC',note:'Three counterparty relationships triangulated'},
+  {ts:'2026-04-25 09:30',user:'lead.analyst',carrier:'United Nigeria',crit:'Composite',fr:'44.3',to:'54.8',src:'methodology',status:'Auto-recalculated',note:'Verdict moved DND → WATCH'},
+  {ts:'2026-04-22 11:08',user:'data.fetcher',carrier:'Sector',crit:'USOAP CMA',fr:'70.23%',to:'91.45%',src:'public',status:'Validated',note:'ICVM EI April 2026 audit'},
+  {ts:'2026-04-15 16:55',user:'analyst.field',carrier:'Enugu Air',crit:'AOC status',fr:'Virtual (XEJet)',to:'Independent',src:'regulatory',status:'Approved',note:'NCAA AOC issued 10 March 2026'},
+  {ts:'2026-04-12 08:22',user:'data.fetcher',carrier:'Arik Air',crit:'APS',fr:'2.8',to:'2.5',src:'public',status:'Auto-applied',note:'CFM56 uncontained failure 5N-MJF'},
+  {ts:'2026-04-08 13:00',user:'data.fetcher',carrier:'Sector',crit:'FX reserves',fr:'$48.1B',to:'$49.4B',src:'macro',status:'Validated',note:'CBN end-March 2026'},
+  {ts:'2026-04-04 17:40',user:'analyst.field',carrier:'Gateway Air',crit:'Operating status',fr:'Pre-launch',to:'Commissioned',src:'public',status:'Validated',note:'Tinubu commissioning 4 April 2026'},
+  {ts:'2026-04-01 17:40',user:'lead.analyst',carrier:'Sector',crit:'NAAIS summit input',fr:'—',to:'Logged',src:'private',status:'Approved',note:'Andara panel participation'},
+  {ts:'2026-03-15 15:42',user:'data.fetcher',carrier:'Air Peace',crit:'Regulatory enforcement',fr:'2 open',to:'3 open',src:'regulatory',status:'Auto-applied',note:'NCAA summons LHR–ABV stranding'},
+  {ts:'2026-03-10 10:48',user:'data.fetcher',carrier:'Enugu Air',crit:'Fleet additions',fr:'5',to:'6',src:'public',status:'Validated',note:'E195 ex-Breeze Airways'},
+  {ts:'2026-02-28 11:11',user:'data.fetcher',carrier:'Green Africa',crit:'PPS',fr:'2.6',to:'2.6',src:'financial',status:'Held',note:'5N-GAC delivery — methodology re-run, no change'},
+  {ts:'2026-02-12 09:30',user:'analyst.field',carrier:'United Nigeria',crit:'AMO status',fr:'Pending',to:'Migrating',src:'public',status:'Validated',note:'5th anniversary press conference'},
+  {ts:'2026-02-06 14:00',user:'data.fetcher',carrier:'Sector',crit:'NCAA DG',fr:'Acting Najomo',to:'Substantive Najomo',src:'regulatory',status:'Validated',note:'Senate confirmation'},
+  {ts:'2026-01-25 08:15',user:'lead.analyst',carrier:'United Nigeria',crit:'Lender stack',fr:'Opaque',to:'Zenith Bank named',src:'private',status:'Approved · CCC',note:'Andara ground intelligence B737 financing'}
+];
+
+const EVENTS={
+  airpeace:[
+    {date:'2026-03-15',cls:'regulatory',t:'NCAA summons over LHR–ABV passenger stranding',d:'Disposition pending. Adds to FCCPC summons disposition trail.'},
+    {date:'2025-11-15',cls:'private',t:'SmartLynx wet-lease relationship terminates',d:'$15M+ losses, $5M+ deposits stuck. 3 aircraft released to AerCap, Castlelake, Global Principal Finance.'},
+    {date:'2025-10-20',cls:'public',t:'OAG ranks Air Peace #1 fastest-growing African carrier',d:'+53.4% YoY seat capacity. Lagos–Heathrow and Abuja–Heathrow added Oct 2025.'},
+    {date:'2024-10-08',cls:'legal',t:'US DOJ superseding indictment of Onyema and Eghagha',d:'36-count: bank fraud, money laundering, obstruction. Springfield Aviation LLC at heart of $44.9M into Atlanta accounts.'}
+  ],
+  ibom:[
+    {date:'2025-06-15',cls:'financial',t:'First public AGM — FY24 results disclosed',d:'Revenue ₦96bn (+43%) · PBT ₦16.6bn · PAT ₦6.8bn (reversing FY23 ₦8.7bn loss attributed to FX).'},
+    {date:'2025-06-03',cls:'public',t:'4 millionth cumulative passenger',d:'Carried since first commercial flight 7 Jun 2019.'},
+    {date:'2024-08-15',cls:'financial',t:'Second A220 delivered (Carlyle Aviation Partners)',d:'Outright purchase. Financed by Fidelity Bank (majority) and Union Bank (minority).'},
+    {date:'2024-04-29',cls:'ops',t:'First A220-300 enters service (5N-CDA MSN 55250)',d:'First sub-Saharan A220 customer. Financing by Zenith Bank.'}
+  ],
+  una:[
+    {date:'2026-04-25',cls:'private',t:'Andara verifies three counterparty relationships',d:'Fly2Sky multi-year A320 wet-lease, CemAir CRJ900 lessor, Zenith Bank underwrite of Southwest 737-800 NG. WATCH from DND.'},
+    {date:'2026-01-25',cls:'private',t:'B737-800 NG deliveries begin from Southwest Airlines',d:'First 2 frames Feb/Mar 2026. Balance by end-Q2 2026.'},
+    {date:'2025-09-03',cls:'private',t:'Southwest Airlines acquisition signing — Dallas',d:'Brokered by SkyWorks Holdings LLC. 6×B737-800 NG firm + 4 under option.'},
+    {date:'2024-12-28',cls:'regulatory',t:'NSIB final report on 5N-BWW engine flameout (Nov 2021)',d:'Maintenance-fault finding. Significant maintenance-culture finding.'}
+  ],
+  overland:[
+    {date:'2024-10-15',cls:'regulatory',t:'IOSA renewed for fifth consecutive cycle',d:'October 2024. Continuous IOSA registration since 2015.'},
+    {date:'2024-12-21',cls:'ops',t:'Lagos–Banjul via Freetown launched',d:'Flagship SAATM execution with Gambian fifth-freedom rights.'},
+    {date:'2023-09-15',cls:'financial',t:'First Embraer E175LR delivered (5N-CCM)',d:'OEM-direct purchase, financing structure DATA GAP — likely Brazilian export-credit.'}
+  ],
+  maxair:[
+    {date:'2025-03-17',cls:'regulatory',t:'Operations resumed after 90-day voluntary suspension',d:'NCAA confirmed safety and economic audit cleared.'},
+    {date:'2025-01-28',cls:'ops',t:'5N-MBD nose-wheel collapse at Kano',d:'NSIB investigating. Triggered carrier-initiated 90-day voluntary domestic suspension.'},
+    {date:'2023-07-12',cls:'regulatory',t:'NCAA grounds entire B737 fleet',d:'Following fuel contamination at Yola, emergency cockpit return at Abuja, and aborted takeoff at Kano.'}
+  ],
+  green:[
+    {date:'2026-02-25',cls:'financial',t:'Access Bank finances 5N-GAC ATR 72-600',d:'Owned-fleet rebuild post-IDERA.'},
+    {date:'2025-03-31',cls:'legal',t:'ACIA Aero Leasing IDERA repossession of all three ATR 72-600s',d:"Nigeria's first Cape Town Convention IDERA repossession executed in practice."},
+    {date:'2024-07-24',cls:'ops',t:'5N-GAA nose-wheel detachment on takeoff Ilorin',d:'NSIB serious-incident GAAL/2024/24/07/INTR/01. 67 pax safe.'}
+  ],
+  arik:[
+    {date:'2026-04-12',cls:'ops',t:'Uncontained CFM56 engine failure on 5N-MJF',d:'Lagos–PHC descent. Nacelle destroyed, vertical-fin damage. 80 souls disembarked safely.'},
+    {date:'2025-01-15',cls:'legal',t:'AMCON publicly signals liquidation track',d:'Receivership has run nine years; sale processes attempted multiple times, none consummated.'},
+    {date:'2024-11-27',cls:'legal',t:'EDC v EFCC FHC judgment — first successful CTC repossession in Nigeria',d:'Justice Owoeye, FHC. CRJ1000 5N-JEE. Landmark IDERA enforceability precedent.'}
+  ],
+  ngeagle:[
+    {date:'2025-09-10',cls:'private',t:'B737-300 leased to Max Air',d:'Inter-operator capacity provision. Lease rate DATA GAP.'},
+    {date:'2025-06-02',cls:'regulatory',t:'NG Eagle Aviation Training Academy ATO certified',d:'Issued by NCAA DG Najomo.'},
+    {date:'2023-03-31',cls:'legal',t:'FHC voids NG Eagle / Super Bravo asset transfer',d:'Justice Lewis Alagoa, Federal High Court.'}
+  ],
+  valuejet:[
+    {date:'2025-08-15',cls:'private',t:'Cally CRJ1000ER lease structure activated',d:'AFG Aviation Ireland → Cross River State → ValueJet (sub-lessee/operator).'},
+    {date:'2025-08-05',cls:'legal',t:'Abuja KWAM-1 tarmac dispute',d:'Capts. Ogoyi and Oloba pilot licences suspended. Min. Keyamo no-fly listed KWAM-1.'},
+    {date:'2025-05-15',cls:'public',t:'Lagos–Banjul regional service launched',d:'First international scheduled.'}
+  ],
+  azman:[
+    {date:'2024-12-15',cls:'legal',t:'French authorities intercept second A340 at Châteauroux',d:'Adds to alleged transfer of A340-642 5N-AAM to Mahan Air (OFAC SDN).'},
+    {date:'2024-08-12',cls:'ops',t:'Indefinite suspension of operations',d:'Staff except 8 managers furloughed. Excluded from NAHCON Hajj contracts.'}
+  ],
+  xejet:[
+    {date:'2025-01-15',cls:'public',t:'Air Sierra Leone (ASL) launches Freetown–Lagos',d:'On 5N-BZZ E145 dry-lease from Regional One.'},
+    {date:'2024-11-02',cls:'public',t:'Inaugural scheduled all-business-class Abuja–Lagos',d:'Following AOC scope upgrade Sep 2024.'}
+  ],
+  enugu:[
+    {date:'2026-03-10',cls:'regulatory',t:'Independent NCAA AOC issued',d:'Among fastest NCAA AOC certifications on record.'},
+    {date:'2026-02-18',cls:'public',t:'E195 ex-Breeze Airways added (~17y)',d:'ADS-B confirms only 5N-ENU active flying; 5N-ENR parked Asaba.'},
+    {date:'2025-07-07',cls:'public',t:'Inaugural commercial flight under XEJet AOC',d:'24-month NCAA-approved partnership. Financed by Fidelity Bank.'}
+  ],
+  gateway:[
+    {date:'2026-04-13',cls:'public',t:'Commercial operations begin',d:'Mon/Tue/Wed/Fri rotations: GWI–Abuja, Abuja–PHC, Abuja–Calabar.'},
+    {date:'2026-04-04',cls:'public',t:'Commissioning by President Tinubu',d:'Ogun State virtual carrier on ValueJet AOC.'}
+  ],
+  bayelsa:[
+    {date:'2025-11-26',cls:'public',t:'Inaugural flight Abuja–Yenagoa',d:'Operating chain: state asset → Pioneer Airlines → 7Star Global Hangar Ltd AOC. Single-aircraft.'},
+    {date:'2024-10-15',cls:'financial',t:'NGN 25bn aircraft acquisition plan disclosed',d:'Premium Trust Bank named as financier. Loan terms NOT DISCLOSED.'}
+  ],
+  aero:[
+    {date:'2024-06-15',cls:'public',t:'Capt. Ado Sanusi returns as MD/CEO',d:'Second tenure (prior 2017–19). Industry-respected; widely interpreted as AMCON stabilisation commitment.'},
+    {date:'2023-11-12',cls:'ops',t:'Cally B737-300 5N-BYQ runway excursion at Abuja',d:'No fatalities, no hull loss. Cally metal under Aero AOC; sits on Aero APS picture.'}
+  ],
+  umza:[
+    {date:'2025-11-30',cls:'public',t:'Ilorin–Abuja inaugural',d:'₦145,000–₦180,000 fare range, ~60% below incumbents.'},
+    {date:'2024-12-12',cls:'regulatory',t:'Independent NCAA AOC issued',d:"Graduated from multi-year incubation under Aero Contractors' AOC."}
+  ],
+  rano:[
+    {date:'2025-06-29',cls:'ops',t:'5N-BZY in-flight engine failure',d:'Flight RAN2024 Abuja–Sokoto air-returned to Abuja. NCAA grounded the airframe.'},
+    {date:'2023-04-13',cls:'regulatory',t:'NCAA AOC issued',d:'AA Rano Nigeria Ltd (OON) promoter base. 5-aircraft owned ERJ-145 fleet.'}
+  ],
+  allied:[
+    {date:'2024-12-15',cls:'ops',t:'B737-400F freighter serious incident',d:'Limited public detail — interview-curable. No fatal accidents in B737 freighter operations.'},
+    {date:'2021-01-15',cls:'public',t:'B737-800SF delivered (AEI-converted)',d:'First African all-cargo airline to operate the type.'}
+  ],
+  cally:[
+    {date:'2025-08-15',cls:'private',t:'CRJ1000ER lease structure activated under VJN AOC',d:'AFG Aviation Ireland (lessor) → Cross River State → ValueJet (operator).'},
+    {date:'2023-11-12',cls:'ops',t:'5N-BYQ B737-300 Abuja runway excursion',d:'Cally airframe; Aero AOC; both APS pictures touched.'},
+    {date:'2021-07-16',cls:'public',t:'Original B737s commissioned by Gov. Ayade',d:'2× B737-300 owned by Cross River State, in service with Aero Contractors under Aero AOC.'}
+  ]
+};
+
+const VC={'DEPLOY':'bd','WATCH':'bw','DO NOT DEPLOY':'bx'};
+const VD={'DEPLOY':'vd','WATCH':'vw','DO NOT DEPLOY':'vx'};
+let cmpSlots=[null,null,null,null],cmpActiveSlot=0;
+
+function el(id){return document.getElementById(id)}
+function toast(title,msg){const t=el('toast');t.innerHTML='<strong>'+title+'</strong>'+msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function closeMobileNav(){const app=el('app');if(app&&window.innerWidth<=900)app.classList.remove('nav-open');}
+function setNavOpen(open){
+  const app=el('app'),bd=el('navBackdrop'),tg=el('navToggle');
+  if(!app||!tg)return;
+  app.classList.toggle('nav-open',!!open);
+  tg.setAttribute('aria-expanded',open?'true':'false');
+  tg.setAttribute('aria-label',open?'Close menu':'Open menu');
+  if(bd)bd.setAttribute('aria-hidden',open?'false':'true');
+}
+function initMobileNav(){
+  const app=el('app'),bd=el('navBackdrop'),tg=el('navToggle');
+  if(!tg||!bd)return;
+  tg.addEventListener('click',()=>setNavOpen(!app.classList.contains('nav-open')));
+  bd.addEventListener('click',()=>setNavOpen(false));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&app.classList.contains('nav-open'))setNavOpen(false);});
+  window.addEventListener('resize',()=>{if(window.innerWidth>900)setNavOpen(false);});
+}
+
+function buildAirlineList(){
+  const s=[...AL].sort((a,b)=>b.c-a.c);
+  el('alist').innerHTML=s.map(a=>'<div class="arow" data-aid="'+a.id+'"><span class="anm">'+a.name+(a.isNew?' <small style="color:var(--pink);font-family:var(--mono);font-size:8px;margin-left:5px">NEW</small>':'')+'</span><span class="asc">'+a.c.toFixed(1)+'</span><span class="vdot '+VD[a.v]+'"></span></div>').join('');
+  el('alist').querySelectorAll('.arow').forEach(r=>r.addEventListener('click',()=>{showAirline(r.dataset.aid);closeMobileNav();}));
+}
+
+function feedItem(it){
+  const a=it.cid?AL.find(x=>x.id===it.cid):null;
+  return '<div class="iitem" data-cid="'+(it.cid||'')+'" data-cls="'+it.cls.join(' ')+'"><div class="itime"><strong>'+it.date+'</strong>'+it.time+'<br><span style="color:var(--pink)">●</span> '+(a?a.name:'Sector')+'</div><div class="ibody"><h4>'+it.title+'</h4><p>'+it.desc+'</p><div class="itags">'+it.cls.map(c=>'<span class="itag '+c+'">'+c+'</span>').join('')+'</div></div></div>';
+}
+
+function buildDashboard(){
+  const s=[...AL].sort((a,b)=>b.c-a.c);
+  el('topRank').innerHTML='<thead><tr><th></th><th>Carrier</th><th>Score</th><th>Verdict</th></tr></thead><tbody>'+s.slice(0,5).map((a,i)=>'<tr data-aid="'+a.id+'"><td style="color:var(--t3);font-family:var(--mono);font-size:10px;padding:8px 12px">0'+(i+1)+'</td><td class="nm">'+a.name+'</td><td class="sc">'+a.c.toFixed(1)+'</td><td><span class="vdot '+VD[a.v]+'" style="display:inline-block;margin-right:5px"></span><span style="font-size:10px;color:var(--t3)">'+a.v+'</span></td></tr>').join('')+'</tbody>';
+  el('botRank').innerHTML='<thead><tr><th></th><th>Carrier</th><th>Score</th><th>Verdict</th></tr></thead><tbody>'+s.slice(-5).reverse().map((a,i)=>'<tr data-aid="'+a.id+'"><td style="color:var(--t3);font-family:var(--mono);font-size:10px;padding:8px 12px">'+(s.length-i).toString().padStart(2,'0')+'</td><td class="nm">'+a.name+'</td><td class="sc" style="color:'+(a.c<50?'var(--dnd)':'#fff')+'">'+a.c.toFixed(1)+'</td><td><span class="vdot '+VD[a.v]+'" style="display:inline-block;margin-right:5px"></span><span style="font-size:10px;color:var(--t3)">'+a.v+'</span></td></tr>').join('')+'</tbody>';
+  const mvs=[{id:'una',n:'United Nigeria',d:'+10.5',dir:'up',note:'WATCH from DND'},{id:'allied',n:'Allied Air',d:'NEW',dir:'up',note:'v1.5 addition'},{id:'maxair',n:'Max Air',d:'NEW',dir:'flat',note:'v1.5 addition'},{id:'ngeagle',n:'NG Eagle',d:'NEW',dir:'flat',note:'v1.5 addition'},{id:'arik',n:'Arik Air',d:'-0.3',dir:'down',note:'CFM56 failure'}];
+  el('mvRank').innerHTML='<thead><tr><th>Carrier</th><th>Δ</th><th>Note</th></tr></thead><tbody>'+mvs.map(m=>'<tr data-aid="'+m.id+'"><td class="nm">'+m.n+'</td><td class="'+(m.dir==='up'?'dup':m.dir==='down'?'ddn':'dfl')+'" style="font-family:var(--mono);font-size:11px;font-weight:600;padding:8px 12px">'+m.d+'</td><td style="padding:8px 12px;color:var(--t2)">'+m.note+'</td></tr>').join('')+'</tbody>';
+  document.querySelectorAll('.rt tr[data-aid]').forEach(r=>r.addEventListener('click',()=>showAirline(r.dataset.aid)));
+  const heat=el('heatGrid');
+  heat.innerHTML=[...AL].sort((a,b)=>b.c-a.c).map(a=>{
+    const c=a.c;
+    const bg=c>=75?'rgba(61,214,140,'+(0.15+Math.min(0.8,(c-75)/25))+')':c>=50?'rgba(245,185,71,'+(0.12+(c-50)/25*0.55)+')':'rgba(255,84,120,'+(0.12+(50-c)/50*0.65)+')';
+    return '<div class="hcell" data-aid="'+a.id+'" style="background:'+bg+'"><div class="hn">'+a.name+'</div><div class="hs">'+a.c.toFixed(1)+'</div></div>';
+  }).join('');
+  heat.querySelectorAll('.hcell').forEach(c=>c.addEventListener('click',()=>showAirline(c.dataset.aid)));
+  el('alertFeed').innerHTML=FEED.slice(0,6).map(it=>feedItem(it)).join('');
+  el('alertFeed').querySelectorAll('.iitem').forEach(x=>x.addEventListener('click',()=>{if(x.dataset.cid)showAirline(x.dataset.cid)}));
+}
+
+function buildFeed(){
+  el('fullFeed').innerHTML=FEED.map(it=>feedItem(it)).join('');
+  el('fcount').textContent=FEED.length+' entries · 30 days';
+  el('fullFeed').querySelectorAll('.iitem').forEach(x=>x.addEventListener('click',()=>{if(x.dataset.cid)showAirline(x.dataset.cid)}));
+  document.querySelectorAll('[data-f]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-f]').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      const f=b.dataset.f;
+      el('fullFeed').querySelectorAll('.iitem').forEach(x=>{x.style.display=(f==='all'||x.dataset.cls.split(' ').includes(f))?'':'none';});
+    });
+  });
+}
+
+function fSummary(a){
+  if(a.v==='DEPLOY')return'Counterparty meets institutional standard. Standard covenant package suffices for facility deployment. Andara recommends standard tenor and security architecture, with quarterly score-movement triggers.';
+  if(a.v==='WATCH'){
+    if(a.c>=70)return'Conditional support — top of the WATCH band. One tightening from Deploy. Andara recommends structured protections, monitoring triggers and reduced tenor pending closure of named data gaps.';
+    if(a.c>=60)return'Conditional support — middle of the WATCH band. Andara recommends structured protections (lessor-favourable lease tail, tighter security deposits, periodic drawstop covenants), reduced tenor, and escalating triggers tied to closure of named score-deficient sub-criteria.';
+    return'Conditional support — lower WATCH. Andara recommends materially structured protections: bilateral state guarantees where applicable, capital-call mechanisms for PE-anchored carriers, escrow of payment streams, and quarterly methodology re-runs at minimum.';
+  }
+  if(a.hf)return'Hard floor triggered. Decline. The methodology blocks any composite above 65 when PPS or RCS falls below 4.0. Explanatory memo to Credit Committee mandatory.';
+  return'Decline. Composite below 50 — Do Not Deploy band. Explanatory memo to Credit Committee mandatory. Re-engagement contemplated only when material score-positive evidence is presented and triangulated under Andara doctrine.';
+}
+
+function scoreHistory(a){
+  const hist=[
+    {v:'v1.2',d:'15 Dec 2025',s:a.id==='una'?'44.3':a.isNew?null:(a.c-0.5).toFixed(1)},
+    {v:'v1.3',d:'22 Feb 2026',s:a.id==='una'?'48.6':a.isNew?null:(a.c-0.3).toFixed(1)},
+    {v:'v1.4',d:'18 Mar 2026',s:a.id==='una'?'54.8':a.isNew?null:(a.c-0.1).toFixed(1)},
+    {v:'v1.5',d:'30 Apr 2026',s:a.c.toFixed(1)}
+  ];
+  const W=400,H=150,P=28;
+  const pts=hist.filter(p=>p.s).map((p,i)=>{
+    const allIdx=hist.findIndex(h=>h===p);
+    return{x:P+(allIdx/(hist.length-1))*(W-P*2),y:H-P-((parseFloat(p.s)-10)/80)*(H-P*2),s:p.s,v:p.v};
+  });
+  if(!pts.length)return'<p style="color:var(--t3);font-size:12px">No history available (new v1.5 addition)</p>';
+  const path=pts.map((p,i)=>(i?'L':'M')+p.x+' '+p.y).join(' ');
+  const area=path+' L'+pts[pts.length-1].x+' '+(H-P)+' L'+pts[0].x+' '+(H-P)+' Z';
+  const y50=H-P-((50-10)/80)*(H-P*2),y75=H-P-((75-10)/80)*(H-P*2);
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" style="display:block;margin-bottom:5px"><defs><linearGradient id="hlg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E63C78" stop-opacity=".35"/><stop offset="100%" stop-color="#E63C78" stop-opacity="0"/></linearGradient></defs><line x1="'+P+'" x2="'+(W-P)+'" y1="'+y50+'" y2="'+y50+'" stroke="rgba(245,185,71,.3)" stroke-dasharray="3 3"/><line x1="'+P+'" x2="'+(W-P)+'" y1="'+y75+'" y2="'+y75+'" stroke="rgba(61,214,140,.3)" stroke-dasharray="3 3"/><text x="'+(W-P+3)+'" y="'+(y50+3)+'" font-family="JetBrains Mono" font-size="8" fill="#F5B947">50</text><text x="'+(W-P+3)+'" y="'+(y75+3)+'" font-family="JetBrains Mono" font-size="8" fill="#3DD68C">75</text><path d="'+area+'" fill="url(#hlg)"/><path d="'+path+'" fill="none" stroke="#E63C78" stroke-width="1.8"/>'+pts.map(p=>'<circle cx="'+p.x+'" cy="'+p.y+'" r="3.5" fill="#E63C78" stroke="#0C1020" stroke-width="1.5"/><text x="'+p.x+'" y="'+(p.y-8)+'" text-anchor="middle" font-family="Fraunces" font-size="10" fill="#fff">'+p.s+'</text>').join('')+hist.map((p,i)=>{const x=P+(i/(hist.length-1))*(W-P*2);return '<text x="'+x+'" y="'+(H-5)+'" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#6B7396" letter-spacing="1">'+p.v+'</text>';}).join('')+'</svg><div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--t3);letter-spacing:.05em;border-top:1px solid var(--line);padding-top:7px">'+hist.map(p=>'<div>'+p.v+'<br><span style="color:var(--t2)">'+p.d+'</span></div>').join('')+'</div>';
+}
+
+function methodTrace(a){
+  const dims=[{n:'SVS',s:a.svs,w:.15,c:'#7DABE3'},{n:'PPS',s:a.pps,w:.25,c:'#E63C78'},{n:'APS',s:a.aps,w:.20,c:'#FF9E64'},{n:'RCS',s:a.rcs,w:.25,c:'#F5B947'},{n:'RAS',s:a.ras,w:.15,c:'#C19EFF'}];
+  const total=dims.reduce((acc,d)=>acc+d.s*d.w,0)*10;
+  return '<div style="display:flex;flex-direction:column;gap:9px">'+dims.map(d=>{const cp=d.s*d.w*10;return '<div><div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--t3);letter-spacing:.07em;margin-bottom:3px"><span>'+d.n+' · '+(d.w*100)+'%</span><span style="color:#fff">'+d.s.toFixed(1)+' → '+cp.toFixed(2)+'pts</span></div><div style="height:5px;background:var(--bg3);overflow:hidden"><div style="width:'+((cp/25)*100)+'%;height:100%;background:'+d.c+'"></div></div></div>';}).join('')+'<div style="border-top:1px solid var(--line);margin-top:5px;padding-top:9px;display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.14em;text-transform:uppercase">Composite</span><span style="font-family:var(--serif);font-size:22px;color:#fff">'+total.toFixed(1)+'<small style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-left:2px">/100</small></span></div></div>';
+}
+
+function renderTl(a){
+  const evs=EVENTS[a.id]||[];
+  if(!evs.length)return'<p style="color:var(--t3);font-size:12.5px">No carrier-specific intelligence events on file in current rolling window.</p>';
+  return'<div class="tl">'+evs.map(e=>'<div class="tlitem '+e.cls+'"><div class="tld">'+e.date+' · '+e.cls.toUpperCase()+'</div><div class="tlt">'+e.t+'</div><div class="tldesc">'+e.d+'</div></div>').join('')+'</div>';
+}
+
+function renderRisks(a){
+  const risks=[{n:'Financial risk',v:100-a.pps*10},{n:'Governance risk',v:100-a.rcs*10},{n:'Liquidity risk',v:a.id==='arik'||a.id==='azman'?92:Math.round(100-(a.pps*10*.8+a.rcs*10*.2))},{n:'FX risk',v:65},{n:'Operational risk',v:100-a.aps*10},{n:'Regulatory risk',v:Math.round(100-(a.aps*.6+a.rcs*.4)*10)},{n:'Institutional finance risk',v:Math.round(100-(a.pps*.5+a.rcs*.5)*10)}];
+  return risks.map(r=>{const v=Math.max(5,Math.min(97,Math.round(r.v)));const cls=v<35?'rl':v<65?'rm':'rx';return'<div class="rrow"><div class="rname">'+r.n+'</div><div class="rbo"><div class="rbi '+cls+'" style="width:'+v+'%"></div></div><div class="rval">'+v+'/100</div></div>';}).join('');
+}
+
+function renderEv(a){
+  const items=[{e:'PDF',n:a.name+' — Carrier brief v1.5',m:'30 Apr 2026 · Andara dossier · Restricted'},{e:'URL',n:'ch-aviation fleet record · '+a.code,m:'Continuous monitoring · Public'},{e:'PDF',n:'NCAA — AC-AWS001A (IDERA)',m:'Oct 2024 · Regulatory · Sector-wide'},{e:'XLSX',n:a.name+' — 5-Score worksheet',m:'30 Apr 2026 · Methodology engine output'}];
+  if(a.id==='ibom')items.push({e:'PDF',n:'AGM 2025 — FY24 audited statements',m:'June 2025 · Public · High confidence'});
+  if(a.id==='airpeace')items.push({e:'PDF',n:'US DOJ superseding indictment text',m:'8 Oct 2024 · Court filing · Verified'});
+  if(a.id==='green')items.push({e:'PDF',n:'NSIB report GAAL/2024/24/07/INTR/01',m:'24 Jul 2024 · 5N-GAA nose-wheel detachment'});
+  if(a.id==='arik')items.push({e:'PDF',n:'EDC v EFCC FHC judgment text',m:'27 Nov 2024 · Justice Owoeye · CTC landmark'});
+  return items.map(i=>'<div class="evitem"><div class="evicon">'+i.e+'</div><div class="evinfo"><h5>'+i.n+'</h5><p>'+i.m+'</p></div><button class="btn btn-sm" onclick="toast(\'Opening\',\''+i.n+'\')">Open</button></div>').join('');
+}
+
+function showAirline(id){
+  const a=AL.find(x=>x.id===id);if(!a)return;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  el('vw-airline').classList.add('active');
+  el('crumbA').textContent='Airlines / '+a.name;
+  document.querySelectorAll('.arow').forEach(r=>r.classList.toggle('active',r.dataset.aid===id));
+  document.querySelectorAll('.sitem').forEach(s=>s.classList.remove('active'));
+  const vc=VC[a.v];
+  el('airlineProfile').innerHTML='<div class="phero"><div class="pmain"><div class="pid"><span><strong>'+a.code+'</strong></span><span>•</span><span>'+a.founded+'</span><span>•</span><span>'+a.hq+'</span>'+(a.isNew?'<span style="color:var(--pink)">• NEW v1.5</span>':'')+(a.hf?'<span style="color:var(--dnd)">• HARD FLOOR</span>':'')+'</div><div class="pname">'+a.name+'</div><p class="psub">'+a.sum+'</p><div class="prow"><div class="pstat"><div class="l">Hubs</div><div class="v">'+a.hubs+'</div></div><div class="pstat"><div class="l">Ownership</div><div class="v" style="font-size:13px">'+a.own+'</div></div><div class="pstat"><div class="l">Confidence</div><div class="v">'+a.conf+'</div></div></div></div><div class="pscore"><div class="vbadge '+vc+'">● '+a.v+'</div><div class="psnum">'+a.c.toFixed(1)+'<sub>/100</sub></div><div class="pslbl">Composite · 5-Score weighted</div></div></div>'
+  +'<div class="tabs"><div class="tab active" data-t="exec">Executive Summary</div><div class="tab" data-t="score">Scorecard</div><div class="tab" data-t="tl">Intelligence Timeline</div><div class="tab" data-t="risk">Risk Breakdown</div><div class="tab" data-t="ev">Supporting Evidence</div></div>'
+  +'<div class="tp active" data-t="exec"><div class="g g12"><div class="panel c6"><div class="ph"><h3>Key strengths</h3><span class="meta">Score-positive</span></div><div class="pb"><ul style="list-style:none;display:flex;flex-direction:column;gap:9px">'+a.str.map(s=>'<li style="display:flex;gap:9px;font-size:12.5px;line-height:1.45;color:var(--t2)"><span style="color:var(--deploy);font-family:var(--mono);font-size:10px;flex-shrink:0;margin-top:2px">▲</span>'+s+'</li>').join('')+'</ul></div></div><div class="panel c6"><div class="ph"><h3>Key weaknesses</h3><span class="meta">Score-negative</span></div><div class="pb"><ul style="list-style:none;display:flex;flex-direction:column;gap:9px">'+a.wk.map(s=>'<li style="display:flex;gap:9px;font-size:12.5px;line-height:1.45;color:var(--t2)"><span style="color:var(--dnd);font-family:var(--mono);font-size:10px;flex-shrink:0;margin-top:2px">▼</span>'+s+'</li>').join('')+'</ul></div></div><div class="panel c12"><div class="ph"><h3>Major risk drivers</h3><span class="meta">Watch points · 2026</span></div><div class="pb"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:9px">'+a.dr.map(d=>'<div style="padding:12px;border:1px solid var(--line);background:var(--bg3);font-size:12px;color:var(--t2);line-height:1.45;border-left:2px solid var(--pink)">'+d+'</div>').join('')+'</div></div></div><div class="panel c12"><div class="ph"><h3>Financeability summary</h3><span class="meta">Institutional posture</span></div><div class="pb"><p style="font-size:13px;color:var(--t2);line-height:1.65;max-width:840px">'+fSummary(a)+'</p><div style="display:flex;gap:9px;margin-top:12px"><button class="btn btn-p" onclick="toast(\'Generating report\',\'Carrier brief queued\')">Export carrier brief</button><button class="btn" onclick="toast(\'Generating report\',\'IC summary queued\')">IC summary</button></div></div></div></div></div>'
+  +'<div class="tp" data-t="score"><div class="sgrid">'+[{c:'svs',n:'Strategic Value',w:'15%',s:a.svs},{c:'pps',n:'Payment Priority',w:'25%',s:a.pps},{c:'aps',n:'Airline Performance',w:'20%',s:a.aps},{c:'rcs',n:'Risk Containment',w:'25%',s:a.rcs},{c:'ras',n:'Redeployment Suitability',w:'15%',s:a.ras}].map(x=>'<div class="scard" data-t="'+(x.s>=7?'h':x.s>=5?'m':'l')+'"><div class="scode">'+x.c.toUpperCase()+'</div><div class="sname">'+x.n+'</div><div class="sval">'+x.s.toFixed(1)+'<small>/10</small></div><div class="sbar"><div style="width:'+(x.s*10)+'%"></div></div><div class="swt">Weight '+x.w+'</div></div>').join('')+'</div>'+(a.hf?'<div class="warn" style="margin-bottom:14px"><strong>Hard floor triggered</strong>Composite cannot exceed 65 because PPS or RCS is below 4.0. Averaging away creditworthiness or structural risk is not permitted.</div>':'')+'<div class="g g12"><div class="panel c7"><div class="ph"><h3>Score history</h3><span class="meta">Last 4 versions</span></div><div class="pb">'+scoreHistory(a)+'</div></div><div class="panel c5"><div class="ph"><h3>Methodology trace</h3><span class="meta">Weighted contribution</span></div><div class="pb">'+methodTrace(a)+'</div></div></div></div>'
+  +'<div class="tp" data-t="tl"><div class="panel"><div class="ph"><h3>Intelligence timeline</h3><span class="meta">Per-carrier · reverse chronological</span></div><div class="pb">'+renderTl(a)+'</div></div></div>'
+  +'<div class="tp" data-t="risk"><div class="panel"><div class="ph"><h3>Risk breakdown</h3><span class="meta">7 categories · 0–100</span></div><div class="pb"><div class="rlist">'+renderRisks(a)+'</div></div></div></div>'
+  +'<div class="tp" data-t="ev"><div class="panel"><div class="ph"><h3>Supporting evidence</h3><span class="meta">Documents · sources · annotations</span></div><div class="pb"><div class="evlist">'+renderEv(a)+'</div><div style="margin-top:12px"><button class="btn btn-p" onclick="goWS(\''+a.id+'\')">+ Submit new evidence</button></div></div></div></div>';
+  el('airlineProfile').querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      el('airlineProfile').querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      el('airlineProfile').querySelectorAll('.tp').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      el('airlineProfile').querySelector('.tp[data-t="'+t.dataset.t+'"]').classList.add('active');
+    });
+  });
+  el('mn').scrollTo({top:0,behavior:'smooth'});
+  closeMobileNav();
+}
+
+function buildCompare(){
+  const s=[...AL].sort((a,b)=>b.c-a.c);
+  if(!cmpSlots[0])cmpSlots=[s[0].id,s[3].id,s[6].id,null];
+  renderCmp();
+}
+
+function renderCmp(){
+  el('cpks').innerHTML=cmpSlots.map((sl,idx)=>{
+    if(sl){const a=AL.find(x=>x.id===sl);return'<div class="cpk filled" data-sl="'+idx+'"><button class="xbtn" onclick="cmpRemove('+idx+',event)">✕</button><div class="cpk-l">Slot '+(idx+1)+'</div><div class="cpk-v">'+a.name+'</div><div style="font-family:var(--mono);font-size:9px;color:var(--t3);margin-top:3px">'+a.c.toFixed(1)+' · '+a.v+'</div></div>';}
+    return'<div class="cpk" data-sl="'+idx+'" onclick="openCmpModal('+idx+')"><div class="cpk-l">Slot '+(idx+1)+'</div><div class="cpk-v" style="color:var(--t3);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase">+ Add carrier</div></div>';
+  }).join('');
+  el('cpks').querySelectorAll('.cpk.filled').forEach(p=>p.addEventListener('click',e=>{if(e.target.classList.contains('xbtn'))return;openCmpModal(parseInt(p.dataset.sl));}));
+  const filled=cmpSlots.filter(Boolean);
+  if(!filled.length){el('ctbl').innerHTML='<tbody><tr><td style="padding:20px;text-align:center;color:var(--t3)">Select carriers above to compare.</td></tr></tbody>';return;}
+  const rows=[{m:'Verdict',f:a=>'<span class="vbadge '+VC[a.v]+'" style="padding:2px 7px;font-size:9px">'+a.v+'</span>'},{m:'Composite',f:a=>'<strong style="color:#fff;font-family:var(--serif);font-size:17px">'+a.c.toFixed(1)+'</strong>'},{m:'SVS · 15%',f:a=>a.svs.toFixed(1)},{m:'PPS · 25%',f:a=>a.pps.toFixed(1)},{m:'APS · 20%',f:a=>a.aps.toFixed(1)},{m:'RCS · 25%',f:a=>a.rcs.toFixed(1)},{m:'RAS · 15%',f:a=>a.ras.toFixed(1)},{m:'Hubs',f:a=>a.hubs},{m:'Ownership',f:a=>a.own},{m:'Confidence',f:a=>a.conf},{m:'Hard floor',f:a=>a.hf?'<span style="color:var(--dnd)">YES</span>':'No'}];
+  el('ctbl').innerHTML='<thead><tr><th>Metric</th>'+filled.map(id=>{const a=AL.find(x=>x.id===id);return'<th style="color:#fff">'+a.name+'</th>';}).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr><td class="mt">'+r.m+'</td>'+filled.map(id=>{const a=AL.find(x=>x.id===id);return'<td>'+r.f(a)+'</td>';}).join('')+'</tr>').join('')+'</tbody>';
+}
+
+function openCmpModal(slot){
+  cmpActiveSlot=slot;
+  const s=[...AL].sort((a,b)=>b.c-a.c);
+  el('mlist').innerHTML=s.map(a=>'<div class="mrow" data-aid="'+a.id+'"><span class="mnm">'+a.name+'</span><span class="mmeta">'+a.c.toFixed(1)+' · '+a.v+'</span></div>').join('');
+  el('mlist').querySelectorAll('.mrow').forEach(r=>r.addEventListener('click',()=>{cmpSlots[cmpActiveSlot]=r.dataset.aid;renderCmp();el('cmpModal').classList.remove('open');}));
+  el('cmpModal').classList.add('open');
+}
+window.openCmpModal=openCmpModal;
+window.cmpRemove=function(idx,e){e.stopPropagation();cmpSlots[idx]=null;renderCmp();};
+
+function buildAudit(){
+  el('atbl').innerHTML='<thead><tr><th>Timestamp</th><th>User</th><th>Carrier</th><th>Criterion</th><th>From</th><th>To</th><th>Source</th><th>Status</th><th>Note</th></tr></thead><tbody>'+AUDIT.map(l=>'<tr><td>'+l.ts+'</td><td>'+l.user+'</td><td style="color:#fff">'+l.carrier+'</td><td>'+l.crit+'</td><td class="af">'+l.fr+'</td><td class="at">'+l.to+'</td><td>'+l.src+'</td><td>'+l.status+'</td><td>'+l.note+'</td></tr>').join('')+'</tbody>';
+}
+
+function buildWorkspace(){
+  const sel=el('evC');
+  sel.innerHTML='<option value="">— Select —</option>'+[...AL].sort((a,b)=>a.name.localeCompare(b.name)).map(a=>'<option value="'+a.id+'">'+a.name+'</option>').join('');
+  el('subEv').addEventListener('click',()=>{
+    const cid=sel.value;
+    if(!cid){toast('Select a carrier','Submission requires affected carrier');return;}
+    const a=AL.find(x=>x.id===cid);
+    toast('Evidence submitted','Routed to '+a.name+' methodology engine for re-run');
+    el('wsForm').reset();
+  });
+}
+
+function goWS(id){
+  document.querySelectorAll('.sitem').forEach(x=>x.classList.remove('active'));
+  document.querySelector('.sitem[data-v="workspace"]').classList.add('active');
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  el('vw-workspace').classList.add('active');
+  el('evC').value=id;
+  el('mn').scrollTo({top:0,behavior:'smooth'});
+  closeMobileNav();
+}
+window.goWS=goWS;
+
+function bindNav(){
+  document.querySelectorAll('.sitem[data-v]').forEach(it=>{
+    it.addEventListener('click',()=>{
+      const v=it.dataset.v;
+      document.querySelectorAll('.sitem').forEach(x=>x.classList.remove('active'));
+      it.classList.add('active');
+      document.querySelectorAll('.arow').forEach(r=>r.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+      el('vw-'+v).classList.add('active');
+      el('mn').scrollTo({top:0});
+      closeMobileNav();
+    });
+  });
+  el('closeModal').addEventListener('click',()=>el('cmpModal').classList.remove('open'));
+  document.querySelectorAll('.rptc').forEach(c=>c.addEventListener('click',()=>toast('Generating report','PDF queued · audit reference logged')));
+  document.querySelectorAll('.btn-sm').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();toast('Download queued','File ready shortly')}));
+}
+
+function startClock(){
+  const c=el('clk');
+  const tick=()=>{const d=new Date(),opts={hour:'2-digit',minute:'2-digit',timeZone:'Africa/Lagos',hour12:false};c.textContent=d.toLocaleTimeString('en-GB',opts)+' WAT';};
+  tick();setInterval(tick,1000);
+}
+
+const ALLOWED_LOGIN_EMAILS=new Set(['dikko@andarasystems.com','ben@andarasystems.com']);
+function normaliseLoginEmail(s){return s.trim().toLowerCase();}
+
+el('lbtn').addEventListener('click',()=>{
+  const pw=el('pw').value.trim(),em=el('em').value.trim(),err=el('lerr');
+  if(!em||!pw){err.textContent='Both fields are required.';err.style.display='block';return;}
+  if(!ALLOWED_LOGIN_EMAILS.has(normaliseLoginEmail(em))){err.textContent='Email address not recognised. Verify credentials.';err.style.display='block';return;}
+  if(pw!=='andara2026'){err.textContent='Access key not recognised. Verify credentials.';err.style.display='block';return;}
+  el('login').style.display='none';
+  el('app').style.display='grid';
+  el('uname').textContent=em.split('@')[0];
+  buildAirlineList();buildDashboard();buildFeed();buildCompare();buildAudit();buildWorkspace();bindNav();startClock();initMobileNav();
+  document.getElementById('gsearch').addEventListener('keydown',e=>{
+    if(e.key!=='Enter')return;
+    const q=e.target.value.trim().toLowerCase();
+    if(!q)return;
+    const hit=AL.find(a=>a.name.toLowerCase().includes(q)||a.code.toLowerCase().includes(q)||a.id.includes(q));
+    if(hit)showAirline(hit.id);
+    else toast('No match','No carrier matches that query');
+  });
+  toast('Welcome to the Andara terminal','Subscriber session active · v1.5');
+});
+el('em').addEventListener('keydown',e=>{if(e.key==='Enter')el('pw').focus();});
+el('pw').addEventListener('keydown',e=>{if(e.key==='Enter')el('lbtn').click();});
+</script>
+</body>
+</html>

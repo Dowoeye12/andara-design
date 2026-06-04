@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Andara Intelligence Reports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy:#061a3a;
+      --navy2:#0a2d5e;
+      --bg:#07101f;
+      --card:rgba(255,255,255,0.03);
+      --border:rgba(255,255,255,0.1);
+      --gold:#c8a84b;
+      --white:#fff;
+      --muted:rgba(255,255,255,0.72);
+      --dim:rgba(255,255,255,0.45);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    .site-header{
+      position:fixed;
+      top:0;
+      left:0;
+      right:0;
+      z-index:1000;
+      height:72px;
+      background:rgba(6,26,58,0.92);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(255,255,255,0.12);
+    }
+    .site-header-inner{
+      width:min(1120px,94vw);
+      height:100%;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+    .site-logo{
+      display:flex;
+      align-items:center;
+      text-decoration:none;
+    }
+    .site-logo img{
+      height:38px;
+      width:auto;
+      display:block;
+      filter:brightness(0) invert(1);
+    }
+    .site-nav{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .site-link{
+      color:rgba(255,255,255,0.86);
+      text-decoration:none;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:13px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      padding:8px 12px;
+      border-radius:8px;
+      transition:.2s ease;
+    }
+    .site-link:hover{background:rgba(255,255,255,0.08)}
+    .site-link.active{color:var(--gold)}
+    .site-cta{
+      color:var(--white);
+      text-decoration:none;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:12px;
+      font-weight:600;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      border:1px solid rgba(255,255,255,0.45);
+      border-radius:999px;
+      padding:8px 12px;
+      transition:.2s ease;
+    }
+    .site-cta:hover{background:#fff;color:#061a3a}
+    body{
+      font-family:'DM Sans',sans-serif;
+      background:linear-gradient(180deg,var(--bg),#040a16);
+      color:var(--white);
+      min-height:100vh;
+    }
+    .wrap{
+      width:min(980px,92vw);
+      margin:0 auto;
+      padding:124px 0 72px;
+    }
+    .eyebrow{
+      font-family:'DM Mono',monospace;
+      font-size:11px;
+      letter-spacing:.24em;
+      color:var(--gold);
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+    h1{
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(44px,8vw,72px);
+      letter-spacing:.06em;
+      line-height:1;
+      margin-bottom:12px;
+    }
+    .lead{
+      color:var(--muted);
+      max-width:700px;
+      line-height:1.7;
+      margin-bottom:34px;
+      font-size:16px;
+    }
+    .reports{
+      display:grid;
+      gap:16px;
+    }
+    .card{
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      background:linear-gradient(140deg,var(--card),rgba(10,45,94,0.2));
+      border:1px solid var(--border);
+      border-left:4px solid var(--gold);
+      padding:22px 22px;
+      transition:.2s ease;
+    }
+    .card:hover{
+      transform:translateY(-2px);
+      border-color:rgba(200,168,75,0.5);
+      box-shadow:0 14px 32px rgba(0,0,0,0.25);
+    }
+    .meta{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:10px;
+      color:var(--dim);
+      font-family:'DM Mono',monospace;
+      font-size:11px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .issue{
+      color:var(--gold);
+    }
+    .title{
+      font-size:24px;
+      line-height:1.25;
+      margin-bottom:8px;
+      font-weight:600;
+    }
+    .desc{
+      color:var(--muted);
+      line-height:1.6;
+      font-size:15px;
+    }
+    .foot{
+      margin-top:28px;
+      color:var(--dim);
+      font-size:13px;
+      line-height:1.6;
+    }
+    @media (max-width: 760px){
+      .site-header{height:auto}
+      .site-header-inner{padding:10px 0;flex-wrap:wrap}
+      .site-logo img{height:32px}
+      .site-nav{width:100%;justify-content:flex-start;flex-wrap:wrap}
+      .wrap{padding-top:140px}
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header-inner">
+      <a class="site-logo" href="/">
+        <img src="/Andara Systems - light mode.svg" alt="Andara Systems">
+      </a>
+      <nav class="site-nav">
+        <a class="site-link active" href="/intelligence">INTELLIGENCE</a>
+        <a class="site-cta" href="/#contact">Book Consultation</a>
+      </nav>
+    </div>
+  </header>
+  <main class="wrap">
+    <p class="eyebrow">Andara Systems</p>
+    <h1>Intelligence Reports</h1>
+    <p class="lead">
+      A chronological archive of Andara Intelligence Reports, sorted by publication date in descending order.
+      Open a report to view the full issue.
+    </p>
+
+    <section class="reports">
+      <a class="card" href="/intelligence/air-001-apr26">
+        <div class="meta">
+          <span class="issue">Issue 001</span>
+          <span>April 2026</span>
+          <span>Nigeria Focus</span>
+        </div>
+        <h2 class="title">Nigeria: The Intelligence Gap That Capital Is About to Step Into</h2>
+        <p class="desc">
+          CTC compliance has shifted, capital is moving, and independent credit intelligence is now the deciding variable
+          for profitable aviation deployment.
+        </p>
+      </a>
+    </section>
+
+    <p class="foot">More issues will appear here as they are published.</p>
+  </main>
+</body>
+</html>

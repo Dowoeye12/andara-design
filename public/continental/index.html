@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andara FleetWatch · Continental Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:  #061a3a; --navy2: #0a2d5e; --navy3: #103572;
+  --accent:#4a9eff; --gold:  #c8a84b; --gold2: #e8c96a;
+  --white: #ffffff; --green: #00c896; --amber: #f5a623; --red: #e63946;
+  --bg:    #06101e; --card:  rgba(255,255,255,0.032);
+  --b:     rgba(255,255,255,0.08); --dim: rgba(255,255,255,0.42);
+  --dimmer:rgba(255,255,255,0.22);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{
+  /* Layout-aware upscale similar to browser 120% zoom */
+  zoom:1.2;
+}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--white);
+  min-height:100vh;
+}
+
+/* ── TOP BAR ── */
+.topbar{
+  height:52px;background:rgba(6,26,58,0.97);border-bottom:1px solid var(--b);
+  backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;position:sticky;top:0;z-index:200;
+}
+.tb-brand{display:flex;align-items:center;gap:12px;}
+.tb-logo{
+  height:24px;
+  width:auto;
+  display:block;
+  /* Turn the blue source logo into white for dark UI */
+  filter: brightness(0) invert(1);
+}
+.tb-name{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;}
+.tb-prod{font-size:9px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;}
+.tb-tabs{display:flex;gap:2px;}
+.ttab{padding:5px 13px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;border-radius:3px;cursor:pointer;border:1px solid var(--b);color:var(--dim);background:transparent;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap;}
+.ttab:hover{color:var(--white);border-color:rgba(255,255,255,0.22);}
+.ttab.active{background:var(--accent);color:var(--navy);border-color:var(--accent);}
+.ttab-select{
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+  padding-right:28px;
+  color:var(--dim);
+  -webkit-text-fill-color:var(--dim);
+  background:transparent;
+  border:1px solid var(--b);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--dim) 50%),
+    linear-gradient(135deg, var(--dim) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) calc(50% - 1px),
+    calc(100% - 9px) calc(50% - 1px);
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+  outline:none;
+}
+.ttab-select:hover{
+  color:var(--white);
+  -webkit-text-fill-color:var(--white);
+  border-color:rgba(255,255,255,0.22);
+}
+.ttab-select:focus{
+  color:var(--white);
+  -webkit-text-fill-color:var(--white);
+  border-color:rgba(255,255,255,0.22);
+  box-shadow:none;
+}
+.ttab-select option{color:#061a3a;}
+.tb-right{display:flex;align-items:center;gap:14px;}
+.tb-menu-btn{
+  display:none;
+  width:34px;
+  height:34px;
+  border-radius:6px;
+  border:1px solid var(--b);
+  background:transparent;
+  color:var(--white);
+  cursor:pointer;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  line-height:1;
+}
+.tb-live{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--green);font-weight:500;letter-spacing:1px;}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.tb-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--dimmer);}
+
+/* ── SCREENS ── */
+.screen{display:none;animation:fadeUp .4s ease both;}
+.screen.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ════════════════════════════════════
+   SCREEN 1 — CONTINENT OVERVIEW
+════════════════════════════════════ */
+#s-continent{padding:22px 24px;}
+
+/* hero */
+.hero{
+  background:linear-gradient(130deg,#071e45 0%,#0d3060 50%,#071e45 100%);
+  border:1px solid var(--b);border-radius:12px;padding:24px 28px;margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);background-size:32px 32px;}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),transparent);}
+.hero-inner{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;}
+.hero-left{}
+.hero-eye{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px;font-family:'DM Mono',monospace;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;line-height:1;margin-bottom:6px;}
+.hero-sub{font-size:12px;color:var(--dim);max-width:480px;line-height:1.6;}
+.hero-right{text-align:right;}
+.hero-num{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:3px;color:var(--accent);line-height:1;}
+.hero-num-lbl{font-size:10px;color:var(--dimmer);letter-spacing:1.5px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.hero-scale{margin-top:6px;font-size:10px;color:var(--gold);font-family:'DM Mono',monospace;}
+
+/* continent KPIs */
+.ckpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:18px;}
+.ckpi{background:var(--card);border:1px solid var(--b);border-radius:8px;padding:13px 14px;position:relative;overflow:hidden;transition:border-color .2s;}
+.ckpi:hover{border-color:rgba(255,255,255,0.16);}
+.ckpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.ckpi.g::before{background:var(--green);}
+.ckpi.a::before{background:var(--amber);}
+.ckpi.r::before{background:var(--red);}
+.ckpi.b::before{background:var(--accent);}
+.ckpi.gold::before{background:var(--gold);}
+.ckpi-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:6px;font-weight:500;}
+.ckpi-val{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;line-height:1;}
+.ckpi-sub{font-size:8px;color:var(--dimmer);margin-top:2px;font-family:'DM Mono',monospace;}
+
+/* region strip */
+.region-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.region-card{
+  background:var(--card);border:1px solid var(--b);border-radius:10px;
+  padding:16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;
+}
+.region-card:hover{border-color:rgba(74,158,255,0.3);background:rgba(74,158,255,0.04);transform:translateY(-2px);}
+.rc-flag{font-size:22px;margin-bottom:8px;}
+.rc-region{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:2px;margin-bottom:3px;}
+.rc-countries{font-size:9px;color:var(--dimmer);margin-bottom:10px;font-family:'DM Mono',monospace;}
+.rc-stats{display:flex;gap:10px;}
+.rc-stat{}
+.rc-stat-val{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;line-height:1;}
+.rc-stat-lbl{font-size:8px;color:var(--dimmer);letter-spacing:1px;text-transform:uppercase;}
+.rc-health{
+  margin-top:10px;display:flex;align-items:center;gap:7px;
+}
+.rc-hbar{flex:1;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.rc-hfill{height:100%;border-radius:2px;}
+.rc-hval{font-size:9px;font-family:'DM Mono',monospace;color:var(--dim);}
+.rc-badge{
+  position:absolute;top:10px;right:10px;
+  font-size:7px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 6px;border-radius:2px;font-family:'DM Mono',monospace;
+}
+.rc-badge.live{background:rgba(0,200,150,0.12);color:var(--green);border:1px solid rgba(0,200,150,0.25);}
+.rc-badge.scaling{background:rgba(200,168,75,0.12);color:var(--gold);border:1px solid rgba(200,168,75,0.25);}
+
+/* main two-col */
+.main-two{display:grid;grid-template-columns:1fr 300px;gap:14px;}
+
+/* panel */
+.panel{background:var(--card);border:1px solid var(--b);border-radius:8px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--b);}
+.ph-ttl{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;font-weight:600;}
+.ph-act{font-size:10px;color:var(--accent);cursor:pointer;}
+.ph-sub{font-size:9px;color:var(--dimmer);font-family:'DM Mono',monospace;}
+
+/* master aircraft table */
+.mat{width:100%;border-collapse:collapse;}
+.mat th{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:var(--dimmer);padding:8px 14px;text-align:left;border-bottom:1px solid var(--b);font-weight:600;}
+.mat td{padding:11px 14px;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.025);color:var(--dim);}
+.mat tr:last-child td{border-bottom:none;}
+.mat tr{cursor:pointer;transition:background .12s;}
+.mat tr:hover td{background:rgba(255,255,255,0.025);color:var(--white);}
+.mat tr.attention td{background:rgba(230,57,70,0.04);}
+.treg{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);font-weight:500;letter-spacing:.5px;}
+.hbar{display:flex;align-items:center;gap:6px;}
+.hb{width:52px;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.hbf{height:100%;border-radius:2px;}
+.hbn{font-family:'DM Mono',monospace;font-size:9px;color:var(--dim);}
+.cflag{font-size:12px;}
+.cname{font-size:10px;color:var(--dimmer);margin-top:1px;font-family:'DM Mono',monospace;}
+.watch-count{font-size:10px;font-weight:600;}
+
+/* pipeline preview */
+.pipeline-preview{
+  background:rgba(74,158,255,0.04);border:1px solid rgba(74,158,255,0.15);
+  border-radius:8px;padding:14px 16px;margin-bottom:12px;
+}
+.pp-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:10px;font-family:'DM Mono',monospace;}
+.pp-item{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.pp-item:last-child{margin-bottom:0;}
+.pp-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.pp-dot.green{background:var(--green);}
+.pp-dot.amber{background:var(--amber);animation:pulse 1.5s infinite;}
+.pp-dot.dim{background:rgba(255,255,255,0.18);}
+.pp-text{font-size:10px;color:var(--dim);}
+.pp-text strong{color:var(--white);}
+.pp-count{margin-left:auto;font-family:'DM Mono',monospace;font-size:9px;color:var(--dimmer);}
+
+/* alert feed */
+.alert-feed{}
+.af-item{display:flex;gap:9px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.025);}
+.af-item:last-child{border-bottom:none;}
+.af-sev{width:3px;flex-shrink:0;border-radius:2px;align-self:stretch;}
+.af-sev.red{background:var(--red);}
+.af-sev.amber{background:var(--amber);}
+.af-sev.blue{background:var(--accent);}
+.af-sev.green{background:var(--green);}
+.af-body{flex:1;}
+.af-reg{font-family:'DM Mono',monospace;font-size:8px;color:var(--accent);margin-bottom:2px;}
+.af-text{font-size:10px;color:rgba(255,255,255,0.7);line-height:1.4;}
+.af-time{font-size:8px;color:var(--dimmer);margin-top:2px;font-family:'DM Mono',monospace;}
+
+/* scale teaser */
+.scale-teaser{
+  background:linear-gradient(135deg,rgba(200,168,75,0.06),rgba(74,158,255,0.06));
+  border:1px solid rgba(200,168,75,0.2);border-radius:8px;padding:16px;
+}
+.st-title{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:2px;color:var(--gold);margin-bottom:6px;}
+.st-text{font-size:10px;color:var(--dim);line-height:1.6;margin-bottom:12px;}
+.st-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.st-num{text-align:center;}
+.st-num-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--white);}
+.st-num-lbl{font-size:8px;color:var(--dimmer);letter-spacing:1px;text-transform:uppercase;font-family:'DM Mono',monospace;}
+
+/* ════════════════════════════════════
+   SCREEN 2 — REGION DRILL
+════════════════════════════════════ */
+#s-region{padding:22px 24px;}
+.region-hdr{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:20px;}
+.region-title-row{display:flex;align-items:center;gap:14px;}
+.rhdr-back{font-size:11px;color:var(--accent);cursor:pointer;display:flex;align-items:center;gap:4px;}
+.rhdr-flag{font-size:32px;}
+.rhdr-name{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;line-height:1;}
+.rhdr-sub{font-size:11px;color:var(--dim);margin-top:2px;}
+
+.region-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.rkpi{background:var(--card);border:1px solid var(--b);border-radius:7px;padding:13px 14px;}
+.rkpi-lbl{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:5px;}
+.rkpi-val{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;line-height:1;}
+.rkpi-sub{font-size:8px;color:var(--dimmer);margin-top:2px;font-family:'DM Mono',monospace;}
+
+.country-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+.country-card{background:var(--card);border:1px solid var(--b);border-radius:8px;padding:14px;}
+.cc-flag{font-size:20px;margin-bottom:6px;}
+.cc-name{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;margin-bottom:4px;}
+.cc-operator{font-size:10px;color:var(--dim);margin-bottom:8px;}
+.cc-aircraft{display:flex;flex-direction:column;gap:5px;}
+.cca{display:flex;align-items:center;gap:7px;padding:5px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:4px;}
+.cca-reg{font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);}
+.cca-type{font-size:9px;color:var(--dimmer);flex:1;}
+.cca-h{font-family:'DM Mono',monospace;font-size:9px;font-weight:500;}
+.cc-more{font-size:9px;color:var(--dimmer);margin-top:5px;font-style:italic;font-family:'DM Mono',monospace;}
+
+/* ════════════════════════════════════
+   SCREEN 3 — PREDICTIVE (CONTINENT)
+════════════════════════════════════ */
+#s-cpred{padding:22px 24px;}
+.pred-banner{
+  background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.18);
+  border-left:3px solid var(--amber);border-radius:6px;
+  padding:12px 16px;margin-bottom:18px;font-size:12px;color:var(--dim);line-height:1.6;
+}
+.pred-banner strong{color:var(--white);}
+
+.pred-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;}
+.pred-col{background:var(--card);border:1px solid var(--b);border-radius:8px;overflow:hidden;}
+.pred-col-hdr{padding:11px 14px;border-bottom:1px solid var(--b);display:flex;align-items:center;gap:7px;}
+.pch-dot{width:8px;height:8px;border-radius:50%;}
+.pch-dot.red{background:var(--red);box-shadow:0 0 5px var(--red);}
+.pch-dot.amber{background:var(--amber);}
+.pch-dot.blue{background:var(--accent);}
+.pch-ttl{font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.pch-count{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--dimmer);}
+.pred-item{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.025);}
+.pred-item:last-child{border-bottom:none;}
+.pi-header{display:flex;align-items:center;gap:7px;margin-bottom:3px;}
+.pi-flag{font-size:11px;}
+.pi-reg{font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);font-weight:500;}
+.pi-country{font-size:9px;color:var(--dimmer);}
+.pi-event{font-size:11px;color:rgba(255,255,255,0.75);line-height:1.4;font-weight:500;}
+.pi-due{font-size:9px;color:var(--dimmer);margin-top:2px;font-family:'DM Mono',monospace;}
+.pi-impact{font-size:7.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:1px 5px;border-radius:2px;display:inline-block;margin-top:3px;}
+.pi-impact.high{background:rgba(230,57,70,0.12);color:var(--red);}
+.pi-impact.med{background:rgba(245,166,35,0.12);color:var(--amber);}
+.pi-impact.low{background:rgba(0,200,150,0.1);color:var(--green);}
+
+/* value at risk map */
+.var-section{background:var(--card);border:1px solid var(--b);border-radius:8px;padding:16px;}
+.var-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+.var-card{background:rgba(255,255,255,0.025);border:1px solid var(--b);border-radius:6px;padding:11px 12px;}
+.vc-region{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--dimmer);margin-bottom:4px;font-family:'DM Mono',monospace;}
+.vc-val{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:2px;}
+.vc-lbl{font-size:8px;color:var(--dimmer);margin-bottom:6px;}
+.vc-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.vc-fill{height:100%;border-radius:2px;}
+
+/* ── ACCESS GATE ── */
+.access-gate{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(74,158,255,0.12), transparent 48%),
+    radial-gradient(ellipse at 85% 80%, rgba(200,168,75,0.08), transparent 50%),
+    var(--bg);
+}
+.gate-card{
+  width:min(560px,100%);
+  border:1px solid var(--b);
+  border-radius:12px;
+  background:rgba(255,255,255,0.03);
+  padding:24px;
+}
+.gate-kicker{
+  font-size:9px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--gold);
+  font-family:'DM Mono',monospace;
+  margin-bottom:8px;
+}
+.gate-title{
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:2px;
+  font-size:34px;
+  line-height:1;
+  margin-bottom:8px;
+}
+.gate-sub{
+  color:var(--dim);
+  font-size:12px;
+  line-height:1.6;
+  margin-bottom:14px;
+}
+.gate-row{display:flex;gap:10px;}
+.gate-input{
+  flex:1;
+  height:40px;
+  border-radius:8px;
+  border:1px solid var(--b);
+  background:rgba(0,0,0,0.2);
+  color:var(--white);
+  padding:0 12px;
+  font-family:'DM Mono',monospace;
+  font-size:12px;
+}
+.gate-btn{
+  height:40px;
+  border-radius:8px;
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:var(--navy);
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  padding:0 14px;
+  cursor:pointer;
+}
+.gate-error{
+  margin-top:10px;
+  font-size:10px;
+  color:var(--red);
+  font-family:'DM Mono',monospace;
+  min-height:14px;
+}
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 900px){
+  html{zoom:1;}
+  .topbar{padding:0 14px;}
+  .tb-menu-btn{display:flex;}
+  .tb-live,.tb-time{display:none;}
+  .tb-tabs{
+    display:none;
+    position:absolute;
+    top:52px;
+    left:0;
+    right:0;
+    z-index:250;
+    flex-direction:column;
+    gap:8px;
+    padding:12px 14px;
+    background:rgba(6,26,58,0.98);
+    border-bottom:1px solid var(--b);
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  }
+  .tb-tabs.mobile-open{display:flex;}
+  .tb-tabs .ttab,
+  .tb-tabs .ttab-select{
+    width:100%;
+    text-align:left;
+    min-height:38px;
+  }
+
+  #s-continent,#s-region,#s-cpred{padding:14px;}
+  .hero-inner{flex-direction:column;align-items:flex-start;gap:10px;}
+  .hero-right{text-align:left;}
+
+  .main-two{grid-template-columns:1fr;}
+  .pred-cols{grid-template-columns:1fr;}
+  .country-grid{grid-template-columns:1fr;}
+  .region-kpis{grid-template-columns:repeat(2,1fr);}
+  .var-grid{grid-template-columns:repeat(2,1fr);}
+
+  .ckpi-row{grid-template-columns:repeat(3,minmax(0,1fr));}
+  .region-row{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .panel{overflow-x:auto;}
+  .mat{min-width:760px;}
+}
+
+@media (max-width: 640px){
+  .ckpi{padding:11px 10px;}
+  .ckpi-val{font-size:24px;}
+  .region-card{padding:12px;}
+  .hero-title{font-size:28px;}
+}
+</style>
+</head>
+<body>
+
+<div id="accessGate" class="access-gate">
+  <form class="gate-card" id="gateForm">
+    <div class="gate-kicker">Private Access</div>
+    <div class="gate-title">Password Protected</div>
+    <div class="gate-sub">FleetWatch Continental is private. Enter password to continue.</div>
+    <div class="gate-row">
+      <input id="gatePassword" class="gate-input" type="password" placeholder="Enter password" autocomplete="current-password" />
+      <button class="gate-btn" type="submit">Unlock</button>
+    </div>
+    <div id="gateError" class="gate-error"></div>
+  </form>
+</div>
+
+<div id="appShell" style="display:none;">
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <img class="tb-logo" src="/Andara%20Systems%20-%20light%20mode.svg" alt="Andara Systems logo" />
+    <div>
+      <div class="tb-name">FleetWatch</div>
+      <div class="tb-prod">Continental</div>
+    </div>
+  </div>
+  <div class="tb-tabs">
+    <button class="ttab active" onclick="show('s-continent',this)">Continent Overview</button>
+    <button class="ttab" onclick="show('s-cpred',this)">Predictive Intelligence</button>
+    <select id="regionSelect" class="ttab ttab-select" onchange="handleRegionSelect(this)">
+      <option value="" id="regionSelectLabel">Region</option>
+      <option value="west">West Africa</option>
+      <option value="east">East Africa</option>
+      <option value="south">Southern Africa</option>
+      <option value="north">North Africa</option>
+    </select>
+  </div>
+  <div class="tb-right">
+    <button class="tb-menu-btn" type="button" aria-label="Toggle navigation menu" onclick="toggleMobileNav()">☰</button>
+    <div class="tb-live"><div class="tb-dot"></div>Live · W13 2026</div>
+    <div class="tb-time" id="ttime"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════
+     SCREEN 1 — CONTINENT OVERVIEW
+════════════════════════════════════ -->
+<div class="screen active" id="s-continent">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-left">
+        <div class="hero-eye">Andara FleetWatch · Master Intelligence View</div>
+        <div class="hero-title">Africa Fleet Intelligence<br>Command Centre</div>
+        <div class="hero-sub">Real-time asset health and value intelligence across 4 regions, 12 countries, and 9 operators. Every aircraft monitored weekly by Andara field agents on the ground.</div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-num">15</div>
+        <div class="hero-num-lbl">Aircraft Live</div>
+        <div class="hero-scale">↗ Scaling to 50+ · Q3 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ckpi-row">
+    <div class="ckpi b"><div class="ckpi-lbl">Aircraft Monitored</div><div class="ckpi-val">15</div><div class="ckpi-sub">Live · W13</div></div>
+    <div class="ckpi gold"><div class="ckpi-lbl">Fleet Health Avg</div><div class="ckpi-val" style="color:var(--amber)">69</div><div class="ckpi-sub">Continent / 100</div></div>
+    <div class="ckpi g"><div class="ckpi-lbl">Value Intact</div><div class="ckpi-val">10</div><div class="ckpi-sub">of 15 aircraft</div></div>
+    <div class="ckpi a"><div class="ckpi-lbl">Value at Risk</div><div class="ckpi-val" style="color:var(--amber)">4</div><div class="ckpi-sub">Trending down</div></div>
+    <div class="ckpi r"><div class="ckpi-lbl">Act Now</div><div class="ckpi-val" style="color:var(--red)">2</div><div class="ckpi-sub">Immediate attention</div></div>
+    <div class="ckpi b"><div class="ckpi-lbl">Capital Protected</div><div class="ckpi-val" style="color:var(--accent)">$312M</div><div class="ckpi-sub">Est. portfolio value</div></div>
+  </div>
+
+  <!-- Region cards -->
+  <div class="region-row">
+    <div class="region-card" onclick="showRegion('west',null)">
+      <div class="rc-badge live">Live</div>
+      <div class="rc-flag">🌍</div>
+      <div class="rc-region">West Africa</div>
+      <div class="rc-countries">Nigeria · Ghana · Senegal</div>
+      <div class="rc-stats">
+        <div class="rc-stat"><div class="rc-stat-val">6</div><div class="rc-stat-lbl">Aircraft</div></div>
+        <div class="rc-stat" style="margin-left:14px;"><div class="rc-stat-val" style="color:var(--amber)">3</div><div class="rc-stat-lbl">Watch Items</div></div>
+      </div>
+      <div class="rc-health">
+        <div class="rc-hbar"><div class="rc-hfill" style="width:67%;background:var(--amber);"></div></div>
+        <div class="rc-hval" style="color:var(--amber)">67</div>
+      </div>
+    </div>
+    <div class="region-card" onclick="showRegion('east',null)">
+      <div class="rc-badge live">Live</div>
+      <div class="rc-flag">🌍</div>
+      <div class="rc-region">East Africa</div>
+      <div class="rc-countries">Kenya · Ethiopia · Rwanda</div>
+      <div class="rc-stats">
+        <div class="rc-stat"><div class="rc-stat-val">4</div><div class="rc-stat-lbl">Aircraft</div></div>
+        <div class="rc-stat" style="margin-left:14px;"><div class="rc-stat-val" style="color:var(--green)">1</div><div class="rc-stat-lbl">Watch Items</div></div>
+      </div>
+      <div class="rc-health">
+        <div class="rc-hbar"><div class="rc-hfill" style="width:79%;background:var(--green);"></div></div>
+        <div class="rc-hval" style="color:var(--green)">79</div>
+      </div>
+    </div>
+    <div class="region-card" onclick="showRegion('south',null)">
+      <div class="rc-badge live">Live</div>
+      <div class="rc-flag">🌍</div>
+      <div class="rc-region">Southern Africa</div>
+      <div class="rc-countries">South Africa · Zambia · Zimbabwe</div>
+      <div class="rc-stats">
+        <div class="rc-stat"><div class="rc-stat-val">3</div><div class="rc-stat-lbl">Aircraft</div></div>
+        <div class="rc-stat" style="margin-left:14px;"><div class="rc-stat-val" style="color:var(--red)">4</div><div class="rc-stat-lbl">Watch Items</div></div>
+      </div>
+      <div class="rc-health">
+        <div class="rc-hbar"><div class="rc-hfill" style="width:52%;background:var(--red);"></div></div>
+        <div class="rc-hval" style="color:var(--red)">52</div>
+      </div>
+    </div>
+    <div class="region-card" onclick="showRegion('north',null)">
+      <div class="rc-badge scaling">Scaling</div>
+      <div class="rc-flag">🌍</div>
+      <div class="rc-region">North Africa</div>
+      <div class="rc-countries">Egypt · Morocco · Tunisia</div>
+      <div class="rc-stats">
+        <div class="rc-stat"><div class="rc-stat-val">2</div><div class="rc-stat-lbl">Aircraft</div></div>
+        <div class="rc-stat" style="margin-left:14px;"><div class="rc-stat-val" style="color:var(--green)">0</div><div class="rc-stat-lbl">Watch Items</div></div>
+      </div>
+      <div class="rc-health">
+        <div class="rc-hbar"><div class="rc-hfill" style="width:84%;background:var(--green);"></div></div>
+        <div class="rc-hval" style="color:var(--green)">84</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main two-col -->
+  <div class="main-two">
+    <div class="panel">
+      <div class="ph">
+        <span class="ph-ttl">All Aircraft · Continental Master View</span>
+        <span class="ph-sub">15 live · 35+ pipeline</span>
+      </div>
+      <table class="mat">
+        <thead>
+          <tr>
+            <th>Registration</th><th>Type</th><th>Country / Operator</th><th>Client</th><th>Health</th><th>Value Trend</th><th>Watch</th>
+          </tr>
+        </thead>
+        <tbody id="master-table"></tbody>
+      </table>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+
+      <div class="panel">
+        <div class="ph"><span class="ph-ttl">Live Intelligence Feed</span></div>
+        <div class="alert-feed" id="alert-feed"></div>
+      </div>
+
+      <div class="pipeline-preview">
+        <div class="pp-title">FleetWatch Scale Pipeline</div>
+        <div class="pp-item"><div class="pp-dot green"></div><div class="pp-text"><strong>15 aircraft</strong> — Live · W13 2026</div><div class="pp-count">Active</div></div>
+        <div class="pp-item"><div class="pp-dot amber"></div><div class="pp-text"><strong>+12 aircraft</strong> — Onboarding Q2 2026</div><div class="pp-count">In progress</div></div>
+        <div class="pp-item"><div class="pp-dot dim"></div><div class="pp-text"><strong>+23 aircraft</strong> — Pipeline Q3 2026</div><div class="pp-count">Contracted</div></div>
+        <div class="pp-item"><div class="pp-dot dim"></div><div class="pp-text"><strong>50+ aircraft</strong> — Target end 2026</div><div class="pp-count">Forecast</div></div>
+      </div>
+
+      <div class="scale-teaser">
+        <div class="st-title">At 50 Aircraft</div>
+        <div class="st-text">What FleetWatch looks like at full continental scale — across 20+ countries and all major African operators.</div>
+        <div class="st-nums">
+          <div class="st-num"><div class="st-num-val">$1.2B</div><div class="st-num-lbl">Assets monitored</div></div>
+          <div class="st-num"><div class="st-num-val">2,600</div><div class="st-num-lbl">Docs / week</div></div>
+          <div class="st-num"><div class="st-num-val">$12M+</div><div class="st-num-lbl">Annual revenue</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════
+     SCREEN 2 — REGION DRILL
+════════════════════════════════════ -->
+<div class="screen" id="s-region">
+  <div class="region-hdr">
+    <div class="rhdr-back" onclick="show('s-continent',document.querySelectorAll('.ttab')[0])">← All Regions</div>
+    <div class="region-title-row">
+      <div class="rhdr-flag" id="r-flag"></div>
+      <div>
+        <div class="rhdr-name" id="r-name"></div>
+        <div class="rhdr-sub" id="r-sub"></div>
+      </div>
+    </div>
+  </div>
+  <div class="region-kpis" id="r-kpis"></div>
+  <div class="country-grid" id="r-countries"></div>
+  <div class="panel">
+    <div class="ph"><span class="ph-ttl" id="r-table-ttl">Regional Aircraft Intelligence</span></div>
+    <table class="mat"><thead><tr><th>Registration</th><th>Type</th><th>Country / Operator</th><th>Client</th><th>Health</th><th>Value Trend</th><th>Watch Items</th></tr></thead>
+    <tbody id="r-table"></tbody></table>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════
+     SCREEN 3 — PREDICTIVE CONTINENT
+════════════════════════════════════ -->
+<div class="screen" id="s-cpred">
+  <div class="pred-banner">
+    <strong>Andara Continental Predictive Intelligence · W13 2026</strong> — Across all 15 monitored aircraft on the continent, Andara has identified 14 forward-looking events over the next 12 months. Early intelligence is the point. Every item below represents value that can be protected if acted upon before it becomes a problem.
+  </div>
+
+  <div class="pred-cols">
+    <div class="pred-col">
+      <div class="pred-col-hdr"><div class="pch-dot red"></div><div class="pch-ttl">Act Now · 0–30 Days</div><div class="pch-count">4 items</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇿🇦</div><div class="pi-reg">ZS-GAL</div><div class="pi-country">South Africa · FlySafair</div></div><div class="pi-event">AOC renewal audit due — operator compliance gaps identified in W11-W13 scans</div><div class="pi-due">Deadline 15 Apr 2026</div><div class="pi-impact high">Regulatory · High Risk</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇳🇬</div><div class="pi-reg">5N-FGT</div><div class="pi-country">Nigeria · Overland Airways</div></div><div class="pi-event">Hydraulic system deferred defect — value erosion active, 42 days outstanding</div><div class="pi-due">Expires MEL W15</div><div class="pi-impact high">Value Impact $1.1M</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇿🇲</div><div class="pi-reg">9J-AEZ</div><div class="pi-country">Zambia · Proflight</div></div><div class="pi-event">Engine oil filter blocked — repeated finding 3 consecutive weeks, escalating</div><div class="pi-due">Recommend W14 action</div><div class="pi-impact high">AOG Risk</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇳🇬</div><div class="pi-reg">5N-BVE</div><div class="pi-country">Nigeria · Air Peace</div></div><div class="pi-event">Engine oil consumption trend — borescope inspection needed before seal failure</div><div class="pi-due">W15 latest</div><div class="pi-impact med">Preventive</div></div>
+    </div>
+
+    <div class="pred-col">
+      <div class="pred-col-hdr"><div class="pch-dot amber"></div><div class="pch-ttl">Plan Now · 1–6 Months</div><div class="pch-count">6 items</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇪🇹</div><div class="pi-reg">ET-ASK</div><div class="pi-country">Ethiopia · Ethiopian</div></div><div class="pi-event">LPT blade life limit — Stage 1 set approaching cycle limit</div><div class="pi-due">~900 cycles · Est. Jun 2026</div><div class="pi-impact high">High Cost Event</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇬🇭</div><div class="pi-reg">9G-AEL</div><div class="pi-country">Ghana · Africa World</div></div><div class="pi-event">Landing gear calendar overhaul due — facility must be booked now</div><div class="pi-due">Due May 2026</div><div class="pi-impact med">Scheduled</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇳🇬</div><div class="pi-reg">5N-MHE</div><div class="pi-country">Nigeria · United Nigeria</div></div><div class="pi-event">APU approaching life limit — high utilisation pattern signals main engine start issue</div><div class="pi-due">Est. 4 months remaining</div><div class="pi-impact high">High Cost</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇰🇪</div><div class="pi-reg">5Y-KQF</div><div class="pi-country">Kenya · Kenya Airways</div></div><div class="pi-event">C-Check window opening — operator must plan slot and funding</div><div class="pi-due">Due Jul 2026</div><div class="pi-impact med">Plan Now</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇲🇦</div><div class="pi-reg">CN-RGV</div><div class="pi-country">Morocco · Royal Air Maroc</div></div><div class="pi-event">AD 2025-22 compliance window closes — confirm operator has actioned</div><div class="pi-due">Deadline Jun 2026</div><div class="pi-impact med">Regulatory</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇿🇼</div><div class="pi-reg">Z-WPF</div><div class="pi-country">Zimbabwe · fastjet</div></div><div class="pi-event">Insurance renewal — coverage gaps identified in operator documentation</div><div class="pi-due">Renewal due May 2026</div><div class="pi-impact med">Financial Risk</div></div>
+    </div>
+
+    <div class="pred-col">
+      <div class="pred-col-hdr"><div class="pch-dot blue"></div><div class="pch-ttl">Aware · 6–12 Months</div><div class="pch-count">4 items</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇳🇬</div><div class="pi-reg">5N-BVE</div><div class="pi-country">Nigeria · Air Peace</div></div><div class="pi-event">C-Check due — plan facility selection and funding structure now</div><div class="pi-due">Est. Aug 2027 · 14 months</div><div class="pi-impact low">Plan ahead</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇸🇳</div><div class="pi-reg">6V-AHG</div><div class="pi-country">Senegal · Air Sénégal</div></div><div class="pi-event">Engine performance trend — EGT margin declining, early watch signal</div><div class="pi-due">Monitor monthly · Q4 2026</div><div class="pi-impact low">Early Watch</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇷🇼</div><div class="pi-reg">9XR-WD</div><div class="pi-country">Rwanda · RwandAir</div></div><div class="pi-event">Aircraft lease expiry — lessor should plan remarketing or extension</div><div class="pi-due">Lease end Jan 2027</div><div class="pi-impact med">Commercial</div></div>
+      <div class="pred-item"><div class="pi-header"><div class="pi-flag">🇪🇬</div><div class="pi-reg">SU-GEA</div><div class="pi-country">Egypt · EgyptAir</div></div><div class="pi-event">Major airframe inspection window — SB compliance bundle due</div><div class="pi-due">Q1 2027</div><div class="pi-impact low">Scheduled</div></div>
+    </div>
+  </div>
+
+  <!-- Value at Risk -->
+  <div class="var-section">
+    <div class="ph" style="padding:0 0 12px;border:none;"><span class="ph-ttl">Portfolio Value at Risk · Continental View</span><span class="ph-sub">Based on current condition and trend analysis</span></div>
+    <div class="var-grid">
+      <div class="var-card">
+        <div class="vc-region">West Africa</div>
+        <div class="vc-val" style="color:var(--amber)">$1.8M</div>
+        <div class="vc-lbl">Estimated value at risk</div>
+        <div class="vc-bar"><div class="vc-fill" style="width:38%;background:var(--amber);"></div></div>
+      </div>
+      <div class="var-card">
+        <div class="vc-region">Southern Africa</div>
+        <div class="vc-val" style="color:var(--red)">$3.2M</div>
+        <div class="vc-lbl">Estimated value at risk</div>
+        <div class="vc-bar"><div class="vc-fill" style="width:62%;background:var(--red);"></div></div>
+      </div>
+      <div class="var-card">
+        <div class="vc-region">East Africa</div>
+        <div class="vc-val" style="color:var(--amber)">$0.9M</div>
+        <div class="vc-lbl">Estimated value at risk</div>
+        <div class="vc-bar"><div class="vc-fill" style="width:22%;background:var(--amber);"></div></div>
+      </div>
+      <div class="var-card">
+        <div class="vc-region">North Africa</div>
+        <div class="vc-val" style="color:var(--green)">$0.2M</div>
+        <div class="vc-lbl">Estimated value at risk</div>
+        <div class="vc-bar"><div class="vc-fill" style="width:6%;background:var(--green);"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// ── DATA ──
+const AIRCRAFT = [
+  // West Africa
+  { reg:'5N-BVE', type:'B737-800',  flag:'🇳🇬', country:'Nigeria',      op:'Air Peace',        client:'Fidelity Bank',  health:64, trend:'watch',  watch:3, region:'west' },
+  { reg:'5N-FGT', type:'ATR 72-600',flag:'🇳🇬', country:'Nigeria',      op:'Overland Airways', client:'Fidelity Bank',  health:41, trend:'eroding',watch:7, region:'west', attention:true },
+  { reg:'5N-MHE', type:'E175',      flag:'🇳🇬', country:'Nigeria',      op:'United Nigeria',   client:'Fidelity Bank',  health:67, trend:'watch',  watch:2, region:'west' },
+  { reg:'9G-AEL', type:'A320-200',  flag:'🇬🇭', country:'Ghana',        op:'Africa World',     client:'Afrexim',        health:73, trend:'stable', watch:1, region:'west' },
+  { reg:'9G-ANO', type:'ATR 72-500',flag:'🇬🇭', country:'Ghana',        op:'Africa World',     client:'Afrexim',        health:81, trend:'stable', watch:0, region:'west' },
+  { reg:'6V-AHG', type:'A319-100',  flag:'🇸🇳', country:'Senegal',      op:'Air Sénégal',      client:'AfDB',           health:77, trend:'stable', watch:1, region:'west' },
+  // East Africa
+  { reg:'5Y-KQF', type:'B787-8',    flag:'🇰🇪', country:'Kenya',        op:'Kenya Airways',    client:'AfDB',           health:79, trend:'stable', watch:1, region:'east' },
+  { reg:'ET-ASK', type:'A350-900',  flag:'🇪🇹', country:'Ethiopia',     op:'Ethiopian Airlines',client:'IFC',           health:82, trend:'stable', watch:0, region:'east' },
+  { reg:'ET-AXJ', type:'B737-800',  flag:'🇪🇹', country:'Ethiopia',     op:'Ethiopian Airlines',client:'IFC',           health:76, trend:'stable', watch:0, region:'east' },
+  { reg:'9XR-WD', type:'CRJ-900',   flag:'🇷🇼', country:'Rwanda',       op:'RwandAir',         client:'AfDB',           health:71, trend:'watch',  watch:1, region:'east' },
+  // Southern Africa
+  { reg:'ZS-GAL', type:'B737-800',  flag:'🇿🇦', country:'South Africa', op:'FlySafair',        client:'Nedbank',        health:58, trend:'watch',  watch:4, region:'south', attention:true },
+  { reg:'9J-AEZ', type:'CRJ-200',   flag:'🇿🇲', country:'Zambia',       op:'Proflight',        client:'Afrexim',        health:49, trend:'eroding',watch:5, region:'south' },
+  { reg:'Z-WPF',  type:'A320-200',  flag:'🇿🇼', country:'Zimbabwe',     op:'fastjet',          client:'AfDB',           health:61, trend:'watch',  watch:2, region:'south' },
+  // North Africa
+  { reg:'SU-GEA', type:'A320-200',  flag:'🇪🇬', country:'Egypt',        op:'EgyptAir',         client:'Commercial Intl',health:85, trend:'stable', watch:0, region:'north' },
+  { reg:'CN-RGV', type:'B737-800',  flag:'🇲🇦', country:'Morocco',      op:'Royal Air Maroc',  client:'BMCE Bank',      health:83, trend:'stable', watch:0, region:'north' },
+];
+
+const TREND_HTML = {
+  stable:  '<span style="color:var(--green);font-size:10px;font-weight:600;">✓ Stable</span>',
+  watch:   '<span style="color:var(--amber);font-size:10px;font-weight:600;">⚠ Watching</span>',
+  eroding: '<span style="color:var(--red);font-size:10px;font-weight:600;">↓ Eroding</span>',
+};
+
+function healthColor(h){ return h>=75?'var(--green)':h>=55?'var(--amber)':'var(--red)'; }
+
+function acRow(ac){
+  const hc = healthColor(ac.health);
+  return `<tr class="${ac.attention?'attention':''}" onclick="">
+    <td><span class="treg">${ac.reg}</span></td>
+    <td>${ac.type}</td>
+    <td><div style="display:flex;align-items:center;gap:5px;"><span style="font-size:13px">${ac.flag}</span><div><div style="font-size:11px;color:var(--white)">${ac.country}</div><div class="cname">${ac.op}</div></div></div></td>
+    <td style="font-size:10px;">${ac.client}</td>
+    <td><div class="hbar"><div class="hb"><div class="hbf" style="width:${ac.health}%;background:${hc};"></div></div><div class="hbn" style="color:${hc}">${ac.health}</div></div></td>
+    <td>${TREND_HTML[ac.trend]}</td>
+    <td><span class="watch-count" style="color:${ac.watch===0?'var(--dimmer)':ac.watch>=5?'var(--red)':'var(--amber)'}">${ac.watch}</span></td>
+  </tr>`;
+}
+
+// Build master table
+document.getElementById('master-table').innerHTML = AIRCRAFT.map(acRow).join('');
+
+// Build alert feed
+const ALERTS = [
+  { sev:'red',   reg:'9J-AEZ · Zambia',   text:'Engine oil filter blocked — 3rd consecutive week. AOG risk if unresolved.', time:'Today · 05:22' },
+  { sev:'red',   reg:'ZS-GAL · South Africa', text:'AOC audit deadline 15 Apr. Compliance gaps identified in W11-W13 scans.', time:'Today · 04:48' },
+  { sev:'amber', reg:'5N-FGT · Nigeria',   text:'Hydraulic MEL deferral expires W15. Operator must action.', time:'Today · 04:10' },
+  { sev:'amber', reg:'5N-BVE · Nigeria',   text:'Engine oil trend: 0.19qt/hr. Borescope recommended W15.', time:'Yesterday' },
+  { sev:'green', reg:'ET-ASK · Ethiopia',  text:'W13 scan complete. All documents received. Health score 82 — strong.', time:'Yesterday' },
+  { sev:'blue',  reg:'9XR-WD · Rwanda',    text:'Lease expiry Jan 2027 flagged. Remarketing window opening.', time:'26 Mar' },
+];
+document.getElementById('alert-feed').innerHTML = ALERTS.map(a=>`
+  <div class="af-item">
+    <div class="af-sev ${a.sev}"></div>
+    <div class="af-body">
+      <div class="af-reg">${a.reg}</div>
+      <div class="af-text">${a.text}</div>
+      <div class="af-time">${a.time}</div>
+    </div>
+  </div>`).join('');
+
+// ── REGION DATA ──
+const REGIONS = {
+  west: {
+    flag:'🌍', name:'West Africa', sub:'Nigeria · Ghana · Senegal · 6 aircraft monitored',
+    kpis:[
+      {lbl:'Aircraft',val:'6',sub:'Active · W13'},
+      {lbl:'Avg Health',val:'67',sub:'Region average',col:'var(--amber)'},
+      {lbl:'Watch Items',val:'14',sub:'Across 6 aircraft'},
+      {lbl:'Value Protected',val:'$142M',sub:'Est. portfolio',col:'var(--accent)'},
+    ],
+    countries:[
+      { flag:'🇳🇬', name:'Nigeria', op:'Air Peace · United Nigeria · Overland',
+        aircraft:[
+          {reg:'5N-BVE',type:'B737-800',h:64},{reg:'5N-FGT',type:'ATR 72-600',h:41},{reg:'5N-MHE',type:'E175',h:67}
+        ], more:'+ 14 aircraft in pipeline' },
+      { flag:'🇬🇭', name:'Ghana', op:'Africa World Airlines',
+        aircraft:[
+          {reg:'9G-AEL',type:'A320-200',h:73},{reg:'9G-ANO',type:'ATR 72-500',h:81}
+        ], more:'+3 aircraft Q2 2026' },
+      { flag:'🇸🇳', name:'Senegal', op:'Air Sénégal',
+        aircraft:[
+          {reg:'6V-AHG',type:'A319-100',h:77}
+        ], more:'+2 aircraft Q3 2026' },
+    ]
+  },
+  east: {
+    flag:'🌍', name:'East Africa', sub:'Kenya · Ethiopia · Rwanda · 4 aircraft monitored',
+    kpis:[
+      {lbl:'Aircraft',val:'4',sub:'Active · W13'},
+      {lbl:'Avg Health',val:'77',sub:'Region average',col:'var(--green)'},
+      {lbl:'Watch Items',val:'2',sub:'Across 4 aircraft'},
+      {lbl:'Value Protected',val:'$98M',sub:'Est. portfolio',col:'var(--accent)'},
+    ],
+    countries:[
+      { flag:'🇰🇪', name:'Kenya', op:'Kenya Airways',
+        aircraft:[{reg:'5Y-KQF',type:'B787-8',h:79}], more:'+4 aircraft pipeline' },
+      { flag:'🇪🇹', name:'Ethiopia', op:'Ethiopian Airlines',
+        aircraft:[{reg:'ET-ASK',type:'A350-900',h:82},{reg:'ET-AXJ',type:'B737-800',h:76}], more:'+6 aircraft pipeline' },
+      { flag:'🇷🇼', name:'Rwanda', op:'RwandAir',
+        aircraft:[{reg:'9XR-WD',type:'CRJ-900',h:71}], more:'+2 aircraft Q3 2026' },
+    ]
+  },
+  south: {
+    flag:'🌍', name:'Southern Africa', sub:'South Africa · Zambia · Zimbabwe · 3 aircraft monitored',
+    kpis:[
+      {lbl:'Aircraft',val:'3',sub:'Active · W13'},
+      {lbl:'Avg Health',val:'56',sub:'Lowest region',col:'var(--red)'},
+      {lbl:'Watch Items',val:'11',sub:'⚠ Highest continent'},
+      {lbl:'Value Protected',val:'$54M',sub:'Est. portfolio',col:'var(--accent)'},
+    ],
+    countries:[
+      { flag:'🇿🇦', name:'South Africa', op:'FlySafair',
+        aircraft:[{reg:'ZS-GAL',type:'B737-800',h:58}], more:'+5 aircraft pipeline' },
+      { flag:'🇿🇲', name:'Zambia', op:'Proflight Zambia',
+        aircraft:[{reg:'9J-AEZ',type:'CRJ-200',h:49}], more:'+1 aircraft Q2 2026' },
+      { flag:'🇿🇼', name:'Zimbabwe', op:'fastjet Zimbabwe',
+        aircraft:[{reg:'Z-WPF',type:'A320-200',h:61}], more:'+2 aircraft Q3 2026' },
+    ]
+  },
+  north: {
+    flag:'🌍', name:'North Africa', sub:'Egypt · Morocco · Tunisia · 2 aircraft — scaling',
+    kpis:[
+      {lbl:'Aircraft',val:'2',sub:'Active · W13'},
+      {lbl:'Avg Health',val:'84',sub:'Strongest region',col:'var(--green)'},
+      {lbl:'Watch Items',val:'0',sub:'All clear'},
+      {lbl:'Value Protected',val:'$38M',sub:'Est. portfolio',col:'var(--accent)'},
+    ],
+    countries:[
+      { flag:'🇪🇬', name:'Egypt', op:'EgyptAir',
+        aircraft:[{reg:'SU-GEA',type:'A320-200',h:85}], more:'+8 aircraft pipeline' },
+      { flag:'🇲🇦', name:'Morocco', op:'Royal Air Maroc',
+        aircraft:[{reg:'CN-RGV',type:'B737-800',h:83}], more:'+5 aircraft pipeline' },
+      { flag:'🇹🇳', name:'Tunisia', op:'Tunisair',
+        aircraft:[], more:'Onboarding Q2 2026 · 3 aircraft' },
+    ]
+  }
+};
+
+const REGION_LABELS = {
+  west: 'West Africa',
+  east: 'East Africa',
+  south: 'Southern Africa',
+  north: 'North Africa'
+};
+
+function toggleMobileNav(){
+  const tabs = document.querySelector('.tb-tabs');
+  if(!tabs) return;
+  tabs.classList.toggle('mobile-open');
+}
+
+function closeMobileNav(){
+  const tabs = document.querySelector('.tb-tabs');
+  if(!tabs) return;
+  tabs.classList.remove('mobile-open');
+}
+
+function setRegionSelectLabel(id){
+  const sel = document.getElementById('regionSelect');
+  if(!sel) return;
+  const label = document.getElementById('regionSelectLabel');
+  if(label) label.textContent = (id && REGION_LABELS[id]) ? `Region: ${REGION_LABELS[id]}` : 'Region';
+  // Keep placeholder selected so styling stays identical to default state.
+  sel.value = '';
+}
+
+function handleRegionSelect(sel){
+  const id = sel.value;
+  if(!id) return;
+  showRegion(id, null);
+  closeMobileNav();
+}
+
+function showRegion(id, tabEl){
+  const r = REGIONS[id];
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-region').classList.add('active');
+  window.scrollTo(0,0);
+
+  document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('active'));
+  if(tabEl && tabEl.tagName === 'BUTTON') tabEl.classList.add('active');
+  setRegionSelectLabel(id);
+  closeMobileNav();
+
+  document.getElementById('r-flag').textContent = r.flag;
+  document.getElementById('r-name').textContent = r.name;
+  document.getElementById('r-sub').textContent = r.sub;
+
+  document.getElementById('r-kpis').innerHTML = r.kpis.map(k=>`
+    <div class="rkpi">
+      <div class="rkpi-lbl">${k.lbl}</div>
+      <div class="rkpi-val" style="color:${k.col||'var(--white)'}">${k.val}</div>
+      <div class="rkpi-sub">${k.sub}</div>
+    </div>`).join('');
+
+  document.getElementById('r-countries').innerHTML = r.countries.map(c=>`
+    <div class="country-card">
+      <div class="cc-flag">${c.flag}</div>
+      <div class="cc-name">${c.name}</div>
+      <div class="cc-operator">${c.op}</div>
+      <div class="cc-aircraft">
+        ${c.aircraft.map(a=>{
+          const hc=healthColor(a.h);
+          return `<div class="cca">
+            <div class="cca-reg">${a.reg}</div>
+            <div class="cca-type">${a.type}</div>
+            <div class="cca-h" style="color:${hc}">${a.h}</div>
+          </div>`;
+        }).join('')}
+        ${c.aircraft.length===0?`<div class="cca"><div class="cca-type" style="font-style:italic">No active aircraft yet</div></div>`:''}
+      </div>
+      <div class="cc-more">${c.more}</div>
+    </div>`).join('');
+
+  const rac = AIRCRAFT.filter(a=>a.region===id);
+  document.getElementById('r-table').innerHTML = rac.map(acRow).join('');
+}
+
+// ── GLOBAL NAV ──
+function show(id, tabEl){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(tabEl){
+    document.querySelectorAll('.ttab').forEach(t=>t.classList.remove('active'));
+    tabEl.classList.add('active');
+  }
+  setRegionSelectLabel('');
+  closeMobileNav();
+}
+
+// ── CLOCK ──
+function tick(){
+  const el=document.getElementById('ttime');
+  if(el){const n=new Date();el.textContent=n.toLocaleDateString('en-GB',{day:'2-digit',month:'short'}).toUpperCase()+' · '+n.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+}
+tick(); setInterval(tick,30000);
+</script>
+
+<script>
+const ACCESS_PASSWORD = 'bacintel';
+
+function setAccessState(isAllowed){
+  const gate = document.getElementById('accessGate');
+  const app = document.getElementById('appShell');
+  if(!gate || !app) return;
+  gate.style.display = isAllowed ? 'none' : 'flex';
+  app.style.display = isAllowed ? 'block' : 'none';
+}
+
+function unlockWithPassword(input){
+  const value = (input || '').trim();
+  const ok = value === ACCESS_PASSWORD;
+  if(ok){
+    sessionStorage.setItem('fleetwatch_access', 'granted');
+    setAccessState(true);
+  }
+  return ok;
+}
+
+const gateForm = document.getElementById('gateForm');
+const gateInput = document.getElementById('gatePassword');
+const gateError = document.getElementById('gateError');
+
+gateForm.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const valid = unlockWithPassword(gateInput.value);
+  if(!valid){
+    gateError.textContent = 'Incorrect password. Try again.';
+    gateInput.focus();
+    gateInput.select();
+  }
+});
+
+if(sessionStorage.getItem('fleetwatch_access') === 'granted'){
+  setAccessState(true);
+} else {
+  setAccessState(false);
+  gateInput.focus();
+}
+</script>
+
+</div>
+</body>
+</html>

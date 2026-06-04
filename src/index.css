@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* BAC Intelligence Color System */
+    --bac-aviation-blue: 203 94% 24%;
+    --bac-white: 0 0% 100%;
+    --bac-light-grey: 210 20% 97%;
+    --bac-near-black: 220 12% 6%;
+    --bac-text-primary: 215 24% 7%;
+    --bac-text-secondary: 215 8% 26%;
+    --bac-text-tertiary: 215 8% 44%;
+    --bac-grid-subtle: 210 30% 92%;
+    --bac-focus-ring: 203 100% 70%;
+    
+    /* Semantic mappings */
+    --background: var(--bac-white);
+    --foreground: var(--bac-text-primary);
+    --card: var(--bac-white);
+    --card-foreground: var(--bac-text-primary);
+    --popover: var(--bac-white);
+    --popover-foreground: var(--bac-text-primary);
+    --primary: var(--bac-aviation-blue);
+    --primary-foreground: var(--bac-white);
+    --secondary: var(--bac-light-grey);
+    --secondary-foreground: var(--bac-text-primary);
+    --muted: var(--bac-light-grey);
+    --muted-foreground: var(--bac-text-secondary);
+    --accent: var(--bac-light-grey);
+    --accent-foreground: var(--bac-text-primary);
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: var(--bac-white);
+    --border: var(--bac-grid-subtle);
+    --input: var(--bac-grid-subtle);
+    --ring: var(--bac-focus-ring);
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
+
+@keyframes subtle-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
