@@ -57,12 +57,56 @@ Edit the constants at the top of `scripts/patch-africa-page.py`.
 
 ---
 
+## AIR — Andara Intelligence Report
+
+The `/intelligence/<issue-id>` pages (e.g. `/intelligence/air-001-apr26`) are quarterly editorial issues published per PRD §3.2.5 / §3.4.6. They share a single design system file so future issues stay consistent.
+
+### File layout
+
+| Path | Purpose |
+|------|---------|
+| `public/intelligence/index.html` | Issue archive landing page |
+| `public/intelligence/air.css` | **Shared design system** — type, color, layout, all primitives |
+| `public/intelligence/<issue-id>/index.html` | Per-issue HTML, links to `/intelligence/air.css` |
+
+### Design system rules (must follow when authoring a new issue)
+
+- **Three type families**: Source Serif 4 (editorial body + headlines), Inter Tight (UI chrome / labels), JetBrains Mono (data values). No additional font families without updating `air.css`.
+- **Two grounds**: dark chrome (`--chrome`, navy `#0A1224`) for cover, editor's note, data panels, about, footer. Light editorial paper (`--paper`, cream `#F7F4EE`) for prose sections. Use the `.alt` class on `.air-section` for alternating tint.
+- **Type floor**: body 17px, UI labels 13px, mono 14px. Never go below 11px (mono-only, for IDs).
+- **AAV labels are mandatory** anywhere Andara is offering analysis vs. reporting fact (PRD §3.4.6). Use `.aav-block` for full blocks or `.aav` inline.
+- **Section spine markers** (`.spine.signal` / `.spine.fin` / `.spine.action`) tag every editorial block by PRD content type — Signal / Financial Translation / Capital Action.
+- **Regional tags** on every section (Nigeria / West Africa / Africa / etc.) — PRD §4.2.4.
+
+### To author a new issue
+
+1. Create `public/intelligence/air-<NNN>-<mon><yy>/index.html` (e.g. `air-002-jul26`)
+2. Copy the structure of `air-001-apr26/index.html` as a template
+3. Link to the shared CSS: `<link rel="stylesheet" href="/intelligence/air.css">`
+4. Update the cover (issue number, headline, deck, TOC), each section's content, and the footer prev/next links
+5. Restart `npm run dev` so the Vite middleware picks up the new folder
+6. Update `vercel.json` only if you add a brand-new top-level static folder (issues under `/intelligence/` don't need new rewrites)
+
+### Phased roadmap (post Phase 0+1)
+
+Phases 2–6 (issue archive redesign, auth + tokenised watermark, seat management, editorial workspace, delivery system) are planned but not started. See conversation history or PRD §3.2.5 / §3.4.6 for scope.
+
+---
+
+## Reference Documents
+
+- `Andara_Master_Build_PRD_v1_5.md` — Master Build PRD covering Client Portal, Super Admin Console, and Andara Internal Workspace across three milestones. **INTERNAL — RESTRICTED.** All product work should reference the relevant PRD section.
+
+---
+
 ## Routing
 
-Static page routes are defined in two places — both must be updated when adding/renaming a page:
+Static page routes are defined in two places — both must be kept in sync when adding a brand-new top-level static folder:
 
 - `vercel.json` — production rewrites
-- `vite.config.ts` — local dev server middleware (mirrors vercel.json)
+- `vite.config.ts` — local dev server middleware
+
+The dev middleware **auto-discovers** any folder under `public/` that contains an `index.html` and rewrites `/folder` to `/folder/index.html` (matching Vercel's behaviour). So most additions — including nested issues like `/intelligence/air-002` — only need a dev-server restart; no config edit. Edit `vercel.json` only when adding a top-level folder that Vercel won't auto-resolve.
 
 ---
 
@@ -73,6 +117,9 @@ Static page routes are defined in two places — both must be updated when addin
 | `public/credit-intelligence/africa/index.html` | Africa terminal page (patched output) |
 | `scripts/patch-africa-page.py` | Patch automation script |
 | `andara_export/` | Raw HTML exports from design tool (not served) |
+| `public/intelligence/air.css` | Shared AIR design system |
+| `public/intelligence/air-001-apr26/index.html` | AIR Issue 001 |
+| `Andara_Master_Build_PRD_v1_5.md` | Master Build PRD (Internal — Restricted) |
 | `vercel.json` | Production URL rewrites |
-| `vite.config.ts` | Dev server config + static page middleware |
+| `vite.config.ts` | Dev server config + auto-discovered static page middleware |
 | `public/Andara Systems logo - dark mode.png` | Logo file used by the terminal page |
