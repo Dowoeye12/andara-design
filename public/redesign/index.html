@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Andara Systems — Making Aviation Markets Legible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#08090B;
+  --bg-2:#0D0F12;
+  --panel:#101317;
+  --panel-2:#15191E;
+  --border:#23282F;
+  --border-bright:#2E353E;
+  --amber:#FF9A1F;
+  --amber-dim:#C9791A;
+  --text:#E9EAEC;
+  --text-2:#9AA1AB;
+  --text-3:#636A74;
+  --up:#3DD68C;
+  --down:#FF5C5C;
+  --cyan:#46B8E8;
+  --maxw:1320px;
+  --gutter:40px;
+  --fd:"Schibsted Grotesk",system-ui,sans-serif;
+  --fb:"Hanken Grotesk",system-ui,sans-serif;
+  --fm:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--fb);background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter)}
+h1,h2,h3{font-family:var(--fd);font-weight:600;line-height:1.05;letter-spacing:-.02em}
+.mono{font-family:var(--fm);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.up{color:var(--up)}.down{color:var(--down)}
+.eyebrow{font-family:var(--fm);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:"";width:18px;height:1px;background:var(--amber);display:inline-block}
+
+/* ===== TOP STATUS BAR ===== */
+.statusbar{
+  background:#000;border-bottom:1px solid var(--border);
+  font-family:var(--fm);font-size:11px;letter-spacing:.1em;color:var(--text-3);
+  position:fixed;top:0;left:0;right:0;z-index:120;height:30px;
+}
+.statusbar .inner{max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);height:30px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.statusbar .grp{display:flex;align-items:center;gap:22px;white-space:nowrap}
+.statusbar .live{display:flex;align-items:center;gap:8px;color:var(--up)}
+.statusbar .live .dot{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 8px var(--up);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.statusbar .amber-t{color:var(--amber)}
+.statusbar .seg{color:var(--text-2)}
+
+/* ===== NAV ===== */
+header.nav{position:fixed;top:30px;left:0;right:0;z-index:110;transition:background .35s,border-color .35s;border-bottom:1px solid transparent}
+header.nav.scrolled{background:rgba(8,9,11,.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:var(--maxw);margin:0 auto;padding:18px var(--gutter);display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .glyph{width:26px;height:26px;flex:none}
+.brand .name{font-family:var(--fd);font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1}
+.brand .name .sub{font-family:var(--fm);font-weight:400;font-size:9.5px;letter-spacing:.2em;color:var(--text-3);display:block;margin-top:3px}
+.nav-links{display:flex;align-items:center;gap:8px}
+.nav-links a{font-family:var(--fm);font-size:12px;letter-spacing:.06em;color:var(--text-2);padding:8px 13px;border:1px solid transparent;transition:.2s;text-transform:uppercase}
+.nav-links a:hover{color:var(--amber);border-color:var(--border-bright);background:var(--panel)}
+.nav-cta{font-family:var(--fm);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#000;background:var(--amber);padding:11px 18px;display:inline-flex;align-items:center;gap:9px;transition:.2s;font-weight:600}
+.nav-cta:hover{background:#fff}
+.nav-cta::after{content:"<GO>";font-size:10px;opacity:.6}
+.burger{display:none}
+
+/* ===== TICKER ===== */
+.ticker{position:fixed;top:30px;left:0;right:0;z-index:90;display:none}
+.ticker-strip{background:#000;border-bottom:1px solid var(--border);overflow:hidden;height:34px;display:flex;align-items:center}
+.ticker-track{display:flex;gap:0;white-space:nowrap;animation:scrollx 60s linear infinite;will-change:transform}
+.ticker-item{font-family:var(--fm);font-size:12px;letter-spacing:.04em;padding:0 22px;display:inline-flex;align-items:center;gap:10px;color:var(--text-2);border-right:1px solid var(--border)}
+.ticker-item b{color:var(--text);font-weight:500}
+@keyframes scrollx{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ===== HERO ===== */
+.hero{position:relative;background:var(--bg);padding-top:170px;padding-bottom:90px;overflow:hidden;border-bottom:1px solid var(--border)}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 70% at 30% 20%,#000 20%,transparent 80%)}
+.hero-glow{position:absolute;top:-15%;left:-5%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(255,154,31,.10),transparent 60%);pointer-events:none}
+.hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
+.hero-cmd{font-family:var(--fm);font-size:12.5px;color:var(--amber);letter-spacing:.06em;margin-bottom:26px;display:flex;align-items:center;gap:10px}
+.hero-cmd .br{color:var(--text-3)}
+.hero h1{font-size:clamp(40px,5.4vw,78px);font-weight:600;letter-spacing:-.03em;line-height:1.02}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero-lede{margin-top:26px;max-width:46ch;font-size:clamp(16px,1.3vw,19px);color:var(--text-2);line-height:1.6}
+.hero-actions{display:flex;align-items:center;gap:16px;margin-top:38px;flex-wrap:wrap}
+.btn-primary{font-family:var(--fm);font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:600;background:var(--amber);color:#000;padding:15px 24px;display:inline-flex;align-items:center;gap:11px;transition:.2s}
+.btn-primary:hover{background:#fff}
+.btn-primary svg{width:14px;height:14px;transition:transform .25s}
+.btn-primary:hover svg{transform:translateX(4px)}
+.btn-ghost{font-family:var(--fm);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text);padding:15px 8px;border-bottom:1px solid var(--border-bright);transition:.2s}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+
+/* ===== TERMINAL PANEL ===== */
+.panel{background:var(--panel);border:1px solid var(--border);position:relative}
+.panel-head{display:flex;align-items:center;justify-content:space-between;background:var(--panel-2);border-bottom:1px solid var(--border);padding:11px 16px}
+.panel-head .t{font-family:var(--fm);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:9px}
+.panel-head .t::before{content:"";width:6px;height:6px;background:var(--amber);display:inline-block}
+.panel-head .r{font-family:var(--fm);font-size:10.5px;letter-spacing:.1em;color:var(--text-3)}
+.monitor-row{display:grid;grid-template-columns:1.4fr 1fr .9fr;gap:12px;padding:13px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-family:var(--fm);font-size:13px;align-items:center;transition:background .2s}
+.monitor-row:hover{background:var(--panel-2)}
+.monitor-row .sym{color:var(--text);font-weight:500;letter-spacing:.02em}
+.monitor-row .sym small{display:block;color:var(--text-3);font-size:10px;letter-spacing:.1em;margin-top:2px}
+.monitor-row .val{text-align:right;color:var(--text)}
+.monitor-row .chg{text-align:right;font-weight:500}
+.monitor-foot{padding:12px 16px;font-family:var(--fm);font-size:12px;color:var(--text-2);display:flex;align-items:center;gap:8px}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--amber);animation:caret 1.1s steps(1) infinite;vertical-align:middle}
+@keyframes caret{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ===== METRICS ===== */
+.metrics{border-bottom:1px solid var(--border);background:var(--bg-2)}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+.metric{padding:42px var(--gutter);border-right:1px solid var(--border);position:relative}
+.metrics-grid .metric:last-child{border-right:none}
+.metric .lbl{font-family:var(--fm);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);margin-bottom:16px}
+.metric .num{font-family:var(--fd);font-weight:600;font-size:clamp(34px,3.5vw,50px);letter-spacing:-.03em;line-height:1}
+.metric .num span{color:var(--amber)}
+.metric .mcap{margin-top:12px;color:var(--text-2);font-size:13.5px;max-width:24ch}
+
+/* ===== SECTION ===== */
+section.block{padding:110px 0}
+.sec-head{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:56px}
+.sec-head h2{font-size:clamp(30px,3.4vw,48px)}
+.sec-head .desc{color:var(--text-2);font-size:16px;max-width:44ch;justify-self:end}
+
+/* capabilities */
+.cap-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.cap{background:var(--panel);border:1px solid var(--border);transition:border-color .25s,transform .25s;display:flex;flex-direction:column}
+.cap:hover{border-color:var(--border-bright);transform:translateY(-3px)}
+.cap .ph{display:flex;align-items:center;justify-content:space-between;background:var(--panel-2);border-bottom:1px solid var(--border);padding:11px 18px}
+.cap .ph .code{font-family:var(--fm);font-size:11.5px;letter-spacing:.1em;color:var(--amber)}
+.cap .ph .idx{font-family:var(--fm);font-size:10.5px;letter-spacing:.12em;color:var(--text-3)}
+.cap .body{padding:30px 22px 28px;display:flex;flex-direction:column;gap:16px;flex:1}
+.cap .ico{width:30px;height:30px;color:var(--amber)}
+.cap h3{font-size:22px;font-weight:600}
+.cap p{color:var(--text-2);font-size:14.5px;line-height:1.6}
+.cap .go{font-family:var(--fm);font-size:11px;letter-spacing:.1em;color:var(--text-3);text-transform:uppercase;margin-top:auto;display:flex;align-items:center;gap:8px;transition:color .25s}
+.cap:hover .go{color:var(--amber)}
+
+/* approach */
+.approach{background:var(--bg-2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.approach-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;position:relative;z-index:2}
+.approach h2{font-size:clamp(30px,3.6vw,50px);max-width:13ch}
+.approach .lede{color:var(--text-2);font-size:17px;margin-top:22px;max-width:46ch;line-height:1.65}
+.pillars{display:flex;flex-direction:column;border:1px solid var(--border);background:var(--panel)}
+.pillar{padding:26px 24px;border-bottom:1px solid var(--border);display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;transition:background .2s}
+.pillar:last-child{border-bottom:none}
+.pillar:hover{background:var(--panel-2)}
+.pillar .n{font-family:var(--fm);font-size:12px;color:var(--amber);letter-spacing:.1em;padding-top:4px}
+.pillar h3{font-size:19px;font-weight:600;margin-bottom:7px}
+.pillar p{color:var(--text-2);font-size:14px;line-height:1.6}
+
+/* sectors */
+.sectors-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.sector{border:1px solid var(--border);background:var(--panel);position:relative;overflow:hidden;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;transition:border-color .3s,transform .3s}
+.sector:hover{border-color:var(--border-bright);transform:translateY(-3px)}
+.sector .slot-wrap{position:absolute;inset:0;z-index:0}
+.sector image-slot{width:100%;height:100%}
+.sector .veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,9,11,.96) 6%,rgba(8,9,11,.45) 48%,rgba(8,9,11,.1) 100%);z-index:1}
+.sector .s-body{position:relative;z-index:2;padding:28px}
+.sector .s-body h3{font-size:21px;font-weight:600}
+.sector .s-body p{color:var(--text-2);font-size:14px;margin-top:8px;max-width:32ch}
+.sector .s-tag{position:absolute;top:18px;left:28px;z-index:2;color:var(--amber);font-family:var(--fm);font-size:10.5px;letter-spacing:.14em}
+.col-7{grid-column:span 7}.col-5{grid-column:span 5}
+
+/* intelligence */
+.intel{border-top:1px solid var(--border);background:var(--bg)}
+.intel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.intel-card{background:var(--panel);border:1px solid var(--border);transition:border-color .25s}
+.intel-card:hover{border-color:var(--border-bright)}
+.intel-card .ph{display:flex;justify-content:space-between;align-items:center;background:var(--panel-2);border-bottom:1px solid var(--border);padding:10px 16px;font-family:var(--fm);font-size:10.5px;letter-spacing:.12em;color:var(--text-3)}
+.intel-card .ph .l{color:var(--amber)}
+.intel-card .body{padding:22px 18px 20px}
+.intel-card .stat{font-family:var(--fd);font-weight:600;font-size:42px;letter-spacing:-.02em;line-height:1}
+.intel-card .stat .u{font-size:22px}
+.spark{height:48px;width:100%;margin:16px 0}
+.intel-card p{color:var(--text-2);font-size:13.5px;line-height:1.55}
+
+/* CTA */
+.cta{border-top:1px solid var(--border);background:var(--bg-2);position:relative;overflow:hidden;text-align:center}
+.cta .hero-glow{top:auto;bottom:-30%;left:50%;transform:translateX(-50%);width:60vw;height:40vw}
+.cta-inner{position:relative;z-index:2;padding:120px 0;display:flex;flex-direction:column;align-items:center}
+.cta h2{font-size:clamp(32px,4.2vw,60px);max-width:16ch}
+.cta p{color:var(--text-2);font-size:17px;margin-top:20px;max-width:48ch;line-height:1.6}
+
+/* footer */
+footer{background:#000;border-top:1px solid var(--border);padding:64px 0 30px}
+.foot-top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding-bottom:46px;border-bottom:1px solid var(--border)}
+.foot-brand .brand{margin-bottom:18px}
+.foot-brand p{color:var(--text-3);font-size:13.5px;max-width:34ch;line-height:1.6}
+.foot-col h4{font-family:var(--fm);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);margin-bottom:16px;font-weight:500}
+.foot-col a{display:block;color:var(--text-2);font-size:14px;padding:6px 0;transition:color .2s}
+.foot-col a:hover{color:var(--amber)}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;color:var(--text-3)}
+
+/* arRise */
+.arRise{transform:translateY(20px);transition:transform .7s cubic-bezier(.2,.6,.2,1)}
+.arRise.in{transform:none}
+@media(prefers-reduced-motion:reduce){.arRise{transform:none}}
+
+@media(max-width:1024px){
+  :root{--gutter:24px}
+  .hero-grid{grid-template-columns:1fr;gap:44px}
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .metric:nth-child(2){border-right:none}
+  .metric{border-bottom:1px solid var(--border)}
+  .approach-grid{grid-template-columns:1fr;gap:44px}
+  .sectors-grid>*{grid-column:span 12!important}
+  .intel-grid{grid-template-columns:1fr}
+}
+@media(max-width:760px){
+  .nav-links,.nav-cta{display:none}
+  .burger{display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:6px}
+  .burger span{width:22px;height:2px;background:var(--amber);display:block}
+  .cap-grid{grid-template-columns:1fr}
+  .sec-head{grid-template-columns:1fr;gap:16px}
+  .sec-head .desc{justify-self:start}
+  .metrics-grid{grid-template-columns:1fr}
+  .metric{border-right:none!important}
+  .statusbar .grp.hideable{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== STATUS BAR ===== -->
+<div class="statusbar">
+  <div class="inner">
+    <div class="grp">
+      <span class="live"><span class="dot"></span>MARKETS OPEN</span>
+      <span class="seg">ANDARA MKT INDEX <span class="up">2,418.6 ▲0.74%</span></span>
+    </div>
+    <div class="grp hideable">
+      <span class="amber-t">AVIATION INTELLIGENCE TERMINAL</span>
+      <span id="clock">--:--:-- UTC</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NAV ===== -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">
+      <svg class="glyph" viewBox="0 0 32 32" fill="none"><path d="M16 2 L29 28 L16 22 L3 28 Z" fill="#FF9A1F"/><path d="M16 2 L16 22 L3 28 Z" fill="#FFB85C"/></svg>
+      <span class="name">ANDARA<span class="sub">AVIATION INTELLIGENCE</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#capabilities">Capabilities</a>
+      <a href="#approach">Approach</a>
+      <a href="#sectors">Clients</a>
+      <a href="#intelligence">Intelligence</a>
+    </nav>
+    <a href="#contact" class="nav-cta">Briefing</a>
+    <div class="burger"><span></span><span></span><span></span></div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-cmd"><span class="br">ANDARA&gt;</span> LEGIBILITY &lt;GO&gt;</div>
+      <h1>Making aviation markets <em>legible.</em></h1>
+      <p class="hero-lede">Independent intelligence and advisory for the most complex aircraft decisions — valuation, transactions, and portfolio strategy. Real data, real conviction, no inventory to sell.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Request a briefing
+          <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+        <a href="#capabilities" class="btn-ghost">View capabilities</a>
+      </div>
+    </div>
+
+    <!-- LIVE MARKET MONITOR -->
+    <div class="panel" id="monitor">
+      <div class="panel-head">
+        <div class="t">Andara Market Monitor</div>
+        <div class="r">CMV · USD M · LIVE</div>
+      </div>
+      <div id="monitor-rows">
+        <div class="monitor-row"><div class="sym">A320neo<small>NARROWBODY · 2021</small></div><div class="val" data-base="48.2">48.2</div><div class="chg up">▲ 0.9%</div></div>
+        <div class="monitor-row"><div class="sym">B737-8 MAX<small>NARROWBODY · 2022</small></div><div class="val" data-base="52.6">52.6</div><div class="chg up">▲ 1.3%</div></div>
+        <div class="monitor-row"><div class="sym">A350-900<small>WIDEBODY · 2020</small></div><div class="val" data-base="142.8">142.8</div><div class="chg up">▲ 0.4%</div></div>
+        <div class="monitor-row"><div class="sym">B787-9<small>WIDEBODY · 2019</small></div><div class="val" data-base="131.5">131.5</div><div class="chg down">▼ 0.3%</div></div>
+        <div class="monitor-row"><div class="sym">A321neo LR<small>NARROWBODY · 2023</small></div><div class="val" data-base="61.4">61.4</div><div class="chg up">▲ 1.1%</div></div>
+        <div class="monitor-row"><div class="sym">LEAP-1A USM<small>ENGINE · GREEN-TIME</small></div><div class="val" data-base="9.8">9.8</div><div class="chg up">▲ 2.4%</div></div>
+      </div>
+      <div class="monitor-foot"><span class="br" style="color:var(--text-3)">ANDARA&gt;</span> <span class="cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TICKER ===== -->
+<div class="ticker" id="ticker">
+  <div class="ticker-strip"><div class="ticker-track" id="ticker-track"></div></div>
+</div>
+
+<!-- ===== METRICS ===== -->
+<section class="metrics">
+  <div class="metrics-grid">
+    <div class="metric arRise"><div class="lbl">// Assets assessed</div><div class="num">$24<span>B</span></div><div class="mcap">Value advised across global mandates</div></div>
+    <div class="metric arRise"><div class="lbl">// Coverage</div><div class="num">47</div><div class="mcap">Countries with active engagements</div></div>
+    <div class="metric arRise"><div class="lbl">// Models</div><div class="num">100<span>+</span></div><div class="mcap">Aircraft &amp; engine types modelled in-house</div></div>
+    <div class="metric arRise"><div class="lbl">// Conflicts</div><div class="num">0</div><div class="mcap">Fully independent — no inventory, no bias</div></div>
+  </div>
+</section>
+
+<!-- ===== CAPABILITIES ===== -->
+<section class="block wrap" id="capabilities">
+  <div class="sec-head arRise">
+    <div>
+      <div class="eyebrow" style="margin-bottom:20px">Functions</div>
+      <h2>Intelligence for every decision<br/>in the fleet lifecycle.</h2>
+    </div>
+    <p class="desc">From a single appraisal to a portfolio-wide strategy — proprietary data and deep market judgement, delivered with terminal precision.</p>
+  </div>
+
+  <div class="cap-grid">
+    <div class="cap arRise">
+      <div class="ph"><span class="code">VALU &lt;GO&gt;</span><span class="idx">FN 01</span></div>
+      <div class="body">
+        <svg class="ico" viewBox="0 0 32 32" fill="none"><path d="M4 28h24M8 28V14M16 28V8M24 28V18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="6" r="2" fill="currentColor"/></svg>
+        <h3>Valuation &amp; Appraisal</h3>
+        <p>ISTAT-grade current and future-base values, lease-encumbered assessments, and maintenance-adjusted positions defensible to lenders and auditors.</p>
+        <span class="go">Run function →</span>
+      </div>
+    </div>
+    <div class="cap arRise">
+      <div class="ph"><span class="code">TRAN &lt;GO&gt;</span><span class="idx">FN 02</span></div>
+      <div class="body">
+        <svg class="ico" viewBox="0 0 32 32" fill="none"><path d="M6 11h16l-4-4M26 21H10l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Acquisition &amp; Disposition</h3>
+        <p>End-to-end advisory on sale-leasebacks, fleet exits, and acquisitions — sourcing, structuring, and negotiation grounded in live market evidence.</p>
+        <span class="go">Run function →</span>
+      </div>
+    </div>
+    <div class="cap arRise">
+      <div class="ph"><span class="code">MKTI &lt;GO&gt;</span><span class="idx">FN 03</span></div>
+      <div class="body">
+        <svg class="ico" viewBox="0 0 32 32" fill="none"><path d="M4 20c4 0 5-10 9-10s5 6 9 6 5-8 6-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 26h24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <h3>Market Intelligence</h3>
+        <p>Demand, residual-value, and liquidity forecasting by type and vintage — the same models that drive our own conviction, delivered to your desk.</p>
+        <span class="go">Run function →</span>
+      </div>
+    </div>
+    <div class="cap arRise">
+      <div class="ph"><span class="code">PORT &lt;GO&gt;</span><span class="idx">FN 04</span></div>
+      <div class="body">
+        <svg class="ico" viewBox="0 0 32 32" fill="none"><rect x="5" y="5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="18" y="5" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="5" y="18" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/><rect x="18" y="18" width="9" height="9" rx="1" stroke="currentColor" stroke-width="1.8"/></svg>
+        <h3>Portfolio &amp; Risk</h3>
+        <p>Concentration, residual, and lessee-credit risk mapped across the book — with stress scenarios that turn exposure into an actionable plan.</p>
+        <span class="go">Run function →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== APPROACH ===== -->
+<section class="approach block" id="approach">
+  <div class="hero-grid-bg"></div>
+  <div class="wrap approach-grid">
+    <div class="arRise">
+      <div class="eyebrow" style="margin-bottom:22px">Our approach</div>
+      <h2>Conviction, earned through independence.</h2>
+      <p class="lede">We hold no aircraft, broker no inventory, and answer to no balance sheet but our clients'. That independence is the entire product — clear-eyed counsel with nothing to sell but the truth.</p>
+    </div>
+    <div class="pillars arRise">
+      <div class="pillar"><div class="n">01</div><div><h3>Independent by design</h3><p>No proprietary positions, no hidden incentives. Our only stake is the quality of the recommendation.</p></div></div>
+      <div class="pillar"><div class="n">02</div><div><h3>Evidence over opinion</h3><p>Every view traces back to transaction data, technical records, and models we build and defend ourselves.</p></div></div>
+      <div class="pillar"><div class="n">03</div><div><h3>Global, on the ground</h3><p>Engagements across 47 markets give us the comparables and relationships desk research can't.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTORS ===== -->
+<section class="block wrap" id="sectors">
+  <div class="sec-head arRise">
+    <div>
+      <div class="eyebrow" style="margin-bottom:20px">Who we serve</div>
+      <h2>Trusted across<br/>the capital stack.</h2>
+    </div>
+    <p class="desc">Lessors, financiers, airlines, and investors rely on Andara when the decision is consequential and the answer has to be right.</p>
+  </div>
+  <div class="sectors-grid">
+    <div class="sector col-7 arRise">
+      <div class="slot-wrap"><image-slot id="sec-lessors" placeholder="Drop aircraft / lessor photo" fit="cover"></image-slot></div>
+      <div class="veil"></div><div class="s-tag">SEGMENT 01</div>
+      <div class="s-body"><h3>Lessors &amp; Lease Platforms</h3><p>Residual strategy, fleet optimisation, and portfolio valuations that satisfy investors and rating agencies alike.</p></div>
+    </div>
+    <div class="sector col-5 arRise">
+      <div class="slot-wrap"><image-slot id="sec-banks" placeholder="Drop finance / skyline photo" fit="cover"></image-slot></div>
+      <div class="veil"></div><div class="s-tag">SEGMENT 02</div>
+      <div class="s-body"><h3>Banks &amp; Financiers</h3><p>Collateral assessment and risk diligence for secured lending and structured aviation debt.</p></div>
+    </div>
+    <div class="sector col-5 arRise">
+      <div class="slot-wrap"><image-slot id="sec-airlines" placeholder="Drop airline photo" fit="cover"></image-slot></div>
+      <div class="veil"></div><div class="s-tag">SEGMENT 03</div>
+      <div class="s-body"><h3>Airlines &amp; Operators</h3><p>Fleet planning, sale-leaseback structuring, and acquisition support aligned to network economics.</p></div>
+    </div>
+    <div class="sector col-7 arRise">
+      <div class="slot-wrap"><image-slot id="sec-investors" placeholder="Drop investor / boardroom photo" fit="cover"></image-slot></div>
+      <div class="veil"></div><div class="s-tag">SEGMENT 04</div>
+      <div class="s-body"><h3>Investors &amp; Funds</h3><p>Independent diligence and market intelligence for capital entering — or exiting — aviation assets with conviction.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INTELLIGENCE ===== -->
+<section class="intel block" id="intelligence">
+  <div class="wrap">
+    <div class="sec-head arRise">
+      <div>
+        <div class="eyebrow" style="margin-bottom:20px">Market signal</div>
+        <h2>What the data is<br/>telling us now.</h2>
+      </div>
+      <p class="desc">A read from our proprietary models — indicative, refreshed continuously, and detailed in full for engaged clients.</p>
+    </div>
+    <div class="intel-grid">
+      <div class="intel-card arRise">
+        <div class="ph"><span class="l">NARROWBODY &lt;GO&gt;</span><span>CMV INDEX</span></div>
+        <div class="body">
+          <div class="stat up">+4.2<span class="u">%</span></div>
+          <svg class="spark" viewBox="0 0 200 48" preserveAspectRatio="none" fill="none"><path d="M0 38 L30 36 L60 31 L90 32 L120 23 L150 18 L180 12 L200 7" stroke="#3DD68C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Late-vintage narrowbody values continue to firm on constrained supply and persistent lease demand.</p>
+        </div>
+      </div>
+      <div class="intel-card arRise">
+        <div class="ph"><span class="l">WIDEBODY &lt;GO&gt;</span><span>LIQUIDITY</span></div>
+        <div class="body">
+          <div class="stat">Stable</div>
+          <svg class="spark" viewBox="0 0 200 48" preserveAspectRatio="none" fill="none"><path d="M0 25 L30 23 L60 27 L90 22 L120 25 L150 21 L180 24 L200 22" stroke="#9AA1AB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Twin-aisle liquidity holds steady as long-haul recovery broadens; placement windows lengthen on older types.</p>
+        </div>
+      </div>
+      <div class="intel-card arRise">
+        <div class="ph"><span class="l">ENGINES &lt;GO&gt;</span><span>USM TREND</span></div>
+        <div class="body">
+          <div class="stat up">+9<span class="u">%</span></div>
+          <svg class="spark" viewBox="0 0 200 48" preserveAspectRatio="none" fill="none"><path d="M0 42 L30 39 L60 31 L90 28 L120 20 L150 15 L180 9 L200 4" stroke="#3DD68C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p>Shop-visit deferrals keep used serviceable material and green-time values well above five-year norms.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta" id="contact">
+  <div class="hero-glow"></div>
+  <div class="cta-inner wrap">
+    <div class="eyebrow" style="justify-content:center;margin-bottom:24px">Open a line</div>
+    <h2>Bring clarity to your next aircraft decision.</h2>
+    <p>Tell us the question on the table. We'll show you how independent intelligence changes the answer.</p>
+    <div class="hero-actions" style="justify-content:center">
+      <a href="mailto:advisory@andarasystems.com" class="btn-primary">Request a briefing
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="mailto:advisory@andarasystems.com" class="btn-ghost">advisory@andarasystems.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <a href="#top" class="brand">
+          <svg class="glyph" viewBox="0 0 32 32" fill="none"><path d="M16 2 L29 28 L16 22 L3 28 Z" fill="#FF9A1F"/><path d="M16 2 L16 22 L3 28 Z" fill="#FFB85C"/></svg>
+          <span class="name">ANDARA<span class="sub">AVIATION INTELLIGENCE</span></span>
+        </a>
+        <p>Independent aviation intelligence and advisory. Making aviation markets legible — globally, and with conviction.</p>
+      </div>
+      <div class="foot-col"><h4>Functions</h4><a href="#capabilities">Valuation &amp; Appraisal</a><a href="#capabilities">Acquisition &amp; Disposition</a><a href="#capabilities">Market Intelligence</a><a href="#capabilities">Portfolio &amp; Risk</a></div>
+      <div class="foot-col"><h4>Company</h4><a href="#approach">Approach</a><a href="#sectors">Clients</a><a href="#intelligence">Intelligence</a><a href="#contact">Contact</a></div>
+      <div class="foot-col"><h4>Connect</h4><a href="mailto:advisory@andarasystems.com">advisory@andarasystems.com</a><a href="#top">LinkedIn</a><a href="#contact">Request a briefing</a></div>
+    </div>
+    <div class="foot-bottom">
+      <span class="mono">© 2026 ANDARA SYSTEMS</span>
+      <span class="mono">MAKING AVIATION MARKETS LEGIBLE</span>
+    </div>
+  </div>
+</footer>
+
+<script src="image-slot.js"></script>
+<script>
+// live UTC clock
+const clk=document.getElementById('clock');
+function tick(){const d=new Date();const p=n=>String(n).padStart(2,'0');clk.textContent=`${p(d.getUTCHours())}:${p(d.getUTCMinutes())}:${p(d.getUTCSeconds())} UTC`;}
+tick();setInterval(tick,1000);
+
+// sticky nav
+const nav=document.getElementById('nav');
+const tk=document.getElementById('ticker');
+function onScroll(){const s=window.scrollY>40;nav.classList.toggle('scrolled',s);tk.style.display=window.scrollY>window.innerHeight*0.6?'block':'none';}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+// build ticker
+const items=[
+  ['A320NEO','48.2','+0.9'],['B737-8','52.6','+1.3'],['A350-900','142.8','+0.4'],['B787-9','131.5','-0.3'],
+  ['A321LR','61.4','+1.1'],['B777-300ER','88.7','-0.6'],['A330-900','78.3','+0.5'],['E195-E2','29.4','+0.8'],
+  ['LEAP-1A','9.8','+2.4'],['GEnx-1B','11.2','+1.7'],['ATR72-600','17.6','+0.2'],['A220-300','38.9','+1.5']
+];
+const track=document.getElementById('ticker-track');
+function row(){return items.map(([s,v,c])=>{const up=c.startsWith('+');return `<span class="ticker-item">${s} <b>${v}</b> <span class="${up?'up':'down'}">${up?'▲':'▼'}${c.replace('+','').replace('-','')}%</span></span>`;}).join('');}
+track.innerHTML=row()+row();
+
+// arRise
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.arRise').forEach(el=>io.observe(el));
+
+// live monitor jitter
+const vals=[...document.querySelectorAll('#monitor-rows .val')];
+setInterval(()=>{
+  const cell=vals[Math.floor(Math.random()*vals.length)];
+  const base=parseFloat(cell.dataset.base);
+  const nv=(base*(1+(Math.random()-0.45)*0.012));
+  cell.textContent=nv.toFixed(1);
+  const chg=cell.nextElementSibling;
+  const up=nv>=base;
+  chg.className='chg '+(up?'up':'down');
+  chg.textContent=(up?'▲ ':'▼ ')+(Math.abs((nv/base-1)*100)).toFixed(1)+'%';
+  cell.style.color=up?'#3DD68C':'#FF5C5C';
+  setTimeout(()=>{cell.style.color='';},420);
+},1800);
+</script>
+</body>
+</html>

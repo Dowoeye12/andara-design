@@ -6,7 +6,7 @@ export const CONTENT = {
     subheadline:
       "The continent's only source of independent, institutional-grade airline credit scoring and continuous aircraft asset surveillance.",
     microcopy: "We connect global supply with underserved demand—confidently, discreetly, and at scale.",
-    primaryCta: "Request a Briefing",
+    primaryCta: "Request Briefing",
     secondaryCta: "Speak in Confidence",
   },
   
@@ -138,7 +138,7 @@ export const CONTENT = {
 };
 
 export const NAV_ITEMS = [
-  { label: "Credit intelligence", href: "/credit-intelligence" },
-  { label: "FleetWatch", href: "/fleetwatch" },
-  { label: "Who we serve", href: "/who-we-serve" },
+  { label: "Credit Intelligence", href: "/credit-intelligence" },
+  { label: "Fleet Watch", href: "/fleetwatch" },
+  { label: "Who We Are", href: "/who-we-are" },
 ];

@@ -1,230 +1,364 @@
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import { SectionContainer } from "@/components/SectionContainer";
-import { VideoHeroBackground } from "@/components/VideoHeroBackground";
 import { useState } from "react";
+import { TerminalChrome, ArrowRightIcon, CtaBand } from "@/components/terminal/TerminalChrome";
+
+// 5-Score dimensions, names and weights per Andara Master Build PRD §3.3.6.
+// Weights: SVS 15, PPS 25, APS 20, RCS 25, RAS 15.
+const SCORES = [
+  {
+    code: "SVS",
+    short: "Strategic Value",
+    weight: 15,
+    title: "Strategic Value Score",
+    text: "How strategically valuable the carrier is to its market — route network significance, national or regional importance, and the carrier's structural position. Sub-inputs are reviewed by the analyst and weighted with evidence references inside the scoring file.",
+  },
+  {
+    code: "PPS",
+    short: "Payment Priority",
+    weight: 25,
+    title: "Payment Priority Score",
+    text: "How the carrier prioritises payment obligations across its counterparty stack — lessors, fuel suppliers, MRO providers, ground handlers, airport authorities. Built from counterparty intelligence, not airline self-disclosure.",
+  },
+  {
+    code: "APS",
+    short: "Airline Performance",
+    weight: 20,
+    title: "Airline Performance Score",
+    text: "Operational performance of the airline as a going concern — fleet composition, utilisation, on-time performance, and operating discipline. Cross-referenced with field observation and regulatory performance data.",
+  },
+  {
+    code: "RCS",
+    short: "Risk Containment",
+    weight: 25,
+    title: "Risk Containment Score",
+    text: "The carrier's posture toward containing operational and counterparty risk — governance, controls, financial discipline, and demonstrated ability to manage stress events without collateral damage to creditors.",
+  },
+  {
+    code: "RAS",
+    short: "Redeployment Suitability",
+    weight: 15,
+    title: "Redeployment Suitability Score",
+    text: "How redeployable the carrier's underlying assets are — fleet liquidity, market mobility of aircraft types, and the structural ease with which assets could be recovered and repositioned in the event of failure.",
+  },
+];
+
+const SOURCES = [
+  { title: "Lessor accounts receivable", detail: "verified whether lease payments are current" },
+  { title: "Fuel suppliers", detail: "payment patterns, credit terms, outstanding balances" },
+  { title: "Ground handlers & airports", detail: "AOG history, handling disputes, ground debt" },
+  { title: "MRO providers", detail: "maintenance payment history and backlog status" },
+  { title: "Regulatory bodies", detail: "airworthiness, certificate standing, compliance posture" },
+  { title: "Market participants", detail: "commercial intelligence and route performance data" },
+];
 
 const CreditIntelligence = () => {
-  const scores = [
-    {
-      code: "SVS",
-      shortLabel: "Safety & viability",
-      title: "Safety & viability score",
-      text: "Operational safety record, regulatory standing with NCAA and EASA, incident and accident history, airworthiness compliance, and the airline's demonstrated safety culture over time. Sourced from regulatory filings, field intelligence, and third-party operator assessments.",
-    },
-    {
-      code: "PPS",
-      shortLabel: "Payment performance",
-      title: "Payment performance score",
-      text: "Verified payment history with lessors, fuel suppliers, MRO providers, ground handlers, and airport authorities. Reconstructed from primary source interviews with counterparties - not from airline self-disclosure. Payment pattern over a minimum 24-month rolling window.",
-    },
-    {
-      code: "APS",
-      shortLabel: "Asset & performance",
-      title: "Asset & performance score",
-      text: "Fleet composition, aircraft age and condition, route network utilisation, load factors, punctuality, and the operational efficiency of the carrier's asset base. Cross-referenced with field observation, fleet database records, and regulatory performance data.",
-    },
-    {
-      code: "RCS",
-      shortLabel: "Revenue & commercial",
-      title: "Revenue & commercial score",
-      text: "Revenue quality, route mix stability, yield management, commercial partnerships, and the resilience of the airline's revenue base to market disruption. Includes analysis of codeshare and interline dependency and the commercial depth behind the carrier's network.",
-    },
-    {
-      code: "RAS",
-      shortLabel: "Risk & adaptability",
-      title: "Risk & adaptability score",
-      text: "Exposure to macro risk - fuel price volatility, currency risk, regulatory risk - and the airline's demonstrated ability to adapt. Includes management depth, governance quality, and track record under stress conditions. Weighted against sector-wide benchmarks.",
-    },
-  ];
-  const [activeScoreIndex, setActiveScoreIndex] = useState(0);
-  const activeScore = scores[activeScoreIndex];
+  const [activeScore, setActiveScore] = useState(0);
+  const score = SCORES[activeScore];
 
   return (
-    <div className="relative">
-      <Header />
-      <main>
-        <div className="sticky top-0 z-0">
-          <VideoHeroBackground videos={["/1472661_People_Business_3840x2160_1_v3.mp4"]}>
-            <div className="max-w-content w-full mx-auto px-6 lg:px-12">
-              <div className="max-w-4xl pt-20">
-                <p className="text-sm uppercase tracking-widest text-white/80 mb-6">
-                  Credit intelligence
-                </p>
-                <h1 className="text-4xl md:text-6xl font-semibold leading-tight mb-6 text-white">
-                  Airline creditworthiness, independently scored
-                </h1>
-                <p className="text-lg md:text-xl text-white/90 leading-relaxed">
-                  Andara scores operators whether or not they cooperate.
-                  Non-cooperation is itself recorded as an intelligence signal.
-                  Airlines do not pay for their own scoring and never access
-                  their own report.
-                </p>
-              </div>
+    <TerminalChrome>
+      {/* hero */}
+      <section className="fw-hero">
+        <div className="fw-grid-bg" />
+        <div className="fw-glow" />
+        <div className="fw-wrap fw-hero-grid">
+          <div>
+            <div className="fw-cmd">
+              <span className="br">ANDARA&gt;</span> CRED &lt;GO&gt;
             </div>
-          </VideoHeroBackground>
-        </div>
+            <h1>
+              Airline creditworthiness, <em>independently scored.</em>
+            </h1>
+            <p className="fw-lede">
+              Andara scores operators whether or not they cooperate. Non-cooperation
+              is itself recorded as an intelligence signal. Airlines do not pay for
+              their own scoring and never access their own report.
+            </p>
+            <div className="fw-actions">
+              <a href="#briefing" className="fw-btn-primary">
+                Request Briefing <ArrowRightIcon />
+              </a>
+              <a href="#methodology" className="fw-btn-ghost">
+                View 5-Score methodology
+              </a>
+            </div>
+          </div>
 
-        <div className="relative z-10 bg-background">
-        <SectionContainer variant="white">
-          <div className="max-w-5xl mx-auto">
-            <p className="text-sm uppercase tracking-widest text-bac-text-tertiary mb-6">
-              The 5-Score methodology
-            </p>
-            <h2 className="text-3xl md:text-4xl font-semibold mb-8">
-              Five dimensions. One verdict.
-            </h2>
-            <p className="text-lg text-bac-text-secondary mb-10">
-              Proprietary 5-Score methodology - SVS, PPS, APS, RCS, RAS -
-              producing Deploy / Watch / Do Not Deploy verdicts on African
-              carriers. Built from primary intelligence, not airline
-              self-disclosure.
-            </p>
-            <div className="grid grid-cols-6 md:grid-cols-5 gap-0 rounded-xl border border-bac-border overflow-hidden">
-              {scores.map((score, index) => {
-                const isActive = index === activeScoreIndex;
+          {/* sample scorecard */}
+          <div className="fw-panel">
+            <div className="fw-ph">
+              <div className="t">Sample 5-Score Verdict</div>
+              <div className="r">ILLUSTRATIVE · NOT A REAL CARRIER</div>
+            </div>
+            <div style={{ padding: 22 }}>
+              {SCORES.map((s, i) => {
+                const values = [82, 71, 75, 68, 63];
                 return (
-                  <button
-                    key={score.code}
-                    type="button"
-                    onClick={() => setActiveScoreIndex(index)}
-                    className={`${
-                      index < 3 ? "col-span-2" : "col-span-3"
-                    } md:col-span-1 p-3 md:p-4 border-r border-bac-border last:border-r-0 transition-colors text-center flex flex-col items-center justify-center ${
-                      isActive
-                        ? "bg-[#f7f8fc]"
-                        : "bg-background hover:bg-bac-light/60"
-                    }`}
+                  <div
+                    key={s.code}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "56px 1fr 44px",
+                      gap: 14,
+                      alignItems: "center",
+                      marginBottom: 14,
+                      fontFamily: "var(--fw-fm)",
+                      fontSize: 12,
+                    }}
                   >
-                    <p className="text-lg md:text-xl font-medium mb-1 text-primary">
-                      {score.code}
-                    </p>
-                    <p className="text-xs md:text-sm text-bac-text-tertiary">
-                      {score.shortLabel}
-                    </p>
-                  </button>
+                    <span style={{ color: "var(--fw-amber)", letterSpacing: ".1em" }}>{s.code}</span>
+                    <span
+                      style={{
+                        height: 6,
+                        background: "var(--fw-bg-2)",
+                        border: "1px solid var(--fw-border)",
+                        position: "relative",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <i
+                        style={{
+                          position: "absolute",
+                          left: 0,
+                          top: 0,
+                          bottom: 0,
+                          width: `${values[i]}%`,
+                          background: "linear-gradient(90deg,var(--fw-amber),#FFB85C)",
+                          display: "block",
+                        }}
+                      />
+                    </span>
+                    <span style={{ textAlign: "right", color: "var(--fw-text)" }}>{values[i]}</span>
+                  </div>
                 );
               })}
-            </div>
-
-            <div className="mt-8 rounded-xl border border-bac-border bg-[#f7f8fc] p-8 md:p-10">
-              <p className="text-pink-600 uppercase tracking-[0.14em] text-sm mb-4">
-                {activeScore.code}
-              </p>
-              <h3 className="text-xl md:text-2xl font-semibold text-primary mb-6">
-                {activeScore.title}
-              </h3>
-              <p className="text-lg text-bac-text-tertiary leading-relaxed">
-                {activeScore.text}
-              </p>
-            </div>
-          </div>
-        </SectionContainer>
-
-        <SectionContainer variant="light-grey">
-          <div className="max-w-5xl mx-auto">
-            <p className="text-sm uppercase tracking-widest text-bac-text-tertiary mb-6">
-              The verdict
-            </p>
-            <h2 className="text-3xl md:text-4xl font-semibold mb-8">
-              An actionable instruction, not just a rating
-            </h2>
-            <p className="text-lg text-bac-text-secondary mb-10">
-              Every scored airline receives one of three deployment verdicts -
-              designed to give a capital provider a clear, defensible position.
-            </p>
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="rounded-lg border border-green-300 bg-green-50 p-6">
-                <p className="inline-block text-xs uppercase tracking-widest mb-3 text-green-800 bg-green-200 px-3 py-1 rounded-md font-medium">
-                  Deploy
-                </p>
-                <p className="text-sm text-green-900">
-                  The airline meets Andara's threshold for capital exposure.
-                  Full intelligence brief issued with supporting evidence.
-                </p>
-              </div>
-              <div className="rounded-lg border border-amber-300 bg-amber-50 p-6">
-                <p className="inline-block text-xs uppercase tracking-widest mb-3 text-amber-800 bg-amber-200 px-3 py-1 rounded-md font-medium">
-                  Watch
-                </p>
-                <p className="text-sm text-amber-900">
-                  Viable but risk factors identified. Conditional brief issued
-                  with defined monitoring triggers.
-                </p>
-              </div>
-              <div className="rounded-lg border border-red-300 bg-red-50 p-6">
-                <p className="inline-block text-xs uppercase tracking-widest mb-3 text-red-800 bg-red-200 px-3 py-1 rounded-md font-medium">
-                  Do not deploy
-                </p>
-                <p className="text-sm text-red-900">
-                  Intelligence does not support capital exposure at this time.
-                  Risk brief explains specific failure points.
-                </p>
-              </div>
-            </div>
-          </div>
-        </SectionContainer>
-
-        <SectionContainer variant="white">
-          <div className="max-w-5xl mx-auto">
-            <p className="text-sm uppercase tracking-widest text-bac-text-tertiary mb-6">
-              Intelligence sources
-            </p>
-            <h2 className="text-3xl md:text-4xl font-semibold mb-8">
-              Primary data, not self-disclosure
-            </h2>
-            <p className="text-lg text-bac-text-secondary mb-10">
-              Andara does not rely on what airlines choose to tell us. Scores
-              are built from primary intelligence gathered directly from third
-              parties who transact with each airline.
-            </p>
-            <div className="grid md:grid-cols-2 gap-3">
-              {[
-                {
-                  title: "Lessor accounts receivable",
-                  detail: "verified whether lease payments are current",
-                },
-                {
-                  title: "Fuel suppliers",
-                  detail: "payment patterns, credit terms, outstanding balances",
-                },
-                {
-                  title: "Ground handlers & airports",
-                  detail: "AOG history, handling disputes, ground debt",
-                },
-                {
-                  title: "MRO providers",
-                  detail: "maintenance payment history and backlog status",
-                },
-                {
-                  title: "Regulatory bodies",
-                  detail: "airworthiness, certificate standing, compliance posture",
-                },
-                {
-                  title: "Market participants",
-                  detail: "commercial intelligence and route performance data",
-                },
-              ].map((source) => (
-                <div
-                  key={source.title}
-                  className="flex items-start gap-3 rounded-lg border border-bac-border bg-[#f7f8fc] p-4"
+              <div
+                style={{
+                  marginTop: 18,
+                  border: "1px solid rgba(61,214,140,.35)",
+                  background: "rgba(61,214,140,.06)",
+                  padding: "16px 18px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 14,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--fw-fm)",
+                    fontSize: 10.5,
+                    letterSpacing: ".2em",
+                    color: "var(--fw-up)",
+                    padding: "5px 10px",
+                    background: "rgba(61,214,140,.12)",
+                    border: "1px solid rgba(61,214,140,.35)",
+                    textTransform: "uppercase",
+                  }}
                 >
-                  <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
-                  <p className="text-base text-bac-text-secondary leading-relaxed">
-                    <span className="font-semibold text-bac-text-primary">
-                      {source.title}
-                    </span>{" "}
-                    - {source.detail}
-                  </p>
-                </div>
-              ))}
+                  ▲ Deploy
+                </span>
+                <span style={{ color: "var(--fw-text-2)", fontFamily: "var(--fw-fm)", fontSize: 12, letterSpacing: ".04em" }}>
+                  COMPOSITE 71.8 / 100
+                </span>
+              </div>
+            </div>
+            <div className="fw-monitor-foot">
+              <span style={{ color: "var(--fw-text-3)" }}>ANDARA&gt;</span>{" "}
+              <span className="fw-cursor" />
             </div>
           </div>
-        </SectionContainer>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </section>
+
+      {/* methodology constants — verified against PRD §3.3.6 */}
+      <section className="fw-metrics">
+        <div className="fw-metrics-grid">
+          <div className="fw-metric fw-arRise">
+            <div className="lbl">// Dimensions</div>
+            <div className="num">5</div>
+            <div className="mcap">SVS · PPS · APS · RCS · RAS. One composite verdict.</div>
+          </div>
+          <div className="fw-metric fw-arRise">
+            <div className="lbl">// Verdict classes</div>
+            <div className="num">3</div>
+            <div className="mcap">Deploy · Watch · Do Not Deploy.</div>
+          </div>
+          <div className="fw-metric fw-arRise">
+            <div className="lbl">// Governance</div>
+            <div className="num">SC</div>
+            <div className="mcap">Every verdict approved by Andara's Scoring Committee. Hard-floor logic enforced.</div>
+          </div>
+          <div className="fw-metric fw-arRise">
+            <div className="lbl">// Airlines paying</div>
+            <div className="num">0</div>
+            <div className="mcap">Operators are never clients. They cannot pay for or see their own scores.</div>
+          </div>
+        </div>
+      </section>
+
+      {/* methodology */}
+      <section id="methodology" className="fw-block fw-wrap">
+        <div className="fw-sec-head fw-arRise">
+          <div>
+            <div className="fw-eyebrow" style={{ marginBottom: 20 }}>The 5-Score methodology</div>
+            <h2>Five dimensions.<br />One verdict.</h2>
+          </div>
+          <p className="desc">
+            Proprietary five-score methodology — SVS · PPS · APS · RCS · RAS,
+            weighted 15 / 25 / 20 / 25 / 15 — producing Deploy, Watch, or Do Not
+            Deploy verdicts. Hard-floor logic prevents borderline composites
+            from masking a single critical failure.
+          </p>
+        </div>
+
+        <div className="fw-arRise">
+          <div className="fw-score-tabs">
+            {SCORES.map((s, i) => (
+              <button key={s.code} onClick={() => setActiveScore(i)} className={i === activeScore ? "active" : ""}>
+                <span className="code">{s.code}</span>
+                <span className="lbl">{s.short}</span>
+                <span
+                  style={{
+                    display: "block",
+                    fontFamily: "var(--fw-fm)",
+                    fontSize: 10.5,
+                    letterSpacing: ".14em",
+                    color: "var(--fw-text-3)",
+                    marginTop: 6,
+                  }}
+                >
+                  WT {s.weight}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div
+            style={{
+              marginTop: 18,
+              border: "1px solid var(--fw-border)",
+              background: "var(--fw-panel)",
+            }}
+          >
+            <div className="fw-ph">
+              <div className="t">
+                {score.code} · {score.short}
+              </div>
+              <div className="r">DIMENSION {String(activeScore + 1).padStart(2, "0")} OF 05</div>
+            </div>
+            <div style={{ padding: "32px 32px 36px", display: "flex", flexDirection: "column", gap: 16 }}>
+              <h3 style={{ fontSize: "clamp(24px,2.4vw,34px)", maxWidth: "22ch" }}>{score.title}</h3>
+              <p style={{ color: "var(--fw-text-2)", fontSize: 16, lineHeight: 1.7, maxWidth: "70ch" }}>
+                {score.text}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* verdicts */}
+      <section
+        className="fw-block"
+        style={{ background: "var(--fw-bg-2)", borderTop: "1px solid var(--fw-border)", borderBottom: "1px solid var(--fw-border)" }}
+      >
+        <div className="fw-wrap">
+          <div className="fw-sec-head fw-arRise">
+            <div>
+              <div className="fw-eyebrow" style={{ marginBottom: 20 }}>The verdict</div>
+              <h2>An actionable instruction,<br />not just a rating.</h2>
+            </div>
+            <p className="desc">
+              Every scored airline receives one of three deployment verdicts.
+              Off-cycle <b style={{ color: "var(--fw-text)" }}>Watch Notes</b>{" "}
+              are issued whenever new intelligence materially changes the picture
+              before the next scheduled refresh.
+            </p>
+          </div>
+
+          <div className="fw-verdicts fw-arRise">
+            <div className="fw-verdict-card deploy">
+              <span className="tag">▲ Deploy</span>
+              <p>
+                The carrier meets Andara's threshold for capital exposure.
+                Verdict letter and full scoring pack delivered to the
+                commissioning client.
+              </p>
+            </div>
+            <div className="fw-verdict-card watch">
+              <span className="tag">◆ Watch</span>
+              <p>
+                Viable but risk factors identified. Conditional verdict letter
+                issued with defined monitoring triggers and Watch Note cadence.
+              </p>
+            </div>
+            <div className="fw-verdict-card deny">
+              <span className="tag">▼ Do Not Deploy</span>
+              <p>
+                Intelligence does not support capital exposure at this time.
+                Risk brief explains the specific failure points behind the call.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* sources */}
+      <section className="fw-block fw-wrap">
+        <div className="fw-sec-head fw-arRise">
+          <div>
+            <div className="fw-eyebrow" style={{ marginBottom: 20 }}>Intelligence sources</div>
+            <h2>Primary data, not<br />self-disclosure.</h2>
+          </div>
+          <p className="desc">
+            Andara does not rely on what airlines choose to tell us. Scores are
+            built from primary intelligence gathered directly from third parties
+            who transact with each airline.
+          </p>
+        </div>
+
+        <div
+          className="fw-arRise"
+          style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 16 }}
+        >
+          {SOURCES.map((s, i) => (
+            <div
+              key={s.title}
+              style={{
+                border: "1px solid var(--fw-border)",
+                background: "var(--fw-panel)",
+                padding: "20px 22px",
+                display: "grid",
+                gridTemplateColumns: "auto 1fr",
+                gap: 20,
+                alignItems: "start",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--fw-fm)",
+                  fontSize: 11,
+                  letterSpacing: ".14em",
+                  color: "var(--fw-amber)",
+                  padding: "6px 10px",
+                  border: "1px solid var(--fw-border-bright)",
+                  background: "var(--fw-panel-2)",
+                }}
+              >
+                SRC {String(i + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 style={{ fontSize: 17, fontWeight: 600, marginBottom: 4, color: "var(--fw-text)" }}>{s.title}</h3>
+                <p style={{ color: "var(--fw-text-2)", fontSize: 14.5, lineHeight: 1.6 }}>{s.detail}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <CtaBand
+        title="Score the carrier on your desk."
+        body="Tell us the operator under review. We'll show you the live 5-Score, the verdict, and the field intelligence behind it."
+      />
+    </TerminalChrome>
   );
 };
 
