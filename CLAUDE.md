@@ -130,9 +130,138 @@ Every verdict approved by the **Scoring Committee**; methodology changes gated b
 
 ---
 
+## Terminal app — design system and conventions
+
+The `/credit-intelligence/africa` page is now a substantial app in its own right. The standalone HTML export from the design tool was kept as a starting point, but the carrier profile, Market Overview, Monitoring tab, and Andara Signal panel have all been redesigned in place. Future work must preserve the conventions below.
+
+### Canvas + palette
+
+Pure-black canvas with layered near-black surfaces. Set in `:root`.
+
+| Token | Value | Use |
+|---|---|---|
+| `--bg` | `#000` | Page canvas / app frame |
+| `--bg4` | `#070809` | Sidebar |
+| `--bg2` | `#0b0d10` | Panels |
+| `--bg3` | `#13161c` | Raised rows / hover |
+| `--line` / `--line2` / `--line3` | `#1e232b` / `#2a313c` / `#343c49` | Borders |
+| `--amber` | `#e8a23a` | Brand accent (desaturated for night canvas) |
+| `--deploy` | `#6bb38a` | Deploy verdict |
+| `--watch` | `#d6a85a` | Watch verdict |
+| `--dnd` | `#c97474` | Do Not Deploy verdict |
+| `--info` | `#7c9fc7` | Informational accent |
+
+Every verdict / status colour is intentionally desaturated. Do not push them back toward the original Bloomberg-bright hues.
+
+### Ink tiers — WCAG AA on pure black
+
+| Token | Value | Contrast vs #000 | Use |
+|---|---|---|---|
+| `--t1` | `#f2f5fa` | ~19:1 | Body text |
+| `--t2` | `#c2cad8` | ~11:1 | Secondary text |
+| `--t3` | `#a4adba` | ~8.4:1 (AAA) | Eyebrows, sub-labels |
+| `--t4` | `#8a93a3` | ~5.6:1 (AA) | Faded meta |
+| `--display` | `rgba(255,255,255,0.92)` | ~17:1 | Big display text (titles, large numbers) |
+
+The old palette (`--t3: #7d889b`, `--t4: #5a6376`) was calibrated against `#0c0e12` and went under-contrast once the canvas switched to `#000`. Do not revert.
+
+### Type system
+
+- **Font floor: 10px system-wide. 12px floor in the Andara Signal section.** Any new text must clear these.
+- **Card headers** (`.ph h3` / `.ph .meta`): 18px sans / 14px mono. Applies to every panel using the legacy `<div class="ph">` markup via the single CSS rule.
+- **Big display text** (font-size ≥ 16px): use `color: var(--display)` instead of `var(--t1)`. The bulk swap was applied to every rule ≥ 16px — add `--display` to any new big-text rules.
+- Type families: Hanken Grotesk (sans, body + display), IBM Plex Mono (mono, labels + numbers).
+
+### Pill / chip / pill-button pattern
+
+Every status pill, chip, and inline-pill-button uses a **fixed height + inline-flex centering** so it sits on the optical centre of any text next to it. No padding-derived heights.
+
+```css
+.thing-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 28px;         /* fixed */
+  padding: 0 14px;      /* horizontal only */
+  line-height: 1;
+  margin: 0;            /* prevent generic class margin leak (see .warn note) */
+  border: 1px solid; border-radius: 4px;
+  box-sizing: border-box;
+}
+```
+
+Sizes in use: 28px (chips next to large titles, refresh-request button), 26px (Signal pills), 24px (verdict pills, proxy state pills), 22px (data-gap tags, vbadge), 20px (mt-badge), 18px (sidebar nav counts).
+
+**Watch out for `.warn`:** there's a generic `.warn` class (warning-banner style, around line 800) that adds `margin-bottom: 14px`. Any pill that also takes class `warn` (the Watch verdict pill, NEW pill, PEP FLAG, CONFLICT) MUST set `margin: 0` in its base rule or the banner margin leaks and shifts the pill vertically. This was the root cause of the long "chips not aligned" debugging session.
+
+### Component namespaces
+
+| Prefix | Surface | Status |
+|---|---|---|
+| `.cp-*` | Redesigned carrier profile (hero, scorecards, meta strip) + Andara Signal panel | Current — new work goes here |
+| `.mo-*` | Market Overview scorecard table (carrier rows, validity column, refresh button) | Current |
+| `.mon-*` | Monitoring tab (refresh schedule, sentinel events) | Current |
+| `.sc-*` | Score composition radar reading block | Current |
+| `.sig-*` | Old Signal panel CSS | **Dead** — no rendered HTML references it. Safe to delete in cleanup. |
+| `.phero`, `.pmain`, `.pscore`, `.pid`, `.pname`, `.psnum` | Pre-redesign carrier profile chrome | **Dead** — replaced by `.cp-*`. |
+
+### Shared helpers (top of script, before data tables)
+
+| Function / constant | Purpose | Used by |
+|---|---|---|
+| `addMonths(ymd, n)` | Date math — accepts `YYYY-MM` or `YYYY-MM-DD` | `validityUntil` |
+| `daysUntil(ymd)` | Integer days from today | `validityUntil` (urgency tiers) |
+| `validityUntil(a)` | → `{validDate, nextRefresh, lastRefresh, days, urgency, cadence}` | Market Overview validity column, Monitoring tab refresh schedule |
+| `REFRESH_CADENCE` | Tier 1 / 2 / 3 → `{label, refreshMo, validityMo}` | `validityUntil` |
+| `cpSignalIcon(size?)` | Canonical Andara Signal SVG (line chart with arrow tip) | Sidebar nav, every Signal panel header |
+| `cpDefaultSignal(a)` | Synthesised "no data yet" Signal record so every carrier renders the full panel | `renderSignalModule` |
+| `cpVerdictCls(v)` / `cpVerdictLbl(v)` | Verdict → CSS class / display label | Carrier profile hero |
+| `cpOwnership(s)` / `cpExtract(s, regex)` | Parse `own` field into separate Ownership / MD/CEO / IOSA cells | Carrier profile metadata strip |
+
+### PRD-aligned terminal surfaces
+
+| Surface | PRD anchor | What renders |
+|---|---|---|
+| Market Overview / Verdict list | §3.2.4 | Carrier table with verdict class, last refresh, **validity-until** with urgency colour tiers, per-row **refresh request** routed to CS lead |
+| Carrier profile — Refresh Schedule (Monitoring tab) | §3.2.4 | Tier badge, last assessment, next assessment, verdict validity |
+| Carrier profile — Sentinel Events (Monitoring tab) | §3.2.4 / §3.2.5 (Watch Notes) | Off-cycle review triggers from `monitoringTriggers` |
+| Carrier profile — Data Gap Flags (Monitoring tab) | §3.4.6 (AAV disclosure) | HIGH / MED / LOW analytical-disclosure tags |
+| Carrier profile — Score composition | §3.3.6 | Radar with per-axis values, ring scale markers, reading block (strongest / weakest / average / shape interpretation) |
+| Carrier profile — Andara Signal | §3.4.5 references | Composite gauge (red→green gradient with marker), 8-card proxy evidence grid covering LIVE/AWAITING/ABSENT/N-A states, Predictive Horizon, AAV callout, footer actions |
+
+**What's NOT in the PRD — do not re-add unprompted:**
+- Assigned analyst / Tier rationale text (no PRD basis for client view, no data field)
+- Sentinel History table with composite delta column (no historical data series — would invent)
+- Per-trigger sub-classification pills (DEPLOY TRIGGER, RCS UPGRADE, WATCH EVENT, etc.) — the design mock invented seven categories; the data has each trigger as one `event → impact` string and that's what we render
+- Portfolio dashboard / Geographic map / Aggregate metrics across all client carriers (M2+)
+
+### Session
+
+- Successful login writes `localStorage.andara.auth = {email, ts}`.
+- `tryRestoreSession()` is invoked once at the bottom of the script (after data tables are declared) and skips the login modal if a session exists.
+- To force the login screen back: `localStorage.removeItem('andara.auth')`.
+- Demo access key remains `andara2026`.
+- The access-key input has an eye toggle (`#pwToggle`) and shows / hides via swapping the `<input type>` between `password` and `text`.
+
+### Sidebar — collapsible carrier groups
+
+`buildSidebar()` wraps each region in a `.reg-group` with a header (rhdot + title + count + chevron) and a `.reg-body`. Clicking the header toggles `.collapsed` on the group. State is persisted in `localStorage.andara.sidebarCollapsed = {ng, wa, ea, sa, ca}`. Region dividers (`.sdiv`) stay between groups.
+
+### Top nav
+
+The status-bar tickers read **Status / Universe / Methodology / UTC** plus a user chip. The search bar is `#gsearch` with a paired GO button (`#goBtn`) — both fire the same carrier search. The user chip display name is parsed from the email's local part (`dikko@…` → `Dikko`, `first.last@…` → `First Last`).
+
+### Functioning breadcrumbs
+
+Every `<div class="crumb">` uses `<button class="nav" data-cnav="dashboard">Terminal</button>` for navigable segments — `bindNav()` wires the click to fire `.sitem[data-v="dashboard"].click()`. The carrier profile renders a full path: `Terminal / Market Overview / [Carrier]`.
+
+---
+
 ## Updating the Africa Credit Intelligence Page
 
-The `/credit-intelligence/africa` page is a self-contained HTML terminal app exported periodically from a design tool. New versions arrive as raw files in `andara_export/` and need standard patches applied before going live.
+The `/credit-intelligence/africa` page is a self-contained HTML terminal app **originally** exported from a design tool. The patch workflow below applies the responsive mobile drawer + logo + meta patches to a raw export.
+
+> **Important — read first.** The page has been substantially redesigned in-place since the last raw import (palette, type system, carrier profile, Market Overview validity column + refresh button, Andara Signal panel, Monitoring tab, etc. — see *Terminal app — design system and conventions* above). **Running the patch script on a new raw export will clobber every one of those customisations.** Use it only on a one-off basis when reimporting the whole app from scratch, then expect to re-port the design-system work on top.
+>
+> For everyday changes, edit `public/credit-intelligence/africa/index.html` directly.
 
 ### One-command update
 
