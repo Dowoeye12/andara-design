@@ -1096,6 +1096,104 @@ select{
 .sig-pop button.danger{color:var(--dnd)}
 .sig-pop .divider{height:1px;background:var(--line);margin:4px 0}
 
+/* Signal — source-health drawer · PRD §4.4.5 (fetch health) */
+.sig-source{cursor:pointer;transition:background .12s,border-color .12s}
+.sig-source:hover{background:var(--bg3);border-color:var(--line2)}
+.sig-source.open{background:var(--bg3);border-color:var(--amber)}
+.sig-drawer-back{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;z-index:180}
+.sig-drawer-back.open{display:block}
+.sig-drawer{position:fixed;top:0;right:0;height:100vh;width:380px;max-width:92vw;background:var(--bg2);border-left:1px solid var(--line2);box-shadow:-12px 0 32px rgba(0,0,0,.6);z-index:181;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .18s ease-out;box-sizing:border-box}
+.sig-drawer.open{transform:translateX(0)}
+.sig-drawer-hd{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--bg3),var(--bg2));flex-shrink:0}
+.sig-drawer-hd .ttl{flex:1;min-width:0}
+.sig-drawer-hd .ttl h3{font-family:var(--sans);font-size:16px;font-weight:700;color:var(--display);margin:0;letter-spacing:-.01em;line-height:1.2}
+.sig-drawer-hd .ttl .sub{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;margin-top:4px;display:block}
+.sig-drawer-hd .close{background:none;border:none;color:var(--t3);font-family:var(--mono);font-size:18px;cursor:pointer;line-height:1;padding:0;flex-shrink:0;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border-radius:3px}
+.sig-drawer-hd .close:hover{color:var(--t1);background:var(--bg)}
+.sig-drawer-body{padding:16px;display:flex;flex-direction:column;gap:24px;overflow-y:auto;flex:1}
+.sig-drawer-sect{display:flex;flex-direction:column;gap:8px}
+.sig-drawer-sect h4{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600;margin:0}
+.sig-drawer-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--mono);font-size:14px;color:var(--t2);line-height:1.4;padding:6px 0;border-bottom:1px solid var(--line)}
+.sig-drawer-row:last-child{border-bottom:none}
+.sig-drawer-row .k{color:var(--t3);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.sig-drawer-row .v{color:var(--t1);text-align:right}
+.sig-drawer-row .v.pos{color:var(--deploy)}
+.sig-drawer-row .v.warn{color:var(--watch);margin:0;background:none;border:none;padding:0;font-family:var(--mono);letter-spacing:0;font-size:14px}
+.sig-drawer-row .v.neg{color:var(--dnd)}
+.sig-status-pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:24px;padding:0 10px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.14em;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;text-transform:uppercase;line-height:1}
+.sig-status-pill .dot{width:7px;height:7px;border-radius:50%}
+.sig-status-pill.live{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.sig-status-pill.live .dot{background:var(--deploy);box-shadow:0 0 6px rgba(107,179,138,.5)}
+.sig-status-pill.degraded{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.sig-status-pill.degraded .dot{background:var(--watch)}
+.sig-status-pill.absent{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.sig-status-pill.absent .dot{background:var(--dnd)}
+.sig-spark{display:block;width:100%;height:64px;margin-top:4px}
+.sig-spark-meta{font-family:var(--mono);font-size:12px;color:var(--t3);display:flex;justify-content:space-between;letter-spacing:.04em;margin-top:4px}
+.sig-fail-list{display:flex;flex-direction:column;gap:6px;font-family:var(--mono);font-size:12px;line-height:1.5}
+.sig-fail-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;background:rgba(201,116,116,.04);border-left:2px solid rgba(201,116,116,.4)}
+.sig-fail-row .ts{color:var(--t3);letter-spacing:.04em}
+.sig-fail-row .code{color:var(--dnd);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.sig-fail-empty{font-family:var(--mono);font-size:12px;color:var(--t4);font-style:italic;letter-spacing:.04em}
+.sig-drawer-foot{padding:16px;border-top:1px solid var(--line);background:var(--bg);flex-shrink:0;display:flex;justify-content:flex-end;gap:8px}
+
+/* Signal — triage queue mode · PRD §4.4.5 Signal triage queue */
+.sig-mode{display:inline-flex;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:3px;margin-bottom:24px;gap:0}
+.sig-mode-btn{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;background:transparent;border:none;color:var(--t2);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;border-radius:3px;letter-spacing:0;transition:.12s}
+.sig-mode-btn:hover{color:var(--t1)}
+.sig-mode-btn.active{background:var(--bg3);color:var(--display);box-shadow:inset 0 0 0 1px var(--line2)}
+.sig-mode-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--amber);border:1px solid rgba(232,162,58,.5);background:rgba(232,162,58,.08);border-radius:3px;box-sizing:border-box;margin:0}
+.sig-mode-count.zero{color:var(--t4);border-color:var(--line2);background:transparent}
+
+/* Triage toolbar — keep state chips + search + source + region on one row */
+.sig-toolbar-triage{flex-wrap:nowrap;gap:12px}
+.sig-tools-triage{margin-left:auto;flex-wrap:nowrap;gap:8px;min-width:0}
+.sig-tools-triage .sig-search{width:200px;min-width:140px}
+.sig-tools-triage .sig-region{padding:0 32px 0 10px;background-position:right 10px center;max-width:170px}
+.sig-tools-triage .sig-region#sigTrSource{max-width:180px}
+.sig-tools-triage .sig-region#sigTrRegion{max-width:140px}
+.sig-livebar{display:flex;margin-top:-12px;margin-bottom:24px;padding:0 2px}
+.sig-livebar .sig-live{margin:0}
+@media (max-width:1279px){
+  .sig-toolbar-triage{flex-wrap:wrap}
+  .sig-tools-triage{margin-left:0;width:100%;flex-wrap:wrap}
+  .sig-tools-triage .sig-search{flex:1 1 200px}
+}
+
+/* Triage state filter chips reuse .rtab from existing cohort */
+.sig-state-pill{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 8px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;line-height:1;white-space:nowrap}
+.sig-state-new{color:var(--amber);border-color:rgba(232,162,58,.5);background:rgba(232,162,58,.08)}
+.sig-state-in_triage{color:var(--info);border-color:rgba(124,159,199,.5);background:rgba(124,159,199,.08)}
+.sig-state-triaged{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.sig-state-dismissed{color:var(--t4);border-color:var(--line2);background:transparent}
+
+/* Triage portfolio table — extends .sig-tbl with extra columns */
+.sig-trbl .sig-headline{font-family:var(--sans);font-size:13px;color:var(--t1);line-height:1.35;font-weight:500;max-width:280px}
+.sig-trbl .sig-headline .agent-tag{display:block;font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.08em;margin-top:3px;text-transform:lowercase}
+.sig-trbl .sig-src-cell{font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.04em;display:inline-flex;align-items:center;gap:6px}
+.sig-trbl .sig-src-cell .src-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sig-trbl .sig-src-cell .src-dot.live{background:var(--deploy)}
+.sig-trbl .sig-src-cell .src-dot.degraded{background:var(--watch)}
+.sig-trbl .sig-src-cell .src-dot.absent{background:var(--dnd)}
+.sig-trbl .sig-ts{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;white-space:nowrap}
+.sig-trbl .sig-ts .ago{display:block;color:var(--t4);font-size:11px;margin-top:2px}
+.sig-trbl tbody tr.dismissed{opacity:.55}
+.sig-trbl tbody tr.dismissed:hover{opacity:.85}
+
+/* Triage stat strip uses .summary .cell — class reuse, no new tokens needed */
+
+/* Signal payload modal — read-only event detail */
+.sig-pld-meta{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.5;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:3px}
+.sig-pld-meta .k{color:var(--t3);letter-spacing:.06em;text-transform:uppercase;font-size:11px;align-self:center}
+.sig-pld-meta .v{color:var(--t1);overflow-wrap:anywhere}
+.sig-pld-meta .v.tag{color:var(--amber)}
+.sig-pld-meta .v.muted{color:var(--t3)}
+.sig-pld-headline{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--display);line-height:1.4;margin:0}
+.sig-pld-payload{font-family:var(--mono);font-size:13px;color:var(--t1);line-height:1.6;padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:3px;white-space:pre-wrap;word-wrap:break-word;margin:0;max-height:240px;overflow-y:auto}
+.sig-pld-note{padding:12px;background:rgba(107,179,138,.05);border-left:2px solid var(--deploy);font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.sig-pld-note.dismiss{background:rgba(201,116,116,.04);border-left-color:var(--dnd)}
+.sig-pld-note .ttl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600;margin-bottom:6px;display:block}
+
 /* Signal modal — promotion + override */
 .sig-mback{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:200}
 .sig-mback.open{display:flex}
@@ -1183,6 +1281,13 @@ select{
 .wsf input:focus,.wsf select:focus,.wsf textarea:focus{border-color:rgba(255,177,46,.5)}
 .wsf textarea{min-height:85px;resize:vertical}
 .wsr{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.wn-helper{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em;text-transform:none;margin-left:6px;font-weight:400}
+.wn-class-row{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
+.wn-class-chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;background:var(--bg2);border:1px solid var(--line);border-radius:4px;font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.04em;cursor:pointer;transition:.12s;box-sizing:border-box;margin:0;text-transform:uppercase}
+.wn-class-chip:hover{background:var(--bg3);border-color:var(--line2);color:var(--t1)}
+.wn-class-chip input{accent-color:var(--amber);margin:0;width:13px;height:13px}
+.wn-class-chip input:checked + span,.wn-class-chip:has(input:checked){color:var(--amber);border-color:rgba(232,162,58,.5);background:rgba(232,162,58,.08)}
+
 .warn{padding:11px 13px;background:rgba(255,194,75,.06);border:1px solid rgba(255,194,75,.2);font-size:11px;color:var(--watch);line-height:1.5;font-family:var(--mono);letter-spacing:.03em;margin-bottom:14px}
 .warn strong{color:#fff;display:block;margin-bottom:4px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
 
@@ -1733,6 +1838,28 @@ select{
 .cp-cscore-mark{position:absolute;top:-3px;width:3px;height:12px;background:var(--t1);border-radius:1px;transform:translateX(-50%);box-shadow:0 0 0 2px rgba(0,0,0,.5)}
 .cp-cscore-ends{display:flex;justify-content:space-between;margin-top:10px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--t3)}
 
+/* Carrier-profile Signal history strip · PRD §3.4.5 (M2 backlog: real time-series). */
+.cp-history{display:flex;flex-direction:column;gap:12px;padding-top:18px;border-top:1px solid var(--line);margin-top:18px}
+.cp-history-hd{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.cp-history-hd .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);font-weight:600}
+.cp-history-hd .rt{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;margin-left:auto}
+.cp-history-chart{position:relative;width:100%;height:120px;background:linear-gradient(180deg,rgba(107,179,138,.06) 0%,rgba(107,179,138,.06) 33%,rgba(214,168,90,.06) 33%,rgba(214,168,90,.06) 66%,rgba(201,116,116,.06) 66%,rgba(201,116,116,.06) 100%);border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.cp-history-band-lbl{position:absolute;right:8px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t4);pointer-events:none}
+.cp-history-band-lbl.up{top:6px;color:rgba(107,179,138,.6)}
+.cp-history-band-lbl.mid{top:50%;transform:translateY(-50%);color:rgba(214,168,90,.6)}
+.cp-history-band-lbl.dn{bottom:6px;color:rgba(201,116,116,.6)}
+.cp-history-chart svg{display:block;width:100%;height:100%}
+.cp-history-axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--t4);margin-top:4px}
+.cp-history-cross{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cp-history-cross-chip{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 8px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap;line-height:1}
+.cp-history-cross-chip.to-deteriorating{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.cp-history-cross-chip.to-stable{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.cp-history-cross-chip.to-improving{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.cp-history-cross-chip .dt{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em;font-weight:400;text-transform:none}
+.cp-history-empty{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em}
+.cp-history-aav{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em;line-height:1.5}
+.cp-history-aav .aav-inline{margin-right:6px}
+
 /* Proxy grid */
 .cp-proxy-hd{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);font-weight:600}
 .cp-proxy-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
@@ -2112,14 +2239,22 @@ select{
       <h1 class="vtitle">Andara <em>Signal</em></h1>
       <p class="vsub">Predictive payments and performance indicator. Monitored carriers ranked by Signal band. Select a carrier to view the full proxy evidence panel.</p>
 
-      <!-- Stat strip -->
-      <div class="summary sig-summary" id="sigSummary"></div>
+      <!-- Mode toggle · PRD §4.4.5 Signal triage queue + portfolio view -->
+      <div class="sig-mode" id="sigMode">
+        <button class="sig-mode-btn active" data-mode="portfolio">Portfolio</button>
+        <button class="sig-mode-btn" data-mode="triage">Triage queue <span class="sig-mode-count" id="sigTrNewCount">0</span> new</button>
+      </div>
 
-      <!-- Source ingestion health (PRD §4.4.5) -->
+      <!-- Stat strip — portfolio mode -->
+      <div class="summary sig-summary sig-mode-portfolio" id="sigSummary"></div>
+      <!-- Stat strip — triage mode -->
+      <div class="summary sig-summary sig-mode-triage" id="sigTrSummary" style="display:none"></div>
+
+      <!-- Source ingestion health (PRD §4.4.5) — shared across modes -->
       <div class="sig-sources" id="sigSources"></div>
 
-      <!-- Toolbar: cohort chips · search · region · live badge -->
-      <div class="sig-toolbar">
+      <!-- Toolbar — portfolio mode: cohort chips · search · region · live badge -->
+      <div class="sig-toolbar sig-mode-portfolio">
         <div class="rtabs sig-cohort" id="sigCohort">
           <button class="rtab active" data-sigband="all">All</button>
           <button class="rtab" data-sigband="deteriorating"><span style="color:var(--dnd)">▼</span> Deteriorating</button>
@@ -2134,8 +2269,37 @@ select{
         </div>
       </div>
 
+      <!-- Toolbar — triage mode: state chips · search · source · region (one row); live badge below -->
+      <div class="sig-toolbar sig-toolbar-triage sig-mode-triage" style="display:none">
+        <div class="rtabs sig-cohort" id="sigTrState">
+          <button class="rtab active" data-trstate="new">New <span class="sig-mode-count zero" id="sigTrStateCountNew">0</span></button>
+          <button class="rtab" data-trstate="in_triage">In triage <span class="sig-mode-count zero" id="sigTrStateCountInTriage">0</span></button>
+          <button class="rtab" data-trstate="triaged">Triaged <span class="sig-mode-count zero" id="sigTrStateCountTriaged">0</span></button>
+          <button class="rtab" data-trstate="dismissed">Dismissed <span class="sig-mode-count zero" id="sigTrStateCountDismissed">0</span></button>
+          <button class="rtab" data-trstate="all">All <span class="sig-mode-count zero" id="sigTrStateCountAll">0</span></button>
+        </div>
+        <div class="sig-tools sig-tools-triage">
+          <input type="text" class="sig-search" id="sigTrSearch" placeholder="Search headlines or carriers…">
+          <select class="sig-region" id="sigTrSource">
+            <option value="all">All sources</option>
+            <option value="ads_b_util">ADS-B Utilisation</option>
+            <option value="sched_int">Schedule Integrity</option>
+            <option value="fuel">Fuel Payment</option>
+            <option value="ground_handler">Ground Handler</option>
+            <option value="yield">Yield Scraper</option>
+            <option value="airport_chg">Airport Charges</option>
+            <option value="ncaa">NCAA Reports</option>
+            <option value="bsp">IATA BSP</option>
+          </select>
+          <select class="sig-region" id="sigTrRegion"><option value="all">All regions</option><option value="nigeria">Nigeria</option></select>
+        </div>
+      </div>
+      <div class="sig-livebar sig-mode-triage" style="display:none">
+        <span class="sig-live"><span class="dot"></span>Live · Market Monitoring Agent</span>
+      </div>
+
       <!-- Portfolio table -->
-      <div class="panel sig-panel">
+      <div class="panel sig-panel sig-mode-portfolio">
         <div class="ph"><h3>Monitored Portfolio — Signal Status</h3><span class="meta" id="sigCount">— rows</span></div>
         <div class="pb" style="padding:0;overflow-x:auto">
           <table class="ctbl sig-tbl">
@@ -2158,14 +2322,41 @@ select{
         </div>
       </div>
 
+      <!-- Triage queue table · PRD §4.4.5 -->
+      <div class="panel sig-panel sig-mode-triage" style="display:none">
+        <div class="ph"><h3>Signal Triage Queue — Market Monitoring Agent</h3><span class="meta" id="sigTrCount">— events</span></div>
+        <div class="pb" style="padding:0;overflow-x:auto">
+          <table class="ctbl sig-tbl sig-trbl">
+            <thead>
+              <tr>
+                <th>State</th>
+                <th>Carrier</th>
+                <th>Source</th>
+                <th>Signal</th>
+                <th>Severity</th>
+                <th>Confidence</th>
+                <th>Ingested</th>
+                <th class="sig-actions-col"></th>
+              </tr>
+            </thead>
+            <tbody id="sigTriageBody"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Methodology footer -->
       <div class="panel">
         <div class="ph"><h3>About Andara Signal</h3><span class="meta">Methodology · v1.5-NG</span></div>
         <div class="pb">
           <p class="sig-method">Andara Signal monitors the operational health of African carriers using independently verifiable operational proxies — schedule integrity, aircraft utilisation, fuel payment behaviour, ground handler billing, regulatory compliance, yield signals, infrastructure charge payments, and settlement behaviour. It produces a continuous directional verdict updated as new proxy data arrives, with a human committee gate required on any band-crossing change.</p>
+          <p class="sig-method"><strong style="color:var(--display)">Confidence</strong> is computed, never analyst-tagged. Three inputs: <strong>coverage</strong> (live proxies as a share of applicable proxies, weighted 0.50), <strong>freshness</strong> (mean days since last live-proxy refresh, weighted 0.30), and <strong>sign agreement</strong> (share of live proxies whose sub-score matches the composite's direction, weighted 0.20). Thresholds: ≥ 0.80 → High, ≥ 0.55 → Medium, ≥ 0.30 → Low, &lt; 0.30 or fewer than 2 live proxies → Insufficient. Hover any confidence pill to see the inputs that drove it.</p>
           <p class="sig-method">Predictive accuracy on the downside signal: <strong style="color:var(--deploy)">70–80%</strong>. Carriers that move to Deteriorating subsequently show verifiable payment or operational stress within the indicated forward window. Signal tells you what is happening to a carrier's operational and financial health before the carrier tells you. <span class="aav-inline">AAV · Andara Analytical View</span></p>
         </div>
       </div>
+
+      <!-- Source-health detail drawer · PRD §4.4.5 fetch health -->
+      <div class="sig-drawer-back" id="sigSrcDrawerBack"></div>
+      <div class="sig-drawer" id="sigSrcDrawer" aria-hidden="true"></div>
     </div>
 
     <!-- SENTINEL -->
@@ -2266,13 +2457,67 @@ select{
           <button type="button" class="btn">Save draft</button>
         </div>
       </form></div></div>
+
+      <!-- Watch Note creator · PRD §3.4.1 (off-cycle Watch Note tied to parent scoring file) -->
+      <div class="panel" style="margin-top:24px">
+        <div class="ph"><h3>Watch Note creator</h3><span class="meta">Off-cycle · PRD §3.4.1</span></div>
+        <div class="pb"><form class="wsform" id="wnForm">
+          <div class="wsr">
+            <div class="wsf"><label>Affected carrier</label><select id="wnCarrier"><option value="">— Select —</option></select></div>
+            <div class="wsf"><label>Severity</label><select id="wnSeverity">
+              <option value="info">Info — informational, no verdict implication</option>
+              <option value="watch" selected>Watch Note — material, monitor for follow-on</option>
+              <option value="alert">Alert — immediate institutional attention</option>
+            </select></div>
+          </div>
+          <div class="wsf">
+            <label>Classification <span class="wn-helper">— PRD §3.2.4 eligible classes</span></label>
+            <div class="wn-class-row" id="wnClassRow">
+              <label class="wn-class-chip"><input type="checkbox" value="regulatory"> Regulatory</label>
+              <label class="wn-class-chip"><input type="checkbox" value="legal"> Legal</label>
+              <label class="wn-class-chip"><input type="checkbox" value="ops"> Operational</label>
+              <label class="wn-class-chip"><input type="checkbox" value="financial"> Financial</label>
+              <label class="wn-class-chip"><input type="checkbox" value="private"> Private intelligence</label>
+            </div>
+          </div>
+          <div class="wsf"><label>Headline</label><input type="text" id="wnHeadline" placeholder="e.g. Lessor IDERA filed against 5N-XXX following 90-day arrears"></div>
+          <div class="wsf"><label>Body</label><textarea id="wnBody" placeholder="What changed, what it means for the verdict, what the client should expect next. Min 80 characters." style="min-height:110px"></textarea></div>
+          <div class="wsr">
+            <div class="wsf"><label>Source citation</label><input type="text" id="wnSource" placeholder="https://… or Field intelligence W23 2026/06/xxx"></div>
+            <div class="wsf"><label>Parent scoring file</label><input type="text" id="wnParent" disabled placeholder="Auto-linked to latest scoring file"></div>
+          </div>
+          <div class="wsf">
+            <label><input type="checkbox" id="wnAav" style="margin-right:8px;vertical-align:middle"> Mark as <strong style="color:var(--amber)">Andara Analytical View</strong> — body carries the AAV chip on dispatch</label>
+          </div>
+          <div style="display:flex;gap:9px;margin-top:6px">
+            <button type="button" class="btn btn-p" id="wnDispatch">Dispatch Watch Note</button>
+            <button type="button" class="btn" id="wnDraft">Save draft</button>
+          </div>
+        </form></div>
+      </div>
     </div>
 
     <!-- AUDIT -->
     <div class="view" id="vw-audit">
       <h1 class="vtitle">Version History &amp; <em>Audit Trail</em></h1>
       <p class="vsub">Every score movement, every evidence submission, every methodology run. Institutional-grade audit integrity is non-negotiable.</p>
-      <div class="panel"><div class="ph"><h3>Audit log</h3><span class="meta">Last 50 events</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="atbl" id="atbl"></table></div></div>
+      <div class="sig-toolbar audit-toolbar">
+        <div class="sig-tools" style="margin-left:0;width:100%">
+          <input type="text" class="sig-search" id="auditSearch" placeholder="Search carrier, criterion, note…" style="width:280px">
+          <select class="sig-region" id="auditSource">
+            <option value="all">All sources</option>
+            <option value="Signal">Signal</option>
+            <option value="Signal Triage">Signal Triage</option>
+            <option value="Methodology">Methodology</option>
+            <option value="Reports">Reports</option>
+            <option value="Compare">Compare</option>
+            <option value="Sentinel">Sentinel</option>
+          </select>
+          <button class="sig-mbtn" id="auditClear" style="height:32px">Clear</button>
+          <span class="sig-live" id="auditScope" style="margin-left:auto;color:var(--t3)">No filter active</span>
+        </div>
+      </div>
+      <div class="panel"><div class="ph"><h3>Audit log</h3><span class="meta" id="auditCount">Last 50 events</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="atbl" id="atbl"></table></div></div>
     </div>
 
     <!-- REPORTS -->
@@ -2360,6 +2605,70 @@ select{
       <button class="sig-mbtn" data-sig-close="sigOverrideModal">Cancel</button>
       <button class="sig-mbtn" id="sigOverrideClear">Clear existing override</button>
       <button class="sig-mbtn primary" id="sigOverrideConfirm">Record override</button>
+    </div>
+  </div>
+</div>
+
+<!-- Signal triage: Mark triaged modal · PRD §4.4.5 -->
+<div class="sig-mback" id="sigTriagedModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Mark event triaged</h3><button class="close" data-sig-close="sigTriagedModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="sigTriagedSummary"></div>
+      <div class="sig-mfield">
+        <label>Linked proxy</label>
+        <select id="sigTriagedProxy">
+          <option value="ads_b_util">ADS-B Utilisation</option>
+          <option value="sched_int">Schedule Integrity</option>
+          <option value="fuel">Fuel Offtake &amp; Payment</option>
+          <option value="ground_handler">Ground Handler Billing</option>
+          <option value="yield">Yield Signal</option>
+          <option value="airport_chg">Airport &amp; En-route Charges</option>
+          <option value="ncaa">NCAA Delay &amp; Cancellation</option>
+          <option value="bsp">IATA BSP Settlement</option>
+        </select>
+        <div class="helper">Which carrier proxy does this raw event affect? Recorded on the carrier's Signal panel.</div>
+      </div>
+      <div class="sig-mfield">
+        <label>Triage note</label>
+        <textarea id="sigTriagedNote" placeholder="What did you verify? Was the signal corroborated? Min 40 chars."></textarea>
+        <div class="helper">Visible in the audit trail. Use it to leave a trail the next analyst can pick up.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="sigTriagedModal">Cancel</button>
+      <button class="sig-mbtn primary" id="sigTriagedConfirm">Mark triaged</button>
+    </div>
+  </div>
+</div>
+
+<!-- Signal triage: View raw payload modal · PRD §4.4.5 (read-only) -->
+<div class="sig-mback" id="sigPayloadModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Raw event payload</h3><button class="close" data-sig-close="sigPayloadModal">✕</button></div>
+    <div class="sig-mbody" id="sigPayloadBody"></div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="sigPayloadModal">Close</button>
+      <button class="sig-mbtn primary" id="sigPayloadCopy">Copy payload</button>
+    </div>
+  </div>
+</div>
+
+<!-- Signal triage: Dismiss as noise modal · PRD §4.4.5 -->
+<div class="sig-mback" id="sigDismissModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Dismiss event as noise</h3><button class="close" data-sig-close="sigDismissModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="sigDismissSummary"></div>
+      <div class="sig-mfield">
+        <label>Dismissal rationale</label>
+        <textarea id="sigDismissRationale" placeholder="Why is this not a real signal? Min 40 chars."></textarea>
+        <div class="helper">Dismissed events remain in the audit trail. Use this to train the source adapter — recurring false positives should be reported to engineering.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="sigDismissModal">Cancel</button>
+      <button class="sig-mbtn danger" id="sigDismissConfirm">Dismiss</button>
     </div>
   </div>
 </div>
@@ -3619,17 +3928,17 @@ const FEED = [
   {date:'2026-05-13',time:'10:00',cid:null,title:'Southern Africa Pass 4 ingestion complete — 58 carriers across 10 jurisdictions',desc:'DEPLOY is South Africa-exclusive: Airlink (80.2) and FlySafair (79.6). SAA Do Not Deploy (disclaimed audit, CEO/CFO resigned April 2026, going concern warning). Air Zimbabwe not a functioning airline (zero owned aircraft). 10 Full Pass 3 carriers · 2 Ethiopian JV modifier · 46 Preliminary. EU ban policy excluded per Andara methodology. SACAA is region gold standard at 95.12% ICAO score.',cls:['private','regulatory']},
   {date:'2026-05-13',time:'09:30',cid:null,title:'East Africa Pass 4 ingestion complete — 21 carriers integrated',desc:'Ethiopian Airlines scores 85 — continental benchmark. Jambojet (76) and Air Seychelles (75) complete a 3-carrier Deploy cohort in East Africa. EU country bans active: Tanzania (Jun 2025), Sudan (ongoing), Eritrea (Dec 2012). Tarco/Badr conflict-adjusted. Eritrean Airlines dormant flag carrier.',cls:['private','regulatory']},
   {date:'2026-05-13',time:'09:00',cid:null,title:'West Africa Pass 4 ingestion complete — 15 carriers integrated',desc:'ASKY Airlines scores Deploy (76.8) — first Deploy verdict in the combined universe. 7 Watch, 7 Do Not Deploy across West Africa Tier 1 active carriers. Methodology held across all 12 West African jurisdictions.',cls:['private','regulatory']},
-  {date:'2026-04-30',time:'14:22',cid:'allied',title:'Allied Air enters Nigeria dossier as highest-scoring private carrier',desc:'v1.5 addition. 27 years AOC continuity, IOSA pioneer, 25-year GSA with Network Aviation Group (UK). WATCH verdict.',cls:['private','financial']},
+  {date:'2026-04-30',time:'14:22',cid:'allied_air',title:'Allied Air enters Nigeria dossier as highest-scoring private carrier',desc:'v1.5 addition. 27 years AOC continuity, IOSA pioneer, 25-year GSA with Network Aviation Group (UK). WATCH verdict.',cls:['private','financial']},
   {date:'2026-04-27',time:'14:00',cid:'air-sierra-leone',title:'Ascend Airways (UK wet-lease counterparty) liquidated',desc:"UK wet-lease partner of Air Sierra Leone went into liquidation 27 April 2026, eliminating the long-haul pathway for ASL. Structurally negative for credit profile.",cls:['financial','legal']},
-  {date:'2026-04-25',time:'09:30',cid:'una',title:'UNA upgrade to WATCH on three counterparty relationships verified',desc:'Fly2Sky multi-year A320 wet-lease, CemAir CRJ900 lessor, Zenith Bank underwrite of 6×B737-800 NG from Southwest Airlines. Composite moves 44.3 (DND) → 54.8 (WATCH).',cls:['private','financial']},
+  {date:'2026-04-25',time:'09:30',cid:'united_nigeria_airlines',title:'UNA upgrade to WATCH on three counterparty relationships verified',desc:'Fly2Sky multi-year A320 wet-lease, CemAir CRJ900 lessor, Zenith Bank underwrite of 6×B737-800 NG from Southwest Airlines. Composite moves 44.3 (DND) → 54.8 (WATCH).',cls:['private','financial']},
   {date:'2026-04-22',time:'11:08',cid:null,title:'NCAA / NSIB ICVM EI scores 91.45% in April 2026 audit',desc:'ICAO USOAP CMA score up from 70.23% in 2023 — well above global average 70.4% and West African average 61.1%. No SSCs flagged.',cls:['public','regulatory','macro']},
-  {date:'2026-04-15',time:'16:55',cid:'enugu',title:'Enugu Air independent AOC issued by NCAA',desc:'Among fastest NCAA certifications on record. Aircraft acquisition publicly attributed to Fidelity Bank financing.',cls:['public','regulatory','financial']},
-  {date:'2026-04-12',time:'08:22',cid:'arik',title:'Uncontained CFM56 engine failure on 5N-MJF (Arik Air)',desc:'Lagos–PHC descent, nacelle destroyed, vertical-fin damage; 80 souls disembarked safely. NSIB investigating.',cls:['public','ops','legal']},
+  {date:'2026-04-15',time:'16:55',cid:'enugu_air',title:'Enugu Air independent AOC issued by NCAA',desc:'Among fastest NCAA certifications on record. Aircraft acquisition publicly attributed to Fidelity Bank financing.',cls:['public','regulatory','financial']},
+  {date:'2026-04-12',time:'08:22',cid:'arik_air',title:'Uncontained CFM56 engine failure on 5N-MJF (Arik Air)',desc:'Lagos–PHC descent, nacelle destroyed, vertical-fin damage; 80 souls disembarked safely. NSIB investigating.',cls:['public','ops','legal']},
   {date:'2026-04-08',time:'13:00',cid:null,title:'CBN external reserves $49.4bn end-March 2026',desc:'Approximately 7 months current external payments cover. IATA blocked-funds list: Nigeria off since June 2024.',cls:['public','macro','financial']},
-  {date:'2026-04-04',time:'10:15',cid:'gateway',title:'Gateway Air commissioning by President Tinubu',desc:'Ogun State virtual carrier on ValueJet AOC. Commercial operations from 13 April 2026.',cls:['public','ops']},
-  {date:'2026-03-30',time:'12:00',cid:'una',title:'UNA fifth anniversary — AMO migration announcement',desc:'Chairman: NCAA-approved AMO migration. MRO facility within 3 years stated.',cls:['public','ops','regulatory']},
-  {date:'2026-03-15',time:'15:42',cid:'airpeace',title:'NCAA summons Air Peace over LHR–ABV passenger stranding',desc:'Disposition pending. Adds to FCCPC summons disposition trail.',cls:['public','regulatory','legal']},
-  {date:'2026-02-28',time:'11:11',cid:'green',title:'Access Bank finances 5N-GAC ATR 72-600',desc:'Recovery from 31 Mar 2025 ACIA Aero Leasing IDERA repossession. Owned-fleet model rebuilt via Access Bank.',cls:['public','financial']},
+  {date:'2026-04-04',time:'10:15',cid:'gateway_air',title:'Gateway Air commissioning by President Tinubu',desc:'Ogun State virtual carrier on ValueJet AOC. Commercial operations from 13 April 2026.',cls:['public','ops']},
+  {date:'2026-03-30',time:'12:00',cid:'united_nigeria_airlines',title:'UNA fifth anniversary — AMO migration announcement',desc:'Chairman: NCAA-approved AMO migration. MRO facility within 3 years stated.',cls:['public','ops','regulatory']},
+  {date:'2026-03-15',time:'15:42',cid:'air_peace',title:'NCAA summons Air Peace over LHR–ABV passenger stranding',desc:'Disposition pending. Adds to FCCPC summons disposition trail.',cls:['public','regulatory','legal']},
+  {date:'2026-02-28',time:'11:11',cid:'green_africa_airways',title:'Access Bank finances 5N-GAC ATR 72-600',desc:'Recovery from 31 Mar 2025 ACIA Aero Leasing IDERA repossession. Owned-fleet model rebuilt via Access Bank.',cls:['public','financial']},
   {date:'2025-04-01',time:'09:00',cid:'air-senegal',title:'Carlyle Aviation repossesses four A320s from Air Sénégal',desc:"USD 10M+ arrears. Four aircraft deregistered. Carrier now operating 100% on ACMI.",cls:['financial','legal']},
   {date:'2025-04-01',time:'08:00',cid:'mauritania-airlines',title:"Royal Air Maroc strategic partnership announced with Mauritania Airlines",desc:'RAM positioning on third West African distressed carrier engagement (after Air Sénégal, Niger Airlines). Partnership structure terms DATA GAP.',cls:['financial','public']},
   {date:'2025-10-01',cid:'air-burkina',title:'Air Burkina renationalisation confirmed by Burkinabé state',desc:'2020 AGD privatisation reversed. 100% state control restored. USD 50M revival investment announced. Chinese counterparty identity not disclosed.',cls:['regulatory','financial']},
@@ -4940,8 +5249,32 @@ function buildCountryModTable(){
   t.innerHTML=`<thead><tr><th>Jurisdiction</th><th>Bloc</th><th>CTC Status</th><th>EU Blacklist</th><th>Sovereign context</th><th>RCS.6 anchor band</th></tr></thead><tbody>${COUNTRY_METADATA.map(c=>`<tr><td style="color:#fff;font-weight:500">${c.jurisdiction}${c.aesBloc?` <span style="color:var(--dnd);font-family:var(--mono);font-size:10px">AES</span>`:''}</td><td>${c.bloc}</td><td style="color:${c.ctcStatus.includes('IDERA')?'var(--deploy)':'var(--watch)'}">${c.ctcStatus}</td><td style="color:${c.euBlacklist?'var(--dnd)':'var(--deploy)'}">${c.euBlacklist?'YES — since '+c.euBlacklistSince:'No'}</td><td style="font-size:11px">${c.sovereignContext}</td><td style="font-family:var(--mono);font-weight:600;color:${c.rcs6AnchorBand[0]>=6?'var(--deploy)':c.rcs6AnchorBand[0]>=4?'var(--watch)':'var(--dnd)'}">${c.rcs6AnchorBand[0]}–${c.rcs6AnchorBand[1]}/10</td></tr>`).join('')}</tbody>`;
 }
 
+const auditFilter={q:'',src:'all'};
 function buildAudit(){
-  el('atbl').innerHTML=`<thead><tr><th>Timestamp</th><th>User</th><th>Carrier</th><th>Criterion</th><th>From</th><th>To</th><th>Source</th><th>Status</th><th>Note</th></tr></thead><tbody>${AUDIT.map(l=>`<tr><td>${l.ts}</td><td>${l.user}</td><td style="color:#fff">${l.carrier}</td><td>${l.crit}</td><td class="af">${l.fr}</td><td class="at">${l.to}</td><td>${l.src}</td><td>${l.status}</td><td style="max-width:200px">${l.note}</td></tr>`).join('')}</tbody>`;
+  let rows=AUDIT.slice();
+  if(auditFilter.src!=='all')rows=rows.filter(l=>l.src===auditFilter.src);
+  if(auditFilter.q){
+    const q=auditFilter.q;
+    rows=rows.filter(l=>(l.carrier||'').toLowerCase().includes(q)||(l.crit||'').toLowerCase().includes(q)||(l.note||'').toLowerCase().includes(q)||(l.user||'').toLowerCase().includes(q));
+  }
+  el('atbl').innerHTML=`<thead><tr><th>Timestamp</th><th>User</th><th>Carrier</th><th>Criterion</th><th>From</th><th>To</th><th>Source</th><th>Status</th><th>Note</th></tr></thead><tbody>${rows.length?rows.map(l=>`<tr><td>${l.ts}</td><td>${l.user}</td><td style="color:#fff">${l.carrier}</td><td>${l.crit}</td><td class="af">${l.fr}</td><td class="at">${l.to}</td><td>${l.src}</td><td>${l.status}</td><td style="max-width:200px">${l.note}</td></tr>`).join(''):`<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--t3);font-size:14px">No audit entries match the current filter.</td></tr>`}</tbody>`;
+  const meta=el('auditCount');
+  if(meta)meta.textContent=`${rows.length} of ${AUDIT.length} events`;
+  const scope=el('auditScope');
+  if(scope){
+    const bits=[];
+    if(auditFilter.q)bits.push(`"${auditFilter.q}"`);
+    if(auditFilter.src!=='all')bits.push(`source=${auditFilter.src}`);
+    scope.textContent=bits.length?`Filter: ${bits.join(' · ')}`:'No filter active';
+    scope.style.color=bits.length?'var(--amber)':'var(--t3)';
+  }
+}
+function bindAuditFilters(){
+  if(window._auditBound)return;window._auditBound=true;
+  const q=el('auditSearch'),s=el('auditSource'),c=el('auditClear');
+  if(q)q.addEventListener('input',e=>{auditFilter.q=e.target.value.trim().toLowerCase();buildAudit();});
+  if(s)s.addEventListener('change',e=>{auditFilter.src=e.target.value;buildAudit();});
+  if(c)c.addEventListener('click',()=>{auditFilter.q='';auditFilter.src='all';if(q)q.value='';if(s)s.value='all';buildAudit();});
 }
 
 function buildWorkspace(){
@@ -4954,6 +5287,63 @@ function buildWorkspace(){
     toast('Evidence submitted','Routed to '+a.name+' methodology engine for re-run');
     el('wsForm').reset();
   });
+
+  // Watch Note creator · PRD §3.4.1
+  const wnSel=el('wnCarrier');
+  if(wnSel){
+    wnSel.innerHTML='<option value="">— Select —</option>'+[...ALL_CARRIERS].sort((a,b)=>a.name.localeCompare(b.name)).map(a=>`<option value="${a.id}">${a.name} (${a.region==='west-africa'?a.jurisdiction:a.region==='nigeria'?'Nigeria':a.jurisdiction||''})</option>`).join('');
+    wnSel.addEventListener('change',()=>{
+      const cid=wnSel.value;const a=ALL_CARRIERS.find(x=>x.id===cid);
+      const p=el('wnParent');
+      if(p)p.value=a?`SF-${(a.dateOfAssessment||'2026-05').replace('-','')}-${a.id.toUpperCase()}`:'';
+    });
+  }
+  const wnBtn=el('wnDispatch');
+  if(wnBtn)wnBtn.addEventListener('click',wnDispatchNote);
+  const wnDraftBtn=el('wnDraft');
+  if(wnDraftBtn)wnDraftBtn.addEventListener('click',()=>toast('Draft saved','Watch Note draft retained locally · no dispatch.'));
+}
+
+// Watch Note dispatcher — appends to FEED so it lights up the Market Overview
+// Watch Notes panel; watermarks via moLogDeliverable; unshifts onto AUDIT.
+function wnNextId(){
+  const ym=(new Date()).toISOString().slice(0,7).replace('-','');
+  // Count existing WN-{ym}-* in AUDIT to assign sequence
+  const existing=AUDIT.filter(l=>(l.note||'').includes(`WN-${ym}-`)).length;
+  return`WN-${ym}-${String(existing+1).padStart(3,'0')}`;
+}
+function wnDispatchNote(){
+  const cid=el('wnCarrier').value;
+  if(!cid){toast('Select a carrier','Watch Note must be tied to a parent scoring file.');return;}
+  const a=ALL_CARRIERS.find(x=>x.id===cid);
+  const headline=el('wnHeadline').value.trim();
+  if(headline.length<10){toast('Headline required','Min 10 characters — make it scannable in the alerts inbox.');return;}
+  const body=el('wnBody').value.trim();
+  if(body.length<80){toast('Body too short','Min 80 characters — the client needs the rationale, not just the headline.');return;}
+  const source=el('wnSource').value.trim();
+  if(source.length<5){toast('Source citation required','Watch Notes are audited. Cite a URL or field-intelligence reference.');return;}
+  const cls=Array.from(document.querySelectorAll('#wnClassRow input:checked')).map(i=>i.value);
+  if(!cls.length){toast('Classification required','Pick at least one PRD §3.2.4 class so the client portal can route the note.');return;}
+  const severity=el('wnSeverity').value;
+  const aav=el('wnAav').checked;
+  const wnId=wnNextId();
+  // Compose FEED entry
+  const d=new Date();
+  const date=d.toISOString().slice(0,10);
+  const time=`${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')}`;
+  const desc=(aav?'<span class="aav-inline">AAV</span> ':'')+body+`<br><span style="font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em">Source: ${source}</span>`;
+  FEED.unshift({date,time,cid:a.id,title:headline,desc,cls,wnId,severity});
+  // Watermark + audit
+  const wm=moLogDeliverable({carrier:a.name,deliverable:`Watch Note ${wnId}`,format:'JSON+PDF',scope:'single'});
+  AUDIT.unshift({ts:sigNowTs(),user:sigCurrentUser(),carrier:a.name,crit:`Watch Note dispatched · ${severity.toUpperCase()}`,fr:'Draft',to:'Client portal feed',src:'Methodology',status:'Dispatched',note:`${wnId} · ${cls.join('/').toUpperCase()} · ${headline.slice(0,140)}`});
+  if(typeof buildAudit==='function')buildAudit();
+  // Refresh client-portal-visible surfaces
+  if(typeof buildDashboard==='function')buildDashboard();
+  if(typeof buildFeed==='function')buildFeed();
+  // Reset form
+  el('wnForm').reset();
+  const pp=el('wnParent');if(pp)pp.value='';
+  toast(`Watch Note dispatched · ${wnId}`,`${a.name} · ${cls.join(' + ').toUpperCase()} · ${severity.toUpperCase()} · Watermark ${wm.token}`);
 }
 
 function bindNav(){
@@ -5012,6 +5402,146 @@ let sigFilter={band:'all',region:'all',q:''};
 const sigOverrides={};   // {carrierId: {severity, rationale, ts, user}}
 const sigPromotions={};  // {carrierId: {impact, rationale, ts, user, status}}
 let sigPopCarrier=null;
+let sigOpenSrc=null;
+
+// Source adapter registry — PRD §4.4.5 ingestion health.
+// Demo data; in production the fetch-health fields are populated by the
+// Market Monitoring Agent's adapter telemetry.
+const SIGNAL_SOURCES=[
+  {code:'ads_b_util',     name:'ADS-B Utilisation',    short:'ADS-B',    adapter:'ads-b-exchange',  version:'v1.2', fetchIntervalMin:5,    lastFetchTs:'2026-06-11 14:08 UTC', last24h:{ok:287,total:288}, last7d:{ok:2011,total:2016}, volume7d:[9,12,14,11,18,21,11], recentFailures:[{ts:'2026-06-09 03:14', code:'timeout'}]},
+  {code:'sched_int',      name:'Schedule Integrity',   short:'Schedule', adapter:'flightradar-jobs', version:'v1.0', fetchIntervalMin:15,   lastFetchTs:'2026-06-11 14:00 UTC', last24h:{ok:96,total:96},   last7d:{ok:671,total:672},   volume7d:[14,16,11,18,12,15,13], recentFailures:[]},
+  {code:'fuel',           name:'Fuel Payment',         short:'Fuel',     adapter:'fi-fuel-payment',  version:'v0.9', fetchIntervalMin:1440, lastFetchTs:'2026-06-10 22:30 UTC', last24h:{ok:1,total:1},     last7d:{ok:7,total:7},       volume7d:[4,5,3,6,4,7,5],       recentFailures:[]},
+  {code:'ground_handler', name:'Ground Handler',       short:'Handler',  adapter:'fi-ground-bill',   version:'v0.9', fetchIntervalMin:1440, lastFetchTs:'2026-06-10 22:30 UTC', last24h:{ok:1,total:1},     last7d:{ok:7,total:7},       volume7d:[3,2,4,3,5,4,3],       recentFailures:[]},
+  {code:'yield',          name:'Yield Scraper',        short:'Yield',    adapter:'fare-scraper',     version:'v1.4', fetchIntervalMin:60,   lastFetchTs:'2026-06-11 14:00 UTC', last24h:{ok:22,total:24},   last7d:{ok:165,total:168},   volume7d:[8,11,9,12,10,14,11],  recentFailures:[{ts:'2026-06-11 09:00', code:'403 source'},{ts:'2026-06-11 10:00', code:'403 source'}]},
+  {code:'airport_chg',    name:'Airport Charges',      short:'Charges',  adapter:'fi-faan-chg',      version:'v0.8', fetchIntervalMin:10080,lastFetchTs:'2026-06-05 14:00 UTC', last24h:{ok:0,total:0},     last7d:{ok:1,total:1},       volume7d:[0,0,2,0,0,1,0],       recentFailures:[]},
+  {code:'ncaa',           name:'NCAA Reports',         short:'NCAA',     adapter:'ncaa-rss',         version:'v1.0', fetchIntervalMin:1440, lastFetchTs:'2026-06-11 06:00 UTC', last24h:{ok:1,total:1},     last7d:{ok:6,total:7},       volume7d:[0,1,0,0,2,0,0],       recentFailures:[{ts:'2026-06-08 06:00', code:'503 upstream'}]},
+  {code:'bsp',            name:'IATA BSP',             short:'BSP',      adapter:'iata-bsp-feed',    version:'v0.6', fetchIntervalMin:10080,lastFetchTs:'2026-05-29 12:00 UTC', last24h:{ok:0,total:0},     last7d:{ok:0,total:1},       volume7d:[0,0,0,0,0,0,0],       recentFailures:[{ts:'2026-05-29 12:00', code:'auth pending'}]},
+];
+
+function sigSourceHealth(src){
+  const t24=src.last24h.total||0;
+  if(t24===0){
+    // Low-frequency source — judge on 7d window
+    const r7=src.last7d.total?src.last7d.ok/src.last7d.total:0;
+    if(r7>=0.99)return{cls:'live',lbl:'LIVE',ratio:r7};
+    if(r7>=0.85)return{cls:'degraded',lbl:'DEGRADED',ratio:r7};
+    return{cls:'absent',lbl:'ABSENT',ratio:r7};
+  }
+  const r=src.last24h.ok/src.last24h.total;
+  if(r>=0.99)return{cls:'live',lbl:'LIVE',ratio:r};
+  if(r>=0.95)return{cls:'degraded',lbl:'DEGRADED',ratio:r};
+  return{cls:'absent',lbl:'ABSENT',ratio:r};
+}
+
+function sigSrcCoverage(srcCode){
+  const monitored=ALL_CARRIERS.filter(c=>SIGNAL_DATA[c.id]).map(c=>SIGNAL_DATA[c.id]);
+  const proxies=monitored.flatMap(sd=>sd.proxies||[]).filter(p=>p.code===srcCode);
+  const live=proxies.filter(p=>p.state==='live').length;
+  const awaiting=proxies.filter(p=>p.state==='awaiting').length;
+  const absent=proxies.filter(p=>p.state==='absent').length;
+  const na=proxies.filter(p=>p.state==='not_applicable').length;
+  return{live,awaiting,absent,na,total:proxies.length-na};
+}
+
+function sigSparkline(values,w,h){
+  if(!values||!values.length)return'';
+  const max=Math.max(...values,1);
+  const stepX=w/(values.length-1||1);
+  const pts=values.map((v,i)=>`${(i*stepX).toFixed(1)},${(h-(v/max)*(h-6)-3).toFixed(1)}`).join(' ');
+  const last=values[values.length-1];
+  const lastX=((values.length-1)*stepX).toFixed(1);
+  const lastY=(h-(last/max)*(h-6)-3).toFixed(1);
+  const areaPts=`0,${h} ${pts} ${w},${h}`;
+  return`<svg class="sig-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <polygon points="${areaPts}" fill="rgba(232,162,58,0.10)"/>
+    <polyline points="${pts}" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="${lastX}" cy="${lastY}" r="2.5" fill="var(--amber)"/>
+  </svg>`;
+}
+
+function sigOpenSrcDrawer(code){
+  const src=SIGNAL_SOURCES.find(s=>s.code===code);
+  if(!src)return;
+  sigOpenSrc=code;
+  const health=sigSourceHealth(src);
+  const cov=sigSrcCoverage(code);
+  const r24=src.last24h.total?(src.last24h.ok/src.last24h.total*100).toFixed(1):'—';
+  const r7=src.last7d.total?(src.last7d.ok/src.last7d.total*100).toFixed(1):'—';
+  const volTotal=src.volume7d.reduce((a,b)=>a+b,0);
+  const volAvg=(volTotal/(src.volume7d.length||1)).toFixed(1);
+  const volToday=src.volume7d[src.volume7d.length-1]||0;
+  const intervalLbl=src.fetchIntervalMin<60?`${src.fetchIntervalMin} min`:src.fetchIntervalMin<1440?`${src.fetchIntervalMin/60} h`:`${src.fetchIntervalMin/1440} d`;
+  const failRows=src.recentFailures.length
+    ?src.recentFailures.map(f=>`<div class="sig-fail-row"><span class="ts">${f.ts}</span><span class="code">${f.code}</span></div>`).join('')
+    :`<div class="sig-fail-empty">No failures in the past 7 days.</div>`;
+  const html=`
+    <div class="sig-drawer-hd">
+      <div class="ttl">
+        <h3>${src.name}</h3>
+        <span class="sub">${src.adapter} · ${src.version}</span>
+      </div>
+      <button class="close" id="sigDrawerClose" title="Close">✕</button>
+    </div>
+    <div class="sig-drawer-body">
+      <div class="sig-drawer-sect">
+        <h4>Adapter status</h4>
+        <div class="sig-drawer-row"><span class="k">Status</span><span class="v"><span class="sig-status-pill ${health.cls}"><span class="dot"></span>${health.lbl}</span></span></div>
+        <div class="sig-drawer-row"><span class="k">Last fetch</span><span class="v">${src.lastFetchTs}</span></div>
+        <div class="sig-drawer-row"><span class="k">Fetch interval</span><span class="v">every ${intervalLbl}</span></div>
+        <div class="sig-drawer-row"><span class="k">Last 24 h</span><span class="v ${health.cls==='live'?'pos':health.cls==='degraded'?'warn':'neg'}">${src.last24h.ok} / ${src.last24h.total} · ${r24}%</span></div>
+        <div class="sig-drawer-row"><span class="k">Last 7 d</span><span class="v ${src.last7d.ok===src.last7d.total?'pos':'warn'}">${src.last7d.ok} / ${src.last7d.total} · ${r7}%</span></div>
+      </div>
+      <div class="sig-drawer-sect">
+        <h4>Signal volume · last 7 d</h4>
+        ${sigSparkline(src.volume7d,332,64)}
+        <div class="sig-spark-meta"><span>Avg ${volAvg} events/day</span><span>Today ${volToday}</span></div>
+      </div>
+      <div class="sig-drawer-sect">
+        <h4>Coverage</h4>
+        <div class="sig-drawer-row"><span class="k">Carriers live</span><span class="v pos">${cov.live} / ${cov.total}</span></div>
+        ${cov.awaiting?`<div class="sig-drawer-row"><span class="k">Awaiting</span><span class="v warn">${cov.awaiting}</span></div>`:''}
+        ${cov.absent?`<div class="sig-drawer-row"><span class="k">Absent</span><span class="v neg">${cov.absent}</span></div>`:''}
+        ${cov.na?`<div class="sig-drawer-row"><span class="k">Not applicable</span><span class="v">${cov.na}</span></div>`:''}
+      </div>
+      <div class="sig-drawer-sect">
+        <h4>Recent failures</h4>
+        <div class="sig-fail-list">${failRows}</div>
+      </div>
+    </div>
+    <div class="sig-drawer-foot">
+      <button class="sig-mbtn primary" id="sigDrawerToEvents">View source events →</button>
+    </div>
+  `;
+  const drawer=el('sigSrcDrawer');
+  drawer.innerHTML=html;
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden','false');
+  el('sigSrcDrawerBack').classList.add('open');
+  document.querySelectorAll('.sig-source').forEach(s=>s.classList.toggle('open',s.dataset.srcCode===code));
+  el('sigDrawerClose').addEventListener('click',sigCloseSrcDrawer);
+  el('sigDrawerToEvents').addEventListener('click',()=>{
+    sigCloseSrcDrawer();
+    if(typeof sigSwitchMode==='function'){
+      sigSwitchMode('triage');
+      sigTriageFilter.source=code;
+      if(typeof renderSigTriage==='function')renderSigTriage();
+      if(typeof syncSigTriageControls==='function')syncSigTriageControls();
+      toast('Triage queue · filtered',`Showing events from ${SIGNAL_SOURCES.find(s=>s.code===code).name}.`);
+    }else{
+      toast('Source events',`Triage queue ships in M1b. Filter will pre-select ${SIGNAL_SOURCES.find(s=>s.code===code).name}.`);
+    }
+  });
+}
+
+function sigCloseSrcDrawer(){
+  const d=el('sigSrcDrawer');
+  if(!d)return;
+  d.classList.remove('open');
+  d.setAttribute('aria-hidden','true');
+  el('sigSrcDrawerBack').classList.remove('open');
+  document.querySelectorAll('.sig-source').forEach(s=>s.classList.remove('open'));
+  sigOpenSrc=null;
+}
 
 function sigCompositeColor(c){
   if(c===null||c===undefined)return'var(--t3)';
@@ -5021,6 +5551,53 @@ function sigCompositeColor(c){
   if(c<0.5)return'rgba(107,179,138,0.85)';
   return'var(--deploy)';
 }
+// Confidence is derived from three inputs: live proxy coverage, freshness,
+// and sign-agreement of live sub-scores with the composite. Codified here so
+// the displayed value can always be explained — never analyst-tagged.
+function sigParseFresh(s){
+  if(!s)return null;
+  const m=String(s).match(/(\d+)\s*(hour|day|week)s?\s*ago/i);
+  if(!m)return null;
+  const n=parseInt(m[1],10);
+  const u=m[2].toLowerCase();
+  return u==='hour'?n/24:u==='week'?n*7:n;
+}
+function sigConfidenceInputs(sd){
+  if(!sd||!sd.proxies)return null;
+  const applicable=sd.proxies.filter(p=>p.state!=='not_applicable');
+  const live=applicable.filter(p=>p.state==='live');
+  const liveCount=live.length;
+  const coverage=applicable.length?liveCount/applicable.length:0;
+  const freshDays=live.map(p=>sigParseFresh(p.fresh)).filter(v=>v!==null);
+  const meanFresh=freshDays.length?freshDays.reduce((a,b)=>a+b,0)/freshDays.length:999;
+  let agreement=1;
+  if(liveCount&&sd.composite!=null){
+    const sign=Math.sign(sd.composite)||1;
+    const matching=live.filter(p=>p.sub!=null&&Math.sign(p.sub)===sign).length;
+    agreement=liveCount?matching/liveCount:0;
+  }
+  return{liveCount,coverage,meanFresh,agreement,applicable:applicable.length};
+}
+function sigComputeConfidence(sd){
+  const inp=sigConfidenceInputs(sd);
+  if(!inp||inp.liveCount<2)return'insufficient';
+  // Weighted score: coverage 0.50 · freshness 0.30 · agreement 0.20
+  const cov=Math.min(inp.liveCount/5,1)*0.5;
+  const fr=Math.max(0,1-inp.meanFresh/30)*0.3;
+  const ag=inp.agreement*0.2;
+  const score=cov+fr+ag;
+  if(score>=0.80)return'high';
+  if(score>=0.55)return'medium';
+  if(score>=0.30)return'low';
+  return'insufficient';
+}
+function sigConfidenceTooltip(sd){
+  const inp=sigConfidenceInputs(sd);
+  if(!inp)return'';
+  const freshLbl=inp.meanFresh>=999?'no fresh data':inp.meanFresh<1?`${Math.round(inp.meanFresh*24)}h avg`:`${inp.meanFresh.toFixed(1)}d avg`;
+  return`${inp.liveCount}/${inp.applicable} live proxies · ${freshLbl} · ${Math.round(inp.agreement*100)}% sign agreement`;
+}
+
 function sigSeverity(sd){
   if(!sd||sd.composite===null||sd.composite===undefined)return{cls:'none',lbl:'—'};
   const abs=Math.abs(sd.composite);
@@ -5110,34 +5687,429 @@ function renderSigSummary(){
 }
 
 function renderSigSources(){
-  // Per-source ingestion health — PRD §4.4.5
-  const monitored=ALL_CARRIERS.filter(c=>SIGNAL_DATA[c.id]).map(c=>SIGNAL_DATA[c.id]);
-  const sources=[
-    {code:'ads_b_util',name:'ADS-B Utilisation',short:'ADS-B'},
-    {code:'sched_int',name:'Schedule Integrity',short:'Schedule'},
-    {code:'fuel',name:'Fuel Payment',short:'Fuel'},
-    {code:'ground_handler',name:'Ground Handler',short:'Handler'},
-    {code:'yield',name:'Yield Scraper',short:'Yield'},
-    {code:'airport_chg',name:'Airport Charges',short:'Charges'},
-    {code:'ncaa',name:'NCAA Reports',short:'NCAA'},
-    {code:'bsp',name:'IATA BSP',short:'BSP'},
-  ];
-  const html=sources.map(src=>{
-    const proxies=monitored.flatMap(sd=>sd.proxies||[]).filter(p=>p.code===src.code);
-    const live=proxies.filter(p=>p.state==='live').length;
-    const total=proxies.length||1;
-    const ratio=live/total;
-    const cls=ratio>=0.6?'live':ratio>=0.25?'degraded':'absent';
-    return`<span class="sig-source"><span class="src-dot ${cls}"></span>${src.short}<span class="src-vol">${live}/${total}</span></span>`;
+  // Per-source ingestion health — PRD §4.4.5.
+  // Dot is fetch-health-based (live/degraded/absent on 24h success ratio);
+  // numeric chip is signal volume (carriers live / monitored).
+  const html=SIGNAL_SOURCES.map(src=>{
+    const health=sigSourceHealth(src);
+    const cov=sigSrcCoverage(src.code);
+    const isOpen=sigOpenSrc===src.code?' open':'';
+    return`<span class="sig-source${isOpen}" data-src-code="${src.code}" title="${src.adapter} ${src.version} · click for fetch health"><span class="src-dot ${health.cls}"></span>${src.short}<span class="src-vol">${cov.live}/${cov.total||1}</span></span>`;
   }).join('');
-  el('sigSources').innerHTML=html;
+  const host=el('sigSources');
+  host.innerHTML=html;
+  host.querySelectorAll('.sig-source').forEach(s=>{
+    s.addEventListener('click',()=>sigOpenSrcDrawer(s.dataset.srcCode));
+  });
 }
+
+// Drawer backdrop click + Esc close
+document.addEventListener('click',e=>{
+  if(e.target&&e.target.id==='sigSrcDrawerBack')sigCloseSrcDrawer();
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&sigOpenSrc)sigCloseSrcDrawer();
+});
 
 function buildSignalPortfolio(){
   renderSigSummary();
   renderSigSources();
   renderSigTable();
   bindSigFilters();
+  // Triage queue · PRD §4.4.5
+  renderSigTriageSummary();
+  renderSigTriage();
+  bindSigTriageFilters();
+  bindSigModeToggle();
+  // Restore last mode
+  let savedMode='portfolio';
+  try{savedMode=localStorage.getItem('andara.sigMode')||'portfolio';}catch(_){}
+  if(savedMode==='triage')sigSwitchMode('triage',{silent:true});
+}
+
+// ── Signal triage queue · PRD §4.4.5 ───────────────────────────────────────
+const sigTriageFilter={state:'new',source:'all',region:'all',q:''};
+let sigTriagePopEvtId=null;
+
+// Demo seed events. In production, populated by the Market Monitoring Agent.
+const SIGNAL_EVENTS=[
+  // NEW (12)
+  {id:'sig-evt-00142', carrierId:'air_peace',              source:'fuel',           ts:'2026-06-11 09:14', state:'new', assignee:null, rawHeadline:'NNPC fuel allocation paused 48h at MMIA — affects fleet uplift', rawPayload:'Field source flags NNPC bulk allocation suspended pending payment reconciliation. Air Peace and Aero among affected operators. 48h window may extend.', computedSeverity:'high', confidence:'medium', agentTag:'fuel.payment.stress', proxyCode:'fuel'},
+  {id:'sig-evt-00141', carrierId:'air_peace',              source:'sched_int',      ts:'2026-06-11 06:02', state:'new', assignee:null, rawHeadline:'Filed-vs-flown ratio drops to 0.78 over 72h on ABV-LOS', rawPayload:'ADS-B Exchange data: cancellation rate 11.2% over 72h. Forward capacity W24 ABV-LOS reduced 14% vs W22 baseline.', computedSeverity:'high', confidence:'high', agentTag:'schedule.integrity.drop', proxyCode:'sched_int'},
+  {id:'sig-evt-00140', carrierId:'max_air',                source:'yield',          ts:'2026-06-10 22:48', state:'new', assignee:null, rawHeadline:'Promotional fares on LOS-KAN below 90-day floor', rawPayload:'Fare scraper: lowest published one-way at ₦62,500, 28% below 90-day average. Yield management or distress signal.', computedSeverity:'medium', confidence:'high', agentTag:'yield.fare.compression', proxyCode:'yield'},
+  {id:'sig-evt-00139', carrierId:'azman_air',              source:'sched_int',      ts:'2026-06-10 18:21', state:'new', assignee:null, rawHeadline:'Schedule integrity 0.41 — six daily cancellations W23', rawPayload:'ADS-B and FR-jobs cross-corroboration: 6 of 14 scheduled departures cancelled W23. Consistent with operational suspension trajectory flagged W21.', computedSeverity:'critical', confidence:'high', agentTag:'schedule.integrity.collapse', proxyCode:'sched_int'},
+  {id:'sig-evt-00138', carrierId:'arik_air',               source:'ground_handler', ts:'2026-06-10 14:55', state:'new', assignee:null, rawHeadline:'NAHCO billing arrears flagged 60+ days', rawPayload:'Field source: NAHCO accounts show Arik balance >60 days outstanding on two stations. Receivership administration cited.', computedSeverity:'high', confidence:'medium', agentTag:'handler.arrears.confirmed', proxyCode:'ground_handler'},
+  {id:'sig-evt-00137', carrierId:'rano_air',               source:'ncaa',           ts:'2026-06-10 11:08', state:'new', assignee:null, rawHeadline:'NCAA Q1 2026 consumer report — Rano Air top-3 cancellation rate', rawPayload:'NCAA quarterly consumer report published 2026-06-10. Rano Air ranked 2nd on cancellation rate (9.8%) across reporting period.', computedSeverity:'medium', confidence:'high', agentTag:'ncaa.report.adverse', proxyCode:'ncaa'},
+  {id:'sig-evt-00136', carrierId:'green_africa_airways',   source:'ads_b_util',     ts:'2026-06-10 08:30', state:'new', assignee:null, rawHeadline:'Block-hour utilisation 4.1 BH/aircraft/day — 30-day low', rawPayload:'30-day rolling utilisation dropped to 4.1 BH/aircraft/day from 5.6 BH baseline. ATR-72 fleet reduction or scheduled maintenance candidate.', computedSeverity:'medium', confidence:'high', agentTag:'utilisation.decline', proxyCode:'ads_b_util'},
+  {id:'sig-evt-00135', carrierId:'aero_contractors',       source:'fuel',           ts:'2026-06-09 19:42', state:'new', assignee:null, rawHeadline:'Fuel payment delay 14 days at MMIA station', rawPayload:'Field source: 14-day payment delay logged with primary supplier. Not yet in arrears threshold but trending negative.', computedSeverity:'medium', confidence:'low', agentTag:'fuel.payment.delay', proxyCode:'fuel'},
+  {id:'sig-evt-00134', carrierId:'air_peace',              source:'yield',          ts:'2026-06-09 16:11', state:'new', assignee:null, rawHeadline:'LOS-PHC fares cut 18% — third route promo this week', rawPayload:'Third promotional route this week. Pattern is consistent with load-factor pressure across the southeast network.', computedSeverity:'medium', confidence:'high', agentTag:'yield.fare.compression', proxyCode:'yield'},
+  {id:'sig-evt-00133', carrierId:'united_nigeria_airlines',source:'sched_int',      ts:'2026-06-09 12:00', state:'new', assignee:null, rawHeadline:'B737-800 induction shifts schedule integrity briefly to 0.79', rawPayload:'Second B737-800 entry-into-service caused 48h schedule disruption W23. Likely transient — recommend re-check W25.', computedSeverity:'low', confidence:'high', agentTag:'schedule.transient.fleet', proxyCode:'sched_int'},
+  {id:'sig-evt-00132', carrierId:'xejet',                  source:'ground_handler', ts:'2026-06-09 09:30', state:'new', assignee:null, rawHeadline:'SAHCO single invoice outstanding 35 days', rawPayload:'Single invoice at 35 days. Below arrears threshold but worth tracking given thin operating buffer.', computedSeverity:'low', confidence:'medium', agentTag:'handler.invoice.aging', proxyCode:'ground_handler'},
+  {id:'sig-evt-00131', carrierId:'valuejet_airlines',      source:'ads_b_util',     ts:'2026-06-09 06:48', state:'new', assignee:null, rawHeadline:'Cotonou route launch boosted utilisation to 7.1 BH/day', rawPayload:'30-day utilisation lifted from 6.5 to 7.1 BH/aircraft/day following Cotonou route launch W22. Positive signal.', computedSeverity:'low', confidence:'high', agentTag:'utilisation.positive', proxyCode:'ads_b_util'},
+  // IN TRIAGE (6)
+  {id:'sig-evt-00130', carrierId:'air_peace',              source:'ads_b_util',     ts:'2026-06-08 22:14', state:'in_triage', assignee:'dikko@andara.io', rawHeadline:'Three-aircraft AOG cluster suspected at MMIA', rawPayload:'ADS-B inactivity >36h on three tail numbers (5N-BUJ, 5N-BUK, 5N-BUL). Maintenance event or wider operational pause.', computedSeverity:'high', confidence:'medium', agentTag:'fleet.aog.cluster', proxyCode:'ads_b_util'},
+  {id:'sig-evt-00129', carrierId:'max_air',                source:'fuel',           ts:'2026-06-08 16:30', state:'in_triage', assignee:'dikko@andara.io', rawHeadline:'Hajj operation tail-end — fuel uplift pattern abnormal', rawPayload:'Hajj wind-down 2026 — fuel uplift inconsistent with published schedule. Repositioning or maintenance event candidate.', computedSeverity:'medium', confidence:'medium', agentTag:'fuel.uplift.anomaly', proxyCode:'fuel'},
+  {id:'sig-evt-00128', carrierId:'arik_air',               source:'sched_int',      ts:'2026-06-08 11:48', state:'in_triage', assignee:'product@wizearly.ai', rawHeadline:'Receivership operations: 1 active tail, schedule integrity 0.62', rawPayload:'Single active tail (5N-MJK) operating LOS-ABV. Schedule integrity reflects single-aircraft constraint not deterioration.', computedSeverity:'medium', confidence:'high', agentTag:'schedule.constrained.fleet', proxyCode:'sched_int'},
+  {id:'sig-evt-00127', carrierId:'green_africa_airways',   source:'yield',          ts:'2026-06-08 09:22', state:'in_triage', assignee:'dikko@andara.io', rawHeadline:'Yield benchmark below cost-recovery floor on two routes', rawPayload:'Published LOS-PHC and LOS-OWE fares estimated to be below per-seat cost-recovery threshold. Pricing pressure or unit-cost mismatch.', computedSeverity:'medium', confidence:'low', agentTag:'yield.below.floor', proxyCode:'yield'},
+  {id:'sig-evt-00126', carrierId:'rano_air',               source:'ground_handler', ts:'2026-06-07 19:50', state:'in_triage', assignee:'product@wizearly.ai', rawHeadline:'NAHCO arrears confirmed — 38 days outstanding KAN station', rawPayload:'Field-verified: 38-day NAHCO arrears at Kano station. Crossing 30-day threshold.', computedSeverity:'high', confidence:'high', agentTag:'handler.arrears.confirmed', proxyCode:'ground_handler'},
+  {id:'sig-evt-00125', carrierId:'aero_contractors',       source:'sched_int',      ts:'2026-06-07 13:10', state:'in_triage', assignee:'dikko@andara.io', rawHeadline:'Filed-vs-flown ratio 0.74 sustained over 14 days', rawPayload:'14-day sustained drop in filed-vs-flown ratio. Cancellation rate 9.1%. Trend, not blip.', computedSeverity:'high', confidence:'high', agentTag:'schedule.integrity.drop', proxyCode:'sched_int'},
+  // TRIAGED (5)
+  {id:'sig-evt-00124', carrierId:'air_peace',              source:'sched_int',      ts:'2026-06-05 14:00', state:'triaged', assignee:'dikko@andara.io', rawHeadline:'Schedule integrity confirmed deteriorating — verdict band updated', rawPayload:'Triaged into the Air Peace Deteriorating signal published W21. Cross-corroborated with utilisation drop.', computedSeverity:'high', confidence:'high', agentTag:'schedule.integrity.drop', proxyCode:'sched_int', triagedNote:'Cross-corroborated with ADS-B utilisation. Linked to active Deteriorating signal. Watch Note dispatched to Fidelity Bank.'},
+  {id:'sig-evt-00123', carrierId:'azman_air',              source:'ncaa',           ts:'2026-06-04 10:30', state:'triaged', assignee:'product@wizearly.ai', rawHeadline:'NCAA Q1 2026 cited operational suspension — triaged into existing DnD', rawPayload:'NCAA report confirms operational suspension. No new analytical view — folded into existing Do Not Deploy verdict.', computedSeverity:'critical', confidence:'high', agentTag:'ncaa.report.adverse', proxyCode:'ncaa', triagedNote:'Confirms what we already know. Folded into the live Azman DnD package — no fresh action.'},
+  {id:'sig-evt-00122', carrierId:'ibom_air',               source:'ads_b_util',     ts:'2026-06-03 16:45', state:'triaged', assignee:'dikko@andara.io', rawHeadline:'Second A220 utilisation reaching steady state', rawPayload:'A220 fleet utilisation steady at 7.4 BH/day across two units. Positive — supports Stable signal.', computedSeverity:'low', confidence:'high', agentTag:'utilisation.positive', proxyCode:'ads_b_util', triagedNote:'Positive utilisation evidence on A220 fleet. Logged on Ibom Air Signal proxy — no band change.'},
+  {id:'sig-evt-00121', carrierId:'overland_airways',       source:'airport_chg',    ts:'2026-06-02 11:20', state:'triaged', assignee:'product@wizearly.ai', rawHeadline:'FAAN charge standing clean ahead of AOC renewal', rawPayload:'Field confirmation: no FAAN charge arrears as of W22 2026. AOC renewal expected July 2026.', computedSeverity:'low', confidence:'high', agentTag:'charges.clean', proxyCode:'airport_chg', triagedNote:'Clean charge standing recorded on the airport-charges proxy. Removes one tail-risk going into the AOC renewal review.'},
+  {id:'sig-evt-00120', carrierId:'united_nigeria_airlines',source:'fuel',           ts:'2026-05-30 09:00', state:'triaged', assignee:'dikko@andara.io', rawHeadline:'Zenith Bank facility utilisation confirms fuel payment backstop', rawPayload:'Zenith Bank facility drawdown supports fuel supplier payment continuity in May 2026.', computedSeverity:'low', confidence:'medium', agentTag:'fuel.backstop.confirmed', proxyCode:'fuel', triagedNote:'Confirms payment-continuity hypothesis. No band change but strengthens the Watch verdict narrative.'},
+  // DISMISSED (2)
+  {id:'sig-evt-00119', carrierId:'valuejet_airlines',      source:'yield',          ts:'2026-06-04 22:14', state:'dismissed', assignee:'dikko@andara.io', rawHeadline:'Single LOS-OWE fare drop — promotional, not distress', rawPayload:'One-day fare promotion on LOS-OWE for new route launch. Pattern not consistent with distress signal.', computedSeverity:'low', confidence:'medium', agentTag:'yield.fare.compression', proxyCode:'yield', dismissRationale:'Confirmed promotional launch fare for newly-added LOS-OWE route. Pattern is explainable and not a distress signal — flagged adapter for tighter promo-vs-distress separation.'},
+  {id:'sig-evt-00118', carrierId:'allied_air',             source:'sched_int',      ts:'2026-06-02 08:00', state:'dismissed', assignee:'product@wizearly.ai', rawHeadline:'Cargo schedule integrity flag — proxy not applicable', rawPayload:'Schedule integrity scoring fired on Allied Air despite cargo operator classification. Adapter rule error.', computedSeverity:'low', confidence:'low', agentTag:'schedule.integrity.drop', proxyCode:'sched_int', dismissRationale:'Adapter fired on a cargo operator where the passenger schedule integrity proxy is not applicable. False positive — adapter rule needs cargo-operator exclusion.'},
+];
+
+function sigTriageAgo(ts){
+  const d=new Date(ts.replace(' ','T')+'Z');
+  const now=new Date();
+  const m=Math.round((now-d)/60000);
+  if(m<60)return`${m}m ago`;
+  if(m<1440)return`${Math.round(m/60)}h ago`;
+  return`${Math.round(m/1440)}d ago`;
+}
+function sigTriageStateLbl(s){
+  return{new:'NEW','in_triage':'IN TRIAGE',triaged:'TRIAGED',dismissed:'DISMISSED'}[s]||s.toUpperCase();
+}
+function sigTriageStateCounts(){
+  const c={new:0,in_triage:0,triaged:0,dismissed:0};
+  SIGNAL_EVENTS.forEach(e=>{c[e.state]=(c[e.state]||0)+1;});
+  return c;
+}
+
+function renderSigTriageSummary(){
+  const c=sigTriageStateCounts();
+  const today=(new Date()).toISOString().slice(0,10);
+  const triagedToday=SIGNAL_EVENTS.filter(e=>e.state==='triaged'&&e.ts.slice(0,10)===today).length;
+  const dismissedToday=SIGNAL_EVENTS.filter(e=>e.state==='dismissed'&&e.ts.slice(0,10)===today).length;
+  // Median time-to-triage on the triaged set (very rough — ingestion ts vs. now stand-in)
+  const triaged=SIGNAL_EVENTS.filter(e=>e.state==='triaged');
+  let mttt='—';
+  if(triaged.length){
+    const hrs=triaged.map(e=>(new Date()-new Date(e.ts.replace(' ','T')+'Z'))/3600000).sort((a,b)=>a-b);
+    const mid=hrs[Math.floor(hrs.length/2)];
+    mttt=mid<24?`${Math.round(mid)}h`:`${Math.round(mid/24)}d`;
+  }
+  const cells=[
+    {k:'New',           v:c.new,           cls:'neg', m:'awaiting analyst triage'},
+    {k:'In triage',     v:c.in_triage,     cls:'',    m:'analyst review in progress'},
+    {k:'Triaged today', v:triagedToday,    cls:'pos', m:'resolved · linked to proxy'},
+    {k:'Dismissed today',v:dismissedToday, cls:'',    m:'noise / adapter false positive'},
+    {k:'Median TTT',    v:mttt,            cls:'',    m:'time from ingest → triage'},
+  ];
+  el('sigTrSummary').innerHTML=cells.map(c=>`<div class="cell"><div class="k">${c.k}</div><div class="val ${c.cls}">${c.v}</div><div class="meta">${c.m}</div></div>`).join('');
+  // Mode-toggle "N new" badge stays on global counts (it's a portfolio summary).
+  // The per-chip counts are managed inside renderSigTriage() so they track
+  // the current source/region/search filter — i.e. they answer "if I click
+  // this chip, how many rows will I see?"
+  const nb=el('sigTrNewCount');
+  if(nb){nb.textContent=c.new;nb.classList.toggle('zero',c.new===0);}
+}
+
+function renderSigTriage(){
+  const body=el('sigTriageBody');
+  if(!body)return;
+  // Apply source/region/search FIRST (without state) so chip counts can reflect
+  // "if I click this chip, how many rows will I see" given the current non-state filters.
+  let preState=SIGNAL_EVENTS.slice();
+  if(sigTriageFilter.source!=='all')preState=preState.filter(e=>e.source===sigTriageFilter.source);
+  if(sigTriageFilter.region!=='all'){
+    preState=preState.filter(e=>{
+      const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+      return c&&c.region===sigTriageFilter.region;
+    });
+  }
+  if(sigTriageFilter.q){
+    const q=sigTriageFilter.q;
+    preState=preState.filter(e=>{
+      const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+      return e.rawHeadline.toLowerCase().includes(q)||(c&&c.name.toLowerCase().includes(q))||e.agentTag.toLowerCase().includes(q);
+    });
+  }
+  // Update chip counts from the source/region/search-filtered set.
+  const cc={new:0,in_triage:0,triaged:0,dismissed:0};
+  preState.forEach(e=>{cc[e.state]=(cc[e.state]||0)+1;});
+  const setChipCount=(id,v)=>{const n=el(id);if(n){n.textContent=v;n.classList.toggle('zero',v===0);}};
+  setChipCount('sigTrStateCountNew',cc.new);
+  setChipCount('sigTrStateCountInTriage',cc.in_triage);
+  setChipCount('sigTrStateCountTriaged',cc.triaged);
+  setChipCount('sigTrStateCountDismissed',cc.dismissed);
+  setChipCount('sigTrStateCountAll',preState.length);
+  // Now apply state filter.
+  let rows=sigTriageFilter.state==='all'?preState.slice():preState.filter(e=>e.state===sigTriageFilter.state);
+  // Sort: newest first
+  rows.sort((a,b)=>(a.ts<b.ts?1:-1));
+  // Within "all" filter, group dismissed last
+  if(sigTriageFilter.state==='all'){
+    const order={new:0,in_triage:1,triaged:2,dismissed:3};
+    rows.sort((a,b)=>(order[a.state]??9)-(order[b.state]??9));
+  }
+  const out=rows.map(e=>{
+    const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+    if(!c)return'';
+    const src=SIGNAL_SOURCES.find(s=>s.code===e.source)||{short:e.source,name:e.source};
+    const srcHealth=src.code?sigSourceHealth(src):{cls:'absent'};
+    const sevCls=e.computedSeverity||'low';
+    const sevLbl=(e.computedSeverity||'low').toUpperCase();
+    return`<tr class="${e.state==='dismissed'?'dismissed':''}" data-evt-id="${e.id}">
+      <td><span class="sig-state-pill sig-state-${e.state}">${sigTriageStateLbl(e.state)}</span></td>
+      <td><div class="sig-carrier">${c.name}${c.iataCode?`<span class="iata">${c.iataCode}</span>`:''}</div></td>
+      <td><span class="sig-src-cell"><span class="src-dot ${srcHealth.cls}"></span>${src.short}</span></td>
+      <td><div class="sig-headline">${e.rawHeadline}<span class="agent-tag">${e.agentTag}</span></div></td>
+      <td><span class="sig-sev-pill sig-sev-${sevCls}">${sevLbl}</span></td>
+      <td><span class="sig-conf-pill sig-conf-${e.confidence}">${e.confidence.charAt(0).toUpperCase()+e.confidence.slice(1)}</span></td>
+      <td><span class="sig-ts">${e.ts.slice(5,16)}<span class="ago">${sigTriageAgo(e.ts)}</span></span></td>
+      <td class="sig-actions-col"><button class="sig-kebab" data-sig-tr-kebab="${e.id}" title="Actions">⋯</button></td>
+    </tr>`;
+  }).join('');
+  body.innerHTML=out||`<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--t3);font-size:14px">No events match the current filter.</td></tr>`;
+  const meta=el('sigTrCount');if(meta)meta.textContent=`${rows.length} event${rows.length===1?'':'s'}`;
+  // Wire row click → carrier profile, kebab → popover
+  body.querySelectorAll('tr[data-evt-id]').forEach(tr=>{
+    tr.addEventListener('click',ev=>{
+      if(ev.target.closest('.sig-kebab')||ev.target.closest('.sig-actions-col'))return;
+      const e=SIGNAL_EVENTS.find(x=>x.id===tr.dataset.evtId);
+      if(e)showAirline(e.carrierId);
+    });
+  });
+  body.querySelectorAll('.sig-kebab').forEach(btn=>{
+    btn.addEventListener('click',ev=>{
+      ev.stopPropagation();
+      sigOpenTriagePop(btn.dataset.sigTrKebab,btn);
+    });
+  });
+}
+
+function syncSigTriageControls(){
+  document.querySelectorAll('#sigTrState .rtab').forEach(b=>{
+    b.classList.toggle('active',b.dataset.trstate===sigTriageFilter.state);
+  });
+  const src=el('sigTrSource');if(src)src.value=sigTriageFilter.source;
+  const rg=el('sigTrRegion');if(rg)rg.value=sigTriageFilter.region;
+  const q=el('sigTrSearch');if(q)q.value=sigTriageFilter.q;
+}
+
+function bindSigTriageFilters(){
+  if(window._sigTrBound)return;window._sigTrBound=true;
+  document.querySelectorAll('#sigTrState .rtab').forEach(b=>{
+    b.addEventListener('click',()=>{
+      sigTriageFilter.state=b.dataset.trstate;
+      syncSigTriageControls();
+      renderSigTriage();
+    });
+  });
+  el('sigTrSearch').addEventListener('input',e=>{sigTriageFilter.q=e.target.value.trim().toLowerCase();renderSigTriage();});
+  el('sigTrSource').addEventListener('change',e=>{sigTriageFilter.source=e.target.value;renderSigTriage();});
+  el('sigTrRegion').addEventListener('change',e=>{sigTriageFilter.region=e.target.value;renderSigTriage();});
+}
+
+// ── Triage row popover · uses #sigPop pattern from portfolio ───────────────
+function sigOpenTriagePop(eventId,anchor){
+  sigTriagePopEvtId=eventId;
+  // Repurpose the existing popover but override its action map for triage events
+  const pop=el('sigPop');
+  // Stash original buttons HTML once
+  if(!pop.dataset.origHtml)pop.dataset.origHtml=pop.innerHTML;
+  const e=SIGNAL_EVENTS.find(x=>x.id===eventId);
+  const isNew=e&&e.state==='new';
+  const isInTriage=e&&e.state==='in_triage';
+  const canClaim=isNew||isInTriage;
+  const canResolve=isNew||isInTriage;
+  pop.innerHTML=`
+    <button data-sig-tr-act="profile"><span>Open carrier profile</span><span class="ki">↵</span></button>
+    <button data-sig-tr-act="payload"><span>View raw payload</span><span class="ki">↳</span></button>
+    <div class="divider"></div>
+    ${canClaim?`<button data-sig-tr-act="claim"><span>${isInTriage?'Reassign to me':'Claim for review'}</span><span class="ki">A</span></button>`:''}
+    ${canResolve?`<button data-sig-tr-act="triaged"><span>Mark triaged →</span><span class="ki">T</span></button>`:''}
+    ${canResolve?`<button data-sig-tr-act="dismiss" class="danger"><span>Dismiss as noise</span><span class="ki">D</span></button>`:''}
+    <div class="divider"></div>
+    <button data-sig-tr-act="promote"><span>Promote to Scoring Committee</span><span class="ki">SC</span></button>
+  `;
+  const r=anchor.getBoundingClientRect();
+  pop.style.top=(r.bottom+window.scrollY+4)+'px';
+  pop.classList.add('open');
+  requestAnimationFrame(()=>{
+    pop.style.left=(r.right+window.scrollX-pop.offsetWidth)+'px';
+  });
+  // Wire fresh buttons
+  pop.querySelectorAll('button[data-sig-tr-act]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const act=b.dataset.sigTrAct,id=sigTriagePopEvtId;
+      sigCloseTriagePop();
+      if(!id)return;
+      const evt=SIGNAL_EVENTS.find(x=>x.id===id);if(!evt)return;
+      if(act==='profile')return showAirline(evt.carrierId);
+      if(act==='payload')return sigOpenPayloadModal(id);
+      if(act==='claim')return sigClaimEvent(id);
+      if(act==='triaged')return sigOpenTriagedModal(id);
+      if(act==='dismiss')return sigOpenDismissModal(id);
+      if(act==='promote')return sigOpenPromote(evt.carrierId);
+    });
+  });
+}
+function sigCloseTriagePop(){
+  const pop=el('sigPop');
+  pop.classList.remove('open');
+  // Restore portfolio-popover HTML so the carrier-row kebab still works
+  if(pop.dataset.origHtml){
+    pop.innerHTML=pop.dataset.origHtml;
+    // Rebind portfolio-popover actions
+    pop.querySelectorAll('button[data-sig-act]').forEach(b=>{
+      b.addEventListener('click',()=>{
+        const act=b.dataset.sigAct,id=sigPopCarrier;
+        sigClosePop();
+        if(!id)return;
+        if(act==='profile')return showAirline(id);
+        if(act==='promote')return sigOpenPromote(id);
+        if(act==='override')return sigOpenOverride(id);
+        if(act==='audit')return sigOpenAudit(id);
+      });
+    });
+  }
+  sigTriagePopEvtId=null;
+}
+
+function sigEventSummaryHtml(e){
+  const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+  const src=SIGNAL_SOURCES.find(s=>s.code===e.source);
+  const region=(typeof cmpRegionLabel==='function'&&c)?cmpRegionLabel(c):'—';
+  return`<strong>${c?c.name:e.carrierId}</strong> · ${region} · <strong>${(src?src.name:e.source)}</strong><br>
+  ${e.rawHeadline}<br>
+  Severity ${(e.computedSeverity||'low').toUpperCase()} · Confidence ${(e.confidence||'low').toUpperCase()} · Ingested ${e.ts}`;
+}
+
+function sigClaimEvent(id){
+  const e=SIGNAL_EVENTS.find(x=>x.id===id);if(!e)return;
+  const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+  const fromState=e.state;
+  e.state='in_triage';
+  e.assignee=sigCurrentUser();
+  const ts=sigNowTs();
+  AUDIT.unshift({ts,user:e.assignee,carrier:c?c.name:e.carrierId,crit:`Signal triage · ${fromState==='in_triage'?'reassigned':'claimed'}`,fr:sigTriageStateLbl(fromState),to:'IN TRIAGE',src:'Signal Triage',status:'Analyst claim',note:`${e.id} · ${e.agentTag}`});
+  if(typeof buildAudit==='function')buildAudit();
+  renderSigTriageSummary();renderSigTriage();
+  toast('Event claimed',`${e.id} assigned to ${e.assignee}.`);
+}
+
+function sigOpenPayloadModal(id){
+  const e=SIGNAL_EVENTS.find(x=>x.id===id);if(!e)return;
+  sigTriagePopEvtId=id;
+  const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+  const src=SIGNAL_SOURCES.find(s=>s.code===e.source)||{name:e.source,adapter:'—',version:''};
+  const region=(typeof cmpRegionLabel==='function'&&c)?cmpRegionLabel(c):'—';
+  const noteBlock=e.triagedNote
+    ?`<div class="sig-pld-note"><span class="ttl">Triage note · ${e.assignee||'—'}</span>${e.triagedNote.replace(/</g,'&lt;')}</div>`
+    :e.dismissRationale
+      ?`<div class="sig-pld-note dismiss"><span class="ttl">Dismissal rationale · ${e.assignee||'—'}</span>${e.dismissRationale.replace(/</g,'&lt;')}</div>`
+      :'';
+  el('sigPayloadBody').innerHTML=`
+    <p class="sig-pld-headline">${e.rawHeadline.replace(/</g,'&lt;')}</p>
+    <div class="sig-pld-meta">
+      <span class="k">Event id</span><span class="v">${e.id}</span>
+      <span class="k">Agent tag</span><span class="v tag">${e.agentTag}</span>
+      <span class="k">Carrier</span><span class="v">${c?c.name:e.carrierId} · ${region}</span>
+      <span class="k">Source</span><span class="v">${src.name} · ${src.adapter}${src.version?' '+src.version:''}</span>
+      <span class="k">Ingested</span><span class="v">${e.ts} UTC · ${sigTriageAgo(e.ts)}</span>
+      <span class="k">State</span><span class="v">${sigTriageStateLbl(e.state)}${e.assignee?' · '+e.assignee:''}</span>
+      <span class="k">Severity</span><span class="v">${(e.computedSeverity||'—').toUpperCase()} (computed) · Confidence ${(e.confidence||'—').toUpperCase()}</span>
+      <span class="k">Proxy</span><span class="v">${e.proxyCode||'—'}</span>
+    </div>
+    <pre class="sig-pld-payload">${(e.rawPayload||'(no payload)').replace(/</g,'&lt;')}</pre>
+    ${noteBlock}
+  `;
+  sigOpenModal('sigPayloadModal');
+}
+el('sigPayloadCopy').addEventListener('click',()=>{
+  const id=sigTriagePopEvtId;if(!id)return;
+  const e=SIGNAL_EVENTS.find(x=>x.id===id);if(!e)return;
+  const text=`${e.id} · ${e.agentTag}\n${e.rawHeadline}\n\n${e.rawPayload}`;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(
+      ()=>toast('Copied',`${e.id} payload copied to clipboard.`),
+      ()=>toast('Copy failed','Select the text manually.')
+    );
+  }else{
+    toast('Copy unavailable','Clipboard API not available in this context.');
+  }
+});
+
+function sigOpenTriagedModal(id){
+  const e=SIGNAL_EVENTS.find(x=>x.id===id);if(!e)return;
+  sigTriagePopEvtId=id;
+  el('sigTriagedSummary').innerHTML=sigEventSummaryHtml(e);
+  el('sigTriagedProxy').value=e.proxyCode||e.source;
+  el('sigTriagedNote').value='';
+  sigOpenModal('sigTriagedModal');
+}
+el('sigTriagedConfirm').addEventListener('click',()=>{
+  const id=sigTriagePopEvtId;if(!id)return;
+  const e=SIGNAL_EVENTS.find(x=>x.id===id);if(!e)return;
+  const note=el('sigTriagedNote').value.trim();
+  if(note.length<40){toast('Triage note required','Min 40 characters — leave a trail the next analyst can pick up.');return;}
+  const proxy=el('sigTriagedProxy').value;
+  const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+  const fromState=e.state;
+  const user=sigCurrentUser();const ts=sigNowTs();
+  e.state='triaged';
+  if(!e.assignee)e.assignee=user;
+  e.triagedNote=note;
+  e.proxyCode=proxy;
+  AUDIT.unshift({ts,user,carrier:c?c.name:e.carrierId,crit:`Signal triage · resolved → ${proxy}`,fr:sigTriageStateLbl(fromState),to:'TRIAGED',src:'Signal Triage',status:`Linked to proxy ${proxy}`,note:`${e.id} · ${note.slice(0,160)}`});
+  if(typeof buildAudit==='function')buildAudit();
+  sigCloseModal('sigTriagedModal');
+  renderSigTriageSummary();renderSigTriage();
+  toast('Event triaged',`${e.id} linked to ${proxy}. Audit entry recorded.`);
+});
+
+function sigOpenDismissModal(id){
+  const e=SIGNAL_EVENTS.find(x=>x.id===id);if(!e)return;
+  sigTriagePopEvtId=id;
+  el('sigDismissSummary').innerHTML=sigEventSummaryHtml(e);
+  el('sigDismissRationale').value='';
+  sigOpenModal('sigDismissModal');
+}
+el('sigDismissConfirm').addEventListener('click',()=>{
+  const id=sigTriagePopEvtId;if(!id)return;
+  const e=SIGNAL_EVENTS.find(x=>x.id===id);if(!e)return;
+  const r=el('sigDismissRationale').value.trim();
+  if(r.length<40){toast('Rationale required','Min 40 characters — dismissals are audited and used to train adapters.');return;}
+  const c=ALL_CARRIERS.find(x=>x.id===e.carrierId);
+  const fromState=e.state;
+  const user=sigCurrentUser();const ts=sigNowTs();
+  e.state='dismissed';
+  if(!e.assignee)e.assignee=user;
+  e.dismissRationale=r;
+  AUDIT.unshift({ts,user,carrier:c?c.name:e.carrierId,crit:'Signal triage · dismissed as noise',fr:sigTriageStateLbl(fromState),to:'DISMISSED',src:'Signal Triage',status:'Adapter feedback',note:`${e.id} · ${r.slice(0,160)}`});
+  if(typeof buildAudit==='function')buildAudit();
+  sigCloseModal('sigDismissModal');
+  renderSigTriageSummary();renderSigTriage();
+  toast('Event dismissed',`${e.id} dismissed. Engineering will receive the adapter feedback.`);
+});
+
+// ── Mode toggle: portfolio ↔ triage ────────────────────────────────────────
+function sigSwitchMode(mode,opts){
+  opts=opts||{};
+  // Close any open popover before swapping the underlying table out
+  if(sigTriagePopEvtId)sigCloseTriagePop();
+  if(sigPopCarrier)sigClosePop();
+  document.querySelectorAll('#sigMode .sig-mode-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.mode===mode);
+  });
+  const showP=mode==='portfolio';
+  document.querySelectorAll('.sig-mode-portfolio').forEach(n=>{n.style.display=showP?'':'none';});
+  document.querySelectorAll('.sig-mode-triage').forEach(n=>{n.style.display=showP?'none':'';});
+  try{localStorage.setItem('andara.sigMode',mode);}catch(_){}
+  if(!showP){renderSigTriageSummary();renderSigTriage();syncSigTriageControls();}
+}
+function bindSigModeToggle(){
+  if(window._sigModeBound)return;window._sigModeBound=true;
+  document.querySelectorAll('#sigMode .sig-mode-btn').forEach(b=>{
+    b.addEventListener('click',()=>sigSwitchMode(b.dataset.mode));
+  });
 }
 
 function bindSigFilters(){
@@ -5203,7 +6175,7 @@ function renderSigTable(){
       <td class="num"><span class="sig-comp" style="color:${compCol}">${compDisplay}</span></td>
       <td>${sigProxyDots(sd)}</td>
       <td><span class="sig-sev-pill sig-sev-${sev.cls}">${sev.lbl}</span>${overrideFlag}</td>
-      <td><span class="sig-conf-pill sig-conf-${conf}">${conf.charAt(0).toUpperCase()+conf.slice(1)}</span></td>
+      <td><span class="sig-conf-pill sig-conf-${conf}" title="${sd?sigConfidenceTooltip(sd).replace(/"/g,'&quot;'):'awaiting first ingestion'}">${conf.charAt(0).toUpperCase()+conf.slice(1)}</span></td>
       <td>${lastUpd}</td>
       <td class="sig-actions-col"><button class="sig-kebab" data-sig-kebab="${c.id}" title="Actions">⋯</button></td>
     </tr>`;
@@ -5240,9 +6212,22 @@ function sigOpenPop(carrierId,anchor){
 }
 function sigClosePop(){el('sigPop').classList.remove('open');sigPopCarrier=null;}
 document.addEventListener('click',e=>{
-  if(!e.target.closest('#sigPop')&&!e.target.closest('.sig-kebab'))sigClosePop();
+  if(!e.target.closest('#sigPop')&&!e.target.closest('.sig-kebab')){
+    if(typeof sigTriagePopEvtId!=='undefined'&&sigTriagePopEvtId)sigCloseTriagePop();
+    else sigClosePop();
+  }
 });
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){sigClosePop();sigCloseModal('sigPromoteModal');sigCloseModal('sigOverrideModal');}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(typeof sigTriagePopEvtId!=='undefined'&&sigTriagePopEvtId)sigCloseTriagePop();
+    else sigClosePop();
+    sigCloseModal('sigPromoteModal');
+    sigCloseModal('sigOverrideModal');
+    sigCloseModal('sigTriagedModal');
+    sigCloseModal('sigDismissModal');
+    sigCloseModal('sigPayloadModal');
+  }
+});
 
 function sigOpenModal(id){el(id).classList.add('open');}
 function sigCloseModal(id){const m=el(id);if(m)m.classList.remove('open');}
@@ -5334,10 +6319,16 @@ el('sigOverrideClear').addEventListener('click',()=>{
 
 function sigOpenAudit(carrierId){
   const c=ALL_CARRIERS.find(x=>x.id===carrierId);
-  // Jump to Audit view and (soft) filter by carrier — full filter UI is future scope.
+  const name=c?c.name:carrierId;
+  // Pre-populate the audit filter, navigate, re-render.
+  auditFilter.q=name.toLowerCase();
+  auditFilter.src='all';
   const target=document.querySelector('.sitem[data-v="audit"]');
   if(target)target.click();
-  toast('Audit trail opened',`Filter by ${c?.name||carrierId} (filter UI: M2 backlog).`);
+  const q=el('auditSearch');if(q)q.value=name;
+  const s=el('auditSource');if(s)s.value='all';
+  buildAudit();
+  toast('Audit trail filtered',`Showing entries for ${name}.`);
 }
 
 function startClock(){
@@ -5372,7 +6363,7 @@ function enterTerminal(em){
     const initials = (parts[0]?parts[0][0]:'') + (parts[1]?parts[1][0]:'');
     av.textContent = (initials || localPart.slice(0,1) || 'S').toUpperCase();
   }
-  buildSidebar();buildDashboard();buildSentinel();buildFeed();buildCompare();buildAudit();buildWorkspace();buildCountryModTable();buildSignalPortfolio();bindNav();startClock();
+  buildSidebar();buildDashboard();buildSentinel();buildFeed();buildCompare();buildAudit();bindAuditFilters();buildWorkspace();buildCountryModTable();buildSignalPortfolio();bindNav();startClock();
   const runSearch = () => {
     const q = (el('gsearch').value||'').trim().toLowerCase();
     if(!q) return;
@@ -5642,6 +6633,12 @@ const SIGNAL_DATA = {
 
 };
 
+// Confidence is computed, never hand-tagged. Walk the data table and overwrite
+// every confidence: field so the displayed value always matches the formula.
+// The pre-existing values in SIGNAL_DATA are kept as historical commentary but
+// have no runtime effect — sigComputeConfidence() is the single source of truth.
+Object.values(SIGNAL_DATA).forEach(sd=>{ sd.confidence = sigComputeConfidence(sd); });
+
 function sigSubClass(v){
   if(v===null)return'na';
   if(v>0.2)return'pos';
@@ -5779,6 +6776,98 @@ function cpDefaultSignal(a){
   };
 }
 
+// ── Carrier Signal history · PRD §3.4.5 (M2 surface) ──────────────────────
+// Synthesised 13-week trail per carrier — final value clamps to live SIGNAL_DATA.composite.
+// In production, populated from the warehouse SIGNAL_SNAPSHOT table.
+const SIGNAL_HISTORY=(function(){
+  const out={};
+  // Carrier id → {weeks:[...composites, 13 entries, oldest→latest], crossings:[{wk, from, to, date}]}
+  const trails={
+    ibom_air:               {weeks:[+0.20,+0.22,+0.24,+0.26,+0.28,+0.30,+0.32,+0.33,+0.35,+0.36,+0.36,+0.37,+0.38], crossings:[]},
+    overland_airways:       {weeks:[+0.18,+0.18,+0.20,+0.20,+0.21,+0.21,+0.22,+0.22,+0.22,+0.22,+0.22,+0.22,+0.22], crossings:[]},
+    allied_air:             {weeks:[+0.10,+0.12,+0.14,+0.14,+0.16,+0.16,+0.17,+0.17,+0.18,+0.18,+0.18,+0.18,+0.18], crossings:[]},
+    air_peace:              {weeks:[+0.34,+0.30,+0.24,+0.16,+0.06,-0.02,-0.12,-0.21,-0.28,-0.34,-0.38,-0.41,-0.44], crossings:[{wk:7, from:'stable', to:'deteriorating', date:'19 May 2026'}]},
+    valuejet_airlines:      {weeks:[+0.05,+0.06,+0.07,+0.08,+0.09,+0.10,+0.10,+0.11,+0.11,+0.11,+0.12,+0.12,+0.12], crossings:[]},
+    united_nigeria_airlines:{weeks:[+0.12,+0.13,+0.13,+0.14,+0.14,+0.15,+0.15,+0.15,+0.16,+0.16,+0.16,+0.16,+0.16], crossings:[]},
+    xejet:                  {weeks:[+0.02,+0.04,+0.05,+0.05,+0.06,+0.06,+0.07,+0.07,+0.07,+0.08,+0.08,+0.08,+0.08], crossings:[]},
+    aero_contractors:       {weeks:[-0.10,-0.15,-0.20,-0.25,-0.30,-0.35,-0.40,-0.42,-0.45,-0.48,-0.50,-0.51,-0.52], crossings:[{wk:3, from:'stable', to:'deteriorating', date:'24 Apr 2026'}]},
+    max_air:                {weeks:[-0.20,-0.28,-0.36,-0.44,-0.52,-0.58,-0.62,-0.66,-0.70,-0.72,-0.74,-0.76,-0.78], crossings:[{wk:1, from:'stable', to:'deteriorating', date:'17 Mar 2026'}]},
+    rano_air:               {weeks:[-0.30,-0.36,-0.40,-0.45,-0.48,-0.52,-0.55,-0.58,-0.60,-0.62,-0.64,-0.65,-0.66], crossings:[{wk:1, from:'stable', to:'deteriorating', date:'10 Mar 2026'}]},
+    green_africa_airways:   {weeks:[-0.20,-0.28,-0.34,-0.40,-0.45,-0.50,-0.54,-0.57,-0.59,-0.60,-0.61,-0.62,-0.62], crossings:[{wk:1, from:'stable', to:'deteriorating', date:'10 Mar 2026'}]},
+    arik_air:               {weeks:[-1.50,-1.55,-1.60,-1.65,-1.68,-1.70,-1.72,-1.74,-1.76,-1.78,-1.80,-1.81,-1.82], crossings:[]},
+    azman_air:               {weeks:[-1.70,-1.74,-1.78,-1.82,-1.85,-1.87,-1.89,-1.90,-1.91,-1.92,-1.93,-1.94,-1.94], crossings:[]},
+  };
+  // Stamp weekly dates ending today (UTC) — 13 weekly samples
+  const now=new Date();
+  const dates=[];
+  for(let i=12;i>=0;i--){
+    const d=new Date(now);d.setUTCDate(d.getUTCDate()-(i*7));
+    dates.push(`${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`);
+  }
+  Object.keys(trails).forEach(cid=>{
+    out[cid]={
+      weeks:trails[cid].weeks.map((v,i)=>({date:dates[i],composite:v,band:v<=-0.3?'deteriorating':v>=0.3?'improving':'stable'})),
+      crossings:trails[cid].crossings.map(c=>({...c,date:c.date}))
+    };
+  });
+  return out;
+})();
+
+function cpHistoryBand(c){return c<=-0.3?'deteriorating':c>=0.3?'improving':'stable';}
+function cpHistoryColor(b){return b==='deteriorating'?'var(--dnd)':b==='improving'?'var(--deploy)':'var(--watch)';}
+
+function cpRenderHistory(a){
+  const hist=SIGNAL_HISTORY[a.id];
+  if(!hist){
+    return`<div class="cp-history">
+      <div class="cp-history-hd"><span class="lbl">Signal History · last 90 days</span><span class="rt">No history available</span></div>
+      <div class="cp-history-empty">Signal trail will populate once this carrier has completed one quarter of continuous proxy ingestion.</div>
+      <div class="cp-history-aav"><span class="aav-inline">AAV</span>Historical Signal trail requires ≥90 days of proxy snapshots. Surface ships M2 once warehouse persistence is live.</div>
+    </div>`;
+  }
+  const w=hist.weeks;
+  const W=640, H=120;
+  // Composite range −2 .. +2 → y. +2 at top (improving), −2 at bottom (deteriorating).
+  const yOf=v=>{const clamped=Math.max(-2,Math.min(2,v));return ((2-clamped)/4)*H;};
+  const xOf=i=>(i/(w.length-1))*W;
+  const linePts=w.map((p,i)=>`${xOf(i).toFixed(1)},${yOf(p.composite).toFixed(1)}`).join(' ');
+  const areaPts=`0,${H} ${linePts} ${W},${H}`;
+  // Band threshold guide lines at +0.3 and −0.3
+  const yUp=yOf(0.3).toFixed(1),yDn=yOf(-0.3).toFixed(1);
+  // Points with band colour
+  const points=w.map((p,i)=>`<circle cx="${xOf(i).toFixed(1)}" cy="${yOf(p.composite).toFixed(1)}" r="3" fill="${cpHistoryColor(p.band)}" stroke="var(--bg)" stroke-width="1"/>`).join('');
+  const latest=w[w.length-1];
+  const oldest=w[0];
+  const delta=(latest.composite-oldest.composite).toFixed(2);
+  const deltaStr=(delta>=0?'+':'')+delta;
+  const deltaCls=delta>=0?'pos':'neg';
+  const crossings=hist.crossings.length
+    ?hist.crossings.map(c=>`<span class="cp-history-cross-chip to-${c.to}">${c.from.charAt(0).toUpperCase()+c.from.slice(1)} → ${c.to.charAt(0).toUpperCase()+c.to.slice(1)}<span class="dt">· ${c.date}</span></span>`).join('')
+    :'<span class="cp-history-empty">No band crossings in window. Signal remained '+(latest.band)+' across all 13 weeks.</span>';
+  const startLbl=oldest.date.slice(5);const endLbl=latest.date.slice(5);
+  return`<div class="cp-history">
+    <div class="cp-history-hd">
+      <span class="lbl">Signal History · last 90 days</span>
+      <span class="rt">Δ ${deltaStr} composite · ${w.length} weekly samples</span>
+    </div>
+    <div class="cp-history-chart">
+      <span class="cp-history-band-lbl up">Improving</span>
+      <span class="cp-history-band-lbl mid">Stable</span>
+      <span class="cp-history-band-lbl dn">Deteriorating</span>
+      <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <line x1="0" y1="${yUp}" x2="${W}" y2="${yUp}" stroke="rgba(107,179,138,0.25)" stroke-dasharray="3,3" stroke-width="1"/>
+        <line x1="0" y1="${yDn}" x2="${W}" y2="${yDn}" stroke="rgba(201,116,116,0.25)" stroke-dasharray="3,3" stroke-width="1"/>
+        <polygon points="${areaPts}" fill="rgba(232,162,58,0.06)"/>
+        <polyline points="${linePts}" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linejoin="round"/>
+        ${points}
+      </svg>
+    </div>
+    <div class="cp-history-axis"><span>${startLbl}</span><span>${endLbl}</span></div>
+    <div class="cp-history-cross">${crossings}</div>
+    <div class="cp-history-aav"><span class="aav-inline">AAV</span>Historical Signal trail. Synthesised for demo — production renders from the warehouse SIGNAL_SNAPSHOT series populated by the Market Monitoring Agent.</div>
+  </div>`;
+}
+
 function renderSignalModule(a){
   // Methodology tag (e.g. v1.5-NG/WA/EA/SA/CA based on region)
   const methodTag = {nigeria:'v1.5-NG','west-africa':'v1.0-WA','east-africa':'v1.0-EA','southern-africa':'v1.0-SA','central-africa':'v1.0-CA'}[a.region]||'v1.5';
@@ -5813,6 +6902,10 @@ function renderSignalModule(a){
   const composite = (sd.composite>0?'+':'') + sd.composite.toFixed(2);
   const compositeCls = sd.composite>=0 ? 'pos' : 'neg';
   const conf = sd.confidence.charAt(0).toUpperCase()+sd.confidence.slice(1);
+  // Predictive horizon — same methodology as the portfolio row, so the two surfaces never disagree.
+  const sev = sigEffectiveSeverity(a.id, sd);
+  const horizon = sigHorizon(sd, sev.cls);
+  const horizonLbl = horizon.label==='—' ? 'Insufficient data' : horizon.label==='pending' ? 'Awaiting first ingestion' : `${horizon.label} forward window`;
 
   return `<div class="cp-signal">
     <div class="cp-signal-hd">
@@ -5822,7 +6915,7 @@ function renderSignalModule(a){
         <div class="sub">Predictive payments &amp; performance indicator · Operational proxy method</div>
       </div>
       <div class="rt">
-        <div class="meta">${conf} confidence · ${sd.proxiesLive} proxies live</div>
+        <div class="meta" title="${sigConfidenceTooltip(sd).replace(/"/g,'&quot;')}">${conf} confidence · ${sd.proxiesLive} proxies live</div>
         <span class="cp-signal-pill ${band.cls}"><span class="d"></span>${band.lbl}</span>
       </div>
     </div>
@@ -5835,6 +6928,7 @@ function renderSignalModule(a){
         </div>
         <div class="cp-cscore-bar"><span class="cp-cscore-mark" style="left:${markerPct}%"></span></div>
         <div class="cp-cscore-ends"><span>← Deteriorating</span><span>Improving →</span></div>
+        ${cpRenderHistory(a)}
       </div>
 
       <div>
@@ -5860,8 +6954,8 @@ function renderSignalModule(a){
       </div>
 
       <div class="cp-horizon">
-        <span class="lbl">Predictive Horizon</span><span class="v">4–8 Quarters Forward</span>
-        <span class="rt">Downside accuracy <strong>70–80%</strong> · Andara Signal Methodology</span>
+        <span class="lbl">Predictive Horizon</span><span class="v">${horizonLbl}</span>
+        <span class="rt">Severity ${sev.lbl} · Downside accuracy <strong>70–80%</strong> · Andara Signal Methodology</span>
       </div>
 
       <div class="cp-aav">
