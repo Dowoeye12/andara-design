@@ -354,10 +354,10 @@ input,select,textarea{font-family:inherit;color:inherit}
   display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
 }
 .vtitle em{font-style:normal;color:var(--t3);font-weight:600}
-.vsub{color:var(--t3);font-size:13.5px;max-width:720px;margin-bottom:20px;line-height:1.5}
+.vsub{color:var(--t3);font-size:13.5px;max-width:720px;margin-bottom:24px;line-height:1.5}
 
 /* page actions strip (sits beside vtitle when present) */
-.page-actions{display:flex;gap:8px;flex-shrink:0;margin-bottom:20px}
+.page-actions{display:flex;gap:8px;flex-shrink:0;margin-bottom:24px}
 
 /* ══════════════════════════════════════════
    PANELS
@@ -365,7 +365,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 .panel{
   background:var(--bg2);border:1px solid var(--line);
   border-radius:var(--r-lg);overflow:hidden;
-  margin-bottom:12px;position:relative;
+  margin-bottom:24px;position:relative;
 }
 .ph{
   padding:11px 16px;border-bottom:1px solid var(--line);
@@ -392,7 +392,7 @@ input,select,textarea{font-family:inherit;color:inherit}
    REGION TABS
 ══════════════════════════════════════════ */
 /* cohort chips (replaces .rtabs/.rtab — same JS hooks) */
-.rtabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;}
+.rtabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px;}
 .rtab{
   display:flex;align-items:center;gap:9px;
   padding:8px 13px;border-radius:var(--r);
@@ -415,13 +415,13 @@ input,select,textarea{font-family:inherit;color:inherit}
 .summary{
   display:grid;grid-template-columns:repeat(5,1fr);
   border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;
-  background:var(--line);gap:1px;margin-bottom:18px;
+  background:var(--line);gap:1px;margin-bottom:24px;
 }
-.summary .cell{background:var(--bg2);padding:14px 16px;}
-.summary .k{font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:700;}
-.summary .val{font-family:var(--mono);font-size:25px;font-weight:600;letter-spacing:-.02em;margin-top:5px;line-height:1;color:var(--display);}
-.summary .val.pos{color:var(--deploy);} .summary .val.warn{color:var(--watch);} .summary .val.neg{color:var(--dnd);}
-.summary .meta{font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:6px;}
+.summary .cell{background:var(--bg2);padding:16px;display:flex;flex-direction:column;gap:8px;}
+.summary .k{font-family:var(--sans);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);font-weight:700;margin:0;}
+.summary .val{font-family:var(--mono);font-size:25px;font-weight:600;letter-spacing:-.02em;line-height:1;color:var(--display);margin:0;background:transparent;border:none;padding:0;}
+.summary .val.pos{color:var(--deploy);} .summary .val.watch{color:var(--watch);} .summary .val.neg{color:var(--dnd);}
+.summary .meta{font-family:var(--mono);font-size:11px;color:var(--t4);margin:auto 0 0;}
 
 /* ══════════════════════════════════════════
    MARKET OVERVIEW — page-head + scorecard table
@@ -435,7 +435,176 @@ input,select,textarea{font-family:inherit;color:inherit}
 .btn.primary:hover{background:var(--amber2);border-color:var(--amber2);color:#1a1206;}
 
 /* scorecard panel */
-.mo-scorecard{margin-bottom:18px;}
+.mo-scorecard{margin-bottom:24px;}
+
+/* ── Composite Market Score + right rail (PRD §4.2.3 portfolio view) ──── */
+.mo-cms-row{margin-bottom:24px;gap:16px}
+.mo-cms .pb{display:flex;flex-direction:column;gap:16px;padding:16px}
+.mo-cms-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.mo-cms-numblk{display:flex;align-items:baseline;gap:6px}
+.mo-cms-num{font-family:var(--serif);font-weight:600;font-size:64px;color:var(--display);line-height:1;letter-spacing:-.03em}
+.mo-cms-unit{font-family:var(--mono);font-size:14px;color:var(--t3);letter-spacing:.02em}
+.mo-cms-breakdown{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:8px}
+.mo-cms-breakdown .seg{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.06em;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.mo-cms-breakdown .seg.deploy{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.mo-cms-breakdown .seg.watch{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.mo-cms-breakdown .seg.dnd{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.mo-cms-narrative{font-family:var(--sans);font-size:14px;color:var(--t1);line-height:1.55;margin:0;max-width:680px}
+.mo-cms-narrative em{font-style:italic;color:var(--amber);font-weight:500}
+.mo-cms-subtotals{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;line-height:1.65;margin:0}
+.mo-cms-tag-pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.mo-cms-tag-strong{color:var(--deploy);border-color:rgba(107,179,138,.5);background:rgba(107,179,138,.1)}
+.mo-cms-tag-mixed{color:var(--watch);border-color:rgba(214,168,90,.5);background:rgba(214,168,90,.1)}
+.mo-cms-tag-weak{color:var(--dnd);border-color:rgba(201,116,116,.5);background:rgba(201,116,116,.1)}
+
+.mo-rail{display:flex;flex-direction:column;gap:16px}
+.mo-rail .panel{margin-bottom:0}
+.mo-mini .pb{padding:16px;display:flex;flex-direction:column;gap:8px}
+.mo-mini-row{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.mo-mini-num{font-family:var(--serif);font-weight:600;font-size:32px;color:var(--display);line-height:1;letter-spacing:-.02em}
+.mo-mini-status{font-family:var(--sans);font-size:14px;color:var(--deploy);font-weight:500}
+.mo-mini-desc{font-family:var(--mono);font-size:12px;color:var(--t3);line-height:1.5;margin:0;letter-spacing:.02em}
+.mo-progress{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.mo-progress-bar{height:100%;background:linear-gradient(90deg,var(--deploy),rgba(107,179,138,.7));border-radius:2px;transition:width .3s ease}
+
+/* ── Strongest / Weakest rank tables ──────────────────────────────────── */
+.mo-rank-row{margin-bottom:24px;gap:16px}
+.mo-rank-tbl{width:100%;border-collapse:collapse;font-size:14px}
+.mo-rank-tbl th{padding:9px 14px;text-align:left;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:600;background:var(--bg3);border-bottom:1px solid var(--line)}
+.mo-rank-tbl th.num{text-align:right}
+.mo-rank-tbl td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:14px}
+.mo-rank-tbl tr:last-child td{border-bottom:none}
+.mo-rank-tbl tr{cursor:pointer;transition:background .1s}
+.mo-rank-tbl tbody tr:hover{background:var(--bg3)}
+.mo-rank-tbl td.rank{font-family:var(--mono);font-size:12px;color:var(--t4);font-weight:500;letter-spacing:.04em;width:36px}
+.mo-rank-tbl td.name{font-family:var(--sans);color:var(--t1);font-weight:500}
+.mo-rank-tbl td.score{font-family:var(--mono);font-size:14px;font-weight:600;text-align:right;width:64px}
+.mo-rank-tbl td.score.up{color:var(--deploy)}
+.mo-rank-tbl td.score.down{color:var(--dnd)}
+.mo-rank-tbl td.jur{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;white-space:nowrap}
+
+/* ── Verdict distribution chart ──────────────────────────────────────── */
+.mo-vchart-panel{display:flex;flex-direction:column}
+.mo-vchart-panel .pb{padding:16px;flex:1;display:flex;flex-direction:column;min-height:280px}
+.mo-vchart{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:stretch;flex:1;min-height:0}
+.mo-vbar{display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;min-height:0}
+.mo-vbar-stem{width:72%;max-width:96px;min-height:32px;border-radius:3px 3px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;font-family:var(--mono);font-size:18px;font-weight:600;color:var(--display);border:1px solid;border-bottom:none;margin-top:auto;transition:height .3s ease;box-sizing:border-box}
+.mo-vbar.deploy .mo-vbar-stem{background:linear-gradient(180deg,rgba(107,179,138,.55),rgba(107,179,138,.18));border-color:rgba(107,179,138,.6)}
+.mo-vbar.watch .mo-vbar-stem{background:linear-gradient(180deg,rgba(214,168,90,.55),rgba(214,168,90,.18));border-color:rgba(214,168,90,.6)}
+.mo-vbar.dnd .mo-vbar-stem{background:linear-gradient(180deg,rgba(201,116,116,.55),rgba(201,116,116,.18));border-color:rgba(201,116,116,.6)}
+.mo-vbar-label{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.14em;text-transform:uppercase;font-weight:500;flex-shrink:0}
+
+@media (max-width:1023px){
+  .mo-cms-row,.mo-rank-row{grid-template-columns:1fr}
+  .mo-cms-row .c8,.mo-cms-row .c4{grid-column:span 12}
+  .mo-rank-row .c4{grid-column:span 12}
+  .mo-cms-num{font-size:48px}
+  .mo-vchart{height:180px}
+}
+
+/* ── Carrier heat-map (PRD §4.2.3 aggregate verdict distribution) ──────── */
+.mo-heat-panel{margin-bottom:24px}
+.mo-heat-tools{margin-left:auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.mo-heat-legend{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em}
+.mo-heat-swatch{display:inline-block;width:12px;height:12px;border-radius:2px;border:1px solid var(--line2)}
+.mo-heat-swatch.deploy{background:rgba(107,179,138,.35);border-color:rgba(107,179,138,.6)}
+.mo-heat-swatch.watch{background:rgba(214,168,90,.35);border-color:rgba(214,168,90,.6)}
+.mo-heat-swatch.dnd{background:rgba(201,116,116,.35);border-color:rgba(201,116,116,.6)}
+.mo-heat-swatch + .mo-heat-swatch{margin-left:6px}
+/* ── System-wide <select> chevron · symmetric padding ───────────────────
+   Native chevrons render with uneven spacing across engines. We strip the
+   default and paint a single SVG caret at a fixed right-gap that mirrors
+   the text's left-gap. Each .select rule sets padding-right = 2 × left + 12
+   (chevron width) so the caret sits with the same breathing room as the
+   text on the opposite side. */
+select{
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1.5L6 6.5L11 1.5' stroke='%23a4adba' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>");
+  background-repeat:no-repeat;
+  cursor:pointer;
+}
+
+.mo-heat-sort{background-color:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--mono);font-size:12px;padding:0 32px 0 10px;background-position:right 10px center;height:28px;outline:none;border-radius:3px;box-sizing:border-box}
+.mo-heat-sort:focus{border-color:rgba(232,162,58,.5)}
+.mo-heat{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.mo-hcell{aspect-ratio:1.5/1;padding:12px;border:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;gap:8px;transition:border-color .12s,transform .12s;border-radius:3px;position:relative;overflow:hidden}
+.mo-hcell:hover{border-color:var(--t3);transform:translateY(-1px)}
+.mo-hcell .mo-hname{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--display);line-height:1.2;letter-spacing:-.005em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mo-hcell .mo-hscore{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--display);line-height:1;letter-spacing:-.02em;display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.mo-hcell .mo-hregion{display:inline-flex;align-items:center;font-family:var(--mono);font-size:10px;color:var(--t1);text-transform:uppercase;letter-spacing:.1em;font-weight:500;padding:3px 7px;background:rgba(8,9,11,0.88);border-radius:3px;line-height:1;white-space:nowrap}
+.mo-hcell.hf{box-shadow:inset 0 0 0 1px rgba(201,116,116,.45)}
+.mo-hcell.hf::after{content:"HF";position:absolute;top:6px;right:6px;font-family:var(--mono);font-size:10px;color:var(--dnd);font-weight:600;letter-spacing:.1em}
+@media (max-width:1279px){.mo-heat{grid-template-columns:repeat(4,1fr)}}
+@media (max-width:1023px){.mo-heat{grid-template-columns:repeat(3,1fr)}.mo-heat-tools{margin-left:0}}
+@media (max-width:767px){.mo-heat{grid-template-columns:repeat(2,1fr)}}
+
+/* ── Watch Notes + Movers strip ───────────────────────────────────────── */
+.mo-row-strip{margin-bottom:24px;gap:16px}
+.mo-watch-list,.mo-mover-list{display:flex;flex-direction:column;max-height:360px;overflow-y:auto}
+.mo-watch-item,.mo-mover-item{display:grid;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .1s}
+.mo-watch-item:last-child,.mo-mover-item:last-child{border-bottom:none}
+.mo-watch-item:hover,.mo-mover-item:hover{background:var(--bg3)}
+.mo-watch-item{grid-template-columns:84px 1fr}
+.mo-watch-time{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em;line-height:1.4}
+.mo-watch-time strong{display:block;color:var(--t2);font-size:12px;font-weight:500;margin-bottom:2px}
+.mo-watch-body{display:flex;flex-direction:column;gap:8px}
+.mo-watch-body h4{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);margin:0;line-height:1.35}
+.mo-watch-body p{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5;margin:0}
+.mo-watch-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.mo-watch-tag{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 7px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line2);color:var(--t3);border-radius:3px;box-sizing:border-box;margin:0;font-weight:500}
+.mo-watch-tag.public{color:#7DABE3;border-color:rgba(125,171,227,.4)}
+.mo-watch-tag.private{color:#e89a8a;border-color:rgba(230,60,120,.4)}
+.mo-watch-tag.regulatory{color:var(--watch);border-color:rgba(214,168,90,.4)}
+.mo-watch-tag.financial{color:var(--deploy);border-color:rgba(107,179,138,.4)}
+.mo-watch-tag.legal{color:#C19EFF;border-color:rgba(193,158,255,.4)}
+.mo-watch-tag.ops{color:#FF9E64;border-color:rgba(255,158,100,.4)}
+.mo-watch-tag.macro{color:var(--info);border-color:rgba(124,159,199,.4)}
+.mo-mover-item{grid-template-columns:1fr auto;align-items:center}
+.mo-mover-name{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);line-height:1.3}
+.mo-mover-note{font-family:var(--sans);font-size:12px;color:var(--t3);margin-top:8px;line-height:1.5}
+.mo-mover-delta{display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 10px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.mo-mover-delta.up{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.mo-mover-delta.down{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.mo-mover-delta.flat{color:var(--t3);border-color:var(--line2)}
+.mo-mover-delta.new{color:var(--amber);border-color:rgba(232,162,58,.4);background:rgba(232,162,58,.08)}
+.mo-empty{padding:24px 16px;text-align:center;color:var(--t3);font-size:14px;font-family:var(--sans)}
+
+/* ── Refresh schedule panel · PRD §4.2.3 ─────────────────────────────── */
+.mo-refresh-panel{margin-bottom:24px}
+.mo-refresh-panel .pb{padding:16px}
+.mo-refresh-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.mo-refresh-col{display:flex;flex-direction:column;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:3px;padding:12px}
+.mo-refresh-coh{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);font-weight:600;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.mo-refresh-coh .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.mo-refresh-coh .ct{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--t1);font-weight:700}
+.mo-refresh-col-expired .dot{background:var(--dnd);box-shadow:0 0 6px rgba(201,116,116,.5)}
+.mo-refresh-col-30 .dot{background:var(--watch)}
+.mo-refresh-col-90 .dot{background:var(--info)}
+.mo-refresh-list{display:flex;flex-direction:column;max-height:300px;overflow-y:auto}
+.mo-refresh-item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer;transition:background .1s}
+.mo-refresh-item:last-child{border-bottom:none}
+.mo-refresh-item:hover{background:rgba(255,255,255,.02)}
+.mo-refresh-item-nm{font-family:var(--sans);font-size:14px;font-weight:500;color:var(--t1);line-height:1.3}
+.mo-refresh-item-meta{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;margin-top:2px;line-height:1.4}
+.mo-refresh-item-days{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.mo-refresh-item-days.expired{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.mo-refresh-item-days.urgent{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.mo-refresh-item-days.soon{color:var(--info);border-color:rgba(124,159,199,.4);background:rgba(124,159,199,.08)}
+.mo-refresh-empty{padding:16px 0;text-align:center;color:var(--t4);font-size:13px;font-family:var(--sans)}
+
+/* ── Row flags on scorecard (HF / EU BAN) + PDF action ───────────────── */
+.mo-row-flags{display:inline-flex;gap:4px;margin-left:8px;align-items:center}
+.mo-row-flag{display:inline-flex;align-items:center;justify-content:center;height:18px;padding:0 6px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;font-weight:600;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.mo-row-flag.hf{color:var(--dnd);border-color:rgba(201,116,116,.5);background:rgba(201,116,116,.1)}
+.mo-row-flag.hf-bdry{color:var(--watch);border-color:rgba(214,168,90,.5);background:rgba(214,168,90,.1)}
+.mo-row-flag.eu{color:#C19EFF;border-color:rgba(193,158,255,.5);background:rgba(193,158,255,.1)}
+.mo-pdf{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:transparent;border:1px solid var(--line2);color:var(--t2);cursor:pointer;border-radius:3px;transition:.12s;margin-left:4px;padding:0}
+.mo-pdf:hover{border-color:var(--amber);color:var(--amber);background:rgba(232,162,58,.06)}
+.mo-pdf svg{display:block}
+
+@media (max-width:1023px){
+  .mo-refresh-grid{grid-template-columns:1fr}
+}
 .mo-tbl{width:100%;border-collapse:collapse;}
 .mo-tbl thead th{
   text-align:left;font-family:var(--sans);font-size:10px;font-weight:700;
@@ -755,19 +924,209 @@ input,select,textarea{font-family:inherit;color:inherit}
 /* ══════════════════════════════════════════
    COMPARE
 ══════════════════════════════════════════ */
-.cpks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
-.cpk{background:var(--bg2);border:1px dashed var(--line3);padding:11px;cursor:pointer;transition:border-color .1s;min-height:76px;position:relative}
+.cpks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px}
+.cpk{background:var(--bg2);border:1px dashed var(--line3);padding-top:16px;padding-right:16px;padding-bottom:16px;padding-left:16px;cursor:pointer;transition:border-color .1s;min-height:76px;position:relative;display:flex;flex-direction:column;gap:8px}
 .cpk:hover{border-color:var(--amber)}
 .cpk.filled{border-style:solid;border-color:var(--line2)}
-.cpk-l{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--t3);text-transform:uppercase;margin-bottom:5px}
+.cpk-l{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--t3);text-transform:uppercase;margin:0}
 .cpk-v{font-family:var(--serif);font-weight:600;font-size:16px;color:var(--display);line-height:1.2;letter-spacing:-.01em}
-.cpk .xbtn{position:absolute;top:7px;right:8px;font-family:var(--mono);font-size:10px;color:var(--t3);cursor:pointer;background:none;border:none}
+.cpk .xbtn{position:absolute;top:16px;right:16px;font-family:var(--mono);font-size:14px;line-height:1;color:var(--t3);cursor:pointer;background:none;border:none;padding:0}
 .cpk .xbtn:hover{color:var(--amber)}
+.cmp-chiprow{display:flex;flex-wrap:wrap;gap:4px}
+.cmp-chip{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 8px;line-height:1;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:3px;box-sizing:border-box;white-space:nowrap;margin:0;font-weight:500}
+.cmp-chip-trig{color:var(--dnd);border-color:var(--dnd);background:rgba(201,116,116,.08)}
+.cmp-chip-bdry{color:var(--watch);border-color:var(--watch);background:rgba(214,168,90,.08)}
+.cmp-chip-stale{color:var(--dnd);border-color:var(--dnd);background:rgba(201,116,116,.08)}
+.cmp-chip-aes{color:#C19EFF;border-color:rgba(193,158,255,.5);background:rgba(193,158,255,.1)}
+.cmp-chip-jv{color:var(--info);border-color:rgba(124,159,199,.5);background:rgba(124,159,199,.1)}
+.cmp-chip-eu{color:#C19EFF;border-color:rgba(193,158,255,.5);background:rgba(193,158,255,.1)}
+
+/* Comparison toolbar (page-actions extras) */
+.cmp-toolbar{gap:8px;align-items:center}
+.cmp-sets-select{background-color:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--mono);font-size:12px;padding:0 36px 0 12px;background-position:right 12px center;height:32px;outline:none;border-radius:3px;box-sizing:border-box;letter-spacing:.04em}
+.cmp-sets-select:focus{border-color:rgba(232,162,58,.5)}
+
+/* Comparison radar */
+.cmp-radar-panel,.cmp-aav-panel{margin-bottom:24px}
+.cmp-radar-panel .pb{padding:16px}
+.cmp-radar-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(340px,1fr);gap:24px;align-items:center}
+.cmp-radar{position:relative;width:100%;max-width:420px;aspect-ratio:1/1;margin:0 auto}
+.cmp-radar svg{display:block;width:100%;height:100%}
+.cmp-radar-legend{display:flex;flex-direction:column;gap:16px;min-width:0}
+.cmp-radar-legend-row{display:grid;grid-template-columns:14px 1fr;gap:12px;align-items:start;font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.04em}
+.cmp-radar-legend-row .swatch{width:14px;height:14px;border-radius:2px;flex-shrink:0;border:1px solid;margin-top:3px}
+.cmp-radar-legend-row .info{display:flex;flex-direction:column;gap:8px;min-width:0}
+.cmp-radar-legend-row .top{display:flex;align-items:baseline;gap:10px}
+.cmp-radar-legend-row .cnm{font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:500;line-height:1.3;flex:1;min-width:0}
+.cmp-radar-legend-row .ccomp{font-family:var(--mono);font-size:13px;color:var(--display);font-weight:600;letter-spacing:-.01em}
+.cmp-radar-legend-row .dims{display:flex;flex-wrap:wrap;gap:4px 10px;font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+.cmp-radar-legend-row .dim{display:inline-flex;align-items:baseline;gap:4px;color:var(--t3)}
+.cmp-radar-legend-row .dim .lbl{color:var(--t4)}
+.cmp-radar-legend-row .dim .val{color:var(--t1);font-weight:500}
+.cmp-radar-legend-row .dim.high .val{color:var(--deploy)}
+.cmp-radar-legend-row .dim.mid .val{color:var(--watch)}
+.cmp-radar-legend-row .dim.low .val{color:var(--dnd)}
+.cmp-radar-bandkey{display:flex;flex-direction:column;gap:8px;padding-top:16px;border-top:1px solid var(--line);margin-top:8px}
+.cmp-radar-bandkey .bk-title{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4);font-weight:600}
+.cmp-radar-bandkey .bk-row{display:grid;grid-template-columns:14px auto 1fr;gap:12px;align-items:center;font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+.cmp-radar-bandkey .bk-dot{width:10px;height:10px;border-radius:50%;justify-self:center}
+.cmp-radar-bandkey .bk-range{white-space:nowrap}
+.cmp-radar-bandkey .bk-row.high .bk-dot{background:var(--deploy);box-shadow:0 0 6px rgba(107,179,138,.5)}
+.cmp-radar-bandkey .bk-row.mid .bk-dot{background:var(--watch)}
+.cmp-radar-bandkey .bk-row.low .bk-dot{background:var(--dnd);box-shadow:0 0 6px rgba(201,116,116,.4)}
+.cmp-radar-bandkey .bk-range{font-weight:600}
+.cmp-radar-bandkey .bk-row.high .bk-range{color:var(--deploy)}
+.cmp-radar-bandkey .bk-row.mid .bk-range{color:var(--watch)}
+.cmp-radar-bandkey .bk-row.low .bk-range{color:var(--dnd)}
+.cmp-radar-bandkey .bk-action{color:var(--t3);font-family:var(--sans);font-size:12px;line-height:1.4}
+
+/* Comparative AAV */
+.cmp-aav-panel .pb{padding:16px}
+.cmp-aav-body{display:flex;flex-direction:column;gap:8px;font-family:var(--sans);font-size:14px;color:var(--t1);line-height:1.6;max-width:780px}
+.cmp-aav-body .row{display:flex;gap:10px;align-items:flex-start}
+.cmp-aav-body .row .dot{flex-shrink:0;width:6px;height:6px;border-radius:50%;margin-top:8px;background:var(--amber)}
+.cmp-aav-body .row.warn .dot{background:var(--dnd)}
+.cmp-aav-body .row.pos .dot{background:var(--deploy)}
+.cmp-aav-body em{font-style:italic;color:var(--amber);font-weight:500}
+
+/* Expandable scorecard rows */
+.ctbl tr.cmp-expandable td.mt{cursor:pointer;color:var(--t2)}
+.ctbl tr.cmp-expandable td.mt::before{content:"▸ ";color:var(--t4);margin-right:4px;display:inline-block;transition:transform .12s;font-family:var(--mono);font-size:10px}
+.ctbl tr.cmp-expandable.open td.mt::before{transform:rotate(90deg);color:var(--amber)}
+.ctbl tr.cmp-expand-body{display:none;background:rgba(255,255,255,.015)}
+.ctbl tr.cmp-expandable.open + tr.cmp-expand-body{display:table-row}
+.ctbl tr.cmp-expand-body td{padding:12px 14px;font-size:13px;color:var(--t2);line-height:1.6;border-top:none;vertical-align:top}
+.ctbl tr.cmp-expand-body ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.ctbl tr.cmp-expand-body ul li{padding-left:14px;position:relative;font-size:13px;line-height:1.5}
+.ctbl tr.cmp-expand-body ul li::before{content:"·";position:absolute;left:4px;color:var(--amber);font-weight:700}
+.ctbl tr.cmp-expand-body .cmp-expand-empty{color:var(--t4);font-style:italic;font-size:12px}
+
+/* ══════════════════════════════════════════
+   ANDARA SIGNAL — portfolio view
+   12px text floor (CLAUDE.md §Signal)
+══════════════════════════════════════════ */
+.sig-sources{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.sig-source{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px;background:var(--bg2);border:1px solid var(--line);border-radius:4px;font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.04em;box-sizing:border-box;margin:0}
+.sig-source .src-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.sig-source .src-dot.live{background:var(--deploy);box-shadow:0 0 6px rgba(107,179,138,.5)}
+.sig-source .src-dot.degraded{background:var(--watch)}
+.sig-source .src-dot.absent{background:var(--t4)}
+.sig-source .src-vol{color:var(--t3);font-size:12px}
+
+.sig-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.sig-cohort{margin-bottom:0;flex-shrink:0}
+.sig-tools{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
+.sig-search,.sig-region{background-color:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--mono);font-size:12px;padding:0 12px;height:32px;outline:none;border-radius:4px;box-sizing:border-box}
+.sig-region{padding:0 36px 0 12px;background-position:right 12px center}
+.sig-search{width:220px}
+.sig-search::placeholder{color:var(--t4)}
+.sig-search:focus,.sig-region:focus{border-color:rgba(255,177,46,.5)}
+.sig-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.04em;margin:0}
+.sig-live .dot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px rgba(232,162,58,.6);animation:sigPulse 1.6s infinite ease-in-out}
+@keyframes sigPulse{0%,100%{opacity:.5}50%{opacity:1}}
+
+.sig-summary{margin-bottom:24px}
+
+.sig-panel{margin-bottom:24px}
+
+/* Signal portfolio table — extends .ctbl with Signal 12px chip floor + tighter columns */
+.sig-tbl td,.sig-tbl th{font-size:14px;padding:12px 14px}
+.sig-tbl th{background:var(--bg3)}
+.sig-tbl .num{text-align:right}
+.sig-tbl tbody tr{cursor:pointer;transition:background .12s}
+.sig-tbl tbody tr:hover{background:var(--bg3)}
+.sig-tbl tbody tr.ingesting{opacity:.55}
+.sig-tbl tbody tr.ingesting:hover{opacity:.9}
+.sig-tbl .sig-carrier{font-family:var(--sans);font-weight:600;color:var(--t1);font-size:14px;line-height:1.3}
+.sig-tbl .sig-carrier .iata{display:block;font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.1em;font-weight:400;margin-top:2px;text-transform:uppercase}
+.sig-tbl .sig-region-lbl{font-family:var(--mono);font-size:12px;color:var(--t2)}
+.sig-tbl .sig-comp{font-family:var(--mono);font-size:16px;font-weight:600;letter-spacing:-.02em;text-align:right}
+
+.sig-band-pill,.sig-verdict-pill,.sig-conf-pill,.sig-sev-pill{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:24px;padding:0 10px;line-height:1;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:3px;box-sizing:border-box;white-space:nowrap;margin:0}
+.sig-band-deteriorating{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.sig-band-stable{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.sig-band-improving{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.sig-band-ingesting{color:var(--t3);border-color:var(--line2);background:transparent}
+.sig-band-insufficient{color:var(--t3);border-color:var(--line2);background:transparent}
+.sig-verdict-deploy{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.sig-verdict-watch{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.sig-verdict-dnd{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.sig-conf-high{color:var(--deploy)}
+.sig-conf-medium{color:var(--watch)}
+.sig-conf-low{color:var(--dnd)}
+.sig-conf-insufficient{color:var(--t3)}
+.sig-sev-critical{color:var(--dnd);border-color:var(--dnd);background:rgba(201,116,116,.12)}
+.sig-sev-high{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.sig-sev-medium{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.sig-sev-low{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.sig-sev-none{color:var(--t3);border-color:var(--line2);background:transparent}
+
+.sig-crossing{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--watch);margin-left:8px;letter-spacing:.04em}
+
+/* Proxies dot row */
+.sig-proxies{display:inline-flex;gap:3px;align-items:center}
+.sig-proxy-dot{width:8px;height:8px;border-radius:50%;background:var(--line2)}
+.sig-proxy-dot.live{background:var(--deploy)}
+.sig-proxy-dot.awaiting{background:var(--watch)}
+.sig-proxy-dot.absent{background:var(--line2)}
+.sig-proxy-summary{font-family:var(--mono);font-size:12px;color:var(--t3);margin-left:8px}
+
+.sig-method{font-size:14px;color:var(--t2);line-height:1.65;max-width:780px;margin:0}
+.sig-method + .sig-method{margin-top:12px}
+.aav-inline{font-family:var(--mono);font-size:12px;color:var(--amber);letter-spacing:.08em;margin-left:6px;padding:2px 6px;border:1px solid rgba(232,162,58,.3);border-radius:3px}
+
+@media (max-width:1023px){
+  .sig-toolbar{flex-direction:column;align-items:stretch}
+  .sig-tools{margin-left:0;width:100%}
+  .sig-search{flex:1;min-width:0;width:auto}
+}
+
+/* Signal — horizon inline chip + override flag + kebab + popover */
+.sig-horizon{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--t3);margin-left:8px;letter-spacing:.04em}
+.sig-override-flag{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 6px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--amber);border:1px solid rgba(232,162,58,.5);background:rgba(232,162,58,.08);border-radius:3px;margin-left:6px;box-sizing:border-box;margin-top:0;margin-bottom:0}
+.sig-promoted-flag{display:inline-flex;align-items:center;justify-content:center;height:20px;padding:0 6px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--info);border:1px solid rgba(124,159,199,.5);background:rgba(124,159,199,.08);border-radius:3px;margin-left:6px;box-sizing:border-box;margin-top:0;margin-bottom:0}
+.sig-actions-col{width:48px}
+.sig-kebab{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:none;border:1px solid transparent;border-radius:3px;color:var(--t3);cursor:pointer;font-family:var(--mono);font-size:16px;line-height:1;padding:0;transition:.12s}
+.sig-kebab:hover{background:var(--bg3);border-color:var(--line2);color:var(--t1)}
+.sig-pop{position:absolute;background:var(--bg2);border:1px solid var(--line2);border-radius:4px;min-width:240px;z-index:120;box-shadow:0 12px 32px rgba(0,0,0,.6);padding:6px;display:none}
+.sig-pop.open{display:block}
+.sig-pop button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:var(--t1);font-family:var(--sans);font-size:13px;text-align:left;padding:10px 12px;cursor:pointer;border-radius:3px;letter-spacing:0}
+.sig-pop button:hover{background:var(--bg3)}
+.sig-pop button .ki{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.1em;text-transform:uppercase;margin-left:auto}
+.sig-pop button.danger{color:var(--dnd)}
+.sig-pop .divider{height:1px;background:var(--line);margin:4px 0}
+
+/* Signal modal — promotion + override */
+.sig-mback{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:200}
+.sig-mback.open{display:flex}
+.sig-mbox{background:var(--bg2);border:1px solid var(--line2);border-radius:6px;width:min(560px,92vw);max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
+.sig-mhd{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--bg3),var(--bg2))}
+.sig-mhd h3{font-family:var(--sans);font-size:16px;font-weight:700;color:var(--display);margin:0;flex:1;letter-spacing:-.01em}
+.sig-mhd .close{background:none;border:none;color:var(--t3);font-family:var(--mono);font-size:18px;cursor:pointer;line-height:1;padding:0}
+.sig-mhd .close:hover{color:var(--t1)}
+.sig-mbody{padding:16px;display:flex;flex-direction:column;gap:16px}
+.sig-mfield{display:flex;flex-direction:column;gap:8px}
+.sig-mfield label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600}
+.sig-mfield select,.sig-mfield textarea,.sig-mfield input{background-color:var(--bg);border:1px solid var(--line);color:var(--t1);font-family:var(--sans);font-size:13px;padding:10px 12px;border-radius:3px;outline:none;width:100%;box-sizing:border-box}
+.sig-mfield select{padding:10px 36px 10px 12px;background-position:right 12px center}
+.sig-mfield textarea{min-height:96px;resize:vertical;font-family:var(--sans);line-height:1.5}
+.sig-mfield select:focus,.sig-mfield textarea:focus,.sig-mfield input:focus{border-color:rgba(232,162,58,.5)}
+.sig-mfield .helper{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.02em;line-height:1.5}
+.sig-msummary{background:var(--bg);border:1px solid var(--line);padding:12px;border-radius:3px;font-family:var(--mono);font-size:12px;color:var(--t2);line-height:1.6}
+.sig-msummary strong{color:var(--display);font-weight:600}
+.sig-mfooter{display:flex;justify-content:flex-end;gap:8px;padding:16px;border-top:1px solid var(--line);background:var(--bg)}
+.sig-mbtn{display:inline-flex;align-items:center;justify-content:center;height:36px;padding:0 16px;font-family:var(--sans);font-size:13px;font-weight:600;border:1px solid var(--line2);background:transparent;color:var(--t1);cursor:pointer;border-radius:3px;letter-spacing:0;box-sizing:border-box}
+.sig-mbtn:hover{background:var(--bg3)}
+.sig-mbtn.primary{background:var(--amber);border-color:var(--amber);color:#1a1206}
+.sig-mbtn.primary:hover{background:var(--amber2);border-color:var(--amber2)}
+.sig-mbtn.danger{background:var(--dnd);border-color:var(--dnd);color:#fff}
+.sig-mbtn:disabled{opacity:.4;cursor:not-allowed}
 .ctbl{width:100%;border-collapse:collapse}
-.ctbl th,.ctbl td{padding:8px 11px;font-size:11.5px;border-bottom:1px solid var(--line);text-align:left}
-.ctbl th{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600;background:var(--bg3)}
+.ctbl th,.ctbl td{padding:11px 13px;font-size:14px;border-bottom:1px solid var(--line);text-align:left}
+.ctbl th{font-family:var(--mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600;background:var(--bg3)}
 .ctbl td{color:var(--t2)}
-.ctbl td.mt{color:var(--t3);font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase}
+.ctbl td.mt{color:var(--t3);font-family:var(--mono);font-size:14px;letter-spacing:.07em;text-transform:uppercase}
+.ctbl td small{font-size:14px}
 .ctbl tr:last-child td{border-bottom:none}
 
 /* ══════════════════════════════════════════
@@ -779,9 +1138,10 @@ input,select,textarea{font-family:inherit;color:inherit}
 .iitem:last-child{border-bottom:none}
 .itime{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em;line-height:1.5}
 .itime strong{display:block;color:var(--t2);font-size:10px}
-.ibody h4{font-size:12.5px;color:var(--t1);margin-bottom:2px;line-height:1.35;font-weight:500}
-.ibody p{font-size:10.5px;color:var(--t2);line-height:1.45}
-.itags{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.ibody{display:flex;flex-direction:column;gap:8px}
+.ibody h4{font-size:12.5px;color:var(--t1);margin:0;line-height:1.35;font-weight:500}
+.ibody p{font-size:10.5px;color:var(--t2);line-height:1.45;margin:0}
+.itags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
 .itag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:2px 5px;border:1px solid var(--line2);color:var(--t3)}
 .itag.public{color:#7DABE3;border-color:rgba(125,171,227,.3)}
 .itag.private{color:var(--amber);border-color:rgba(255,177,46,.3);background:rgba(255,177,46,.05)}
@@ -794,14 +1154,14 @@ input,select,textarea{font-family:inherit;color:inherit}
 /* ══════════════════════════════════════════
    METHODOLOGY
 ══════════════════════════════════════════ */
-.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
-.mcard{background:var(--bg2);border:1px solid var(--line);padding:15px;position:relative;overflow:hidden}
+.mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
+.mcard{background:var(--bg2);border:1px solid var(--line);padding:16px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
 .mcard::before{content:"";position:absolute;top:0;left:0;height:100%;width:2px;background:var(--ac)}
 .mcard[data-c=svs]{--ac:#7DABE3}.mcard[data-c=pps]{--ac:var(--amber)}.mcard[data-c=aps]{--ac:#FF9E64}.mcard[data-c=rcs]{--ac:var(--watch)}.mcard[data-c=ras]{--ac:#C19EFF}
-.mcode{font-family:var(--mono);font-size:11px;color:var(--ac);letter-spacing:.16em;font-weight:600}
-.mname{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--display);margin:6px 0 4px;line-height:1.15;letter-spacing:-.01em}
-.mw{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;margin-bottom:10px}
-.mq{font-size:12px;color:var(--t2);font-style:italic;line-height:1.5;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.mcode{font-family:var(--mono);font-size:11px;color:var(--ac);letter-spacing:.16em;font-weight:600;margin:0}
+.mname{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--display);margin:0;line-height:1.15;letter-spacing:-.01em}
+.mw{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;margin:0}
+.mq{font-size:12px;color:var(--t2);font-style:italic;line-height:1.5;margin:0;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .ml{list-style:none;font-size:10.5px;color:var(--t2);line-height:1.7}
 .ml li{padding-left:11px;position:relative}
 .ml li::before{content:"·";position:absolute;left:3px;color:var(--ac);font-weight:700}
@@ -818,7 +1178,8 @@ input,select,textarea{font-family:inherit;color:inherit}
 .wsform{display:grid;gap:11px;max-width:700px}
 .wsf{display:flex;flex-direction:column;gap:5px}
 .wsf label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3)}
-.wsf input,.wsf select,.wsf textarea{background:var(--bg2);border:1px solid var(--line);padding:8px 10px;color:var(--t1);font-size:12px;outline:none;transition:border-color .12s}
+.wsf input,.wsf select,.wsf textarea{background-color:var(--bg2);border:1px solid var(--line);padding:8px 10px;color:var(--t1);font-size:12px;outline:none;transition:border-color .12s}
+.wsf select{padding:8px 32px 8px 10px;background-position:right 10px center}
 .wsf input:focus,.wsf select:focus,.wsf textarea:focus{border-color:rgba(255,177,46,.5)}
 .wsf textarea{min-height:85px;resize:vertical}
 .wsr{display:grid;grid-template-columns:1fr 1fr;gap:11px}
@@ -839,8 +1200,8 @@ input,select,textarea{font-family:inherit;color:inherit}
 ══════════════════════════════════════════ */
 .rptg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .rptc{
-  background:var(--bg2);border:1px solid var(--line);padding:22px;
-  display:flex;flex-direction:column;gap:10px;
+  background:var(--bg2);border:1px solid var(--line);padding:16px;
+  display:flex;flex-direction:column;gap:8px;
   cursor:pointer;transition:border-color .25s,transform .25s;
   position:relative;overflow:hidden;
 }
@@ -914,7 +1275,7 @@ input,select,textarea{font-family:inherit;color:inherit}
    SENTINEL
 ══════════════════════════════════════════ */
 .sentinel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.sentinel-card{background:var(--bg2);border:1px solid var(--line);padding:12px;display:flex;flex-direction:column;gap:5px;cursor:pointer;transition:border-color .1s}
+.sentinel-card{background:var(--bg2);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:border-color .1s}
 .sentinel-card:hover{border-color:var(--t3)}
 .sentinel-card.t1{border-left:2px solid var(--dnd)}
 .sentinel-card.t2{border-left:2px solid var(--watch)}
@@ -1563,7 +1924,6 @@ input,select,textarea{font-family:inherit;color:inherit}
   <main class="mn">
     <!-- DASHBOARD -->
     <div class="view active" id="vw-dashboard">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Market Overview</span></div>
       <div class="page-head">
         <div>
           <h1 class="vtitle">Africa Aviation <em>Credit Climate</em></h1>
@@ -1585,12 +1945,135 @@ input,select,textarea{font-family:inherit;color:inherit}
         <button class="rtab" data-region="central-africa">Central Africa<span class="rcount">11</span></button>
       </div>
 
+      <!-- Composite Market Score + right rail · PRD §4.2.3 portfolio view -->
+      <div class="g g12 mo-cms-row">
+        <div class="panel c8 mo-cms">
+          <div class="ph">
+            <h3>Composite market score</h3>
+            <span class="meta" id="moCmsTag">—</span>
+          </div>
+          <div class="pb mo-cms-body">
+            <div class="mo-cms-head">
+              <div class="mo-cms-numblk">
+                <div class="mo-cms-num" id="moCmsNum">—</div>
+                <div class="mo-cms-unit">/100</div>
+              </div>
+              <div class="mo-cms-breakdown" id="moCmsBreakdown"></div>
+            </div>
+            <p class="mo-cms-narrative" id="moCmsNarrative"></p>
+            <p class="mo-cms-subtotals" id="moCmsSubtotals"></p>
+          </div>
+        </div>
+        <div class="c4 mo-rail">
+          <div class="panel mo-mini">
+            <div class="ph"><h3>Cape Town Convention</h3></div>
+            <div class="pb">
+              <div class="mo-mini-row"><span class="mo-mini-num" id="moCtcPct">—%</span><span class="mo-mini-status" id="moCtcStatus">—</span></div>
+              <div class="mo-progress"><div class="mo-progress-bar" id="moCtcBar"></div></div>
+              <p class="mo-mini-desc">Asset recovery framework · % of cohort jurisdictions ratified</p>
+            </div>
+          </div>
+          <div class="panel mo-mini">
+            <div class="ph"><h3>Deploy verdicts · cohort</h3></div>
+            <div class="pb">
+              <div class="mo-mini-row"><span class="mo-mini-num" id="moDvCount">—</span><span class="mo-mini-status" id="moDvSub">—</span></div>
+              <p class="mo-mini-desc" id="moDvBenchmark">—</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="summary" id="summary">
         <div class="cell"><div class="k">In cohort</div><div class="val" id="s-total">85</div><div class="meta">carriers scored</div></div>
         <div class="cell"><div class="k">Deploy</div><div class="val pos" id="s-deploy">—</div><div class="meta">≥ 75 composite</div></div>
-        <div class="cell"><div class="k">Watch</div><div class="val warn" id="s-watch">—</div><div class="meta">50 – 74 · conditional</div></div>
+        <div class="cell"><div class="k">Watch</div><div class="val watch" id="s-watch">—</div><div class="meta">50 – 74 · conditional</div></div>
         <div class="cell"><div class="k">Do Not Deploy</div><div class="val neg" id="s-dnd">—</div><div class="meta">&lt; 50 · decline</div></div>
         <div class="cell"><div class="k">Hard floor</div><div class="val" id="s-floor">—</div><div class="meta">PPS / RCS &lt; 40</div></div>
+      </div>
+
+      <!-- Strongest · Weakest · Verdict distribution -->
+      <div class="g g12 mo-rank-row">
+        <div class="panel c4 mo-rank">
+          <div class="ph"><h3>Strongest carriers</h3><span class="meta">By composite</span></div>
+          <div class="pb" style="padding:0"><table class="mo-rank-tbl" id="moRankTop"></table></div>
+        </div>
+        <div class="panel c4 mo-rank">
+          <div class="ph"><h3>Weakest carriers</h3><span class="meta">By composite</span></div>
+          <div class="pb" style="padding:0"><table class="mo-rank-tbl" id="moRankBot"></table></div>
+        </div>
+        <div class="panel c4 mo-vchart-panel">
+          <div class="ph"><h3>Verdict distribution</h3><span class="meta" id="moVchartMeta">— carriers</span></div>
+          <div class="pb"><div class="mo-vchart" id="moVchart"></div></div>
+        </div>
+      </div>
+
+      <!-- Carrier credit heat-map · PRD §4.2.3 aggregate verdict distribution -->
+      <div class="panel mo-heat-panel">
+        <div class="ph">
+          <h3>Carrier credit heat-map</h3>
+          <div class="mo-heat-tools">
+            <div class="mo-heat-legend">
+              <span class="mo-heat-swatch deploy"></span>Deploy
+              <span class="mo-heat-swatch watch"></span>Watch
+              <span class="mo-heat-swatch dnd"></span>Do Not Deploy
+            </div>
+            <select class="mo-heat-sort" id="moHeatSort">
+              <option value="composite">Sort: composite</option>
+              <option value="name">Sort: name</option>
+              <option value="region">Sort: region</option>
+            </select>
+            <span class="meta">Click any cell to drill</span>
+          </div>
+        </div>
+        <div class="pb">
+          <div class="mo-heat" id="moHeat"></div>
+        </div>
+      </div>
+
+      <!-- Watch Notes feed + Recent verdict movers · PRD §3.2.4 + §4.2.3 -->
+      <div class="g g12 mo-row-strip">
+        <div class="panel c6">
+          <div class="ph">
+            <h3>Watch Notes &amp; off-cycle alerts</h3>
+            <span class="meta" id="moWatchCount">— · 60d</span>
+          </div>
+          <div class="pb" style="padding:0">
+            <div class="mo-watch-list" id="moWatchList"></div>
+          </div>
+        </div>
+        <div class="panel c6">
+          <div class="ph">
+            <h3>Recent verdict movers</h3>
+            <span class="meta">Last 30 days · Audit-sourced</span>
+          </div>
+          <div class="pb" style="padding:0">
+            <div class="mo-mover-list" id="moMoverList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Refresh schedule · PRD §4.2.3 -->
+      <div class="panel mo-refresh-panel">
+        <div class="ph">
+          <h3>Refresh schedule</h3>
+          <span class="meta" id="moRefreshMeta">— upcoming</span>
+        </div>
+        <div class="pb">
+          <div class="mo-refresh-grid">
+            <div class="mo-refresh-col mo-refresh-col-expired">
+              <div class="mo-refresh-coh"><span class="dot"></span>Expired<span class="ct" id="moRefCtExp">0</span></div>
+              <div class="mo-refresh-list" id="moRefExpired"></div>
+            </div>
+            <div class="mo-refresh-col mo-refresh-col-30">
+              <div class="mo-refresh-coh"><span class="dot"></span>Next 30 days<span class="ct" id="moRefCt30">0</span></div>
+              <div class="mo-refresh-list" id="moRef30"></div>
+            </div>
+            <div class="mo-refresh-col mo-refresh-col-90">
+              <div class="mo-refresh-coh"><span class="dot"></span>31 – 90 days<span class="ct" id="moRefCt90">0</span></div>
+              <div class="mo-refresh-list" id="moRef90"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="panel mo-scorecard">
@@ -1626,45 +2109,67 @@ input,select,textarea{font-family:inherit;color:inherit}
 
     <!-- SIGNAL PORTFOLIO VIEW -->
     <div class="view" id="vw-signal">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Andara Signal</span></div>
       <h1 class="vtitle">Andara <em>Signal</em></h1>
       <p class="vsub">Predictive payments and performance indicator. Monitored carriers ranked by Signal band. Select a carrier to view the full proxy evidence panel.</p>
-      <div class="g g12" style="margin-bottom:16px">
-        <div class="panel c12">
-          <div class="ph">
-            <h3>Monitored Portfolio — Signal Status</h3>
-            <span class="meta" style="color:var(--amber)">Live · Operational proxy method</span>
-          </div>
-          <div class="pb" style="padding:0">
-            <table style="width:100%;border-collapse:collapse">
-              <thead>
-                <tr style="background:var(--bg2)">
-                  <th style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--line)">Carrier</th>
-                  <th style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--line)">Region</th>
-                  <th style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--line)">CI Verdict</th>
-                  <th style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--line)">Signal Band</th>
-                  <th style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--line)">Composite</th>
-                  <th style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--line)">Confidence</th>
-                  <th style="font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);padding:10px 16px;text-align:left;border-bottom:1px solid var(--line)">Last Updated</th>
-                </tr>
-              </thead>
-              <tbody id="signalPortfolioBody"></tbody>
-            </table>
-          </div>
+
+      <!-- Stat strip -->
+      <div class="summary sig-summary" id="sigSummary"></div>
+
+      <!-- Source ingestion health (PRD §4.4.5) -->
+      <div class="sig-sources" id="sigSources"></div>
+
+      <!-- Toolbar: cohort chips · search · region · live badge -->
+      <div class="sig-toolbar">
+        <div class="rtabs sig-cohort" id="sigCohort">
+          <button class="rtab active" data-sigband="all">All</button>
+          <button class="rtab" data-sigband="deteriorating"><span style="color:var(--dnd)">▼</span> Deteriorating</button>
+          <button class="rtab" data-sigband="stable"><span style="color:var(--watch)">●</span> Stable</button>
+          <button class="rtab" data-sigband="improving"><span style="color:var(--deploy)">▲</span> Improving</button>
+          <button class="rtab" data-sigband="ingesting"><span style="color:var(--t3)">●</span> Ingesting</button>
+        </div>
+        <div class="sig-tools">
+          <input type="text" class="sig-search" id="sigSearch" placeholder="Search carriers…">
+          <select class="sig-region" id="sigRegion"><option value="all">All regions</option><option value="nigeria">Nigeria</option><option value="west-africa">West Africa</option><option value="east-africa">East Africa</option><option value="southern-africa">Southern Africa</option><option value="central-africa">Central Africa</option></select>
+          <span class="sig-live"><span class="dot"></span>Live · Operational proxy method</span>
         </div>
       </div>
-      <div class="panel c12" style="margin-top:0">
-        <div class="ph"><h3>About Andara Signal</h3><span class="meta">Methodology</span></div>
+
+      <!-- Portfolio table -->
+      <div class="panel sig-panel">
+        <div class="ph"><h3>Monitored Portfolio — Signal Status</h3><span class="meta" id="sigCount">— rows</span></div>
+        <div class="pb" style="padding:0;overflow-x:auto">
+          <table class="ctbl sig-tbl">
+            <thead>
+              <tr>
+                <th>Carrier</th>
+                <th>Region</th>
+                <th>CI Verdict</th>
+                <th>Signal Band · Horizon</th>
+                <th class="num">Composite</th>
+                <th>Proxies</th>
+                <th>Severity</th>
+                <th>Confidence</th>
+                <th>Last Updated</th>
+                <th class="sig-actions-col"></th>
+              </tr>
+            </thead>
+            <tbody id="signalPortfolioBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Methodology footer -->
+      <div class="panel">
+        <div class="ph"><h3>About Andara Signal</h3><span class="meta">Methodology · v1.5-NG</span></div>
         <div class="pb">
-          <p style="font-size:12.5px;color:var(--t2);line-height:1.65;max-width:780px">Andara Signal monitors the operational health of African carriers using independently verifiable operational proxies — schedule integrity, aircraft utilisation, fuel payment behaviour, ground handler billing, regulatory compliance, yield signals, infrastructure charge payments, and settlement behaviour. It produces a continuous directional verdict updated as new proxy data arrives, with a human committee gate required on any band-crossing change.</p>
-          <p style="font-size:12.5px;color:var(--t2);line-height:1.65;max-width:780px;margin-top:10px">Predictive accuracy on the downside signal: <strong style="color:var(--deploy)">70–80%</strong>. Carriers that move to Deteriorating subsequently show verifiable payment or operational stress within the indicated forward window. Signal tells you what is happening to a carrier's operational and financial health before the carrier tells you.</p>
+          <p class="sig-method">Andara Signal monitors the operational health of African carriers using independently verifiable operational proxies — schedule integrity, aircraft utilisation, fuel payment behaviour, ground handler billing, regulatory compliance, yield signals, infrastructure charge payments, and settlement behaviour. It produces a continuous directional verdict updated as new proxy data arrives, with a human committee gate required on any band-crossing change.</p>
+          <p class="sig-method">Predictive accuracy on the downside signal: <strong style="color:var(--deploy)">70–80%</strong>. Carriers that move to Deteriorating subsequently show verifiable payment or operational stress within the indicated forward window. Signal tells you what is happening to a carrier's operational and financial health before the carrier tells you. <span class="aav-inline">AAV · Andara Analytical View</span></p>
         </div>
       </div>
     </div>
 
     <!-- SENTINEL -->
     <div class="view" id="vw-sentinel">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Andara Sentinel</span></div>
       <h1 class="vtitle">Andara <em>Sentinel</em></h1>
       <p class="vsub">Continuous operator monitoring. Carriers are assigned to monitoring tiers based on credit-event frequency, structural volatility, and institutional importance. Tier 1 triggers monthly review. Tier 2 quarterly. Tier 3 semi-annual.</p>
       <div class="g g12" style="margin-bottom:16px">
@@ -1676,7 +2181,6 @@ input,select,textarea{font-family:inherit;color:inherit}
 
     <!-- INTEL FEED -->
     <div class="view" id="vw-intel">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Intelligence Feed</span></div>
       <h1 class="vtitle">Intelligence <em>Feed</em></h1>
       <p class="vsub">Public-domain and private-source intelligence flowing into the Andara database. Timestamped, source-classified, and mapped to scoring criteria.</p>
       <div class="fb">
@@ -1695,16 +2199,37 @@ input,select,textarea{font-family:inherit;color:inherit}
 
     <!-- COMPARE -->
     <div class="view" id="vw-compare">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Comparison</span></div>
-      <h1 class="vtitle">Carrier <em>Comparison</em></h1>
-      <p class="vsub">Side-by-side comparative scoring across up to four carriers. Cross-region comparison supported — compare Nigerian carriers against West African carriers.</p>
+      <div class="page-head">
+        <div>
+          <h1 class="vtitle">Carrier <em>Comparison</em></h1>
+          <p class="vsub">Side-by-side comparative scoring across up to four carriers, drawn from any African region in your universe. Used for portfolio-concentration review and Credit Committee sub-cohort assessment.</p>
+        </div>
+        <div class="page-actions cmp-toolbar">
+          <select class="cmp-sets-select" id="cmpSetsSelect"><option value="">— Saved sets —</option></select>
+          <button class="btn" id="cmpSaveSet">Save set</button>
+          <button class="btn" id="cmpSubmitSC">Submit to SC</button>
+          <button class="btn primary" id="cmpExport">Export PDF</button>
+        </div>
+      </div>
       <div class="cpks" id="cpks"></div>
+
+      <!-- Comparative AAV · PRD §3.4.6 -->
+      <div class="panel cmp-aav-panel" id="cmpAavPanel" style="display:none">
+        <div class="ph"><h3>Comparative Andara Analytical View</h3><span class="meta"><span class="aav-inline">AAV</span></span></div>
+        <div class="pb"><div class="cmp-aav-body" id="cmpAavBody"></div></div>
+      </div>
+
+      <!-- 5-Score radar overlay -->
+      <div class="panel cmp-radar-panel" id="cmpRadarPanel" style="display:none">
+        <div class="ph"><h3>5-Score profile overlay</h3><span class="meta">Each axis 0 – 10 · outer ring = institutional ideal</span></div>
+        <div class="pb"><div class="cmp-radar-wrap"><div class="cmp-radar" id="cmpRadar"></div><div class="cmp-radar-legend" id="cmpRadarLegend"></div></div></div>
+      </div>
+
       <div class="panel"><div class="ph"><h3>Comparative scorecard</h3><span class="meta">5-Score · weighted</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="ctbl" id="ctbl"></table></div></div>
     </div>
 
     <!-- METHODOLOGY -->
     <div class="view" id="vw-method">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Methodology</span></div>
       <h1 class="vtitle">The 5-Score <em>Methodology</em></h1>
       <p class="vsub">Five weighted dimensions, five distinct questions. Weighted average produces a 0–100 composite. Verdicts are calculated outputs — never analyst opinions. The methodology is geography-agnostic and applies uniformly across all African regions.</p>
       <div class="mgrid">
@@ -1714,14 +2239,13 @@ input,select,textarea{font-family:inherit;color:inherit}
         <div class="mcard" data-c="rcs"><div class="mcode">RCS · 25%</div><div class="mname">Risk Containment</div><div class="mw">Structural protections</div><div class="mq">If things go wrong, how protected are we?</div><ul class="ml"><li>Cape Town Convention</li><li>IDERA practice</li><li>Repossession case law</li><li>FX repatriation risk</li><li>Ownership transparency</li><li>Audited financials</li><li>Insurance coverage</li><li>Country-level RCS modifier</li></ul></div>
         <div class="mcard" data-c="ras"><div class="mcode">RAS · 15%</div><div class="mname">Redeployment Suitability</div><div class="mw">Asset liquidity</div><div class="mq">If they default, how fast can we move the asset?</div><ul class="ml"><li>Aircraft type liquidity</li><li>Engine type liquidity</li><li>Configuration heaviness</li><li>AD / SB compliance</li><li>Technical records</li><li>C-check / D-check status</li><li>African operator demand</li><li>Re-export timeline</li></ul></div>
       </div>
-      <div class="panel" style="margin-bottom:14px"><div class="ph"><h3>Verdict thresholds</h3><span class="meta">Hard floors apply</span></div><div class="pb"><table class="ttbl"><tr><td class="tdt">≥75</td><td><strong style="color:#fff">DEPLOY</strong> — Counterparty meets institutional standard. Standard covenant package suffices.</td></tr><tr><td class="twt">50–74</td><td><strong style="color:#fff">WATCH</strong> — Conditional support. Structured protections, monitoring triggers, reduced tenor required.</td></tr><tr><td class="txt">&lt;50</td><td><strong style="color:#fff">DO NOT DEPLOY</strong> — Decline. Explanatory memo to Credit Committee mandatory.</td></tr></table><div class="warn" style="margin-top:12px"><strong>Hard floor</strong>Composite cannot exceed 65 if PPS &lt; 40 or RCS &lt; 40, regardless of other scores. Exercised on 7 carriers across the combined universe.</div></div></div>
-      <div class="panel" style="margin-bottom:14px"><div class="ph"><h3>Country-level RCS modifier</h3><span class="meta">West Africa · 12 jurisdictions + East Africa · 11 jurisdictions</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="ctbl" id="countryModTable"></table></div></div>
+      <div class="panel"><div class="ph"><h3>Verdict thresholds</h3><span class="meta">Hard floors apply</span></div><div class="pb"><table class="ttbl"><tr><td class="tdt">≥75</td><td><strong style="color:#fff">DEPLOY</strong> — Counterparty meets institutional standard. Standard covenant package suffices.</td></tr><tr><td class="twt">50–74</td><td><strong style="color:#fff">WATCH</strong> — Conditional support. Structured protections, monitoring triggers, reduced tenor required.</td></tr><tr><td class="txt">&lt;50</td><td><strong style="color:#fff">DO NOT DEPLOY</strong> — Decline. Explanatory memo to Credit Committee mandatory.</td></tr></table><div class="warn" style="margin-top:12px"><strong>Hard floor</strong>Composite cannot exceed 65 if PPS &lt; 40 or RCS &lt; 40, regardless of other scores. Exercised on 7 carriers across the combined universe.</div></div></div>
+      <div class="panel"><div class="ph"><h3>Country-level RCS modifier</h3><span class="meta">West Africa · 12 jurisdictions + East Africa · 11 jurisdictions</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="ctbl" id="countryModTable"></table></div></div>
       <div class="panel"><div class="ph"><h3>Client-tier verdict differentiation</h3><span class="meta">Pass 3–4 doctrine · v1.0-WA + v1.0-EA</span></div><div class="pb"><p style="font-size:12.5px;color:var(--t2);line-height:1.65;max-width:800px">West Africa: <strong style="color:#fff">Air Burkina</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese institutional), <strong style="color:#fff">Sky Mali</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese), and <strong style="color:#fff">Global Aviation</strong> (Watch-mid for Western; Watch-high for Chinese, Regional African, Mining/oil-and-gas). East Africa: <strong style="color:#fff">Air Tanzania</strong>, <strong style="color:#fff">Precision Air</strong>, <strong style="color:#fff">African Express Airways</strong> (westernInstitutional Do Not Deploy reflecting EU ban or fleet ineligibility; other tiers Watch). <strong style="color:#fff">Tarco Aviation</strong> and <strong style="color:#fff">Badr Airlines</strong> (conflict-adjusted: westernInstitutional, Chinese, and miningOilGas Do Not Deploy; regionalAfricanInstitutional Watch). The underlying evidence is identical across all tiers; the risk weighting differs by mandate.</p></div></div>
     </div>
 
     <!-- WORKSPACE -->
     <div class="view" id="vw-workspace">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Analyst Workspace</span></div>
       <h1 class="vtitle">Analyst <em>Workspace</em></h1>
       <p class="vsub">Submit new evidence to the Andara database. Scores update only through the approved methodology engine — never manually.</p>
       <div class="warn"><strong>Scoring governance · v1.5-NG / 1.0-WA / 1.0-EA</strong>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>
@@ -1746,7 +2270,6 @@ input,select,textarea{font-family:inherit;color:inherit}
 
     <!-- AUDIT -->
     <div class="view" id="vw-audit">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Audit Trail</span></div>
       <h1 class="vtitle">Version History &amp; <em>Audit Trail</em></h1>
       <p class="vsub">Every score movement, every evidence submission, every methodology run. Institutional-grade audit integrity is non-negotiable.</p>
       <div class="panel"><div class="ph"><h3>Audit log</h3><span class="meta">Last 50 events</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="atbl" id="atbl"></table></div></div>
@@ -1754,7 +2277,6 @@ input,select,textarea{font-family:inherit;color:inherit}
 
     <!-- REPORTS -->
     <div class="view" id="vw-reports">
-      <div class="crumb"><button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><span class="here">Report Centre</span></div>
       <h1 class="vtitle">Report <em>Export Centre</em></h1>
       <p class="vsub">Generate institutional-grade briefings and Credit Committee summaries. Reports reflect latest validated data and methodology outputs across Nigeria and West Africa.</p>
       <div class="rptg">
@@ -1782,6 +2304,123 @@ input,select,textarea{font-family:inherit;color:inherit}
     <div class="mlist" id="mlist"></div>
   </div>
 </div>
+
+<!-- Signal: promote-to-Scoring-Committee modal · PRD §4.4.5 -->
+<div class="sig-mback" id="sigPromoteModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Promote Signal to Scoring Committee</h3><button class="close" data-sig-close="sigPromoteModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="sigPromoteSummary"></div>
+      <div class="sig-mfield">
+        <label>Verdict-impact assessment</label>
+        <select id="sigPromoteImpact">
+          <option value="watch-downgrade">Watch downgrade — band move within Watch</option>
+          <option value="dnd-trigger">Do Not Deploy trigger — verdict re-rate proposed</option>
+          <option value="hard-floor-review">Hard floor review — PPS or RCS approaching threshold</option>
+          <option value="aog-class">AOG-class alert — off-cycle SC review required within 24h</option>
+          <option value="info-only">Information only — no verdict change proposed, awareness</option>
+        </select>
+      </div>
+      <div class="sig-mfield">
+        <label>Escalation rationale</label>
+        <textarea id="sigPromoteRationale" placeholder="Cite specific proxies, evidence, and what verdict-affecting change is proposed. Min 60 chars."></textarea>
+        <div class="helper">Notification will be dispatched to the Scoring Committee inbox with the proxy evidence pack and your rationale. Logged in the audit trail.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="sigPromoteModal">Cancel</button>
+      <button class="sig-mbtn primary" id="sigPromoteConfirm">Notify Scoring Committee</button>
+    </div>
+  </div>
+</div>
+
+<!-- Signal: severity override modal · PRD §4.4.5 -->
+<div class="sig-mback" id="sigOverrideModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Override predicted severity</h3><button class="close" data-sig-close="sigOverrideModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="sigOverrideSummary"></div>
+      <div class="sig-mfield">
+        <label>Analyst severity</label>
+        <select id="sigOverrideSev">
+          <option value="critical">CRITICAL — immediate SC review</option>
+          <option value="high">HIGH — review within 14 days</option>
+          <option value="medium">MEDIUM — review within next refresh cycle</option>
+          <option value="low">LOW — monitor</option>
+          <option value="none">NONE — no severity concern</option>
+        </select>
+      </div>
+      <div class="sig-mfield">
+        <label>Override rationale</label>
+        <textarea id="sigOverrideRationale" placeholder="Why is the computed severity wrong? What evidence supports your call? Min 40 chars."></textarea>
+        <div class="helper">The computed severity stays visible behind an OVERRIDE flag. Reversible until the next SC sign-off cycle.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="sigOverrideModal">Cancel</button>
+      <button class="sig-mbtn" id="sigOverrideClear">Clear existing override</button>
+      <button class="sig-mbtn primary" id="sigOverrideConfirm">Record override</button>
+    </div>
+  </div>
+</div>
+
+<!-- Compare: Save set modal · PRD §4.2.5 -->
+<div class="sig-mback" id="cmpSaveModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Save comparison set</h3><button class="close" data-sig-close="cmpSaveModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="cmpSaveSummary"></div>
+      <div class="sig-mfield">
+        <label>Set name</label>
+        <input type="text" id="cmpSaveName" placeholder="e.g. West Africa Deploy candidates · Q3 2026">
+        <div class="helper">Saved sets persist in this browser. Reload from the dropdown above any time.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="cmpSaveModal">Cancel</button>
+      <button class="sig-mbtn primary" id="cmpSaveConfirm">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Compare: Submit-to-SC modal · PRD §3.4.1 / §4.4.5 -->
+<div class="sig-mback" id="cmpSubmitModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Submit comparison to Scoring Committee</h3><button class="close" data-sig-close="cmpSubmitModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="cmpSubmitSummary"></div>
+      <div class="sig-mfield">
+        <label>Comparison purpose</label>
+        <select id="cmpSubmitPurpose">
+          <option value="portfolio-concentration">Portfolio concentration review</option>
+          <option value="sub-cohort">Credit Committee sub-cohort assessment</option>
+          <option value="band-crossing-cluster">Band-crossing cluster review</option>
+          <option value="hard-floor-cohort">Hard-floor cohort under stress</option>
+          <option value="cross-region">Cross-region exposure read</option>
+        </select>
+      </div>
+      <div class="sig-mfield">
+        <label>Analyst commentary</label>
+        <textarea id="cmpSubmitNote" placeholder="What does this comparison surface that the committee should weigh? Min 60 chars."></textarea>
+        <div class="helper">The four-carrier set, full scorecard, and your commentary are packaged for the Scoring Committee inbox. Audit logged.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="cmpSubmitModal">Cancel</button>
+      <button class="sig-mbtn primary" id="cmpSubmitConfirm">Notify Scoring Committee</button>
+    </div>
+  </div>
+</div>
+
+<!-- Signal: row kebab popover (singleton, reattached per row) -->
+<div class="sig-pop" id="sigPop">
+  <button data-sig-act="profile">Open carrier profile <span class="ki">⌘O</span></button>
+  <button data-sig-act="promote">Promote to Scoring Committee <span class="ki">SC</span></button>
+  <button data-sig-act="override">Override severity <span class="ki">ALT</span></button>
+  <div class="divider"></div>
+  <button data-sig-act="audit" class="danger">View band-crossing history <span class="ki">LOG</span></button>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -3116,15 +3755,290 @@ function buildDashboard(){
   const metaEl = el('moRowsMeta');
   if (rowsEl) {
     rowsEl.innerHTML = moRenderRows(sorted);
-    rowsEl.querySelectorAll('tr[data-aid]').forEach(r=>r.addEventListener('click',()=>showAirline(r.dataset.aid)));
+    rowsEl.querySelectorAll('tr[data-aid]').forEach(r=>r.addEventListener('click',e=>{
+      if(e.target.closest('.mo-refresh-cell'))return;
+      showAirline(r.dataset.aid);
+    }));
     // PRD §3.2.4 Refresh request — routed to CS lead. We toast as confirmation.
     rowsEl.querySelectorAll('.mo-refresh').forEach(btn => btn.addEventListener('click', e => {
       e.stopPropagation();
       toast('Refresh requested', `Routed to CS lead for ${btn.dataset.cname}`);
     }));
+    // PRD §3.2.4 + §3.2.6 — verdict letter download, watermarked + audited.
+    rowsEl.querySelectorAll('.mo-pdf').forEach(btn => btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const wm = moLogDeliverable({carrier:btn.dataset.cname,deliverable:'Verdict letter',format:'PDF',scope:'single'});
+      toast(`Verdict letter · ${btn.dataset.cname}`, `Watermark <strong>${wm.token}</strong> · ${wm.deliverableId}. Audit recorded.`);
+    }));
   }
   if (metaEl) metaEl.textContent = `${sorted.length} of ${ALL_CARRIERS.length} · weighted composite`;
+
+  renderMoCms(carriers);
+  renderMoCtc(carriers);
+  renderMoDeployVerdicts(carriers);
+  renderMoRanks(carriers);
+  renderMoVchart(carriers);
+  renderMoHeatmap(carriers);
+  renderMoWatchNotes(carriers);
+  renderMoMovers(carriers);
+  renderMoRefreshSchedule(carriers);
 }
+
+// ── Watermark + deliverable logging · PRD §3.2.6 ─────────────────────────
+// Every PDF / cohort export regenerated with the downloading user's token + logged.
+function moHashStr(s){
+  // Small non-cryptographic hash used only as the deliverable id seed.
+  let h=2166136261;
+  for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+  return(h>>>0).toString(36).toUpperCase();
+}
+function moWatermarkToken(deliverable,carrierIdOrCohort){
+  const user=(function(){try{return JSON.parse(localStorage.getItem('andara.auth')||'{}').email||'analyst';}catch(_){return'analyst';}})();
+  const ts=(function(){const d=new Date(),p=n=>String(n).padStart(2,'0');return`${d.getUTCFullYear()}${p(d.getUTCMonth()+1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;})();
+  const seed=`${user}|${ts}|${deliverable}|${carrierIdOrCohort}|${Math.random()}`;
+  const id=moHashStr(seed);
+  return{user,ts,deliverableId:`AND-${deliverable.toUpperCase()}-${id}`,token:`tok-${id.slice(0,8)}`};
+}
+function moLogDeliverable(opts){
+  // opts: {carrier, deliverable ('Verdict letter'|'Cohort export'|...), format, scope}
+  const wm=moWatermarkToken(opts.deliverable,opts.carrier||opts.scope||'cohort');
+  const ts=(function(){const d=new Date(),p=n=>String(n).padStart(2,'0');return`${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`;})();
+  AUDIT.unshift({
+    ts,
+    user:wm.user,
+    carrier:opts.carrier||opts.scope||'Cohort',
+    crit:`${opts.deliverable} download`,
+    fr:'—',
+    to:`${opts.format||'PDF'} · watermarked`,
+    src:'Reports',
+    status:'Delivered',
+    note:`${wm.deliverableId} · ${wm.token} · scope=${opts.scope||'single'}`
+  });
+  if(typeof buildAudit==='function')buildAudit();
+  return wm;
+}
+
+// ── Refresh schedule panel · PRD §4.2.3 ──────────────────────────────────
+function renderMoRefreshSchedule(carriers){
+  const exp=[],d30=[],d90=[];
+  carriers.forEach(c=>{
+    const v=validityUntil(c);
+    if(!v.validDate||v.days==null)return;
+    if(v.days<0)exp.push({c,v});
+    else if(v.days<=30)d30.push({c,v});
+    else if(v.days<=90)d90.push({c,v});
+  });
+  const sortBy=(a,b)=>a.v.days-b.v.days;
+  exp.sort(sortBy);d30.sort(sortBy);d90.sort(sortBy);
+  el('moRefCtExp').textContent=exp.length;
+  el('moRefCt30').textContent=d30.length;
+  el('moRefCt90').textContent=d90.length;
+  el('moRefreshMeta').textContent=`${exp.length+d30.length+d90.length} upcoming · CS-routed`;
+  const item=({c,v},cls)=>{
+    const days=v.days<0?`${Math.abs(v.days)}d overdue`:`${v.days}d left`;
+    const jur=c.jurisdiction||cmpRegionLabel(c);
+    return`<div class="mo-refresh-item" data-aid="${c.id}"><div><div class="mo-refresh-item-nm">${c.name}</div><div class="mo-refresh-item-meta">${jur} · valid ${v.validDate}</div></div><span class="mo-refresh-item-days ${cls}">${days}</span></div>`;
+  };
+  const renderCol=(target,arr,cls,empty)=>{
+    const wrap=el(target);
+    wrap.innerHTML=arr.length?arr.map(x=>item(x,cls)).join(''):`<div class="mo-refresh-empty">${empty}</div>`;
+    wrap.querySelectorAll('[data-aid]').forEach(r=>r.addEventListener('click',()=>showAirline(r.dataset.aid)));
+  };
+  renderCol('moRefExpired',exp,'expired','No expired verdicts.');
+  renderCol('moRef30',d30,'urgent','None within 30 days.');
+  renderCol('moRef90',d90,'soon','None within 31 – 90 days.');
+}
+
+// ── Composite Market Score + right rail (PRD §4.2.3) ──────────────────────
+function activeRegionScopeLabel(){
+  const m={all:'Sub-Saharan Africa',nigeria:'Nigeria','west-africa':'West Africa','east-africa':'East Africa','south-africa':'South Africa','southern-africa':'Southern Africa ex-SA','central-africa':'Central Africa'};
+  return m[activeRegion]||'Cohort';
+}
+function renderMoCms(carriers){
+  if(!carriers.length){el('moCmsNum').textContent='—';return;}
+  const avg=carriers.reduce((s,c)=>s+c.composite,0)/carriers.length;
+  const deploy=carriers.filter(c=>c.verdict==='deploy').length;
+  const watch=carriers.filter(c=>c.verdict==='watch').length;
+  const dnd=carriers.filter(c=>c.verdict==='do-not-deploy').length;
+  el('moCmsNum').textContent=avg.toFixed(1);
+  let tagCls='mixed',tagLbl='MIXED';
+  if(avg>=75){tagCls='strong';tagLbl='STRONG';}
+  else if(avg<50){tagCls='weak';tagLbl='WEAK';}
+  el('moCmsTag').innerHTML=`<span class="mo-cms-tag-pill mo-cms-tag-${tagCls}">● ${activeRegionScopeLabel().toUpperCase()} · ${tagLbl}</span>`;
+  el('moCmsBreakdown').innerHTML=`<span class="seg deploy">${deploy} Deploy</span><span class="seg watch">${watch} Watch</span><span class="seg dnd">${dnd} Do Not Deploy</span>`;
+  const sorted=[...carriers].sort((a,b)=>b.composite-a.composite);
+  const lead=sorted.filter(c=>c.verdict==='deploy').slice(0,2);
+  const noDeployRegions=[];
+  const byRegion={};
+  carriers.forEach(c=>{(byRegion[c.region]=byRegion[c.region]||[]).push(c);});
+  Object.entries(byRegion).forEach(([r,list])=>{if(!list.some(c=>c.verdict==='deploy'))noDeployRegions.push(r);});
+  let narrative;
+  if(deploy===0)narrative=`<em>${activeRegionScopeLabel()}</em>: 0 Deploy in cohort. ${sorted[0]?`<em>${sorted[0].name}</em> (${sorted[0].composite.toFixed(1)}) leads the field — closest to Deploy threshold.`:''}`;
+  else if(lead.length>=2)narrative=`${deploy} Deploy across ${carriers.length} carriers. <em>${lead[0].name}</em> (${lead[0].composite.toFixed(1)}) and <em>${lead[1].name}</em> (${lead[1].composite.toFixed(1)}) lead ${cmpRegionLabel(lead[0])}. ${noDeployRegions.length?`No Deploy in ${noDeployRegions.map(r=>cmpRegionLabel({region:r})).join(' / ')} — closest candidate pending conditions.`:''}`;
+  else narrative=`${deploy} Deploy across ${carriers.length} carriers. <em>${lead[0].name}</em> (${lead[0].composite.toFixed(1)}) is the cohort benchmark.${noDeployRegions.length?` No Deploy in ${noDeployRegions.map(r=>cmpRegionLabel({region:r})).join(' / ')}.`:''}`;
+  el('moCmsNarrative').innerHTML=narrative;
+  const sub=Object.entries(byRegion).map(([r,list])=>`${cmpRegionLabel({region:r})} ${list.length}`).join(' · ');
+  el('moCmsSubtotals').textContent=sub;
+}
+
+// CTC adoption — % of cohort jurisdictions with Cape Town Convention ratified
+function renderMoCtc(carriers){
+  const isos=new Set(carriers.map(c=>c.iso).filter(Boolean));
+  // Nigeria is CTC-ratified with IDERA practice but not in COUNTRY_METADATA (Nigeria-only base case).
+  // Treat Nigeria as ratified by default.
+  const ratifiedIsos=new Set();
+  isos.forEach(iso=>{
+    if(iso==='NG'){ratifiedIsos.add(iso);return;}
+    const cm=COUNTRY_METADATA.find(m=>m.iso===iso);
+    if(cm&&/Ratified|IDERA/i.test(cm.ctcStatus||''))ratifiedIsos.add(iso);
+  });
+  const pct=isos.size?Math.round(ratifiedIsos.size/isos.size*100):0;
+  let status,statusCol;
+  if(pct>=80){status='Full adoption';statusCol='var(--deploy)';}
+  else if(pct>=50){status='Partial adoption';statusCol='var(--deploy)';}
+  else if(pct>=25){status='Limited adoption';statusCol='var(--watch)';}
+  else{status='Sparse adoption';statusCol='var(--dnd)';}
+  el('moCtcPct').textContent=pct+'%';
+  const stEl=el('moCtcStatus');stEl.textContent=status;stEl.style.color=statusCol;
+  el('moCtcBar').style.width=pct+'%';
+}
+
+// Deploy verdicts mini — count, regions, benchmark
+function renderMoDeployVerdicts(carriers){
+  const deploys=carriers.filter(c=>c.verdict==='deploy');
+  const regions=new Set(deploys.map(c=>c.region));
+  el('moDvCount').textContent=deploys.length;
+  el('moDvSub').textContent=`Across ${regions.size} region${regions.size===1?'':'s'}`;
+  if(!deploys.length){el('moDvBenchmark').textContent='No Deploy verdicts in cohort.';return;}
+  const top=[...deploys].sort((a,b)=>b.composite-a.composite)[0];
+  el('moDvBenchmark').innerHTML=`<strong style="color:var(--display)">${top.name}</strong> (${top.composite.toFixed(1)}) is benchmark`;
+}
+
+// Strongest / Weakest rank tables
+function renderMoRanks(carriers){
+  const sorted=[...carriers].sort((a,b)=>b.composite-a.composite);
+  const head=`<thead><tr><th></th><th>Carrier</th><th class="num">Score</th><th>Jurisdiction</th></tr></thead>`;
+  const rowFn=(c,rank,scoreCls)=>`<tr data-aid="${c.id}"><td class="rank">${String(rank).padStart(2,'0')}</td><td class="name">${c.name}</td><td class="score ${scoreCls}">${c.composite.toFixed(1)}</td><td class="jur">${c.jurisdiction||cmpRegionLabel(c)}</td></tr>`;
+  const top=sorted.slice(0,5).map((c,i)=>rowFn(c,i+1,'up')).join('');
+  const bot=sorted.slice(-5).reverse().map((c,i)=>rowFn(c,sorted.length-i,'down')).join('');
+  el('moRankTop').innerHTML=head+`<tbody>${top}</tbody>`;
+  el('moRankBot').innerHTML=head+`<tbody>${bot}</tbody>`;
+  document.querySelectorAll('.mo-rank-tbl tr[data-aid]').forEach(r=>r.addEventListener('click',()=>showAirline(r.dataset.aid)));
+}
+
+// Verdict distribution vertical bar chart
+function renderMoVchart(carriers){
+  const deploy=carriers.filter(c=>c.verdict==='deploy').length;
+  const watch=carriers.filter(c=>c.verdict==='watch').length;
+  const dnd=carriers.filter(c=>c.verdict==='do-not-deploy').length;
+  const max=Math.max(deploy,watch,dnd,1);
+  const bar=(cls,lbl,n)=>{
+    const h=Math.round((n/max)*100);
+    return`<div class="mo-vbar ${cls}"><div class="mo-vbar-stem" style="height:${h}%">${n||0}</div><div class="mo-vbar-label">${lbl}</div></div>`;
+  };
+  el('moVchart').innerHTML=bar('deploy','Deploy',deploy)+bar('watch','Watch',watch)+bar('dnd','DND',dnd);
+  el('moVchartMeta').textContent=`${carriers.length} carrier${carriers.length===1?'':'s'}`;
+}
+
+// ── Market Overview — heat map · Watch Notes · movers ──────────────────────
+// PRD §4.2.3 aggregate verdict distribution + §3.2.4 Watch Note feed.
+function moHeatCellStyle(c){
+  const v=c.composite;
+  if(v>=75){const a=0.18+Math.min(0.55,(v-75)/25*0.55);return`background:rgba(107,179,138,${a});`;}
+  if(v>=50){const a=0.14+((v-50)/24)*0.4;return`background:rgba(214,168,90,${a});`;}
+  const a=0.14+Math.min(0.55,(50-v)/50*0.55);return`background:rgba(201,116,116,${a});`;
+}
+function renderMoHeatmap(carriers){
+  const wrap=el('moHeat');if(!wrap)return;
+  const sort=el('moHeatSort')?.value||'composite';
+  let list=[...carriers];
+  if(sort==='composite')list.sort((a,b)=>b.composite-a.composite);
+  else if(sort==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
+  else if(sort==='region')list.sort((a,b)=>(a.region||'').localeCompare(b.region||'')||(b.composite-a.composite));
+  if(!list.length){wrap.innerHTML=`<div class="mo-empty">No carriers in current cohort.</div>`;return;}
+  wrap.innerHTML=list.map(c=>{
+    const hf=c.hardFloor&&(c.hardFloor.ppsTriggered||c.hardFloor.rcsTriggered);
+    const regionLbl=(typeof cmpRegionLabel==='function')?cmpRegionLabel(c):'—';
+    const title=`${c.name} · ${c.jurisdiction||regionLbl} · ${(c.verdict||'').replace(/[_-]/g,' ').toUpperCase()} ${c.composite.toFixed(1)}${hf?' · HARD FLOOR':''}`;
+    return`<div class="mo-hcell ${hf?'hf':''}" data-aid="${c.id}" style="${moHeatCellStyle(c)}" title="${title.replace(/"/g,'&quot;')}">
+      <div class="mo-hname">${c.name}</div>
+      <div class="mo-hscore"><span>${c.composite.toFixed(1)}</span><span class="mo-hregion">${c.jurisdiction||regionLbl}</span></div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('.mo-hcell').forEach(cell=>cell.addEventListener('click',()=>showAirline(cell.dataset.aid)));
+}
+
+// Watch Notes panel: FEED entries with a carrier id, filtered to the current cohort,
+// classed as Watch-Note-eligible (regulatory · legal · ops · financial · private).
+function renderMoWatchNotes(carriers){
+  const wrap=el('moWatchList');if(!wrap)return;
+  const cidSet=new Set(carriers.map(c=>c.id));
+  // Treat FEED items as Watch-Note candidates when they're tied to a carrier in cohort
+  // and their class set intersects the Watch-Note categories.
+  const wnClasses=new Set(['regulatory','legal','ops','financial','private']);
+  const items=FEED.filter(f=>f.cid&&cidSet.has(f.cid)&&(f.cls||[]).some(c=>wnClasses.has(c))).slice(0,12);
+  const setMeta=el('moWatchCount');
+  if(setMeta)setMeta.textContent=`${items.length} note${items.length===1?'':'s'} · 60d`;
+  if(!items.length){wrap.innerHTML=`<div class="mo-empty">No active Watch Notes in this cohort.</div>`;return;}
+  wrap.innerHTML=items.map(it=>{
+    const c=ALL_CARRIERS.find(x=>x.id===it.cid);
+    const tags=(it.cls||[]).map(cl=>`<span class="mo-watch-tag ${cl}">${cl.toUpperCase()}</span>`).join('');
+    return`<div class="mo-watch-item" data-aid="${it.cid}">
+      <div class="mo-watch-time"><strong>${it.date}</strong>${it.time||''}</div>
+      <div class="mo-watch-body">
+        <h4>${c?c.name+' · ':''}${it.title}</h4>
+        <p>${it.desc||''}</p>
+        <div class="mo-watch-tags">${tags}</div>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('.mo-watch-item').forEach(x=>x.addEventListener('click',()=>showAirline(x.dataset.aid)));
+}
+
+// Recent movers panel: AUDIT entries with crit=Composite or crit=Verdict where
+// `to` reflects a band change or new addition. PRD §4.2.3 historical verdict trail.
+function renderMoMovers(carriers){
+  const wrap=el('moMoverList');if(!wrap)return;
+  const cidNames=new Map(ALL_CARRIERS.map(c=>[c.name,c.id]));
+  const cohortNames=new Set(carriers.map(c=>c.name));
+  const items=AUDIT
+    .filter(l=>cohortNames.has(l.carrier)&&(/Composite|Verdict|Signal/.test(l.crit)))
+    .slice(0,12)
+    .map(l=>{
+      const id=cidNames.get(l.carrier);
+      const fr=(l.fr||'').toUpperCase();
+      const to=(l.to||'').toUpperCase();
+      let dir='flat',delta=to||'—';
+      if(fr==='—'||/^NEW/.test(to))dir='new',delta='NEW';
+      else if(/DEPLOY/.test(to)&&!/DEPLOY/.test(fr))dir='up',delta=`→ DEPLOY`;
+      else if(/DO NOT DEPLOY|DND/.test(to)&&!/DO NOT DEPLOY|DND/.test(fr))dir='down',delta=`→ DND`;
+      else if(/WATCH/.test(to)&&/DND|DO NOT DEPLOY/.test(fr))dir='up',delta=`→ WATCH`;
+      else if(/WATCH/.test(to)&&/DEPLOY/.test(fr))dir='down',delta=`→ WATCH`;
+      else{
+        const frN=parseFloat(fr),toN=parseFloat(to);
+        if(!isNaN(frN)&&!isNaN(toN)){const d=toN-frN;dir=d>=0?'up':'down';delta=(d>=0?'+':'')+d.toFixed(1);}
+      }
+      return{id,name:l.carrier,note:l.note||l.crit,delta,dir,ts:l.ts};
+    });
+  if(!items.length){wrap.innerHTML=`<div class="mo-empty">No verdict moves in current cohort.</div>`;return;}
+  wrap.innerHTML=items.map(m=>`<div class="mo-mover-item" data-aid="${m.id||''}">
+    <div>
+      <div class="mo-mover-name">${m.name}</div>
+      <div class="mo-mover-note">${m.note.length>120?m.note.slice(0,117)+'…':m.note}</div>
+    </div>
+    <span class="mo-mover-delta ${m.dir}">${m.delta}</span>
+  </div>`).join('');
+  wrap.querySelectorAll('.mo-mover-item').forEach(x=>{
+    if(x.dataset.aid)x.addEventListener('click',()=>showAirline(x.dataset.aid));
+  });
+}
+
+// Wire heat-map sort once.
+(function(){
+  document.addEventListener('change',e=>{
+    if(e.target&&e.target.id==='moHeatSort')renderMoHeatmap(filteredCarriers());
+  });
+})();
 
 // Renders a row per carrier for the Market Overview scorecard.
 // Signal column draws from SIGNAL_DATA when present; otherwise shown as N/A.
@@ -3207,18 +4121,28 @@ function moRenderRows(list){
                    : val.urgency === 'soon'    ? `${val.days}d left`
                    : val.days != null          ? `${val.days}d left`
                    : '';
+    // Row flags: hard floor + EU blacklist (PRD §3.3.6, COUNTRY_METADATA)
+    const hf=c.hardFloor;
+    const cm=(typeof COUNTRY_METADATA!=='undefined')?COUNTRY_METADATA.find(m=>m.iso===c.iso):null;
+    const flags=[];
+    if(hf&&(hf.ppsTriggered||hf.rcsTriggered))flags.push(`<span class="mo-row-flag hf" title="Hard floor triggered — PPS or RCS &lt; 40">HF</span>`);
+    else if(hf&&hf.atBoundary)flags.push(`<span class="mo-row-flag hf-bdry" title="At hard-floor boundary">HF · BDRY</span>`);
+    if(cm&&cm.euBlacklist)flags.push(`<span class="mo-row-flag eu" title="EU blacklist · since ${cm.euBlacklistSince||'—'}">EU BAN</span>`);
+    const flagStrip=flags.length?`<span class="mo-row-flags">${flags.join('')}</span>`:'';
     return `<tr data-aid="${c.id}">
-      <td><div class="carrier"><span class="iata">${iata}</span><div class="txt"><div class="nm">${c.name}</div><div class="rg">${region}</div></div></div></td>
+      <td><div class="carrier"><span class="iata">${iata}</span><div class="txt"><div class="nm">${c.name}${flagStrip}</div><div class="rg">${region}</div></div></div></td>
       <td class="num"><div class="comp"><span class="score">${comp.toFixed(1)}</span><span class="meter"><i style="width:${Math.min(100,comp)}%;background:${bandColor(comp)}"></i></span></div></td>
       <td><div class="fivebar">${bars}</div></td>
       <td><span class="verdict ${v.cls}"><span class="d"></span>${v.t}</span></td>
       <td><span class="mo-sig ${sig.cls}"><span class="arr">${sig.arr}</span>${sig.label}</span></td>
       <td><span class="upd">${lastDisplay}</span></td>
       <td><div class="mo-val mo-val-${val.urgency}"><span class="mo-val-d">${validDisplay}</span><span class="mo-val-c">${daysCopy}</span></div></td>
-      <td class="mo-refresh-cell"><button type="button" class="mo-refresh" data-cid="${c.id}" data-cname="${c.name}" aria-label="Request refresh for ${c.name}" title="Request refresh — routed to CS lead">
+      <td class="mo-refresh-cell"><div style="display:inline-flex;align-items:center;gap:4px"><button type="button" class="mo-refresh" data-cid="${c.id}" data-cname="${c.name}" aria-label="Request refresh for ${c.name}" title="Request refresh — routed to CS lead">
         <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5v3h-3"/><path d="M13.5 5.5A6 6 0 1 0 14 9"/></svg>
         <span>Refresh</span>
-      </button></td>
+      </button><button type="button" class="mo-pdf" data-cid="${c.id}" data-cname="${c.name}" aria-label="Download verdict letter for ${c.name}" title="Download verdict letter · watermarked PDF">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 2.5h6l3 3v8h-9z"/><path d="M9.5 2.5v3h3"/><path d="M6 9v3"/><path d="M8 9v3"/><path d="M10 9v3"/></svg>
+      </button></div></td>
     </tr>`;
   }).join('');
 }
@@ -3276,11 +4200,33 @@ function cpOwnership(s){
   return s.replace(/\.?\s*MD\/CEO\s+[^.]+\.?/i,'').replace(/\.?\s*IOSA\s+[^.]+\.?/i,'').replace(/\.+$/,'').trim();
 }
 
+// Track which main view the user came from so the carrier-profile breadcrumb
+// links back to the origin (Andara Signal, Sentinel, Market Overview, etc.)
+// rather than always to Market Overview.
+const VIEW_TO_NAV = {
+  'vw-dashboard':{v:'dashboard',lbl:'Market Overview'},
+  'vw-signal':{v:'signal',lbl:'Andara Signal'},
+  'vw-sentinel':{v:'sentinel',lbl:'Andara Sentinel'},
+  'vw-intel':{v:'intel',lbl:'Intelligence Feed'},
+  'vw-compare':{v:'compare',lbl:'Comparison'},
+  'vw-method':{v:'method',lbl:'Methodology'},
+  'vw-workspace':{v:'workspace',lbl:'Analyst Workspace'},
+  'vw-audit':{v:'audit',lbl:'Audit Trail'},
+  'vw-reports':{v:'reports',lbl:'Report Centre'},
+};
+let lastOriginNav = VIEW_TO_NAV['vw-dashboard'];
+
 function showAirline(id){
   const a=ALL_CARRIERS.find(x=>x.id===id);if(!a)return;
+  // Capture origin BEFORE switching view. Carrier-to-carrier nav preserves
+  // the prior origin.
+  const active=document.querySelector('.view.active');
+  if(active&&active.id!=='vw-airline'&&VIEW_TO_NAV[active.id]){
+    lastOriginNav=VIEW_TO_NAV[active.id];
+  }
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   el('vw-airline').classList.add('active');
-  el('crumbA').innerHTML = `<button type="button" class="nav" data-cnav="dashboard">Terminal</button><span class="sep">/</span><button type="button" class="nav" data-cnav="dashboard">Market Overview</button><span class="sep">/</span><span class="here">${a.name}</span>`;
+  el('crumbA').innerHTML = `<button type="button" class="nav" data-cnav="${lastOriginNav.v}">${lastOriginNav.lbl}</button><span class="sep">/</span><span class="here">${a.name}</span>`;
   el('crumbA').querySelectorAll('.nav').forEach(b => b.addEventListener('click', () => {
     const item = document.querySelector('.sitem[data-v="'+b.dataset.cnav+'"]');
     if(item) item.click();
@@ -3619,6 +4565,27 @@ function fSummary(a){
   return'Decline. Composite below 50 — Do Not Deploy band. Explanatory memo to Credit Committee mandatory. Re-engagement contemplated only when material score-positive evidence is presented and triangulated under Andara doctrine.';
 }
 
+const CMP_REGION_LABEL={nigeria:'Nigeria','west-africa':'West Africa','east-africa':'East Africa','southern-africa':'Southern Africa','central-africa':'Central Africa','north-africa':'North Africa'};
+const CMP_REGION_COLOR={nigeria:'var(--amber)','west-africa':'#7DABE3','east-africa':'#9bd1a5','southern-africa':'#d2a3e0','central-africa':'#e7c46b','north-africa':'#e89a8a'};
+const CMP_METHOD_TAG={nigeria:'v1.5-NG','west-africa':'v1.0-WA','east-africa':'v1.0-EA','southern-africa':'v1.0-SA','central-africa':'v1.0-CA','north-africa':'v1.0-NA'};
+function cmpRegionLabel(a){return CMP_REGION_LABEL[a.region]||'—';}
+function cmpRegionColor(a){return CMP_REGION_COLOR[a.region]||'var(--t2)';}
+function cmpMethodTag(a){return CMP_METHOD_TAG[a.region]||'v1.0';}
+function cmpCompositeColor(v){return v>=75?'var(--deploy)':v>=50?'var(--watch)':'var(--dnd)';}
+function cmpHardFloorState(a){
+  if(!a.hardFloor)return{cls:'ok',lbl:'OK'};
+  if(a.hardFloor.ppsTriggered||a.hardFloor.rcsTriggered)return{cls:'trig',lbl:'TRIGGERED'};
+  if(a.hardFloor.atBoundary)return{cls:'bdry',lbl:'AT BOUNDARY'};
+  return{cls:'ok',lbl:'OK'};
+}
+function cmpDataGapCounts(a){
+  const flags=a.dataGapFlags||[];
+  const crit=flags.filter(f=>/CRITICAL/.test(f)).length;
+  const high=flags.filter(f=>/HIGH/.test(f)).length;
+  const med=flags.filter(f=>/MEDIUM/.test(f)).length;
+  return{crit,high,med,total:flags.length};
+}
+
 function buildCompare(){
   const s=[...ALL_CARRIERS].sort((a,b)=>b.composite-a.composite);
   if(!cmpSlots[0])cmpSlots=[s.find(a=>a.region==='west-africa')?.id||s[0].id,s[1].id,s[5].id,null];
@@ -3626,40 +4593,346 @@ function buildCompare(){
 }
 
 function renderCmp(){
-  const s=[...ALL_CARRIERS].sort((a,b)=>b.composite-a.composite);
   el('cpks').innerHTML=cmpSlots.map((sl,idx)=>{
-    if(sl){const a=ALL_CARRIERS.find(x=>x.id===sl);return`<div class="cpk filled" data-sl="${idx}"><button class="xbtn" onclick="cmpRemove(${idx},event)">✕</button><div class="cpk-l">Slot ${idx+1} · ${a.region==='west-africa'?'West Africa':'Nigeria'}</div><div class="cpk-v">${a.name}</div><div style="font-family:var(--mono);font-size:10px;color:var(--t3);margin-top:3px">${a.composite.toFixed(1)} · ${a.verdict.toUpperCase()}</div></div>`;}
+    if(sl){
+      const a=ALL_CARRIERS.find(x=>x.id===sl);
+      const hf=cmpHardFloorState(a);
+      const val=validityUntil(a);
+      const stale=val.urgency==='expired';
+      const compColor=cmpCompositeColor(a.composite);
+      const cm=COUNTRY_METADATA.find(c=>c.iso===a.iso);
+      const chips=[];
+      if(hf.cls!=='ok')chips.push(`<span class="cmp-chip cmp-chip-${hf.cls}">HF ${hf.lbl}</span>`);
+      if(stale)chips.push(`<span class="cmp-chip cmp-chip-stale">STALE ${Math.abs(val.days)}d</span>`);
+      if(a.aesBloc)chips.push(`<span class="cmp-chip cmp-chip-aes" title="AES bloc — sanctions-flagged jurisdiction">AES</span>`);
+      if(a.ethiopianJV)chips.push(`<span class="cmp-chip cmp-chip-jv" title="Ethiopian Airlines JV / operational management modifier">ET JV</span>`);
+      if(cm&&cm.euBlacklist)chips.push(`<span class="cmp-chip cmp-chip-eu" title="EU blacklist · since ${cm.euBlacklistSince||'—'}">EU BAN</span>`);
+      return`<div class="cpk filled" data-sl="${idx}"><button class="xbtn" onclick="cmpRemove(${idx},event)">✕</button><div class="cpk-l">Slot ${idx+1} · <span style="color:${cmpRegionColor(a)}">${cmpRegionLabel(a)}</span></div><div class="cpk-v">${a.name}</div><div style="font-family:var(--mono);font-size:10px;color:var(--t3)"><span style="color:${compColor}">${a.composite.toFixed(1)}</span> · ${a.verdict.toUpperCase()} · ${cmpMethodTag(a)}</div>${chips.length?`<div class="cmp-chiprow">${chips.join('')}</div>`:''}</div>`;
+    }
     return`<div class="cpk" data-sl="${idx}" onclick="openCmpModal(${idx})"><div class="cpk-l">Slot ${idx+1}</div><div class="cpk-v" style="color:var(--t3);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase">+ Add carrier</div></div>`;
   }).join('');
   el('cpks').querySelectorAll('.cpk.filled').forEach(p=>p.addEventListener('click',e=>{if(e.target.classList.contains('xbtn'))return;openCmpModal(parseInt(p.dataset.sl));}));
   const filled=cmpSlots.filter(Boolean);
-  if(!filled.length){el('ctbl').innerHTML='<tbody><tr><td style="padding:20px;text-align:center;color:var(--t3)">Select carriers above to compare.</td></tr></tbody>';return;}
+  if(!filled.length){
+    el('ctbl').innerHTML='<tbody><tr><td style="padding:20px;text-align:center;color:var(--t3)">Select carriers above to compare.</td></tr></tbody>';
+    el('cmpRadarPanel').style.display='none';
+    el('cmpAavPanel').style.display='none';
+    return;
+  }
+  const scoreCell=(a,k)=>`${(a.scores?.[k]?.value||0).toFixed(1)} <small style="color:var(--t3);font-family:var(--mono);font-size:14px">${a.scores?.[k]?.confidence||''}</small>`;
+  const validityCell=a=>{
+    const v=validityUntil(a);
+    if(!v.validDate)return'<span style="color:var(--t3)">—</span>';
+    const color=v.urgency==='expired'?'var(--dnd)':v.urgency==='urgent'?'var(--dnd)':v.urgency==='soon'?'var(--watch)':'var(--t2)';
+    const suffix=v.days==null?'':v.days<0?` <small style="color:var(--dnd);font-family:var(--mono);font-size:14px">EXPIRED ${Math.abs(v.days)}d</small>`:` <small style="color:${color};font-family:var(--mono);font-size:14px">${v.days}d left</small>`;
+    return`<span style="color:${color}">${v.validDate}</span>${suffix}`;
+  };
+  const watchNoteCell=a=>{
+    const triggers=(a.monitoringTriggers||[]).length;
+    return triggers?`<span class="vbadge warn" style="height:20px;font-size:10px;margin:0">● ${triggers} TRIGGERS</span>`:'<span style="color:var(--t3)">None on file</span>';
+  };
+  const dataGapCell=a=>{
+    const g=cmpDataGapCounts(a);
+    if(!g.total)return'<span style="color:var(--t3)">—</span>';
+    const parts=[];
+    if(g.crit)parts.push(`<span style="color:var(--dnd)">${g.crit} CRIT</span>`);
+    if(g.high)parts.push(`<span style="color:var(--watch)">${g.high} HIGH</span>`);
+    if(g.med)parts.push(`<span style="color:var(--t2)">${g.med} MED</span>`);
+    return parts.join(' · ');
+  };
+  const rcsBandCell=a=>{
+    const cm=COUNTRY_METADATA.find(c=>c.iso===a.iso);
+    if(!cm)return'<span style="color:var(--t3)">—</span>';
+    const lo=cm.rcs6AnchorBand[0],hi=cm.rcs6AnchorBand[1];
+    const color=lo>=6?'var(--deploy)':lo>=4?'var(--watch)':'var(--dnd)';
+    return`<span style="color:${color};font-family:var(--mono)">${lo}–${hi}/10</span>`;
+  };
+  // PRD §3.3.6 — Cape Town Convention + EU blacklist from COUNTRY_METADATA.
+  const ctcCell=a=>{
+    if(a.iso==='NG')return`<span style="color:var(--deploy)">Ratified · IDERA</span>`;
+    const cm=COUNTRY_METADATA.find(c=>c.iso===a.iso);
+    if(!cm||!cm.ctcStatus)return'<span style="color:var(--t3)">—</span>';
+    const col=/IDERA|Ratified/i.test(cm.ctcStatus)?'var(--deploy)':/Acceded|Signatory/i.test(cm.ctcStatus)?'var(--watch)':'var(--dnd)';
+    return`<span style="color:${col}">${cm.ctcStatus}</span>`;
+  };
+  const euCell=a=>{
+    const cm=COUNTRY_METADATA.find(c=>c.iso===a.iso);
+    if(!cm)return a.iso==='NG'?'<span style="color:var(--deploy)">Clear</span>':'<span style="color:var(--t3)">—</span>';
+    return cm.euBlacklist
+      ?`<span style="color:#C19EFF">Listed · since ${cm.euBlacklistSince||'—'}</span>`
+      :`<span style="color:var(--deploy)">Clear</span>`;
+  };
+  // Expandable row factory — returns header row + collapsed detail row.
+  // `detailFn(a)` returns an array of strings (one per bullet).
+  const expandRow = (metricLabel, summaryFn, detailFn) => ({
+    expandable:true, m:metricLabel, f:summaryFn,
+    detail: id=>{
+      const a=ALL_CARRIERS.find(x=>x.id===id);
+      const items=detailFn(a)||[];
+      if(!items.length)return`<div class="cmp-expand-empty">None on file.</div>`;
+      return`<ul>${items.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+    }
+  });
+  // Same shape but for paragraph (not list) content. Used for verdict
+  // narrative where the source is a single AAV-classed paragraph.
+  // `aav:true` prepends the AAV chip per PRD §3.4.6.
+  const expandRowText = (metricLabel, summaryFn, textFn, opts={}) => ({
+    expandable:true, m:metricLabel, f:summaryFn,
+    detail: id=>{
+      const a=ALL_CARRIERS.find(x=>x.id===id);
+      const text=textFn(a);
+      if(!text)return`<div class="cmp-expand-empty">None on file.</div>`;
+      const aav=opts.aav?`<span class="aav-inline" style="margin-right:8px">AAV</span>`:'';
+      return`<div style="font-size:13px;line-height:1.6;color:var(--t2)">${aav}${text}</div>`;
+    }
+  });
   const rows=[
     {m:'Verdict',f:a=>vbadge(a.verdict)},
-    {m:'Composite',f:a=>`<strong style="color:#fff;font-family:var(--serif);font-size:17px">${a.composite.toFixed(1)}</strong>`},
-    {m:'SVS · 15%',f:a=>`${(a.scores?.svs?.value||0).toFixed(1)} <small style="color:var(--t3);font-family:var(--mono);font-size:10px">${a.scores?.svs?.confidence||''}</small>`},
-    {m:'PPS · 25%',f:a=>`${(a.scores?.pps?.value||0).toFixed(1)} <small style="color:var(--t3);font-family:var(--mono);font-size:10px">${a.scores?.pps?.confidence||''}</small>`},
-    {m:'APS · 20%',f:a=>`${(a.scores?.aps?.value||0).toFixed(1)} <small style="color:var(--t3);font-family:var(--mono);font-size:10px">${a.scores?.aps?.confidence||''}</small>`},
-    {m:'RCS · 25%',f:a=>`${(a.scores?.rcs?.value||0).toFixed(1)} <small style="color:var(--t3);font-family:var(--mono);font-size:10px">${a.scores?.rcs?.confidence||''}</small>`},
-    {m:'RAS · 15%',f:a=>`${(a.scores?.ras?.value||0).toFixed(1)} <small style="color:var(--t3);font-family:var(--mono);font-size:10px">${a.scores?.ras?.confidence||''}</small>`},
-    {m:'Region',f:a=>a.region==='west-africa'?'<span style="color:#7DABE3">West Africa</span>':'<span style="color:var(--amber)">Nigeria</span>'},
-    {m:'Jurisdiction',f:a=>a.jurisdiction||'Nigeria'},
+    {m:'Composite',f:a=>`<strong style="color:${cmpCompositeColor(a.composite)};font-family:var(--serif);font-size:17px">${a.composite.toFixed(1)}</strong>`},
+    {m:'SVS · 15%',f:a=>scoreCell(a,'svs')},
+    {m:'PPS · 25%',f:a=>scoreCell(a,'pps')},
+    {m:'APS · 20%',f:a=>scoreCell(a,'aps')},
+    {m:'RCS · 25%',f:a=>scoreCell(a,'rcs')},
+    {m:'RAS · 15%',f:a=>scoreCell(a,'ras')},
+    expandRow('Strengths',a=>{const n=(a.str||[]).length;return n?`<span style="color:var(--deploy)">${n} on file</span>`:'<span style="color:var(--t3)">—</span>';},a=>a.str||[]),
+    expandRow('Weaknesses',a=>{const n=(a.wk||[]).length;return n?`<span style="color:var(--dnd)">${n} on file</span>`:'<span style="color:var(--t3)">—</span>';},a=>a.wk||[]),
+    {m:'Region',f:a=>`<span style="color:${cmpRegionColor(a)}">${cmpRegionLabel(a)}</span>`},
+    {m:'Jurisdiction',f:a=>a.jurisdiction||'—'},
+    {m:'Methodology',f:a=>`<span style="font-family:var(--mono);color:var(--t2)">${cmpMethodTag(a)}</span>`},
     {m:'Monitoring tier',f:a=>`<span class="mt-badge mt-${a.monitoringTier}" style="font-size:10px">Tier ${a.monitoringTier}</span>`},
-    {m:'Hard floor',f:a=>a.hardFloor&&(a.hardFloor.ppsTriggered||a.hardFloor.rcsTriggered)?'<span style="color:var(--dnd)">TRIGGERED</span>':a.hardFloor?.atBoundary?'<span style="color:var(--watch)">AT BOUNDARY</span>':'No'},
-    {m:'Assessment date',f:a=>a.dateOfAssessment||'—'},
+    {m:'Hard floor',f:a=>{const hf=cmpHardFloorState(a);const c=hf.cls==='trig'?'var(--dnd)':hf.cls==='bdry'?'var(--watch)':'var(--t2)';return`<span style="color:${c}">${hf.lbl}</span>`;}},
+    {m:'Country RCS band',f:rcsBandCell},
+    {m:'Cape Town Convention',f:ctcCell},
+    {m:'EU blacklist',f:euCell},
+    {m:'Last assessment',f:a=>a.dateOfAssessment||'—'},
+    {m:'Next refresh',f:a=>validityUntil(a).nextRefresh||'—'},
+    {m:'Validity-until',f:validityCell},
+    expandRow('Active triggers',watchNoteCell,a=>a.monitoringTriggers||[]),
+    expandRow('Data-gap profile',dataGapCell,a=>a.dataGapFlags||[]),
+    // PRD §3.3.6 Pass 3–4 doctrine — what needs to change for Watch → Deploy.
+    expandRow('Conditions for upgrade',
+      a=>{const n=(a.conditions||[]).length;return n?`<span style="color:var(--watch)">${n} on file</span>`:'<span style="color:var(--t3)">—</span>';},
+      a=>a.conditions||[]),
+    // PRD §3.4.6 — analytical narrative, must carry AAV label.
+    expandRowText('Verdict narrative',
+      a=>a.verdictNarrative?`<span style="color:var(--amber)">AAV available</span>`:'<span style="color:var(--t3)">—</span>',
+      a=>a.verdictNarrative,
+      {aav:true}),
+    // PRD §4.2.3 — historical verdict trail per carrier.
+    expandRow('Verdict trail',
+      a=>{const n=AUDIT.filter(l=>l.carrier===a.name).length;return n?`<span style="color:var(--info)">${n} entries</span>`:'<span style="color:var(--t3)">—</span>';},
+      a=>AUDIT.filter(l=>l.carrier===a.name).slice(0,8).map(l=>{
+        const delta=l.fr&&l.to?`<span style="color:var(--t3)">${l.fr}</span> → <span style="color:var(--t1)">${l.to}</span>`:'';
+        return`<span style="font-family:var(--mono);font-size:12px;color:var(--t4)">${l.ts}</span> · ${l.crit}${delta?' · '+delta:''}${l.note?`<br><span style="color:var(--t3);font-size:12px">${l.note.slice(0,140)}${l.note.length>140?'…':''}</span>`:''}`;
+      })),
   ];
-  el('ctbl').innerHTML=`<thead><tr><th>Metric</th>${filled.map(id=>{const a=ALL_CARRIERS.find(x=>x.id===id);return`<th style="color:#fff">${a.name}</th>`}).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td class="mt">${r.m}</td>${filled.map(id=>{const a=ALL_CARRIERS.find(x=>x.id===id);return`<td>${r.f(a)}</td>`}).join('')}</tr>`).join('')}</tbody>`;
+  const head=`<thead><tr><th>Metric</th>${filled.map(id=>{const a=ALL_CARRIERS.find(x=>x.id===id);return`<th style="color:var(--display)">${a.name}</th>`}).join('')}</tr></thead>`;
+  const colCount=filled.length+1;
+  const body=`<tbody>${rows.map((r,i)=>{
+    const cells=filled.map(id=>{const a=ALL_CARRIERS.find(x=>x.id===id);return`<td>${r.f(a)}</td>`}).join('');
+    const trMain=r.expandable
+      ?`<tr class="cmp-expandable" data-cmp-row="${i}"><td class="mt">${r.m}</td>${cells}</tr>`
+      :`<tr><td class="mt">${r.m}</td>${cells}</tr>`;
+    if(!r.expandable)return trMain;
+    const detailCells=filled.map(id=>`<td>${r.detail(id)}</td>`).join('');
+    return`${trMain}<tr class="cmp-expand-body"><td></td>${detailCells}</tr>`;
+  }).join('')}</tbody>`;
+  el('ctbl').innerHTML=head+body;
+  el('ctbl').querySelectorAll('.cmp-expandable').forEach(tr=>{
+    tr.addEventListener('click',()=>tr.classList.toggle('open'));
+  });
+  // Post-render: radar overlay, AAV narrative, sets dropdown refresh.
+  renderCmpRadar(filled);
+  renderCmpAav(filled);
+  renderCmpSetsDropdown();
 }
 
 function openCmpModal(slot){
   cmpActiveSlot=slot;
   const s=[...ALL_CARRIERS].sort((a,b)=>b.composite-a.composite);
-  el('mlist').innerHTML=s.map(a=>`<div class="mrow" data-aid="${a.id}"><span class="mnm">${a.name}</span><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="mmeta">${a.composite.toFixed(1)} · ${a.verdict.toUpperCase()}</span><span class="mjur">${a.region==='west-africa'?a.jurisdiction:'Nigeria'}</span></div></div>`).join('');
+  el('mlist').innerHTML=s.map(a=>`<div class="mrow" data-aid="${a.id}"><span class="mnm">${a.name}</span><div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span class="mmeta">${a.composite.toFixed(1)} · ${a.verdict.toUpperCase()}</span><span class="mjur">${a.jurisdiction||cmpRegionLabel(a)}</span></div></div>`).join('');
   el('mlist').querySelectorAll('.mrow').forEach(r=>r.addEventListener('click',()=>{cmpSlots[cmpActiveSlot]=r.dataset.aid;renderCmp();el('cmpModal').classList.remove('open');}));
   el('cmpModal').classList.add('open');
 }
 window.openCmpModal=openCmpModal;
 window.cmpRemove=(idx,e)=>{e.stopPropagation();cmpSlots[idx]=null;renderCmp();};
+
+// ── Comparison radar overlay · PRD §3.3.6 ────────────────────────────────
+const CMP_SLOT_COLORS=['#FF9A1F','#7DABE3','#9bd1a5','#d2a3e0'];
+function renderCmpRadar(filled){
+  const panel=el('cmpRadarPanel');
+  if(filled.length<2){panel.style.display='none';return;}
+  panel.style.display='';
+  const wrap=el('cmpRadar');
+  const dims=['svs','pps','aps','rcs','ras'];
+  const dimLabels={svs:'SVS',pps:'PPS',aps:'APS',rcs:'RCS',ras:'RAS'};
+  const size=440,cx=size/2,cy=size/2,r=size*0.4;
+  const angle=(i)=>(-Math.PI/2)+(i*2*Math.PI/dims.length);
+  const point=(i,v)=>{const a=angle(i);return[cx+Math.cos(a)*r*(v/10),cy+Math.sin(a)*r*(v/10)];};
+  // Concentric rings (2, 4, 6, 8, 10)
+  const rings=[2,4,6,8,10].map(v=>{
+    const pts=dims.map((_,i)=>point(i,v).join(',')).join(' ');
+    return`<polygon points="${pts}" fill="none" stroke="var(--line)" stroke-width="${v===10?1.5:1}" />`;
+  }).join('');
+  // Axis spokes + labels
+  const spokes=dims.map((d,i)=>{
+    const[x,y]=point(i,10);
+    const[lx,ly]=[cx+Math.cos(angle(i))*r*1.18,cy+Math.sin(angle(i))*r*1.18];
+    return`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--line2)" stroke-width="1" /><text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-family="var(--mono)" font-size="12" fill="var(--t3)" letter-spacing="1">${dimLabels[d]}</text>`;
+  }).join('');
+  // Polygons per carrier
+  const polys=filled.map((id,si)=>{
+    const a=ALL_CARRIERS.find(x=>x.id===id);
+    const col=CMP_SLOT_COLORS[si%4];
+    const pts=dims.map((d,i)=>{const v=a.scores?.[d]?.value||0;return point(i,v).join(',');}).join(' ');
+    return`<polygon points="${pts}" fill="${col}" fill-opacity="0.12" stroke="${col}" stroke-width="2" />`+dims.map((d,i)=>{const v=a.scores?.[d]?.value||0;const[x,y]=point(i,v);return`<circle cx="${x}" cy="${y}" r="3" fill="${col}" />`}).join('');
+  }).join('');
+  wrap.innerHTML=`<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${polys}</svg>`;
+  // Per-dimension breakdown — each value colour-banded so the eye picks
+  // out strong (≥7) and weak (<4) dimensions at a glance.
+  const dimMeta=[['svs','SVS'],['pps','PPS'],['aps','APS'],['rcs','RCS'],['ras','RAS']];
+  const bandCls=v=>v>=7?'high':v>=4?'mid':'low';
+  const rows=filled.map((id,si)=>{
+    const a=ALL_CARRIERS.find(x=>x.id===id);
+    const col=CMP_SLOT_COLORS[si%4];
+    const dimsHtml=dimMeta.map(([k,lbl])=>{
+      const v=a.scores?.[k]?.value||0;
+      return`<span class="dim ${bandCls(v)}"><span class="lbl">${lbl}</span><span class="val">${v.toFixed(1)}</span></span>`;
+    }).join('');
+    return`<div class="cmp-radar-legend-row"><span class="swatch" style="background:${col}1f;border-color:${col}"></span><div class="info"><div class="top"><span class="cnm">${a.name}</span><span class="ccomp">${a.composite.toFixed(1)}</span></div><div class="dims">${dimsHtml}</div></div></div>`;
+  }).join('');
+  // Band scale — explains the per-dimension colour ladder and the action
+  // each band implies. Consistent with verdict / signal / composite banding.
+  const bandkey=`<div class="cmp-radar-bandkey">
+    <div class="bk-title">Dimension score bands</div>
+    <div class="bk-row high"><span class="bk-dot"></span><span class="bk-range">≥ 7.0</span><span class="bk-action">Strong — anchor for the verdict</span></div>
+    <div class="bk-row mid"><span class="bk-dot"></span><span class="bk-range">4.0 – 6.9</span><span class="bk-action">Mid — conditions watched, upgrade path possible</span></div>
+    <div class="bk-row low"><span class="bk-dot"></span><span class="bk-range">&lt; 4.0</span><span class="bk-action">Weak — structural concern, hard floor at &lt; 4.0 on PPS or RCS</span></div>
+  </div>`;
+  el('cmpRadarLegend').innerHTML=rows+bandkey;
+}
+
+// ── Comparative AAV · PRD §3.4.6 ──────────────────────────────────────────
+function renderCmpAav(filled){
+  const panel=el('cmpAavPanel');
+  if(filled.length<2){panel.style.display='none';return;}
+  panel.style.display='';
+  const list=filled.map(id=>ALL_CARRIERS.find(x=>x.id===id));
+  const sorted=[...list].sort((a,b)=>b.composite-a.composite);
+  const lead=sorted[0],tail=sorted[sorted.length-1];
+  const gap=(lead.composite-tail.composite).toFixed(1);
+  const dims=[['svs','SVS · Strategic Value'],['pps','PPS · Payment Priority'],['aps','APS · Airline Performance'],['rcs','RCS · Risk Containment'],['ras','RAS · Redeployment Suitability']];
+  // Strongest avg dimension
+  const avgByDim=dims.map(([k,lbl])=>({k,lbl,avg:list.reduce((s,c)=>s+(c.scores?.[k]?.value||0),0)/list.length}));
+  const strongestDim=[...avgByDim].sort((a,b)=>b.avg-a.avg)[0];
+  const weakestDim=[...avgByDim].sort((a,b)=>a.avg-b.avg)[0];
+  // Largest cross-carrier spread on a single dimension
+  const spreadByDim=dims.map(([k,lbl])=>{
+    const vals=list.map(c=>c.scores?.[k]?.value||0);
+    return{k,lbl,spread:Math.max(...vals)-Math.min(...vals),max:Math.max(...vals),min:Math.min(...vals)};
+  }).sort((a,b)=>b.spread-a.spread);
+  const topSpread=spreadByDim[0];
+  // Hard floor warnings
+  const hf=list.filter(c=>c.hardFloor&&(c.hardFloor.ppsTriggered||c.hardFloor.rcsTriggered));
+  const bdry=list.filter(c=>c.hardFloor&&c.hardFloor.atBoundary&&!c.hardFloor.ppsTriggered&&!c.hardFloor.rcsTriggered);
+  // Stale verdicts
+  const stale=list.filter(c=>{const v=validityUntil(c);return v.urgency==='expired';});
+  const lines=[];
+  lines.push({cls:lead.verdict==='deploy'?'pos':'',html:`<em>${lead.name}</em> leads the set at <em>${lead.composite.toFixed(1)}</em>, ${gap} points above <em>${tail.name}</em> (${tail.composite.toFixed(1)}). ${lead.verdict==='deploy'?'Deploy verdict anchor.':lead.verdict==='watch'?'Watch verdict — top candidate for upgrade conditions.':'No Deploy in the set.'}`});
+  lines.push({cls:'',html:`Strongest shared dimension is <em>${strongestDim.lbl}</em> (avg ${strongestDim.avg.toFixed(1)} / 10). Weakest is <em>${weakestDim.lbl}</em> (avg ${weakestDim.avg.toFixed(1)}).`});
+  if(topSpread.spread>=2.5)lines.push({cls:'',html:`Largest spread on <em>${topSpread.lbl}</em> — ${topSpread.spread.toFixed(1)} points between high (${topSpread.max.toFixed(1)}) and low (${topSpread.min.toFixed(1)}). Differentiation driver for this set.`});
+  if(hf.length)lines.push({cls:'warn',html:`Hard floor triggered: ${hf.map(c=>`<em>${c.name}</em>`).join(', ')}. Composite capped at 65 regardless of other dimensions.`});
+  if(bdry.length)lines.push({cls:'warn',html:`At hard-floor boundary: ${bdry.map(c=>`<em>${c.name}</em>`).join(', ')}. One PPS or RCS deterioration triggers the cap.`});
+  if(stale.length)lines.push({cls:'warn',html:`Stale verdict${stale.length===1?'':'s'}: ${stale.map(c=>`<em>${c.name}</em>`).join(', ')}. Refresh recommended before committee distribution.`});
+  el('cmpAavBody').innerHTML=lines.map(l=>`<div class="row ${l.cls}"><span class="dot"></span><div>${l.html}</div></div>`).join('');
+}
+
+// ── Saved comparison sets · PRD §4.2.5 ──────────────────────────────────
+const CMP_SETS_KEY='andara.cmp.sets';
+function cmpLoadSets(){try{return JSON.parse(localStorage.getItem(CMP_SETS_KEY)||'[]');}catch(_){return[];}}
+function cmpSaveSets(arr){try{localStorage.setItem(CMP_SETS_KEY,JSON.stringify(arr));}catch(_){}}
+function renderCmpSetsDropdown(){
+  const sel=el('cmpSetsSelect');if(!sel)return;
+  const sets=cmpLoadSets();
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Saved sets —</option>'+sets.map((s,i)=>`<option value="${i}">${s.name} (${s.ids.filter(Boolean).length})</option>`).join('');
+  if(cur)sel.value=cur;
+}
+
+function cmpSummary(){
+  return cmpSlots.filter(Boolean).map(id=>{const a=ALL_CARRIERS.find(x=>x.id===id);return`<strong>${a.name}</strong> (${a.composite.toFixed(1)} ${a.verdict.toUpperCase().replace(/[_-]/g,' ')})`}).join(' · ');
+}
+
+// Save modal
+function cmpOpenSaveModal(){
+  if(!cmpSlots.filter(Boolean).length){toast('No carriers selected','Add at least one carrier before saving a set.');return;}
+  el('cmpSaveSummary').innerHTML=cmpSummary();
+  el('cmpSaveName').value='';
+  sigOpenModal('cmpSaveModal');
+}
+function cmpDoSave(){
+  const name=el('cmpSaveName').value.trim();
+  if(!name){toast('Name required','Give the set a label so you can recall it later.');return;}
+  const sets=cmpLoadSets();
+  sets.unshift({name,ids:[...cmpSlots],ts:sigNowTs(),user:sigCurrentUser()});
+  cmpSaveSets(sets);
+  sigCloseModal('cmpSaveModal');
+  renderCmpSetsDropdown();
+  toast('Comparison set saved',`"${name}" stored locally · reload anytime from the dropdown.`);
+}
+
+// Submit-to-SC modal
+function cmpOpenSubmitModal(){
+  if(cmpSlots.filter(Boolean).length<2){toast('Select 2 + carriers','Submission requires at least two carriers in the comparison.');return;}
+  el('cmpSubmitSummary').innerHTML=cmpSummary();
+  el('cmpSubmitNote').value='';
+  el('cmpSubmitPurpose').value='portfolio-concentration';
+  sigOpenModal('cmpSubmitModal');
+}
+function cmpDoSubmit(){
+  const note=el('cmpSubmitNote').value.trim();
+  if(note.length<60){toast('Commentary required','Min 60 characters — Scoring Committee needs context.');return;}
+  const purpose=el('cmpSubmitPurpose').value;
+  const ids=cmpSlots.filter(Boolean);
+  const names=ids.map(id=>ALL_CARRIERS.find(x=>x.id===id).name);
+  const user=sigCurrentUser();const ts=sigNowTs();
+  AUDIT.unshift({ts,user,carrier:names.join(' × '),crit:`Comparison submission · ${purpose}`,fr:'Comparison',to:'Scoring Committee inbox',src:'Comparison',status:'Notified · awaiting SC',note:note.slice(0,180)});
+  if(typeof buildAudit==='function')buildAudit();
+  sigCloseModal('cmpSubmitModal');
+  toast('Scoring Committee notified',`${ids.length} carriers · purpose ${purpose}. Audit recorded.`);
+}
+
+// PDF export — watermarked + audited via existing moLogDeliverable helper.
+function cmpDoExport(){
+  const ids=cmpSlots.filter(Boolean);
+  if(!ids.length){toast('No carriers selected','Add carriers to the comparison before export.');return;}
+  const names=ids.map(id=>ALL_CARRIERS.find(x=>x.id===id).name);
+  const scope=names.join(' × ');
+  const wm=moLogDeliverable({carrier:scope,deliverable:'Comparison report',format:'PDF',scope:`compare-${ids.length}`});
+  toast(`Comparison · ${ids.length} carriers`,`Watermark <strong>${wm.token}</strong> · ${wm.deliverableId}. Audit recorded.`);
+}
+
+// Sets dropdown load
+function cmpDoLoadSet(idx){
+  const sets=cmpLoadSets();
+  const s=sets[idx];if(!s)return;
+  cmpSlots=[...s.ids,null,null,null,null].slice(0,4);
+  renderCmp();
+  toast('Comparison set loaded',`"${s.name}" restored from saved sets.`);
+}
+
+// Wire toolbar buttons + sets-select once.
+(function bindCmpToolbar(){
+  const ready=()=>{
+    const expBtn=el('cmpExport');if(expBtn&&!expBtn._bound){expBtn._bound=1;expBtn.addEventListener('click',cmpDoExport);}
+    const saveBtn=el('cmpSaveSet');if(saveBtn&&!saveBtn._bound){saveBtn._bound=1;saveBtn.addEventListener('click',cmpOpenSaveModal);}
+    const subBtn=el('cmpSubmitSC');if(subBtn&&!subBtn._bound){subBtn._bound=1;subBtn.addEventListener('click',cmpOpenSubmitModal);}
+    const saveConfirm=el('cmpSaveConfirm');if(saveConfirm&&!saveConfirm._bound){saveConfirm._bound=1;saveConfirm.addEventListener('click',cmpDoSave);}
+    const subConfirm=el('cmpSubmitConfirm');if(subConfirm&&!subConfirm._bound){subConfirm._bound=1;subConfirm.addEventListener('click',cmpDoSubmit);}
+    const sel=el('cmpSetsSelect');if(sel&&!sel._bound){sel._bound=1;sel.addEventListener('change',e=>{if(e.target.value!==''){cmpDoLoadSet(parseInt(e.target.value));e.target.value='';}});}
+  };
+  if(document.readyState!=='loading')ready();else document.addEventListener('DOMContentLoaded',ready);
+})();
 
 function buildCountryModTable(){
   const t=el('countryModTable');
@@ -3707,11 +4980,22 @@ function bindNav(){
     });
   });
   const goExport = el('moExport');
-  if (goExport) goExport.addEventListener('click', ()=>toast('Export queued', 'Cohort CSV will be available shortly'));
+  if (goExport) goExport.addEventListener('click', ()=>{
+    // PRD §3.2.6 — watermarked cohort export, logged.
+    const scope = activeRegionScopeLabel();
+    const wm = moLogDeliverable({scope,deliverable:'Cohort export',format:'XLSX'});
+    toast(`Cohort export · ${scope}`, `Watermark <strong>${wm.token}</strong> · ${wm.deliverableId}. Audit recorded.`);
+  });
   const goReport = el('moOpenReport');
   if (goReport) goReport.addEventListener('click', ()=>{
-    const item = document.querySelector('.sitem[data-v="method"]');
-    if (item) item.click();
+    // PRD §3.2.6 — watermarked market report, logged. Then navigate.
+    const scope = activeRegionScopeLabel();
+    const wm = moLogDeliverable({scope,deliverable:'Market report',format:'PDF'});
+    toast(`Market report · ${scope}`, `Watermark <strong>${wm.token}</strong> · ${wm.deliverableId}. Opening report centre…`);
+    setTimeout(()=>{
+      const item = document.querySelector('.sitem[data-v="method"]');
+      if (item) item.click();
+    }, 400);
   });
   // Breadcrumbs — each .nav button routes to the matching sidebar item.
   document.querySelectorAll('.crumb .nav[data-cnav]').forEach(b => {
@@ -3722,53 +5006,338 @@ function bindNav(){
   });
 }
 
+// ── Andara Signal portfolio ────────────────────────────────────────────────
+let sigFilter={band:'all',region:'all',q:''};
+// In-memory analyst overrides + escalation register — PRD §4.4.5
+const sigOverrides={};   // {carrierId: {severity, rationale, ts, user}}
+const sigPromotions={};  // {carrierId: {impact, rationale, ts, user, status}}
+let sigPopCarrier=null;
+
+function sigCompositeColor(c){
+  if(c===null||c===undefined)return'var(--t3)';
+  if(c<=-0.5)return'var(--dnd)';
+  if(c<=-0.2)return'rgba(201,116,116,0.85)';
+  if(c<0.2)return'var(--watch)';
+  if(c<0.5)return'rgba(107,179,138,0.85)';
+  return'var(--deploy)';
+}
+function sigSeverity(sd){
+  if(!sd||sd.composite===null||sd.composite===undefined)return{cls:'none',lbl:'—'};
+  const abs=Math.abs(sd.composite);
+  const conf=sd.confidence||'low';
+  if(sd.composite<=-1.5&&conf==='high')return{cls:'critical',lbl:'CRITICAL'};
+  if(sd.composite<=-1.0)return{cls:'high',lbl:'HIGH'};
+  if(abs<=0.3)return{cls:'low',lbl:'LOW'};
+  if(sd.composite<0)return{cls:'medium',lbl:'MEDIUM'};
+  return{cls:'low',lbl:'LOW'};
+}
+function sigVerdictPill(v){
+  const cls=v==='deploy'?'deploy':(v==='do-not-deploy'||v==='do_not_deploy')?'dnd':'watch';
+  const lbl=(v||'watch').toUpperCase().replace(/[_-]/g,' ');
+  return`<span class="sig-verdict-pill sig-verdict-${cls}">● ${lbl}</span>`;
+}
+function sigBandPill(sd){
+  if(!sd)return`<span class="sig-band-pill sig-band-ingesting">● INGESTING</span>`;
+  if(sd.confidence==='insufficient')return`<span class="sig-band-pill sig-band-insufficient">◎ INSUFFICIENT</span>`;
+  const m={improving:['improving','▲ IMPROVING'],stable:['stable','● STABLE'],deteriorating:['deteriorating','▼ DETERIORATING']}[sd.band]||['stable','● STABLE'];
+  return`<span class="sig-band-pill sig-band-${m[0]}">${m[1]}</span>`;
+}
+function sigProxyDots(sd){
+  if(!sd)return`<span class="sig-proxies"><span class="sig-proxy-summary">awaiting</span></span>`;
+  const live=sd.proxiesLive||0,awaiting=sd.proxiesAwaiting||0,absent=sd.proxiesAbsent||0;
+  const total=live+awaiting+absent||8;
+  const dots=[];
+  for(let i=0;i<live;i++)dots.push(`<span class="sig-proxy-dot live"></span>`);
+  for(let i=0;i<awaiting;i++)dots.push(`<span class="sig-proxy-dot awaiting"></span>`);
+  for(let i=0;i<absent;i++)dots.push(`<span class="sig-proxy-dot absent"></span>`);
+  return`<span class="sig-proxies">${dots.join('')}<span class="sig-proxy-summary">${live}/${total}</span></span>`;
+}
+function sigDaysSince(ymd){
+  if(!ymd)return null;
+  const d=new Date(ymd),now=new Date();
+  return Math.round((now-d)/(1000*60*60*24));
+}
+
+// Predictive horizon — derived from severity × confidence per current methodology.
+// Source field not in SIGNAL_DATA yet (M2 backlog), so disclose as derived.
+function sigHorizon(sd,sevCls){
+  if(!sd)return{label:'—',days:null,derived:true};
+  if(sd.confidence==='insufficient')return{label:'pending',days:null,derived:true};
+  const map={critical:30,high:45,medium:75,low:120,none:180};
+  const days=map[sevCls]||120;
+  return{label:`${days}d`,days,derived:true};
+}
+
+// Apply analyst override if present, otherwise return the computed severity.
+function sigEffectiveSeverity(carrierId,sd){
+  const o=sigOverrides[carrierId];
+  if(o)return{cls:o.severity,lbl:o.severity.toUpperCase(),overridden:true,rationale:o.rationale};
+  const s=sigSeverity(sd);
+  return{...s,overridden:false};
+}
+
+function sigCurrentUser(){
+  try{const a=JSON.parse(localStorage.getItem('andara.auth')||'{}');return a.email||'analyst';}catch(_){return'analyst';}
+}
+function sigNowTs(){
+  const d=new Date(),p=n=>String(n).padStart(2,'0');
+  return`${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`;
+}
+
+function sigComputeStats(){
+  const monitored=ALL_CARRIERS.filter(c=>SIGNAL_DATA[c.id]).map(c=>SIGNAL_DATA[c.id]);
+  const ingesting=ALL_CARRIERS.filter(c=>c.region==='nigeria'&&!SIGNAL_DATA[c.id]).length;
+  const count=b=>monitored.filter(s=>s.band===b&&s.confidence!=='insufficient').length;
+  return{
+    deteriorating:count('deteriorating'),
+    stable:count('stable'),
+    improving:count('improving'),
+    ingesting,
+    universe:monitored.length+ingesting,
+  };
+}
+
+function renderSigSummary(){
+  const s=sigComputeStats();
+  const cells=[
+    {k:'Deteriorating',v:s.deteriorating,cls:'neg',m:'carriers · active signal'},
+    {k:'Stable',v:s.stable,cls:'watch',m:'carriers · active signal'},
+    {k:'Improving',v:s.improving,cls:'pos',m:'carriers · active signal'},
+    {k:'Ingesting',v:s.ingesting,cls:'',m:'carriers · data pipeline'},
+    {k:'Universe',v:s.universe,cls:'',m:'Nigeria · v1.5-NG'},
+  ];
+  el('sigSummary').innerHTML=cells.map(c=>`<div class="cell"><div class="k">${c.k}</div><div class="val ${c.cls}">${c.v}</div><div class="meta">${c.m}</div></div>`).join('');
+}
+
+function renderSigSources(){
+  // Per-source ingestion health — PRD §4.4.5
+  const monitored=ALL_CARRIERS.filter(c=>SIGNAL_DATA[c.id]).map(c=>SIGNAL_DATA[c.id]);
+  const sources=[
+    {code:'ads_b_util',name:'ADS-B Utilisation',short:'ADS-B'},
+    {code:'sched_int',name:'Schedule Integrity',short:'Schedule'},
+    {code:'fuel',name:'Fuel Payment',short:'Fuel'},
+    {code:'ground_handler',name:'Ground Handler',short:'Handler'},
+    {code:'yield',name:'Yield Scraper',short:'Yield'},
+    {code:'airport_chg',name:'Airport Charges',short:'Charges'},
+    {code:'ncaa',name:'NCAA Reports',short:'NCAA'},
+    {code:'bsp',name:'IATA BSP',short:'BSP'},
+  ];
+  const html=sources.map(src=>{
+    const proxies=monitored.flatMap(sd=>sd.proxies||[]).filter(p=>p.code===src.code);
+    const live=proxies.filter(p=>p.state==='live').length;
+    const total=proxies.length||1;
+    const ratio=live/total;
+    const cls=ratio>=0.6?'live':ratio>=0.25?'degraded':'absent';
+    return`<span class="sig-source"><span class="src-dot ${cls}"></span>${src.short}<span class="src-vol">${live}/${total}</span></span>`;
+  }).join('');
+  el('sigSources').innerHTML=html;
+}
+
 function buildSignalPortfolio(){
+  renderSigSummary();
+  renderSigSources();
+  renderSigTable();
+  bindSigFilters();
+}
+
+function bindSigFilters(){
+  if(window._sigBound)return;window._sigBound=true;
+  document.querySelectorAll('#sigCohort .rtab').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('#sigCohort .rtab').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      sigFilter.band=b.dataset.sigband;
+      renderSigTable();
+    });
+  });
+  el('sigSearch').addEventListener('input',e=>{sigFilter.q=e.target.value.trim().toLowerCase();renderSigTable();});
+  el('sigRegion').addEventListener('change',e=>{sigFilter.region=e.target.value;renderSigTable();});
+}
+
+function renderSigTable(){
   const body=el('signalPortfolioBody');
   if(!body)return;
-  // Sort: deteriorating first (by composite ascending), then insufficient, then stable (descending), then ingesting
   const bandOrder={deteriorating:0,insufficient:1,stable:2,improving:3};
-  const sigCarriers=ALL_CARRIERS
+  // Monitored
+  let monitored=ALL_CARRIERS
     .filter(c=>SIGNAL_DATA[c.id])
     .map(c=>({c,sd:SIGNAL_DATA[c.id]}))
     .sort((a,b)=>{
-      const ao=bandOrder[a.sd.band]??1, bo=bandOrder[b.sd.band]??1;
+      const ao=bandOrder[a.sd.band]??1,bo=bandOrder[b.sd.band]??1;
       if(ao!==bo)return ao-bo;
-      // within same band, sort by composite (worst first)
       return (a.sd.composite??0)-(b.sd.composite??0);
     });
-  const allNg=ALL_CARRIERS.filter(c=>c.region==='nigeria'&&!SIGNAL_DATA[c.id]);
-  const rows=[];
-  sigCarriers.forEach(({c,sd})=>{
-    const isInsufficient=sd.confidence==='insufficient';
-    const bandCol=isInsufficient?'var(--t3)':sd.band==='improving'?'var(--deploy)':sd.band==='deteriorating'?'var(--dnd)':'var(--watch)';
-    const bandLabel=isInsufficient?'◎ INSUFFICIENT DATA':sd.band==='improving'?'▲ IMPROVING':sd.band==='deteriorating'?'▼ DETERIORATING':'● STABLE';
-    const ciCol=c.verdict==='deploy'?'var(--deploy)':c.verdict==='do-not-deploy'||c.verdict==='do_not_deploy'?'var(--dnd)':'var(--watch)';
-    const confCol=sd.confidence==='high'?'var(--deploy)':sd.confidence==='medium'?'var(--watch)':'var(--dnd)';
-    const compDisplay=sd.composite===null?'—':(sd.composite>0?'+':'')+sd.composite.toFixed(2);
-    rows.push(`<tr style="cursor:pointer;border-bottom:1px solid var(--line)" onclick="showAirline('${c.id}')">
-      <td style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--t1)">${c.name}</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--t2)">Nigeria</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;font-weight:600;color:${ciCol}">${(c.verdict||'watch').toUpperCase().replace(/_/g,' ').replace(/-/g,' ')}</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;font-weight:700;color:${bandCol}">${bandLabel}</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--amber)">${compDisplay}</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:${confCol}">${sd.confidence.charAt(0).toUpperCase()+sd.confidence.slice(1)}</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--t3)">Live</td>
-    </tr>`);
+  // Ingesting (carriers in Signal universe but no SIGNAL_DATA — currently Nigeria-only ingest cohort)
+  let ingesting=ALL_CARRIERS.filter(c=>c.region==='nigeria'&&!SIGNAL_DATA[c.id]).map(c=>({c,sd:null}));
+
+  // Filter: band
+  let rows=[...monitored,...ingesting];
+  if(sigFilter.band==='deteriorating')rows=rows.filter(r=>r.sd?.band==='deteriorating');
+  else if(sigFilter.band==='stable')rows=rows.filter(r=>r.sd?.band==='stable');
+  else if(sigFilter.band==='improving')rows=rows.filter(r=>r.sd?.band==='improving');
+  else if(sigFilter.band==='ingesting')rows=rows.filter(r=>!r.sd);
+  // Filter: region
+  if(sigFilter.region!=='all')rows=rows.filter(r=>r.c.region===sigFilter.region);
+  // Filter: search
+  if(sigFilter.q)rows=rows.filter(r=>r.c.name.toLowerCase().includes(sigFilter.q)||(r.c.iataCode||'').toLowerCase().includes(sigFilter.q));
+
+  const out=rows.map(({c,sd})=>{
+    const isIngest=!sd;
+    const regionLbl=(typeof cmpRegionLabel==='function')?cmpRegionLabel(c):(c.jurisdiction||'—');
+    const regionColor=(typeof cmpRegionColor==='function')?cmpRegionColor(c):'var(--t2)';
+    const sev=sigEffectiveSeverity(c.id,sd);
+    const horizon=sigHorizon(sd,sev.cls);
+    const compDisplay=sd?.composite===null||sd?.composite===undefined?'—':((sd.composite>0?'+':'')+sd.composite.toFixed(2));
+    const compCol=sigCompositeColor(sd?.composite);
+    const conf=sd?.confidence||'insufficient';
+    const lastUpd=isIngest?'<span style="color:var(--t3)">Pending</span>':'<span style="color:var(--deploy)">Live</span>';
+    const crossing=sd?.bandCrossing&&sd?.bandCrossingDate?`<span class="sig-crossing">· crossed ${sigDaysSince(sd.bandCrossingDate)||'?'}d ago</span>`:'';
+    const horizonChip=horizon.label==='—'?'':`<span class="sig-horizon" title="Derived from severity × confidence (M2 backlog: source field)">· horizon ${horizon.label}</span>`;
+    const overrideFlag=sev.overridden?`<span class="sig-override-flag" title="${(sev.rationale||'').replace(/"/g,'&quot;')}">OVERRIDE</span>`:'';
+    const promotedFlag=sigPromotions[c.id]?`<span class="sig-promoted-flag" title="${(sigPromotions[c.id].rationale||'').replace(/"/g,'&quot;')}">SC NOTIFIED</span>`:'';
+    return`<tr class="${isIngest?'ingesting':''}" data-carrier="${c.id}">
+      <td><div class="sig-carrier">${c.name}${c.iataCode?`<span class="iata">${c.iataCode}</span>`:''}${promotedFlag}</div></td>
+      <td><span class="sig-region-lbl" style="color:${regionColor}">${regionLbl}</span></td>
+      <td>${sigVerdictPill(c.verdict)}</td>
+      <td>${sigBandPill(sd)}${crossing}${horizonChip}</td>
+      <td class="num"><span class="sig-comp" style="color:${compCol}">${compDisplay}</span></td>
+      <td>${sigProxyDots(sd)}</td>
+      <td><span class="sig-sev-pill sig-sev-${sev.cls}">${sev.lbl}</span>${overrideFlag}</td>
+      <td><span class="sig-conf-pill sig-conf-${conf}">${conf.charAt(0).toUpperCase()+conf.slice(1)}</span></td>
+      <td>${lastUpd}</td>
+      <td class="sig-actions-col"><button class="sig-kebab" data-sig-kebab="${c.id}" title="Actions">⋯</button></td>
+    </tr>`;
+  }).join('');
+  body.innerHTML=out||`<tr><td colspan="10" style="padding:24px;text-align:center;color:var(--t3);font-size:14px">No carriers match the current filter.</td></tr>`;
+  const meta=el('sigCount');if(meta)meta.textContent=`${rows.length} row${rows.length===1?'':'s'}`;
+  // Wire row click → carrier profile, kebab → popover. Kebab clicks stop propagation.
+  body.querySelectorAll('tr[data-carrier]').forEach(tr=>{
+    tr.addEventListener('click',e=>{
+      if(e.target.closest('.sig-kebab')||e.target.closest('.sig-actions-col'))return;
+      showAirline(tr.dataset.carrier);
+    });
   });
-  // Remaining Nigeria carriers as ingesting
-  allNg.forEach(c=>{
-    const ciCol=c.verdict==='deploy'?'var(--deploy)':c.verdict==='do-not-deploy'||c.verdict==='do_not_deploy'?'var(--dnd)':'var(--watch)';
-    rows.push(`<tr style="cursor:pointer;border-bottom:1px solid var(--line);opacity:0.5" onclick="showAirline('${c.id}')">
-      <td style="padding:10px 16px;font-size:12.5px;font-weight:600;color:var(--t1)">${c.name}</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--t2)">Nigeria</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;font-weight:600;color:${ciCol}">${(c.verdict||'watch').toUpperCase().replace(/_/g,' ').replace(/-/g,' ')}</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--t3)">● INGESTING</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--t3)">—</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--t3)">Pending</td>
-      <td style="padding:10px 16px;font-family:var(--mono);font-size:10px;color:var(--t3)">In progress</td>
-    </tr>`);
+  body.querySelectorAll('.sig-kebab').forEach(btn=>{
+    btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      sigOpenPop(btn.dataset.sigKebab,btn);
+    });
   });
-  body.innerHTML=rows.join('');
+}
+
+// ── Signal row actions: kebab popover, promote modal, override modal ────────
+function sigOpenPop(carrierId,anchor){
+  sigPopCarrier=carrierId;
+  const pop=el('sigPop');
+  const r=anchor.getBoundingClientRect();
+  pop.style.top=(r.bottom+window.scrollY+4)+'px';
+  pop.style.left=(r.right+window.scrollX-pop.offsetWidth||r.left+window.scrollX-220)+'px';
+  pop.classList.add('open');
+  // Recalc left after open (width is now real)
+  requestAnimationFrame(()=>{
+    pop.style.left=(r.right+window.scrollX-pop.offsetWidth)+'px';
+  });
+}
+function sigClosePop(){el('sigPop').classList.remove('open');sigPopCarrier=null;}
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#sigPop')&&!e.target.closest('.sig-kebab'))sigClosePop();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){sigClosePop();sigCloseModal('sigPromoteModal');sigCloseModal('sigOverrideModal');}});
+
+function sigOpenModal(id){el(id).classList.add('open');}
+function sigCloseModal(id){const m=el(id);if(m)m.classList.remove('open');}
+document.querySelectorAll('[data-sig-close]').forEach(b=>b.addEventListener('click',()=>sigCloseModal(b.dataset.sigClose)));
+
+el('sigPop').querySelectorAll('button[data-sig-act]').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const act=b.dataset.sigAct,id=sigPopCarrier;
+    sigClosePop();
+    if(!id)return;
+    if(act==='profile')return showAirline(id);
+    if(act==='promote')return sigOpenPromote(id);
+    if(act==='override')return sigOpenOverride(id);
+    if(act==='audit')return sigOpenAudit(id);
+  });
+});
+
+function sigCarrierSummary(carrierId){
+  const c=ALL_CARRIERS.find(x=>x.id===carrierId);if(!c)return'';
+  const sd=SIGNAL_DATA[carrierId];
+  const sev=sigEffectiveSeverity(carrierId,sd);
+  const comp=sd?.composite==null?'—':((sd.composite>0?'+':'')+sd.composite.toFixed(2));
+  const region=(typeof cmpRegionLabel==='function')?cmpRegionLabel(c):'—';
+  return`<strong>${c.name}</strong> · ${region} · CI ${(c.verdict||'watch').toUpperCase().replace(/[_-]/g,' ')}<br>
+  Signal: <strong>${sd?(sd.band||'').toUpperCase():'INGESTING'}</strong> · Composite ${comp} · Confidence ${(sd?.confidence||'insufficient').toUpperCase()} · Severity ${sev.lbl}${sev.overridden?' (OVERRIDE)':''}`;
+}
+
+function sigOpenPromote(carrierId){
+  sigPopCarrier=carrierId;
+  el('sigPromoteSummary').innerHTML=sigCarrierSummary(carrierId);
+  el('sigPromoteRationale').value='';
+  el('sigPromoteImpact').value='watch-downgrade';
+  sigOpenModal('sigPromoteModal');
+}
+el('sigPromoteConfirm').addEventListener('click',()=>{
+  const id=sigPopCarrier;if(!id)return;
+  const rationale=el('sigPromoteRationale').value.trim();
+  if(rationale.length<60){toast('Rationale required','Min 60 characters — Scoring Committee needs the evidence pack reasoning.');return;}
+  const impact=el('sigPromoteImpact').value;
+  const c=ALL_CARRIERS.find(x=>x.id===id);
+  const user=sigCurrentUser();const ts=sigNowTs();
+  sigPromotions[id]={impact,rationale,ts,user,status:'Pending committee review'};
+  AUDIT.unshift({ts,user,carrier:c?.name||id,crit:`Signal escalation · ${impact}`,fr:'Signal portfolio',to:'Scoring Committee inbox',src:'Signal',status:'Notified · awaiting SC',note:rationale.slice(0,180)});
+  if(typeof buildAudit==='function')buildAudit();
+  sigCloseModal('sigPromoteModal');
+  renderSigTable();
+  toast('Scoring Committee notified',`${c?.name||id} escalated · ${impact}. Audit entry recorded.`);
+});
+
+function sigOpenOverride(carrierId){
+  sigPopCarrier=carrierId;
+  const sd=SIGNAL_DATA[carrierId];
+  el('sigOverrideSummary').innerHTML=sigCarrierSummary(carrierId);
+  const cur=sigOverrides[carrierId];
+  el('sigOverrideSev').value=cur?.severity||sigSeverity(sd).cls||'low';
+  el('sigOverrideRationale').value=cur?.rationale||'';
+  el('sigOverrideClear').style.display=cur?'inline-flex':'none';
+  sigOpenModal('sigOverrideModal');
+}
+el('sigOverrideConfirm').addEventListener('click',()=>{
+  const id=sigPopCarrier;if(!id)return;
+  const rationale=el('sigOverrideRationale').value.trim();
+  if(rationale.length<40){toast('Rationale required','Min 40 characters — overrides are audited.');return;}
+  const sev=el('sigOverrideSev').value;
+  const c=ALL_CARRIERS.find(x=>x.id===id);
+  const sd=SIGNAL_DATA[id];
+  const computed=sigSeverity(sd).cls;
+  const user=sigCurrentUser();const ts=sigNowTs();
+  sigOverrides[id]={severity:sev,rationale,ts,user};
+  AUDIT.unshift({ts,user,carrier:c?.name||id,crit:'Signal severity override',fr:computed.toUpperCase(),to:sev.toUpperCase(),src:'Signal',status:'Analyst override',note:rationale.slice(0,180)});
+  if(typeof buildAudit==='function')buildAudit();
+  sigCloseModal('sigOverrideModal');
+  renderSigTable();
+  toast('Severity override recorded',`${c?.name||id}: ${computed.toUpperCase()} → ${sev.toUpperCase()}.`);
+});
+el('sigOverrideClear').addEventListener('click',()=>{
+  const id=sigPopCarrier;if(!id||!sigOverrides[id])return;
+  const c=ALL_CARRIERS.find(x=>x.id===id);
+  const prev=sigOverrides[id].severity;
+  const computed=sigSeverity(SIGNAL_DATA[id]).cls;
+  const user=sigCurrentUser();const ts=sigNowTs();
+  delete sigOverrides[id];
+  AUDIT.unshift({ts,user,carrier:c?.name||id,crit:'Signal severity override cleared',fr:prev.toUpperCase(),to:computed.toUpperCase(),src:'Signal',status:'Reverted to computed',note:'Analyst cleared override; reverted to methodology output.'});
+  if(typeof buildAudit==='function')buildAudit();
+  sigCloseModal('sigOverrideModal');
+  renderSigTable();
+  toast('Override cleared',`${c?.name||id} reverted to computed severity ${computed.toUpperCase()}.`);
+});
+
+function sigOpenAudit(carrierId){
+  const c=ALL_CARRIERS.find(x=>x.id===carrierId);
+  // Jump to Audit view and (soft) filter by carrier — full filter UI is future scope.
+  const target=document.querySelector('.sitem[data-v="audit"]');
+  if(target)target.click();
+  toast('Audit trail opened',`Filter by ${c?.name||carrierId} (filter UI: M2 backlog).`);
 }
 
 function startClock(){
