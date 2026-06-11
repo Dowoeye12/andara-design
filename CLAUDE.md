@@ -167,7 +167,11 @@ The old palette (`--t3: #7d889b`, `--t4: #5a6376`) was calibrated against `#0c0e
 
 ### Type system
 
-- **Font floor: 10px system-wide. 12px floor in the Andara Signal section.** Any new text must clear these.
+- **Font floors (codified across the terminal):**
+  - **10px** system-wide minimum. Below this is a bug.
+  - **12px** floor for the Andara Signal section + secondary labels / mono captions everywhere else.
+  - **14px** floor for **tabular data** (every `<th>` / `<td>` that carries numeric or text values in scorecard / Compare / Signal / Refresh-schedule tables). The 10/11.5px legacy table sizes were bumped in this pass.
+  - **10px** chip floor — chips (pills) are the explicit carve-out from the 12/14 floors and may sit at 10px when used in dense tabular contexts.
 - **Card headers** (`.ph h3` / `.ph .meta`): 18px sans / 14px mono. Applies to every panel using the legacy `<div class="ph">` markup via the single CSS rule.
 - **Big display text** (font-size ≥ 16px): use `color: var(--display)` instead of `var(--t1)`. The bulk swap was applied to every rule ≥ 16px — add `--display` to any new big-text rules.
 - Type families: Hanken Grotesk (sans, body + display), IBM Plex Mono (mono, labels + numbers).
@@ -197,10 +201,11 @@ Sizes in use: 28px (chips next to large titles, refresh-request button), 26px (S
 | Prefix | Surface | Status |
 |---|---|---|
 | `.cp-*` | Redesigned carrier profile (hero, scorecards, meta strip) + Andara Signal panel | Current — new work goes here |
-| `.mo-*` | Market Overview scorecard table (carrier rows, validity column, refresh button) | Current |
+| `.mo-*` | Market Overview — scorecard table, **heat-map (`.mo-heat-*`)**, **Watch Notes (`.mo-watch-*`)**, **Recent Movers (`.mo-mover-*`)**, **Refresh Schedule (`.mo-refresh-*`)**, **Composite Market Score (`.mo-cms-*`)**, **rank tables (`.mo-rank-*`)**, **Verdict-distribution chart (`.mo-vchart-*`)**, mini rail panels (`.mo-mini`), row flags (`.mo-row-flag.hf / .hf-bdry / .eu`), per-row PDF action (`.mo-pdf`) | Current |
 | `.mon-*` | Monitoring tab (refresh schedule, sentinel events) | Current |
 | `.sc-*` | Score composition radar reading block | Current |
-| `.sig-*` | Old Signal panel CSS | **Dead** — no rendered HTML references it. Safe to delete in cleanup. |
+| `.sig-*` | **Andara Signal portfolio surface** (`/signal`) — `.sig-summary` stat strip, `.sig-sources`, `.sig-toolbar`, `.sig-tbl`, severity / band / confidence / verdict pills, `.sig-kebab` row actions, `.sig-pop` popover, `.sig-mback` / `.sig-mbox` / `.sig-mfield` modal system, `.sig-mbtn` action buttons | **Revived — actively used by all M2 §4.4.5 surfaces.** The old "dead" note is obsolete. |
+| `.cmp-*` | Carrier Comparison view — `.cmp-chip` slot chips (HF, STALE, AES, ET-JV, EU-BAN), `.cmp-radar*` overlay + legend + band-key, `.cmp-aav-*` comparative narrative, `.cmp-expandable / .cmp-expand-body` row toggle, `.cmp-sets-select` saved sets, `.cmp-toolbar` action strip | Current |
 | `.phero`, `.pmain`, `.pscore`, `.pid`, `.pname`, `.psnum` | Pre-redesign carrier profile chrome | **Dead** — replaced by `.cp-*`. |
 
 ### Shared helpers (top of script, before data tables)
@@ -209,29 +214,52 @@ Sizes in use: 28px (chips next to large titles, refresh-request button), 26px (S
 |---|---|---|
 | `addMonths(ymd, n)` | Date math — accepts `YYYY-MM` or `YYYY-MM-DD` | `validityUntil` |
 | `daysUntil(ymd)` | Integer days from today | `validityUntil` (urgency tiers) |
-| `validityUntil(a)` | → `{validDate, nextRefresh, lastRefresh, days, urgency, cadence}` | Market Overview validity column, Monitoring tab refresh schedule |
+| `validityUntil(a)` | → `{validDate, nextRefresh, lastRefresh, days, urgency, cadence}` | Market Overview validity column, Monitoring tab refresh schedule, **Compare validity row**, **Refresh Schedule panel** |
 | `REFRESH_CADENCE` | Tier 1 / 2 / 3 → `{label, refreshMo, validityMo}` | `validityUntil` |
 | `cpSignalIcon(size?)` | Canonical Andara Signal SVG (line chart with arrow tip) | Sidebar nav, every Signal panel header |
 | `cpDefaultSignal(a)` | Synthesised "no data yet" Signal record so every carrier renders the full panel | `renderSignalModule` |
 | `cpVerdictCls(v)` / `cpVerdictLbl(v)` | Verdict → CSS class / display label | Carrier profile hero |
 | `cpOwnership(s)` / `cpExtract(s, regex)` | Parse `own` field into separate Ownership / MD/CEO / IOSA cells | Carrier profile metadata strip |
+| `cmpRegionLabel(a)` / `cmpRegionColor(a)` / `cmpMethodTag(a)` | Canonical region label, region colour, methodology tag (v1.5-NG / v1.0-WA / etc.) | Compare, Signal, Market Overview heat-map, refresh schedule — **one truth for region rendering across the app** |
+| `cmpHardFloorState(a)` / `cmpCompositeColor(c)` / `cmpDataGapCounts(a)` | Hard-floor classification, composite band colour, data-gap count breakdown | Compare slot cards + rows, Market Overview row flags |
+| `sigSeverity(sd)` / `sigEffectiveSeverity(id,sd)` / `sigHorizon(sd,sev)` | Signal severity (computed) + override-aware severity + predictive horizon | Signal portfolio table |
+| `sigOpenPromote(id)` / `sigOpenOverride(id)` | Open the Promote-to-SC + severity-override modals — model pattern for committee-gated actions | Signal kebab; copied as `cmpOpenSubmitModal` |
+| `sigOpenModal(id)` / `sigCloseModal(id)` / `sigCurrentUser()` / `sigNowTs()` | Generic modal open/close + session-derived user/timestamp | Every action modal in the app (Signal + Compare) |
+| `moWatermarkToken(deliverable, scope)` | Generates `{user, ts, deliverableId, token}` per PRD §3.2.6 watermark contract | `moLogDeliverable` |
+| `moLogDeliverable({carrier, deliverable, format, scope})` | One-call download logger: stamps watermark, unshifts AUDIT entry, calls `buildAudit()` | Cohort export, Open report, per-row Verdict letter PDF, Compare Export PDF |
+| `expandRow(label, summaryFn, detailFn)` / `expandRowText(label, summaryFn, textFn, {aav})` | Compare expandable-row factories (bulleted list + paragraph variants). `{aav:true}` prepends the AAV chip per §3.4.6 | All Compare expandable rows |
+| `lastOriginNav` + `VIEW_TO_NAV` | Origin-aware breadcrumb state — see *Breadcrumbs* section below | `showAirline()` |
 
 ### PRD-aligned terminal surfaces
 
 | Surface | PRD anchor | What renders |
 |---|---|---|
-| Market Overview / Verdict list | §3.2.4 | Carrier table with verdict class, last refresh, **validity-until** with urgency colour tiers, per-row **refresh request** routed to CS lead |
+| Market Overview / Verdict list | §3.2.4 | Carrier scorecard with verdict class, last refresh, **validity-until** with urgency colour tiers, per-row **refresh request** routed to CS lead, **per-row Verdict-letter PDF download** (watermarked + audited), **HF / HF·BDRY / EU BAN row flags** |
+| Market Overview / Composite Market Score | §4.2.3 portfolio view | Weighted cohort average (`/100`), STRONG / MIXED / WEAK band pill, 24px deploy / watch / dnd count chips, derived narrative (top-2 Deploy carriers or top-of-field + no-Deploy regions), regional sub-totals |
+| Market Overview / Right rail mini-panels | §4.2.3 | **Cape Town Convention adoption %** (cohort jurisdictions ratified, Nigeria treated as ratified) + **Deploy verdicts mini** (count across N regions + benchmark callout) |
+| Market Overview / Strongest + Weakest tables | §3.4.1 carrier list | Top-5 / bottom-5 ranked by composite, deploy-green / dnd-red score colour, click → carrier profile |
+| Market Overview / Verdict Distribution chart | §4.2.3 | Three vertical bars (Deploy / Watch / DND) with linear-gradient fill in band colours; height proportional to max count; lives in the Strongest/Weakest row |
+| Market Overview / Carrier credit heat-map | §4.2.3 aggregate verdict distribution | 6-col grid (responsive 4/3/2), banded backgrounds keyed to composite (deploy/watch/dnd ramps), HF inset ring + `HF` chip, **AAA-contrast dark backplate** on jurisdiction tag, sort by composite / name / region |
+| Market Overview / Watch Notes feed | §3.2.4 Watch Note feed | `FEED` items filtered by carrier in cohort + Watch-Note-eligible class (regulatory / legal / ops / financial / private) |
+| Market Overview / Recent verdict movers | §4.2.3 historical verdict trail | `AUDIT`-sourced moves filtered to current cohort, banded delta chips (NEW / →DEPLOY / →WATCH / →DND / `+/-N`) |
+| Market Overview / Refresh schedule panel | §4.2.3 refresh schedule view | Three columns (Expired / 30d / 31–90d) sourced from `validityUntil()`, days-remaining chips, click → carrier profile |
 | Carrier profile — Refresh Schedule (Monitoring tab) | §3.2.4 | Tier badge, last assessment, next assessment, verdict validity |
 | Carrier profile — Sentinel Events (Monitoring tab) | §3.2.4 / §3.2.5 (Watch Notes) | Off-cycle review triggers from `monitoringTriggers` |
 | Carrier profile — Data Gap Flags (Monitoring tab) | §3.4.6 (AAV disclosure) | HIGH / MED / LOW analytical-disclosure tags |
 | Carrier profile — Score composition | §3.3.6 | Radar with per-axis values, ring scale markers, reading block (strongest / weakest / average / shape interpretation) |
 | Carrier profile — Andara Signal | §3.4.5 references | Composite gauge (red→green gradient with marker), 8-card proxy evidence grid covering LIVE/AWAITING/ABSENT/N-A states, Predictive Horizon, AAV callout, footer actions |
+| **Andara Signal portfolio** (`/signal`) | §4.4.5 Signal triage queue + §4.2.2 remote signal feed | 5-cell stat strip (Deteriorating / Stable / Improving / Ingesting / Universe), **per-source ingestion health chip strip** (8 sources × live/total), cohort filter chips + search + region select + live badge, 10-col table (Carrier · Region · CI Verdict · Signal Band + Horizon + crossing chip · Composite (banded by direction) · Proxies dot row · Severity · Confidence · Last Updated · Actions kebab) |
+| Signal row kebab | §4.4.5 escalation + override | Promote to Scoring Committee modal (verdict-impact + ≥60-char rationale) + Severity override modal (CRITICAL/HIGH/MEDIUM/LOW/NONE + ≥40-char rationale). Both unshift onto `AUDIT` and persist as in-memory state with visible `OVERRIDE` / `SC NOTIFIED` flags on the row |
+| **Comparison** (`/compare`) | §4.2.3 + §5.4.1 cross-carrier | Up-to-4 slot cards (`.cpk`) with chips (HF / STALE / AES / ET-JV / EU-BAN), Comparative AAV panel (auto-derived takeaways: leader Δ, strongest/weakest shared dimension, largest spread axis, hard-floor warnings, stale-verdict warnings), 5-Score radar overlay with per-carrier breakdown + band-key legend, 25-row scorecard incl. Verdict / Composite / 5-Score weighted (×5) / Strengths / Weaknesses / Region / Jurisdiction / Methodology / Monitoring tier / Hard floor / Country RCS band / CTC / EU blacklist / Last+Next+Validity dates / Active triggers / Data-gap profile / Conditions for upgrade / Verdict narrative (AAV) / Verdict trail (AUDIT-sourced) |
+| Comparison toolbar | §3.2.6 + §4.2.5 + §3.4.1 | Saved sets dropdown · Save set · Submit to SC · Export PDF — all watermarked + audited |
 
 **What's NOT in the PRD — do not re-add unprompted:**
 - Assigned analyst / Tier rationale text (no PRD basis for client view, no data field)
 - Sentinel History table with composite delta column (no historical data series — would invent)
 - Per-trigger sub-classification pills (DEPLOY TRIGGER, RCS UPGRADE, WATCH EVENT, etc.) — the design mock invented seven categories; the data has each trigger as one `event → impact` string and that's what we render
-- Portfolio dashboard / Geographic map / Aggregate metrics across all client carriers (M2+)
+- Differentiated verdicts per client tier on the Comparison view (Western / Chinese / Regional / Mining-O&G) — Pass 3–4 doctrine, but cross-tier matrix on Comparison is over-spec
+- Per-carrier historical verdict trail with full sparkline/time-series on Compare or anywhere else — no time-series data exists. The AUDIT-sourced trail row in Compare is the legitimate substitute.
+- Geographic map / FleetWatch portfolio view on Market Overview — different product (M2+)
 
 ### Session
 
@@ -249,9 +277,137 @@ Sizes in use: 28px (chips next to large titles, refresh-request button), 26px (S
 
 The status-bar tickers read **Status / Universe / Methodology / UTC** plus a user chip. The search bar is `#gsearch` with a paired GO button (`#goBtn`) — both fire the same carrier search. The user chip display name is parsed from the email's local part (`dikko@…` → `Dikko`, `first.last@…` → `First Last`).
 
-### Functioning breadcrumbs
+### Breadcrumbs — sub-page-only, origin-aware
 
-Every `<div class="crumb">` uses `<button class="nav" data-cnav="dashboard">Terminal</button>` for navigable segments — `bindNav()` wires the click to fire `.sitem[data-v="dashboard"].click()`. The carrier profile renders a full path: `Terminal / Market Overview / [Carrier]`.
+Breadcrumbs **only appear on sub-pages**. The carrier profile (`vw-airline`) is currently the only sub-page in the terminal — every other view is a top-level entry in the sidebar and renders **no crumb**. Do not re-add a crumb to a top-level view.
+
+The carrier-profile crumb links **back to the page the user came from**, not to a hard-coded parent. `showAirline(id)` reads the currently-active view *before* switching to `vw-airline` and updates `lastOriginNav` (one of `Market Overview / Andara Signal / Andara Sentinel / Intelligence Feed / Comparison / Methodology / Analyst Workspace / Audit Trail / Report Centre`). Carrier-to-carrier nav preserves the original origin.
+
+The mapping lives in `VIEW_TO_NAV` and renders as a **two-segment** crumb (no `Terminal /` prefix): `Origin / Carrier name`.
+
+If you add a new top-level view, add its `data-v` → `{v, lbl}` entry to `VIEW_TO_NAV` so the carrier profile can route back to it.
+
+### System rhythm — 16 / 8 / 24
+
+| Token | Use |
+|---|---|
+| **16px** | Padding *around* any card surface (`.cpk`, `.summary .cell`, `.sentinel-card`, `.mcard`, `.rptc`, `.mo-cms .pb`, `.mo-mini .pb`, panel `.pb`). Also the right-rail mini-panel internal padding. |
+| **8px** | Vertical gap *between elements inside* a card. Card containers are `display: flex; flex-direction: column; gap: 8px` and child margins are zeroed so the gap owns the rhythm. |
+| **24px** | Margin *between sections* on a page. Applies to `.panel`, `.summary`, `.cpks`, `.sig-*` rows, `.mo-*-row`, `.rtabs → first section`, etc. Inline `margin-bottom: 14/16/18px` overrides on individual panels were stripped. |
+
+Do not introduce a fourth spacing token without a reason. If a child needs different inner padding, give it 12px — never go below 8 (that's the internal gap, not padding).
+
+### List-item header → sub → chips rhythm (8 / 16)
+
+Any list-item that contains a **headline**, a **sub-header/description**, and a **chip row** below uses this pattern:
+
+```css
+.x-body { display: flex; flex-direction: column; gap: 8px; }
+.x-body h4 { margin: 0; }   /* heading */
+.x-body p  { margin: 0; }   /* sub */
+.x-tags    { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+```
+
+- Headline → sub: **8px** (flex gap)
+- Sub → chips: **16px** (8px flex gap + 8px `margin-top` on the chip strip)
+
+Applied to `.mo-watch-body` (Watch Notes), `.mo-mover-item` (Recent Movers — name → note 8px), `.ibody` (alert feed items). Any future list-item with this shape must use it.
+
+### Pill / chip margin — `.warn` collision guard
+
+The legacy `.warn` class (warning banner) adds `padding`, `background`, `border`, and `margin-bottom: 14px`. **Any pill that takes class `warn` (verdict pill, NEW pill, the Watch active-triggers pill, etc.) MUST set `margin: 0` in its base rule** or the banner's bottom margin leaks and shifts the pill vertically. This was the root cause of the Market Overview Watch-cell rendering as a tall amber box — the `.val.warn` was inheriting `.warn`'s padding + border + margin. We renamed the class to `.val.watch` to dodge the collision, and every new chip declares `margin: 0` defensively.
+
+### System-wide `<select>` chevron + symmetric padding
+
+Native browser chevrons render with uneven spacing across engines. The fix is global:
+
+```css
+select {
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg…chevron…/>");
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+```
+
+Per-class, set:
+
+- `padding-right = 2L + 12px` (L = left padding, 12 = chevron width)
+- `background-position: right Lpx center`
+
+So the chevron has the **same breathing room from the right border as the text has from the left border**.
+
+Standard heights:
+- 28px select with L=10 → padding-right 32 / chevron right 10
+- 32px select with L=12 → padding-right 36 / chevron right 12
+
+Always set `background-color:` (not the shorthand `background:`) so colour overrides don't clobber the chevron `background-image`.
+
+### Watermark + audit logging (PRD §3.2.6)
+
+Every deliverable that leaves the platform must be watermarked and logged. The pattern is centralised:
+
+```js
+const wm = moLogDeliverable({
+  carrier: 'ASKY Airlines',   // or full scope string for cohorts
+  deliverable: 'Verdict letter',
+  format: 'PDF',
+  scope: 'single'             // or 'cohort' / 'compare-N' / 'Nigeria' / etc.
+});
+// wm = { user, ts, deliverableId: 'AND-VERDICTLETTER-XYZ',
+//        token: 'tok-abcd1234' }
+```
+
+`moLogDeliverable()`:
+1. Generates the watermark token via `moWatermarkToken()` — derived from session email (`localStorage.andara.auth`), UTC timestamp, deliverable type, scope, and a random seed (FNV-1a hash).
+2. Unshifts an entry onto the global `AUDIT` array: `{ts, user, carrier, crit: '<Deliverable> download', fr: '—', to: '<format> · watermarked', src: 'Reports', status: 'Delivered', note: '<deliverableId> · <token> · scope=<scope>'}`.
+3. Calls `buildAudit()` so the `/audit` table reflects the entry immediately.
+
+Wired surfaces: **Export cohort**, **Open report**, **per-row Verdict letter PDF** on Market Overview; **Export PDF** on Comparison. Toast displays the watermark token + deliverable id so the user has a copyable handle.
+
+Any new download / export must go through `moLogDeliverable()` — never `toast()` alone.
+
+### Audit-log integration as the action substrate
+
+The global `AUDIT` array is now the **system-wide action log** — not just methodology changes. The following actions all `unshift` onto it and call `buildAudit()` so the `/audit` view reflects them in real time:
+
+- Signal: Promote to SC · Severity override · Override clear
+- Compare: Submit to SC
+- All watermarked downloads (above)
+
+This also powers the **Verdict trail** row on Compare (filtered by carrier name) and the **Recent Movers** panel on Market Overview (filtered to crit ∈ {Composite, Verdict, Signal}). Any new action that affects a carrier should write to `AUDIT` so it surfaces in both reads automatically.
+
+### Modal pattern (Signal + Compare)
+
+Modals across the app share one CSS namespace and one open/close API:
+
+```html
+<div class="sig-mback" id="someModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Title</h3>
+      <button class="close" data-sig-close="someModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary">…carrier/cohort summary chip…</div>
+      <div class="sig-mfield">
+        <label>Field label</label>
+        <select|input|textarea>
+        <div class="helper">Helper text.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="someModal">Cancel</button>
+      <button class="sig-mbtn primary" id="someConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+```
+
+- Open: `sigOpenModal(id)`
+- Close: `sigCloseModal(id)` (also auto-bound to `[data-sig-close]` and to the Esc key)
+- Field widths: `.sig-mfield input/select/textarea` already enforce 100% width and 12px helper text
+- Min rationale lengths: enforced inline in the confirm handler; bounce a `toast()` if too short
+
+When you add a new committee-gated action (promote / override / submit), copy a Signal modal verbatim — same id pattern (`sig-mback` / `sig-mbox`), same `sigOpenModal/sigCloseModal` calls. Don't fork the modal system.
 
 ---
 
