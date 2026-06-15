@@ -1223,6 +1223,11 @@ select{
 .ctbl th,.ctbl td{padding:11px 13px;font-size:14px;border-bottom:1px solid var(--line);text-align:left}
 .ctbl th{font-family:var(--mono);font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600;background:var(--bg3)}
 .ctbl td{color:var(--t2)}
+
+/* Country-level RCS modifier — column-width balance */
+#countryModTable th:nth-child(3),#countryModTable td:nth-child(3){width:170px;max-width:170px}
+#countryModTable th:nth-child(5),#countryModTable td:nth-child(5){width:230px;max-width:230px}
+#countryModTable th:nth-child(6),#countryModTable td:nth-child(6){width:170px;max-width:170px}
 .ctbl td.mt{color:var(--t3);font-family:var(--mono);font-size:14px;letter-spacing:.07em;text-transform:uppercase}
 .ctbl td small{font-size:14px}
 .ctbl tr:last-child td{border-bottom:none}
@@ -1231,14 +1236,23 @@ select{
    INTELLIGENCE FEED
 ══════════════════════════════════════════ */
 .ilist{display:flex;flex-direction:column}
-.iitem{padding:11px 14px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:82px 1fr;gap:12px;cursor:pointer;transition:background .1s}
-.iitem:hover{background:rgba(255,255,255,.022)}
+.iitem{padding:14px 16px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:100px 1fr;gap:14px;cursor:pointer;transition:background .1s}
+.iitem:hover{background:var(--bg3)}
 .iitem:last-child{border-bottom:none}
-.itime{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em;line-height:1.5}
-.itime strong{display:block;color:var(--t2);font-size:10px}
+.itime{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;line-height:1.5}
+.itime strong{display:block;color:var(--t2);font-size:12px;font-weight:600;letter-spacing:.04em}
 .ibody{display:flex;flex-direction:column;gap:8px}
-.ibody h4{font-size:12.5px;color:var(--t1);margin:0;line-height:1.35;font-weight:500}
-.ibody p{font-size:10.5px;color:var(--t2);line-height:1.45;margin:0}
+.ibody h4{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);margin:0;line-height:1.35}
+.ibody p{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5;margin:0}
+.iitem-head{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.iitem-head h4{margin:0;flex:1 1 220px;min-width:0}
+.iitem .sn-wn-id,.iitem .sn-vlabel,.iitem .sn-vchip,.iitem .aav-inline{margin:0}
+.iitem .sn-vlabel{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.14em;text-transform:uppercase}
+.isev{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 8px;line-height:1;margin:0;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:3px;box-sizing:border-box;white-space:nowrap}
+.isev.alert{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.isev.watch{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.isev.info{color:var(--t3);border-color:var(--line2);background:transparent}
+.iitem.is-move .itime strong{color:var(--info)}
 .itags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
 .itag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:2px 5px;border:1px solid var(--line2);color:var(--t3)}
 .itag.public{color:#7DABE3;border-color:rgba(125,171,227,.3)}
@@ -1254,21 +1268,68 @@ select{
 ══════════════════════════════════════════ */
 .mgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
 .mcard{background:var(--bg2);border:1px solid var(--line);padding:16px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
-.mcard::before{content:"";position:absolute;top:0;left:0;height:100%;width:2px;background:var(--ac)}
+.mcard::before{content:"";position:absolute;top:0;left:0;height:2px;width:100%;background:var(--ac)}
 .mcard[data-c=svs]{--ac:#7DABE3}.mcard[data-c=pps]{--ac:var(--amber)}.mcard[data-c=aps]{--ac:#FF9E64}.mcard[data-c=rcs]{--ac:var(--watch)}.mcard[data-c=ras]{--ac:#C19EFF}
-.mcode{font-family:var(--mono);font-size:11px;color:var(--ac);letter-spacing:.16em;font-weight:600;margin:0}
-.mname{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--display);margin:0;line-height:1.15;letter-spacing:-.01em}
+.mcode{font-family:var(--mono);font-size:12px;color:var(--ac);letter-spacing:.16em;font-weight:600;margin:0;text-transform:uppercase}
+.mname{font-family:var(--sans);font-weight:600;font-size:18px;color:var(--display);margin:0;line-height:1.2;letter-spacing:-.005em}
 .mw{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;margin:0}
-.mq{font-size:12px;color:var(--t2);font-style:italic;line-height:1.5;margin:0;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.ml{list-style:none;font-size:10.5px;color:var(--t2);line-height:1.7}
-.ml li{padding-left:11px;position:relative}
-.ml li::before{content:"·";position:absolute;left:3px;color:var(--ac);font-weight:700}
-.ttbl{width:100%;border-collapse:collapse;margin-top:10px}
-.ttbl td{padding:11px 14px;border:1px solid var(--line);font-size:12px;color:var(--t2)}
-.ttbl td:first-child{font-family:var(--mono);font-size:12.5px;font-weight:600;color:#fff;width:120px;text-align:center}
-.tdt{background:rgba(54,211,153,.06);color:var(--deploy);border-color:rgba(54,211,153,.24)!important}
-.twt{background:rgba(255,194,75,.06);color:var(--watch);border-color:rgba(255,194,75,.24)!important}
-.txt{background:rgba(255,92,92,.06);color:var(--dnd);border-color:rgba(255,92,92,.24)!important}
+.mq{font-family:var(--sans);font-size:13px;color:var(--t2);font-style:italic;line-height:1.5;margin:0;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.ml{list-style:none;font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5;margin:0;padding:0}
+.ml li{font-size:13px;padding:8px 0 8px 14px;position:relative;border-bottom:1px solid var(--line)}
+.ml li:last-child{border-bottom:none}
+.ml li::before{content:"·";position:absolute;left:0;top:8px;font-size:13px;line-height:1.5;color:var(--ac);font-weight:700}
+
+/* Verdict thresholds — list-row pattern (system list-row typography canon) */
+.vt-list{display:flex;flex-direction:column;margin:0}
+.vt-row{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;padding:16px;border-bottom:1px solid var(--line)}
+.vt-row:last-child{border-bottom:none}
+.vt-val{font-family:var(--mono);font-size:20px;font-weight:600;letter-spacing:.02em;text-align:center;line-height:1.1}
+.vt-body{display:flex;flex-direction:column;gap:6px;min-width:0}
+.vt-lbl{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;line-height:1}
+.vt-desc{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.vt-row.vt-deploy{background:rgba(107,179,138,.04)}
+.vt-row.vt-deploy .vt-val,.vt-row.vt-deploy .vt-lbl{color:var(--deploy)}
+.vt-row.vt-watch{background:rgba(214,168,90,.04)}
+.vt-row.vt-watch .vt-val,.vt-row.vt-watch .vt-lbl{color:var(--watch)}
+.vt-row.vt-dnd{background:rgba(201,116,116,.04)}
+.vt-row.vt-dnd .vt-val,.vt-row.vt-dnd .vt-lbl{color:var(--dnd)}
+
+/* Methodology — active version indicator (PRD §3.3.6 + §4.3.5 forward note) */
+.m-ver{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 24px}
+.m-ver-lbl{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px}
+.m-ver-chip{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--t2);border:1px solid var(--info-line);background:var(--info-soft);border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.m-ver-chip strong{color:var(--info);font-weight:600;letter-spacing:.06em}
+.m-ver-meta{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.16em;text-transform:uppercase;margin-left:auto}
+
+/* Methodology — change-request placeholder card */
+.m-cr{display:flex;flex-direction:column;gap:16px}
+.m-cr-lead{margin:0;font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5;max-width:760px}
+.m-cr-lead strong{color:var(--t1);font-weight:600}
+.m-cr-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:0}
+.m-cr-cell{display:flex;flex-direction:column;gap:6px;padding:12px;background:var(--bg2);border:1px solid var(--line);border-radius:3px;min-width:0}
+.m-cr-lbl{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;line-height:1}
+.m-cr-val{font-family:var(--sans);font-size:13px;color:var(--t1);line-height:1.4}
+.m-cr-soon{display:inline-flex;align-items:center;justify-content:center;height:18px;padding:0 6px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--watch);border:1px solid rgba(214,168,90,.4);background:rgba(214,168,90,.08);border-radius:3px;box-sizing:border-box;margin-left:8px}
+.m-cr .btn:disabled{opacity:.65;cursor:not-allowed;align-self:flex-start}
+@media (max-width:1023px){.m-cr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:639px){.m-cr-grid{grid-template-columns:1fr}}
+
+/* Scoring Committee minutes index (PRD §3.3.6) — list-row canon */
+.sc-mins{display:flex;flex-direction:column}
+.sc-min{display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .1s}
+.sc-min:last-child{border-bottom:none}
+.sc-min:hover{background:var(--bg3)}
+.sc-min .when{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;line-height:1.5}
+.sc-min .when strong{display:block;color:var(--t2);font-size:12px;font-weight:600;letter-spacing:.04em}
+.sc-min .when .who{display:block;margin-top:4px;color:var(--t3)}
+.sc-min .when .who::before{content:"● ";color:var(--amber)}
+.sc-min .body{display:flex;flex-direction:column;gap:8px;min-width:0}
+.sc-min .body h4{margin:0;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);line-height:1.35}
+.sc-min .body p{margin:0;font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.sc-min .meta-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px}
+.sc-min .sc-tag{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 8px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line2);color:var(--t3);border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.sc-min .sc-tag.approved{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.sc-min .sc-tag.pending{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
 
 /* ══════════════════════════════════════════
    WORKSPACE
@@ -1331,6 +1392,17 @@ select{
 .fp{padding:6px 11px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);color:var(--t2);cursor:pointer;transition:.2s;background:none}
 .fp:hover{color:var(--amber);border-color:var(--line2);background:var(--bg2)}
 .fp.active{color:var(--amber);border-color:var(--line2);background:var(--bg2)}
+
+/* Intel feed — toolbar tweaks (uses sig-toolbar + rtabs + sig-tools patterns) */
+#vw-intel .sig-toolbar{margin-bottom:24px}
+#vw-intel .rtabs{margin-bottom:0}
+#vw-intel .sig-tools #intelCarrier{max-width:200px}
+#vw-intel .sig-tools #intelWindow{max-width:170px}
+
+/* Intel feed — class row + entries share the panel body, 16px apart */
+.intel-feed-body{padding:0;display:flex;flex-direction:column;gap:16px}
+.intel-class-row{padding:16px 16px 0;margin:0}
+.intel-feed-body .ilist{margin:0}
 
 /* ══════════════════════════════════════════
    BUTTONS
@@ -2421,19 +2493,44 @@ select{
     <!-- INTEL FEED -->
     <div class="view" id="vw-intel">
       <h1 class="vtitle">Intelligence <em>Feed</em></h1>
-      <p class="vsub">Public-domain and private-source intelligence flowing into the Andara database. Timestamped, source-classified, and mapped to scoring criteria.</p>
-      <div class="fb">
-        <span style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px">FILTER</span>
-        <button class="fp active" data-f="all">All</button>
-        <button class="fp" data-f="public">Public</button>
-        <button class="fp" data-f="private">Private</button>
-        <button class="fp" data-f="regulatory">Regulatory</button>
-        <button class="fp" data-f="financial">Financial</button>
-        <button class="fp" data-f="legal">Legal</button>
-        <button class="fp" data-f="ops">Operational</button>
-        <button class="fp" data-f="macro">Macro</button>
+      <p class="vsub">Analyst-internal mirror of the §3.2.7 alerts inbox and §3.4.1 evidence corpus. Carrier-tagged events and audited verdict / composite moves in one stream.</p>
+
+      <!-- Stream segmentation (matches Signal portfolio rtabs pattern) -->
+      <div class="sig-toolbar">
+        <div class="rtabs" id="intelStream">
+          <button class="rtab active" data-stream="all">All</button>
+          <button class="rtab" data-stream="events">Events</button>
+          <button class="rtab" data-stream="moves">Verdict moves</button>
+        </div>
+        <div class="sig-tools">
+          <input type="text" class="sig-search" id="intelSearch" placeholder="Search headlines, carriers, source…" autocomplete="off">
+          <select class="sig-region" id="intelCarrier"><option value="">All carriers</option><option value="__sector__">Sector-level only</option></select>
+          <select class="sig-region" id="intelWindow">
+            <option value="30">Last 30 days</option>
+            <option value="90" selected>Last 90 days</option>
+            <option value="365">Last 12 months</option>
+            <option value="all">All time</option>
+          </select>
+        </div>
       </div>
-      <div class="panel"><div class="ph"><h3>Last 30 days</h3><span class="meta" id="fcount">16 entries</span></div><div class="pb" style="padding:0"><div class="ilist" id="fullFeed"></div></div></div>
+
+      <div class="panel">
+        <div class="ph"><h3 id="intelWindowLabel">Last 90 days</h3><span class="meta" id="fcount">— entries</span></div>
+        <div class="pb intel-feed-body">
+          <div class="fb intel-class-row">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px">CLASS</span>
+            <button class="fp active" data-f="all">All</button>
+            <button class="fp" data-f="public">Public</button>
+            <button class="fp" data-f="private">Private</button>
+            <button class="fp" data-f="regulatory">Regulatory</button>
+            <button class="fp" data-f="financial">Financial</button>
+            <button class="fp" data-f="legal">Legal</button>
+            <button class="fp" data-f="ops">Operational</button>
+            <button class="fp" data-f="macro">Macro</button>
+          </div>
+          <div class="ilist" id="fullFeed"></div>
+        </div>
+      </div>
     </div>
 
     <!-- COMPARE -->
@@ -2471,6 +2568,16 @@ select{
     <div class="view" id="vw-method">
       <h1 class="vtitle">The 5-Score <em>Methodology</em></h1>
       <p class="vsub">Five weighted dimensions, five distinct questions. Weighted average produces a 0–100 composite. Verdicts are calculated outputs — never analyst opinions. The methodology is geography-agnostic and applies uniformly across all African regions.</p>
+
+      <!-- Active methodology versions · PRD §3.3.6 read-only · §4.3.5 versioning ships M2 -->
+      <div class="m-ver">
+        <span class="m-ver-lbl">Active versions</span>
+        <span class="m-ver-chip"><strong>v1.5-NG</strong> Nigeria</span>
+        <span class="m-ver-chip"><strong>v1.0-WA</strong> West Africa</span>
+        <span class="m-ver-chip"><strong>v1.0-EA</strong> East Africa</span>
+        <span class="m-ver-meta">Read-only at M1</span>
+      </div>
+
       <div class="mgrid">
         <div class="mcard" data-c="svs"><div class="mcode">SVS · 15%</div><div class="mname">Strategic Value</div><div class="mw">Weight 15 percent</div><div class="mq">Does this airline make African aviation stronger?</div><ul class="ml"><li>Network strategic importance</li><li>Route monopoly / connectivity</li><li>Employment footprint</li><li>Government / sovereign relationship</li><li>Brand equity and recognition</li><li>Years in continuous operation</li><li>Domestic market share</li><li>IATA, AFRAA membership</li><li>SAATM / ICAO contribution</li></ul></div>
         <div class="mcard" data-c="pps"><div class="mcode">PPS · 25%</div><div class="mname">Payment Priority</div><div class="mw">Primary creditworthiness</div><div class="mq">When times are hard, will they pay first?</div><ul class="ml"><li>Lessor payment history</li><li>MRO vendor payment</li><li>Fuel supplier payment</li><li>Regulator fee compliance</li><li>Tax / PAYE compliance</li><li>Bank facility servicing</li><li>Cash position / buffers</li><li>Revenue trend (3–5 yr)</li></ul></div>
@@ -2478,9 +2585,70 @@ select{
         <div class="mcard" data-c="rcs"><div class="mcode">RCS · 25%</div><div class="mname">Risk Containment</div><div class="mw">Structural protections</div><div class="mq">If things go wrong, how protected are we?</div><ul class="ml"><li>Cape Town Convention</li><li>IDERA practice</li><li>Repossession case law</li><li>FX repatriation risk</li><li>Ownership transparency</li><li>Audited financials</li><li>Insurance coverage</li><li>Country-level RCS modifier</li></ul></div>
         <div class="mcard" data-c="ras"><div class="mcode">RAS · 15%</div><div class="mname">Redeployment Suitability</div><div class="mw">Asset liquidity</div><div class="mq">If they default, how fast can we move the asset?</div><ul class="ml"><li>Aircraft type liquidity</li><li>Engine type liquidity</li><li>Configuration heaviness</li><li>AD / SB compliance</li><li>Technical records</li><li>C-check / D-check status</li><li>African operator demand</li><li>Re-export timeline</li></ul></div>
       </div>
-      <div class="panel"><div class="ph"><h3>Verdict thresholds</h3><span class="meta">Hard floors apply</span></div><div class="pb"><table class="ttbl"><tr><td class="tdt">≥75</td><td><strong style="color:#fff">DEPLOY</strong> — Counterparty meets institutional standard. Standard covenant package suffices.</td></tr><tr><td class="twt">50–74</td><td><strong style="color:#fff">WATCH</strong> — Conditional support. Structured protections, monitoring triggers, reduced tenor required.</td></tr><tr><td class="txt">&lt;50</td><td><strong style="color:#fff">DO NOT DEPLOY</strong> — Decline. Explanatory memo to Credit Committee mandatory.</td></tr></table><div class="warn" style="margin-top:12px"><strong>Hard floor</strong>Composite cannot exceed 65 if PPS &lt; 40 or RCS &lt; 40, regardless of other scores. Exercised on 7 carriers across the combined universe.</div></div></div>
+      <div class="panel">
+        <div class="ph"><h3>Verdict thresholds</h3><span class="meta">Hard floors apply</span></div>
+        <div class="pb" style="padding:0">
+          <div class="vt-list">
+            <div class="vt-row vt-deploy">
+              <div class="vt-val">≥75</div>
+              <div class="vt-body">
+                <div class="vt-lbl">Deploy</div>
+                <div class="vt-desc">Counterparty meets institutional standard. Standard covenant package suffices.</div>
+              </div>
+            </div>
+            <div class="vt-row vt-watch">
+              <div class="vt-val">50–74</div>
+              <div class="vt-body">
+                <div class="vt-lbl">Watch</div>
+                <div class="vt-desc">Conditional support. Structured protections, monitoring triggers, reduced tenor required.</div>
+              </div>
+            </div>
+            <div class="vt-row vt-dnd">
+              <div class="vt-val">&lt;50</div>
+              <div class="vt-body">
+                <div class="vt-lbl">Do Not Deploy</div>
+                <div class="vt-desc">Decline. Explanatory memo to Credit Committee mandatory.</div>
+              </div>
+            </div>
+          </div>
+          <div class="warn" style="margin:16px"><strong>Hard floor</strong>Composite cannot exceed 65 if PPS &lt; 40 or RCS &lt; 40, regardless of other scores. Exercised on 7 carriers across the combined universe.</div>
+        </div>
+      </div>
+      <!-- Scoring Committee minutes index · PRD §3.3.6 -->
+      <div class="panel">
+        <div class="ph"><h3>Scoring Committee · recent decisions</h3><span class="meta">PRD §3.3.6 · minutes index</span></div>
+        <div class="pb" style="padding:0"><div class="sc-mins" id="scMinutes"></div></div>
+      </div>
+
       <div class="panel"><div class="ph"><h3>Country-level RCS modifier</h3><span class="meta">West Africa · 12 jurisdictions + East Africa · 11 jurisdictions</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="ctbl" id="countryModTable"></table></div></div>
       <div class="panel"><div class="ph"><h3>Client-tier verdict differentiation</h3><span class="meta">Pass 3–4 doctrine · v1.0-WA + v1.0-EA</span></div><div class="pb"><p style="font-size:12.5px;color:var(--t2);line-height:1.65;max-width:800px">West Africa: <strong style="color:#fff">Air Burkina</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese institutional), <strong style="color:#fff">Sky Mali</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese), and <strong style="color:#fff">Global Aviation</strong> (Watch-mid for Western; Watch-high for Chinese, Regional African, Mining/oil-and-gas). East Africa: <strong style="color:#fff">Air Tanzania</strong>, <strong style="color:#fff">Precision Air</strong>, <strong style="color:#fff">African Express Airways</strong> (westernInstitutional Do Not Deploy reflecting EU ban or fleet ineligibility; other tiers Watch). <strong style="color:#fff">Tarco Aviation</strong> and <strong style="color:#fff">Badr Airlines</strong> (conflict-adjusted: westernInstitutional, Chinese, and miningOilGas Do Not Deploy; regionalAfricanInstitutional Watch). The underlying evidence is identical across all tiers; the risk weighting differs by mandate.</p></div></div>
+
+      <!-- Methodology change requests · PRD §3.3.6 read-only placeholder · §4.3.5 workflow ships M2 -->
+      <div class="panel">
+        <div class="ph"><h3>Change requests</h3></div>
+        <div class="pb m-cr">
+          <p class="m-cr-lead">Methodology changes — weights, hard floor parameters, verdict thresholds — are gated by the <strong>Scoring Committee</strong>. The propose-review-approve workflow ships in <strong>M2 (PRD §4.3.5)</strong>. Until then, change requests are routed manually.</p>
+          <div class="m-cr-grid">
+            <div class="m-cr-cell">
+              <div class="m-cr-lbl">Route to</div>
+              <div class="m-cr-val">Scoring Committee Chair</div>
+            </div>
+            <div class="m-cr-cell">
+              <div class="m-cr-lbl">Required artefact</div>
+              <div class="m-cr-val">Proposal memo + supporting evidence</div>
+            </div>
+            <div class="m-cr-cell">
+              <div class="m-cr-lbl">Decision cadence</div>
+              <div class="m-cr-val">Next scheduled SC session</div>
+            </div>
+            <div class="m-cr-cell">
+              <div class="m-cr-lbl">Audit</div>
+              <div class="m-cr-val">Decision recorded on minutes index above</div>
+            </div>
+          </div>
+          <button type="button" class="btn" id="mCrDraft" disabled title="Workflow ships M2 — currently routed manually">Draft change request <span class="m-cr-soon">M2</span></button>
+        </div>
+      </div>
     </div>
 
     <!-- WORKSPACE -->
@@ -3983,6 +4151,7 @@ const FEED = [
   {date:'2026-04-15',time:'16:55',cid:'enugu_air',title:'Enugu Air independent AOC issued by NCAA',desc:'Among fastest NCAA certifications on record. Aircraft acquisition publicly attributed to Fidelity Bank financing.',cls:['public','regulatory','financial']},
   {date:'2026-04-12',time:'08:22',cid:'arik_air',title:'Uncontained CFM56 engine failure on 5N-MJF (Arik Air)',desc:'Lagos–PHC descent, nacelle destroyed, vertical-fin damage; 80 souls disembarked safely. NSIB investigating.',cls:['public','ops','legal']},
   {date:'2026-04-08',time:'13:00',cid:null,title:'CBN external reserves $49.4bn end-March 2026',desc:'Approximately 7 months current external payments cover. IATA blocked-funds list: Nigeria off since June 2024.',cls:['public','macro','financial']},
+  {date:'2026-04-01',time:'09:00',cid:null,title:'AIR Issue 001 published — Nigeria: The Intelligence Gap That Capital Is About to Step Into',desc:'Andara Intelligence Report Issue 001 dispatched to subscriber tiers (Standard / Expanded / Enterprise). Quarterly cadence. Sections: Paradox of African aviation profitability · ATR ground-stop case · Four intelligence variables (Air Peace governance, AOC certification chain, fleet age, lessor stack). AAV throughout. Cohort: Nigerian Tier-1 + Pan-African macro frame. Watermarked PDF per subscriber.',cls:['private']},
   {date:'2026-04-04',time:'10:15',cid:'gateway_air',title:'Gateway Air commissioning by President Tinubu',desc:'Ogun State virtual carrier on ValueJet AOC. Commercial operations from 13 April 2026.',cls:['public','ops']},
   {date:'2026-03-30',time:'12:00',cid:'united_nigeria_airlines',title:'UNA fifth anniversary — AMO migration announcement',desc:'Chairman: NCAA-approved AMO migration. MRO facility within 3 years stated.',cls:['public','ops','regulatory']},
   {date:'2026-03-15',time:'15:42',cid:'air_peace',title:'NCAA summons Air Peace over LHR–ABV passenger stranding',desc:'Disposition pending. Adds to FCCPC summons disposition trail.',cls:['public','regulatory','legal']},
@@ -4116,9 +4285,10 @@ function buildDashboard(){
       if(e.target.closest('.mo-refresh-cell'))return;
       showAirline(r.dataset.aid);
     }));
-    // PRD §3.2.4 Refresh request — routed to CS lead. We toast as confirmation.
+    // PRD §3.2.4 Refresh request — routed to CS lead. AUDIT-logged so it surfaces on /audit and /intel.
     rowsEl.querySelectorAll('.mo-refresh').forEach(btn => btn.addEventListener('click', e => {
       e.stopPropagation();
+      logRefreshRequest(btn.dataset.cid, btn.dataset.cname, 'Market Overview');
       toast('Refresh requested', `Routed to CS lead for ${btn.dataset.cname}`);
     }));
     // PRD §3.2.4 + §3.2.6 — verdict letter download, watermarked + audited.
@@ -4173,6 +4343,31 @@ function moLogDeliverable(opts){
   });
   if(typeof buildAudit==='function')buildAudit();
   return wm;
+}
+
+// PRD §3.2.4 — refresh request logged to AUDIT so it surfaces on /audit and /intel.
+// origin: 'Sentinel' or 'Market Overview' (sets src). Returns the entry timestamp.
+function logRefreshRequest(cid, cname, origin){
+  const a = (cid && typeof ALL_CARRIERS!=='undefined') ? ALL_CARRIERS.find(x=>x.id===cid) : null;
+  const v = (a && typeof validityUntil==='function') ? validityUntil(a) : null;
+  const tier = a && a.monitoringTier ? `Tier ${a.monitoringTier}` : 'Tier —';
+  const nextLbl = v && v.nextRefresh ? `Next ${v.nextRefresh}` : 'No scheduled refresh';
+  const user = (typeof sigCurrentUser==='function') ? sigCurrentUser() : 'analyst';
+  const ts = (typeof sigNowTs==='function') ? sigNowTs()
+           : (function(){const d=new Date(),p=n=>String(n).padStart(2,'0');return`${d.getUTCFullYear()}-${p(d.getUTCMonth()+1)}-${p(d.getUTCDate())} ${p(d.getUTCHours())}:${p(d.getUTCMinutes())}`;})();
+  AUDIT.unshift({
+    ts, user,
+    carrier: cname || (a?a.name:cid),
+    crit: 'Refresh request',
+    fr: 'Active verdict',
+    to: 'CS queue',
+    src: origin || 'Sentinel',
+    status: 'Routed to CS lead',
+    note: `${tier} · ${nextLbl}`
+  });
+  if(typeof buildAudit==='function')buildAudit();
+  if(typeof intelRender==='function' && document.getElementById('fullFeed')) intelRender();
+  return ts;
 }
 
 // ── Refresh schedule panel · PRD §4.2.3 ──────────────────────────────────
@@ -4649,9 +4844,10 @@ function buildSentinel(){
       if(e.target.closest('.sn-refresh')||e.target.closest('.sn-draft'))return;
       showAirline(r.dataset.aid);
     }));
-    // PRD §3.2.4 Refresh request — routed to CS lead. Same pattern as Market Overview rows.
+    // PRD §3.2.4 Refresh request — routed to CS lead. AUDIT-logged so it surfaces on /audit and /intel.
     ctr.querySelectorAll('.sn-refresh').forEach(btn=>btn.addEventListener('click',e=>{
       e.stopPropagation();
+      logRefreshRequest(btn.dataset.cid, btn.dataset.cname, 'Sentinel');
       toast('Refresh requested', `Routed to CS lead for ${btn.dataset.cname}`);
     }));
     // PRD §3.4.1 Draft Watch Note — jump to workspace form with carrier + classification pre-filled.
@@ -4685,25 +4881,191 @@ function snGoToDraftWatchNote(cid, prefillCls){
   }, 60);
 }
 
+// ── Intelligence Feed — analyst-internal mirror of §3.2.7 + §3.4.1 ────────
+// Combines FEED (carrier events + sector log) with AUDIT verdict/composite/Signal
+// moves into one filterable stream. Filter state: stream, class, cid, daysWindow,
+// search. The 'class' chips still scope by cls[] (Watch-Note classification +
+// source mix); 'stream' splits events vs verdict moves; carrier select scopes
+// to one cid or sector; window honours the header label.
+const intelState = {stream:'all', cls:'all', cid:'', daysWindow:90, search:''};
+
+const intelVerdictDelta = (l)=>{
+  const fr=(l.fr||'').toUpperCase();
+  const to=(l.to||'').toUpperCase();
+  let dir='flat',delta=to||'—';
+  if(fr==='—'||/^NEW/.test(to)) { dir='new'; delta='NEW'; }
+  else if(/DEPLOY/.test(to)&&!/DEPLOY/.test(fr)) { dir='up'; delta='→ DEPLOY'; }
+  else if(/DO NOT DEPLOY|DND/.test(to)&&!/DO NOT DEPLOY|DND/.test(fr)) { dir='down'; delta='→ DND'; }
+  else if(/WATCH/.test(to)&&/DND|DO NOT DEPLOY/.test(fr)) { dir='up'; delta='→ WATCH'; }
+  else if(/WATCH/.test(to)&&/DEPLOY/.test(fr)) { dir='down'; delta='→ WATCH'; }
+  else {
+    const frN=parseFloat(fr), toN=parseFloat(to);
+    if(!isNaN(frN)&&!isNaN(toN)){ const d=toN-frN; dir=d>=0?'up':'down'; delta=(d>=0?'+':'')+d.toFixed(1); }
+  }
+  return {dir, delta};
+};
+
+// AUDIT entries → cid lookup. Captures every analyst-actionable AUDIT row:
+// • Composite / Verdict / Signal (incl. Signal escalation / override / override cleared / triage)
+// • Comparison submission to SC
+// • Refresh request (PRD §3.2.4 affordance — both Sentinel and Market Overview origins)
+// Watch Note dispatches are excluded — they already surface in FEED via the unshift.
+function intelAuditItems(){
+  const byName = new Map(ALL_CARRIERS.map(a=>[a.name, a]));
+  return AUDIT.filter(l=>/Composite|Verdict|Signal|Comparison submission|Refresh request/i.test(l.crit||'')).map(l=>{
+    const a = byName.get(l.carrier);
+    const date = (l.ts||'').slice(0,10);
+    const time = (l.ts||'').slice(11,16);
+    return {
+      kind:'move',
+      date, time,
+      cid: a?a.id:null,
+      carrierName: l.carrier,
+      audit: l,
+      cls: [ (l.src||'').toLowerCase() ].filter(c=>['public','private','regulatory','financial','legal','ops','macro','methodology'].includes(c))
+    };
+  });
+}
+
+function intelEventItems(){
+  return FEED.map(it=>({kind:'event', ...it}));
+}
+
+function intelClassesFor(it){
+  if(it.kind==='move') return it.cls||[];
+  return it.cls||[];
+}
+
+function intelMatchesSearch(it, q){
+  if(!q) return true;
+  const hay = [
+    it.kind==='move' ? `${it.audit.crit} ${it.audit.fr} ${it.audit.to} ${it.audit.note||''}` : `${it.title} ${it.desc||''}`,
+    it.carrierName || '',
+    (it.cls||[]).join(' '),
+    it.kind==='move' ? (it.audit.src||'') : ''
+  ].join(' ').toLowerCase();
+  return hay.includes(q);
+}
+
+function intelInWindow(it){
+  if(intelState.daysWindow==='all') return true;
+  const d = new Date(it.date+'T00:00:00');
+  if(isNaN(d.getTime())) return true;
+  const cutoff = Date.now() - Number(intelState.daysWindow)*864e5;
+  return d.getTime() >= cutoff;
+}
+
 function buildFeed(){
-  el('fullFeed').innerHTML=FEED.map(it=>feedItem(it)).join('');
-  el('fcount').textContent=FEED.length+' entries';
-  el('fullFeed').querySelectorAll('.iitem').forEach(x=>x.addEventListener('click',()=>{if(x.dataset.cid)showAirline(x.dataset.cid)}));
+  // Populate carrier select once
+  const sel = el('intelCarrier');
+  if(sel && sel.options.length<=1){
+    ALL_CARRIERS.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(a=>{
+      const opt=document.createElement('option'); opt.value=a.id; opt.textContent=a.name; sel.appendChild(opt);
+    });
+    const sectorOpt=document.createElement('option'); sectorOpt.value='__sector__'; sectorOpt.textContent='Sector-level only'; sel.insertBefore(sectorOpt, sel.options[1]);
+  }
+  intelRender();
+  if(buildFeed._bound) return;
+  buildFeed._bound = true;
+
+  // Bind controls (once)
+  document.querySelectorAll('[data-stream]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('[data-stream]').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      intelState.stream=b.dataset.stream;
+      intelRender();
+    });
+  });
   document.querySelectorAll('[data-f]').forEach(b=>{
     b.addEventListener('click',()=>{
       document.querySelectorAll('[data-f]').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
-      const f=b.dataset.f;
-      el('fullFeed').querySelectorAll('.iitem').forEach(x=>{x.style.display=(f==='all'||x.dataset.cls.split(' ').includes(f))?'':'none';});
+      intelState.cls=b.dataset.f;
+      intelRender();
     });
   });
+  if(sel) sel.addEventListener('change',()=>{ intelState.cid=sel.value; intelRender(); });
+  const win = el('intelWindow');
+  if(win) win.addEventListener('change',()=>{
+    intelState.daysWindow = win.value==='all' ? 'all' : Number(win.value);
+    const lbl=el('intelWindowLabel');
+    if(lbl) lbl.textContent = win.value==='all' ? 'All time' : win.options[win.selectedIndex].text;
+    intelRender();
+  });
+  const search = el('intelSearch');
+  if(search) search.addEventListener('input',()=>{ intelState.search=search.value.trim().toLowerCase(); intelRender(); });
+}
+
+function intelRender(){
+  const events = intelState.stream==='moves' ? [] : intelEventItems();
+  const moves  = intelState.stream==='events' ? [] : intelAuditItems();
+  let items = events.concat(moves);
+
+  // Sort newest first by date+time
+  items.sort((x,y)=>{
+    const xd = (x.date||'')+(x.time||'00:00');
+    const yd = (y.date||'')+(y.time||'00:00');
+    return yd.localeCompare(xd);
+  });
+
+  items = items.filter(it=>{
+    if(!intelInWindow(it)) return false;
+    if(intelState.cls!=='all' && !intelClassesFor(it).includes(intelState.cls)) return false;
+    if(intelState.cid==='__sector__' && it.cid) return false;
+    if(intelState.cid && intelState.cid!=='__sector__' && it.cid!==intelState.cid) return false;
+    if(!intelMatchesSearch(it, intelState.search)) return false;
+    return true;
+  });
+
+  const wrap = el('fullFeed');
+  if(!items.length){
+    wrap.innerHTML = `<div class="sn-empty">No entries in this window · adjust filters or widen the date range</div>`;
+  } else {
+    wrap.innerHTML = items.map(it=> it.kind==='move' ? auditToFeedItem(it) : feedItem(it)).join('');
+  }
+  el('fcount').textContent = `${items.length} ${items.length===1?'entry':'entries'}`;
+  wrap.querySelectorAll('.iitem').forEach(x=>x.addEventListener('click',()=>{if(x.dataset.cid)showAirline(x.dataset.cid)}));
 }
 
 function feedItem(it){
   const a=it.cid?ALL_CARRIERS.find(x=>x.id===it.cid):null;
+  const carrier = a?a.name:'Sector';
+  const wnBadge = it.wnId ? `<span class="sn-wn-id" title="Watch Note reference">${it.wnId}</span>` : '';
+  const sev = it.severity;
+  const sevPill = sev ? `<span class="isev ${sev==='alert'?'alert':sev==='watch'?'watch':'info'}" title="Watch Note severity">${sev}</span>` : '';
+  const aav = it.aav ? `<span class="aav-inline" title="Andara Analytical View — analyst commentary (PRD §3.4.6)">AAV</span>` : '';
+  const tags = (it.cls||[]).map(c=>`<span class="itag ${c}">${c}</span>`).join('');
   return`<div class="iitem" data-cid="${it.cid||''}" data-cls="${(it.cls||[]).join(' ')}">
-    <div class="itime"><strong>${it.date}</strong>${it.time||''}<br><span style="color:var(--amber)">●</span> ${a?a.name:'Sector'}</div>
-    <div class="ibody"><h4>${it.title}</h4><p>${it.desc}</p><div class="itags">${(it.cls||[]).map(c=>`<span class="itag ${c}">${c}</span>`).join('')}</div></div>
+    <div class="itime"><strong>${it.date}</strong>${it.time||''}<br><span style="color:var(--amber)">●</span> ${carrier}</div>
+    <div class="ibody">
+      <div class="iitem-head">${wnBadge}${sevPill}${aav}<h4>${it.title}</h4></div>
+      <p>${it.desc||''}</p>
+      <div class="itags">${tags}</div>
+    </div>
+  </div>`;
+}
+
+function auditToFeedItem(it){
+  const l = it.audit;
+  const a = it.cid ? ALL_CARRIERS.find(x=>x.id===it.cid) : null;
+  const carrier = a ? a.name : (it.carrierName || 'Sector');
+  const {dir, delta} = intelVerdictDelta(l);
+  const summary = `${l.crit}: ${(l.fr||'—')} → ${(l.to||'—')}`;
+  const note = l.note || '';
+  const srcTag = l.src ? `<span class="itag ${(l.src||'').toLowerCase()}">${l.src}</span>` : '';
+  const statusTag = l.status ? `<span class="itag" style="color:var(--t3)">${l.status}</span>` : '';
+  return `<div class="iitem is-move" data-cid="${it.cid||''}" data-cls="${(it.cls||[]).join(' ')}">
+    <div class="itime"><strong>${it.date}</strong>${it.time||''}<br><span style="color:var(--info)">●</span> ${carrier}</div>
+    <div class="ibody">
+      <div class="iitem-head">
+        <span class="sn-vlabel">Verdict</span>
+        <span class="sn-vchip ${dir}">${delta}</span>
+        <h4>${summary}</h4>
+      </div>
+      ${note?`<p>${note}</p>`:''}
+      <div class="itags">${srcTag}${statusTag}</div>
+    </div>
   </div>`;
 }
 
@@ -5450,10 +5812,50 @@ function cmpDoLoadSet(idx){
   if(document.readyState!=='loading')ready();else document.addEventListener('DOMContentLoaded',ready);
 })();
 
+// Scoring Committee minutes index · PRD §3.3.6
+// Surfaces AUDIT entries that represent committee-gated decisions:
+// • Approved · CCC (verdicts / composite / methodology integrations)
+// • Notified · awaiting SC (Signal escalations + Comparison submissions to SC)
+// Top 10 most recent. Click → carrier profile when the row carries a known carrier name.
+function buildScMinutes(){
+  const wrap=el('scMinutes');
+  if(!wrap)return;
+  const byName=new Map(ALL_CARRIERS.map(a=>[a.name,a]));
+  const rows=AUDIT.filter(l=>{
+    const status=l.status||'';
+    const src=l.src||'';
+    return /Approved · CCC|Notified · awaiting SC/i.test(status) && /Methodology|Signal|Comparison/i.test(src);
+  }).slice(0,10);
+  if(!rows.length){wrap.innerHTML=`<div class="sn-empty">No committee decisions recorded in current window.</div>`;return;}
+  wrap.innerHTML=rows.map(l=>{
+    const a=byName.get(l.carrier);
+    const date=(l.ts||'').slice(0,10);
+    const time=(l.ts||'').slice(11,16);
+    const approved=/Approved/i.test(l.status||'');
+    const tagCls=approved?'approved':'pending';
+    const tagLbl=approved?'Approved':'Awaiting SC';
+    const summary=`${l.crit||'—'}${l.fr&&l.to?`: ${l.fr} → ${l.to}`:''}`;
+    const note=l.note?`<p>${l.note.length>180?l.note.slice(0,177)+'…':l.note}</p>`:'';
+    return `<div class="sc-min" data-aid="${a?a.id:''}">
+      <div class="when"><strong>${date}</strong>${time}<span class="who">${l.carrier||'Sector'}</span></div>
+      <div class="body">
+        <h4>${summary}</h4>
+        ${note}
+        <div class="meta-row">
+          <span class="sc-tag ${tagCls}">${tagLbl}</span>
+          <span class="sc-tag">${l.src||'—'}</span>
+          ${l.user?`<span class="sc-tag">${l.user}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('.sc-min').forEach(r=>r.addEventListener('click',()=>{if(r.dataset.aid)showAirline(r.dataset.aid)}));
+}
+
 function buildCountryModTable(){
   const t=el('countryModTable');
   if(!t)return;
-  t.innerHTML=`<thead><tr><th>Jurisdiction</th><th>Bloc</th><th>CTC Status</th><th>EU Blacklist</th><th>Sovereign context</th><th>RCS.6 anchor band</th></tr></thead><tbody>${COUNTRY_METADATA.map(c=>`<tr><td style="color:#fff;font-weight:500">${c.jurisdiction}${c.aesBloc?` <span style="color:var(--dnd);font-family:var(--mono);font-size:10px">AES</span>`:''}</td><td>${c.bloc}</td><td style="color:${c.ctcStatus.includes('IDERA')?'var(--deploy)':'var(--watch)'}">${c.ctcStatus}</td><td style="color:${c.euBlacklist?'var(--dnd)':'var(--deploy)'}">${c.euBlacklist?'YES — since '+c.euBlacklistSince:'No'}</td><td style="font-size:11px">${c.sovereignContext}</td><td style="font-family:var(--mono);font-weight:600;color:${c.rcs6AnchorBand[0]>=6?'var(--deploy)':c.rcs6AnchorBand[0]>=4?'var(--watch)':'var(--dnd)'}">${c.rcs6AnchorBand[0]}–${c.rcs6AnchorBand[1]}/10</td></tr>`).join('')}</tbody>`;
+  t.innerHTML=`<thead><tr><th>Jurisdiction</th><th>Bloc</th><th>CTC Status</th><th>EU Blacklist</th><th>Sovereign context</th><th>RCS.6 anchor band</th></tr></thead><tbody>${COUNTRY_METADATA.map(c=>`<tr><td>${c.jurisdiction}${c.aesBloc?` <span style="color:var(--dnd);font-family:var(--mono);font-size:10px">AES</span>`:''}</td><td>${c.bloc}</td><td style="color:${c.ctcStatus.includes('IDERA')?'var(--deploy)':'var(--watch)'}">${c.ctcStatus}</td><td style="color:${c.euBlacklist?'var(--dnd)':'var(--deploy)'}">${c.euBlacklist?'YES — since '+c.euBlacklistSince:'No'}</td><td>${c.sovereignContext}</td><td style="color:${c.rcs6AnchorBand[0]>=6?'var(--deploy)':c.rcs6AnchorBand[0]>=4?'var(--watch)':'var(--dnd)'}">${c.rcs6AnchorBand[0]}–${c.rcs6AnchorBand[1]}/10</td></tr>`).join('')}</tbody>`;
 }
 
 const auditFilter={q:'',src:'all'};
@@ -6570,7 +6972,7 @@ function enterTerminal(em){
     const initials = (parts[0]?parts[0][0]:'') + (parts[1]?parts[1][0]:'');
     av.textContent = (initials || localPart.slice(0,1) || 'S').toUpperCase();
   }
-  buildSidebar();buildDashboard();buildSentinel();buildFeed();buildCompare();buildAudit();bindAuditFilters();buildWorkspace();buildCountryModTable();buildSignalPortfolio();bindNav();startClock();
+  buildSidebar();buildDashboard();buildSentinel();buildFeed();buildCompare();buildAudit();bindAuditFilters();buildWorkspace();buildCountryModTable();buildScMinutes();buildSignalPortfolio();bindNav();startClock();
   const runSearch = () => {
     const q = (el('gsearch').value||'').trim().toLowerCase();
     if(!q) return;

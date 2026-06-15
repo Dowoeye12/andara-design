@@ -207,6 +207,7 @@ Sizes in use: 28px (chips next to large titles, refresh-request button), 26px (S
 | `.sc-*` | Score composition radar reading block | Current |
 | `.sig-*` | **Andara Signal portfolio surface** (`/signal`) — `.sig-summary` stat strip, `.sig-sources` (clickable, opens drawer), `.sig-toolbar`, `.sig-tbl` portfolio table, `.sig-trbl` triage table, severity / band / confidence / verdict / **state** (`.sig-state-new/in_triage/triaged/dismissed`) pills, `.sig-mode` view toggle, `.sig-drawer` + `.sig-drawer-back` source-health detail drawer (`.sig-status-pill`, `.sig-spark`, `.sig-fail-row`), `.sig-kebab` row actions, `.sig-pop` popover (re-used by triage with HTML swap), `.sig-mback` / `.sig-mbox` / `.sig-mfield` modal system (Promote · Override · Mark triaged · Dismiss · Save set · Submit to SC), `.sig-mbtn` action buttons | **Revived — actively used by all M2 §4.4.5 surfaces.** The old "dead" note is obsolete. |
 | `.cmp-*` | Carrier Comparison view — `.cmp-chip` slot chips (HF, STALE, AES, ET-JV, EU-BAN), `.cmp-radar*` overlay + legend + band-key, `.cmp-aav-*` comparative narrative, `.cmp-expandable / .cmp-expand-body` row toggle, `.cmp-sets-select` saved sets, `.cmp-toolbar` action strip | Current |
+| `.m-*` / `.vt-*` / `.sc-min*` | **Methodology surface** (`/method`) — `.mgrid` + `.mcard` 5-Score cards (top accent stripe, sans 18px name, 13px sub-input list with dividers), `.vt-list` Verdict thresholds list-rows (mono threshold value + colour-keyed eyebrow label + sans description, tinted by `.vt-deploy / .vt-watch / .vt-dnd`), `.m-ver` active-versions strip (informational `--info` chips per the chip-colour rule), `.sc-min` Scoring Committee minutes index (list-row canon over AUDIT entries matching `Approved · CCC` / `Notified · awaiting SC` from Methodology/Signal/Comparison sources), `.m-cr` change-request placeholder (4-cell future-state grid + disabled CTA with `M2` chip suffix) | Current |
 | `.phero`, `.pmain`, `.pscore`, `.pid`, `.pname`, `.psnum` | Pre-redesign carrier profile chrome | **Dead** — replaced by `.cp-*`. |
 
 ### Shared helpers (top of script, before data tables)
@@ -257,6 +258,8 @@ Sizes in use: 28px (chips next to large titles, refresh-request button), 26px (S
 | **Watch Note creator** (`/workspace`) | §3.4.1 "Off-cycle Watch Note tied to a parent scoring file" | Analyst-internal form below the evidence-submission panel. Fields: affected carrier (auto-links a `SF-YYYYMM-<CARRIER>` parent-scoring-file id into a read-only field), severity (Info / Watch Note / Alert), classification chips (regulatory · legal · ops · financial · private — multi-select; ≥1 required per §3.2.4 routing), headline (≥10 chars), body (≥80 chars), source citation (≥5 chars), AAV toggle. Dispatch unshifts a new entry onto `FEED` with the carrier's full `ALL_CARRIERS.id` so it surfaces immediately on Market Overview's Watch Notes panel, calls `moLogDeliverable` to watermark + audit-log, and refreshes the dashboard + intel feed. Watch Note ids use the `WN-YYYYMM-NNN` format; sequence derives from `AUDIT` count for the current YYYYMM. All seed `FEED` cids have been normalised to full `ALL_CARRIERS.id` form (the legacy short-cid pattern was retired) — `renderMoWatchNotes` now resolves every seed entry. |
 | **Comparison** (`/compare`) | §4.2.3 + §5.4.1 cross-carrier | Up-to-4 slot cards (`.cpk`) with chips (HF / STALE / AES / ET-JV / EU-BAN), Comparative AAV panel (auto-derived takeaways: leader Δ, strongest/weakest shared dimension, largest spread axis, hard-floor warnings, stale-verdict warnings), 5-Score radar overlay with per-carrier breakdown + band-key legend, 25-row scorecard incl. Verdict / Composite / 5-Score weighted (×5) / Strengths / Weaknesses / Region / Jurisdiction / Methodology / Monitoring tier / Hard floor / Country RCS band / CTC / EU blacklist / Last+Next+Validity dates / Active triggers / Data-gap profile / Conditions for upgrade / Verdict narrative (AAV) / Verdict trail (AUDIT-sourced) |
 | Comparison toolbar | §3.2.6 + §4.2.5 + §3.4.1 | Saved sets dropdown · Save set · Submit to SC · Export PDF — all watermarked + audited |
+| **Methodology** (`/method`) | §3.3.6 read-only at M1 (Methodology display · Scoring Committee minutes index · Change request placeholder) | Active-versions strip (`.m-ver` blue informational chips: v1.5-NG / v1.0-WA / v1.0-EA + READ-ONLY AT M1 meta), 5-Score cards (`.mgrid` + `.mcard` with top accent stripe, sans 18 name, 13px sub-input list with dividers per dimension), Verdict thresholds (`.vt-list` list-rows with mono colour-keyed threshold values + sans descriptions + tinted backplates) + hard-floor `.warn` banner (composite ≤ 65 if PPS < 40 or RCS < 40), **Scoring Committee · recent decisions** panel (`.sc-min` list-rows over AUDIT entries with status matching `Approved · CCC` or `Notified · awaiting SC` and src ∈ {Methodology, Signal, Comparison}; top 10 newest, click → carrier profile), Country-level RCS modifier table (`.ctbl` with column-width balance, uniform sans 14 cell typography, verdict-coloured CTC/EU/RCS cells for state semantics), Client-tier verdict differentiation paragraph (Pass 3–4 doctrine), **Change requests** placeholder panel (`.m-cr` 4-cell future-state grid: Route to / Required artefact / Decision cadence / Audit + disabled CTA flagging M2 §4.3.5 workflow). No breadcrumb — methodology is a top-level view. |
+| Intelligence Feed (`/intel`) | §3.2.7 analyst-internal mirror + §3.4.1 evidence corpus | Three-piece toolbar: `.rtabs` stream segmentation (All / Events / Verdict moves), `.sig-tools` inline controls (`.sig-search` headline+carrier+source search, `.sig-region` carrier select with `Sector-level only`, `.sig-region` window select 30 / 90 / 365 / All — drives the panel-header label). `.fb` class chips inside the panel body (`.intel-feed-body` flex column gap 16) for source/impact filtering. Stream merges `FEED` (sector + carrier events incl. AIR publish, Watch Notes with `wnId` + severity + AAV badges) and `AUDIT` moves via `intelAuditItems()` (`/Composite|Verdict|Signal|Comparison submission|Refresh request/i` regex). Move rows render with `.sn-vchip` directional chip (`intelVerdictDelta` mirrors Sentinel + Recent Movers logic) + `.iitem.is-move` info-blue bullet. Watch Note dispatches surface from FEED to avoid double-render; SC promotions, severity overrides, comparison submissions, refresh requests all flow via AUDIT. `logRefreshRequest(cid, cname, origin)` helper (next to `moLogDeliverable`) writes the AUDIT row from both Sentinel and Market Overview refresh buttons. |
 
 **What's NOT in the PRD — do not re-add unprompted:**
 - Assigned analyst / Tier rationale text (no PRD basis for client view, no data field)
@@ -317,6 +320,68 @@ Any list-item that contains a **headline**, a **sub-header/description**, and a 
 - Sub → chips: **16px** (8px flex gap + 8px `margin-top` on the chip strip)
 
 Applied to `.mo-watch-body` (Watch Notes), `.mo-mover-item` (Recent Movers — name → note 8px), `.ibody` (alert feed items). Any future list-item with this shape must use it.
+
+### Filter-heavy view shell (Signal · Intel Feed pattern)
+
+When a view has both primary segmentation and inline secondary controls, reuse the three-piece shell already established on `/signal` and `/intel`:
+
+1. **Outer toolbar** — `<div class="sig-toolbar">` (flex, gap 16, wrap, `margin-bottom: 24px`).
+2. **Primary segmentation** — `<div class="rtabs">` with `.rtab` chips (sans 13/600, amber-soft active state). Used for stream / state / band / cohort toggles. `margin-bottom: 0` inside the toolbar so the toolbar owns the 24px section gap.
+3. **Inline controls** — `<div class="sig-tools">` (flex, gap 8, `margin-left: auto` so it right-aligns within the toolbar). Holds `.sig-search` (220px, mono 12px, bg2) and `.sig-region` selects (32px with system chevron). Per-view ids get a `max-width` override (`#vw-intel .sig-tools #intelCarrier{max-width:200px}`).
+
+Do not roll a bespoke `.x-tools` grid for this shape — extend the shared classes with id-scoped overrides instead.
+
+### Filter row inside a panel — 16px sub-section rhythm
+
+When a filter row is tightly bound to one result list (so they read as one unit), nest it **inside** the panel body rather than as a sibling above the panel. Pattern:
+
+```html
+<div class="panel">
+  <div class="ph"><h3>…</h3><span class="meta">…</span></div>
+  <div class="pb intel-feed-body">
+    <div class="fb intel-class-row">…chips…</div>
+    <div class="ilist" id="…"></div>
+  </div>
+</div>
+```
+
+```css
+.intel-feed-body{padding:0;display:flex;flex-direction:column;gap:16px}
+.intel-class-row{padding:16px 16px 0;margin:0}
+.intel-feed-body .ilist{margin:0}
+```
+
+- The panel's `.pb` owns the 16px sub-section rhythm via `flex-direction: column; gap: 16px` — same idea as the 8px card rhythm, scaled up one step for tightly-bound sub-sections.
+- The list still flows edge-to-edge (`padding:0` on the body), so item border-bottoms hit the panel border cleanly.
+- Use this pattern any time a filter belongs to a single result list. Use the outer-toolbar pattern (above) when the filter scopes more than one panel on the view.
+
+### List-row typography canon
+
+Every list-item row across the terminal uses the same three-tier type stack — `.mo-watch-body`, `.mo-mover-*`, `.sn-event`, `.iitem` all agree. Match it when you build a new list:
+
+| Slot | Style |
+|---|---|
+| Headline (`h4` / `.nm` / body `strong`) | sans 14 / 600 / `var(--t1)` / line-height 1.35 |
+| Sub-line (description / note) | sans 13 / `var(--t2)` / line-height 1.5 |
+| Meta column (date + time + carrier) | mono 12 / `var(--t3)` (date in `strong` bumps to 600 / `var(--t2)`) |
+| Row padding | 14px top/bottom · 16px sides |
+| Hover | `background: var(--bg3)` |
+
+For multi-row chips on the headline (WN-id, severity, AAV, verdict label + vchip), use `.iitem-head` (flex, wrap, gap 8) so badges align on the optical centre of the headline.
+
+### Chip colour rule — informational vs. actionable
+
+Chips fall into two buckets and use different palette tokens. Get this right when you add a new chip.
+
+| Bucket | What it means | Token | Examples |
+|---|---|---|---|
+| **Informational** | Static metadata the user reads but doesn't act on. No click, no state change. | `--info` foreground + `--info-soft` background + `--info-line` border | Methodology version chips (`v1.5-NG`), version markers, build / schema tags, read-only reference identifiers |
+| **Actionable / brand-accent** | Filter active states, brand-significant labels analysts engage with (AAV chip, WN-id reference), CTAs, escalation flags | `--amber` foreground + `rgba(232,162,58,*)` background + amber border | Active filter chips (`.fp.active`, `.rtab.active`), AAV chip, WN-id badge, NEW pill, AOG severity |
+| **Status / verdict** | Stateful semantic colour | `--deploy / --watch / --dnd` ramps | Verdict pills, severity (alert/watch/info), Recent Movers chips |
+
+Amber is reserved. Don't use it for a chip whose only job is to label something the user already understood. If the chip carries no action and no state, it goes blue (`--info`).
+
+If you're recolouring an existing chip from amber to blue (or back), update the chip's class CSS, not inline styles. Search for the class first to confirm reuse.
 
 ### Pill / chip margin — `.warn` collision guard
 
