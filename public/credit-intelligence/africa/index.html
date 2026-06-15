@@ -1377,17 +1377,59 @@ select{
 .toast strong{color:var(--amber);display:block;margin-bottom:1px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
 
 /* ══════════════════════════════════════════
-   SENTINEL
+   SENTINEL — cadence enforcement + off-cycle queue (PRD §3.2.4)
 ══════════════════════════════════════════ */
-.sentinel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.sentinel-card{background:var(--bg2);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:border-color .1s}
-.sentinel-card:hover{border-color:var(--t3)}
-.sentinel-card.t1{border-left:2px solid var(--dnd)}
-.sentinel-card.t2{border-left:2px solid var(--watch)}
-.sentinel-card.t3{border-left:2px solid var(--deploy)}
-.sc-name{font-size:13px;color:var(--t1);font-weight:500}
-.sc-jur{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.1em;text-transform:uppercase}
-.sc-score{font-family:var(--serif);font-weight:600;font-size:20px;color:var(--display);letter-spacing:-.015em}
+.sn-roll{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.sn-rcell{background:var(--bg2);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:8px}
+.sn-rcell .lbl{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase}
+.sn-rcell .num{font-family:var(--serif);font-size:28px;color:var(--display);letter-spacing:-.015em;line-height:1}
+.sn-rcell .sub{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em}
+.sn-rcell.alert .num{color:var(--dnd)}
+.sn-rcell.warn .num{color:var(--watch)}
+
+.sentinel-grid{display:flex;flex-direction:column}
+.sn-card{padding:16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:background .1s}
+.sn-card:last-child{border-bottom:none}
+.sn-card:hover{background:rgba(255,255,255,.022)}
+.sn-card.overdue{background:rgba(201,116,116,.04)}
+.sn-card.overdue:hover{background:rgba(201,116,116,.08)}
+.sn-card-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.sn-card-hd .nm{font-family:var(--sans);font-size:14px;font-weight:500;color:var(--t1);line-height:1.3;margin-bottom:3px}
+.sn-card-hd .jur{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.08em;text-transform:uppercase}
+.sn-card-hd .sc{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.sn-card-hd .sc .v{font-family:var(--serif);font-size:20px;color:var(--display);letter-spacing:-.015em;line-height:1}
+.sn-cadence{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sn-cadence .dates{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em}
+.sn-days{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
+.sn-days.expired{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.sn-days.urgent{color:var(--watch);border-color:rgba(214,168,90,.4);background:rgba(214,168,90,.08)}
+.sn-days.soon{color:var(--info);border-color:rgba(124,159,199,.4);background:rgba(124,159,199,.08)}
+.sn-days.ok{color:var(--deploy);border-color:rgba(107,179,138,.35);background:rgba(107,179,138,.06)}
+.sn-event{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--t2);line-height:1.45;border-top:1px solid var(--line);padding-top:8px}
+.sn-event .when{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;white-space:nowrap;flex-shrink:0;min-width:64px}
+.sn-event .body{flex:1}
+.sn-event .body strong{color:var(--t1);font-weight:500}
+.sn-ev-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px;line-height:1.4}
+.sn-ev-head .sn-wn-id,.sn-ev-head .sn-vlabel,.sn-ev-head .sn-vchip,.sn-ev-head .aav-inline{margin:0}
+.sn-ev-note{margin-top:6px;color:var(--t2);line-height:1.5}
+.sn-wn-id{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--amber);letter-spacing:.04em;margin-right:8px;padding:2px 6px;border:1px solid rgba(232,162,58,.35);background:rgba(232,162,58,.06);border-radius:3px;white-space:nowrap}
+.sn-vlabel{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin-right:8px}
+.sn-vchip{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 8px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;border:1px solid;border-radius:3px;box-sizing:border-box;margin:0 8px 0 0;white-space:nowrap;vertical-align:middle}
+.sn-vchip.up{color:var(--deploy);border-color:rgba(107,179,138,.4);background:rgba(107,179,138,.08)}
+.sn-vchip.down{color:var(--dnd);border-color:rgba(201,116,116,.4);background:rgba(201,116,116,.08)}
+.sn-vchip.flat{color:var(--t3);border-color:var(--line2);background:transparent}
+.sn-vchip.new{color:var(--amber);border-color:rgba(232,162,58,.4);background:rgba(232,162,58,.08)}
+.sn-event-empty{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em;border-top:1px solid var(--line);padding-top:8px}
+.sn-actions{display:flex;justify-content:flex-start;gap:8px;margin-top:4px}
+.sn-refresh,.sn-draft{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:26px;padding:0 10px;line-height:1;background:transparent;border:1px solid var(--line2);color:var(--t2);font-family:var(--mono);font-size:12px;letter-spacing:.04em;font-weight:500;border-radius:4px;cursor:pointer;transition:.12s;box-sizing:border-box;white-space:nowrap;margin:0}
+.sn-refresh:hover,.sn-draft:hover{background:rgba(232,162,58,.08);border-color:var(--amber-line);color:var(--amber)}
+.sn-refresh svg,.sn-draft svg{flex-shrink:0;display:block}
+.sn-draft{gap:4px}
+.sn-empty{padding:20px 14px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em}
+
+@media (max-width: 1023px){
+  .sn-roll{grid-template-columns:repeat(2,1fr)}
+}
 
 /* ══════════════════════════════════════════
    BACKGROUND MATRIX
@@ -2362,11 +2404,17 @@ select{
     <!-- SENTINEL -->
     <div class="view" id="vw-sentinel">
       <h1 class="vtitle">Andara <em>Sentinel</em></h1>
-      <p class="vsub">Continuous operator monitoring. Carriers are assigned to monitoring tiers based on credit-event frequency, structural volatility, and institutional importance. Tier 1 triggers monthly review. Tier 2 quarterly. Tier 3 semi-annual.</p>
-      <div class="g g12" style="margin-bottom:16px">
-        <div class="panel c4"><div class="ph"><h3>Tier 1 — Monthly</h3><span class="meta" style="color:var(--dnd)">High-frequency</span></div><div class="pb" style="padding:0"><div class="sentinel-grid" style="grid-template-columns:1fr;gap:0;display:flex;flex-direction:column" id="sent1"></div></div></div>
-        <div class="panel c4"><div class="ph"><h3>Tier 2 — Quarterly</h3><span class="meta" style="color:var(--watch)">Standard</span></div><div class="pb" style="padding:0"><div style="display:flex;flex-direction:column" id="sent2"></div></div></div>
-        <div class="panel c4"><div class="ph"><h3>Tier 3 — Semi-annual</h3><span class="meta" style="color:var(--deploy)">Low-frequency</span></div><div class="pb" style="padding:0"><div style="display:flex;flex-direction:column" id="sent3"></div></div></div>
+      <p class="vsub">Cadence enforcement and off-cycle review queue. Carriers grouped by monitoring tier — Tier 1 monthly, Tier 2 quarterly, Tier 3 semi-annual. Cards surface verdict validity status and active Watch-Note-eligible events from the intelligence feed. Click through to the carrier profile for the full active-trigger list.</p>
+      <div class="sn-roll" id="snRoll">
+        <div class="sn-rcell" id="snRollOver"><span class="lbl">Overdue cadence</span><span class="num">—</span><span class="sub">past validity</span></div>
+        <div class="sn-rcell" id="snRoll30"><span class="lbl">Due in 30d</span><span class="num">—</span><span class="sub">refresh window</span></div>
+        <div class="sn-rcell" id="snRollWn"><span class="lbl">Open Watch Notes</span><span class="num">—</span><span class="sub">last 60d</span></div>
+        <div class="sn-rcell" id="snRollQ"><span class="lbl">Due this quarter</span><span class="num">—</span><span class="sub">within 90d</span></div>
+      </div>
+      <div class="g g12" style="margin-bottom:24px;gap:20px">
+        <div class="panel c4"><div class="ph"><h3>Tier 1 — Monthly</h3><span class="meta" id="sent1Meta" style="color:var(--dnd)">High-frequency</span></div><div class="pb" style="padding:0"><div class="sentinel-grid" id="sent1"></div></div></div>
+        <div class="panel c4"><div class="ph"><h3>Tier 2 — Quarterly</h3><span class="meta" id="sent2Meta" style="color:var(--watch)">Standard</span></div><div class="pb" style="padding:0"><div class="sentinel-grid" id="sent2"></div></div></div>
+        <div class="panel c4"><div class="ph"><h3>Tier 3 — Semi-annual</h3><span class="meta" id="sent3Meta" style="color:var(--deploy)">Low-frequency</span></div><div class="pb" style="padding:0"><div class="sentinel-grid" id="sent3"></div></div></div>
       </div>
     </div>
 
@@ -4457,25 +4505,184 @@ function moRenderRows(list){
 }
 
 function buildSentinel(){
-  const tiers=[1,2,3];
-  tiers.forEach(t=>{
-    const carriers=ALL_CARRIERS.filter(a=>a.monitoringTier===t).sort((a,b)=>b.composite-a.composite);
-    const ctr=el('sent'+t);
-    ctr.innerHTML=carriers.map(a=>`<div class="iitem" data-aid="${a.id}" style="grid-template-columns:1fr">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:13px;color:var(--t1);font-weight:500;margin-bottom:2px">${a.name}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.1em">${a.jurisdiction||'Nigeria'} · ${a.dateOfAssessment}</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:var(--serif);font-size:18px;color:#fff">${a.composite.toFixed(1)}</div>
-          <span class="vdot ${vdotCls(a.verdict)}" style="display:inline-block;margin-right:4px"></span>
-        </div>
-      </div>
-      ${a.monitoringTriggers&&a.monitoringTriggers.length?`<div style="font-size:11px;color:var(--t3);margin-top:4px;line-height:1.4">● ${a.monitoringTriggers[0]}</div>`:''}
-    </div>`).join('');
-    ctr.querySelectorAll('[data-aid]').forEach(r=>r.addEventListener('click',()=>showAirline(r.dataset.aid)));
+  // PRD §3.2.4 — Watch-Note-eligible classes that define a "fired event" line on a card.
+  const SN_WN_CLASSES = new Set(['regulatory','legal','ops','financial','private']);
+  const refreshSvg = `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5v3h-3"/><path d="M13.5 5.5A6 6 0 1 0 14 9"/></svg>`;
+  const draftSvg = `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 2.5l2.5 2.5L5 13.5H2.5V11z"/><path d="M9.5 4l2.5 2.5"/></svg>`;
+
+  // Rollup numbers across the full universe — overdue, due 30d, due this quarter, open Watch Notes.
+  let overdue=0, due30=0, dueQ=0;
+  ALL_CARRIERS.forEach(a=>{
+    const v=validityUntil(a);
+    if(v.days==null)return;
+    if(v.days<0) overdue++;
+    else if(v.days<=30){ due30++; dueQ++; }
+    else if(v.days<=90) dueQ++;
   });
+  const carrierIdSet = new Set(ALL_CARRIERS.map(a=>a.id));
+  // Open Watch Notes — restrict to entries dated within the last 60d, matching the sub-text.
+  const openWN = FEED.filter(f=>{
+    if(!f.cid || !carrierIdSet.has(f.cid)) return false;
+    if(!(f.cls||[]).some(c=>SN_WN_CLASSES.has(c))) return false;
+    const d = daysUntil(f.date);
+    return d!=null && d <= 0 && d >= -60;
+  }).length;
+  const setRoll=(id,n,cls)=>{ const cell=el(id); if(!cell)return; cell.querySelector('.num').textContent=n; cell.classList.remove('alert','warn'); if(cls)cell.classList.add(cls); };
+  setRoll('snRollOver', overdue, overdue>0?'alert':null);
+  setRoll('snRoll30',   due30,   due30>0?'warn':null);
+  setRoll('snRollWn',   openWN,  null);
+  setRoll('snRollQ',    dueQ,    null);
+
+  // Latest Watch-Note-eligible FEED event per carrier — one source of the "active event" line.
+  const latestEvent = new Map();
+  FEED.forEach(f=>{
+    if(!f.cid) return;
+    if(!(f.cls||[]).some(c=>SN_WN_CLASSES.has(c))) return;
+    if(!latestEvent.has(f.cid)) latestEvent.set(f.cid, f); // FEED is already newest-first
+  });
+  // §3.2.7 alerts inbox — verdict / composite moves are alerts too. Pull from AUDIT and
+  // pre-index by carrier id so the per-card event line can pick whichever fired most recently.
+  const carrierByName = new Map(ALL_CARRIERS.map(a=>[a.name, a.id]));
+  const latestVerdictMove = new Map();
+  AUDIT.forEach(l=>{
+    if(!/Verdict|Composite/.test(l.crit||'')) return;
+    const cid = carrierByName.get(l.carrier);
+    if(!cid) return;
+    if(!latestVerdictMove.has(cid)) latestVerdictMove.set(cid, l); // AUDIT is newest-first
+  });
+  // Mirrors the Recent Movers chip logic so the visual stays consistent across surfaces.
+  const snVerdictDelta = (l)=>{
+    const fr=(l.fr||'').toUpperCase();
+    const to=(l.to||'').toUpperCase();
+    let dir='flat',delta=to||'—';
+    if(fr==='—'||/^NEW/.test(to)) { dir='new'; delta='NEW'; }
+    else if(/DEPLOY/.test(to)&&!/DEPLOY/.test(fr)) { dir='up'; delta='→ DEPLOY'; }
+    else if(/DO NOT DEPLOY|DND/.test(to)&&!/DO NOT DEPLOY|DND/.test(fr)) { dir='down'; delta='→ DND'; }
+    else if(/WATCH/.test(to)&&/DND|DO NOT DEPLOY/.test(fr)) { dir='up'; delta='→ WATCH'; }
+    else if(/WATCH/.test(to)&&/DEPLOY/.test(fr)) { dir='down'; delta='→ WATCH'; }
+    else {
+      const frN=parseFloat(fr), toN=parseFloat(to);
+      if(!isNaN(frN)&&!isNaN(toN)){ const d=toN-frN; dir=d>=0?'up':'down'; delta=(d>=0?'+':'')+d.toFixed(1); }
+    }
+    return {dir, delta};
+  };
+
+  [1,2,3].forEach(t=>{
+    const carriers = ALL_CARRIERS.filter(a=>a.monitoringTier===t).map(a=>({a, v:validityUntil(a)}));
+    // Overdue first, then by days-until-expiry ascending, then composite desc as tiebreak.
+    carriers.sort((x,y)=>{
+      const xd = x.v.days==null ? 1e9 : x.v.days;
+      const yd = y.v.days==null ? 1e9 : y.v.days;
+      if(xd !== yd) return xd - yd;
+      return y.a.composite - x.a.composite;
+    });
+    const tierOverdue = carriers.filter(x=>x.v.urgency==='expired').length;
+    const meta = el('sent'+t+'Meta');
+    if(meta){
+      const base = t===1?'High-frequency':t===2?'Standard':'Low-frequency';
+      meta.textContent = tierOverdue ? `${base} · ${tierOverdue} overdue` : base;
+    }
+    const ctr = el('sent'+t);
+    if(!carriers.length){
+      ctr.innerHTML = `<div class="sn-empty">No carriers in this tier.</div>`;
+      return;
+    }
+    ctr.innerHTML = carriers.map(({a,v})=>{
+      const daysCopy = v.urgency==='expired' ? `${Math.abs(v.days)}d overdue`
+                     : v.days!=null          ? `${v.days}d left`
+                     : 'No date';
+      const chipCls = v.urgency==='expired' ? 'expired'
+                    : v.urgency==='urgent'  ? 'urgent'
+                    : v.urgency==='soon'    ? 'soon'
+                    : v.urgency==='ok'      ? 'ok' : '';
+      const jur = a.jurisdiction || 'Nigeria';
+      // §3.2.7 alerts inbox — pick the more recent of WN-eligible FEED entry vs verdict/composite AUDIT move.
+      // Tie-break favours the verdict move (decision-relevant outcome vs originating event).
+      const ev = latestEvent.get(a.id);
+      const mv = latestVerdictMove.get(a.id);
+      const evDate = ev ? ev.date : '';
+      const mvDate = mv ? (mv.ts||'').slice(0,10) : '';
+      let evKind = null;
+      if(ev && mv)  evKind = (evDate > mvDate) ? 'wn' : 'verdict';
+      else if(ev)   evKind = 'wn';
+      else if(mv)   evKind = 'verdict';
+      const evClsAttr = (evKind === 'wn') ? (ev.cls||[]).filter(c=>SN_WN_CLASSES.has(c)).join(',') : '';
+      let eventLine;
+      if(evKind === 'wn'){
+        const wnBadge = ev.wnId ? `<span class="sn-wn-id" title="Watch Note reference">${ev.wnId}</span>` : '';
+        const head = `<div class="sn-ev-head">${wnBadge}<strong>${ev.title}</strong><span class="aav-inline" title="Andara Analytical View — analyst-curated commentary on the source, not a restatement of fact (PRD §3.4.6)">AAV</span></div>`;
+        const note = ev.desc ? `<div class="sn-ev-note">${ev.desc}</div>` : '';
+        eventLine = `<div class="sn-event"><span class="when">${ev.date}</span><div class="body">${head}${note}</div></div>`;
+      } else if(evKind === 'verdict'){
+        const {dir, delta} = snVerdictDelta(mv);
+        const summary = `${mv.crit}: ${(mv.fr||'—')} → ${(mv.to||'—')}`;
+        const noteCopy = mv.note ? (mv.note.length>140?mv.note.slice(0,137)+'…':mv.note) : '';
+        const head = `<div class="sn-ev-head"><span class="sn-vlabel">Verdict</span><span class="sn-vchip ${dir}">${delta}</span><strong>${summary}</strong></div>`;
+        const note = noteCopy ? `<div class="sn-ev-note">${noteCopy}</div>` : '';
+        eventLine = `<div class="sn-event"><span class="when">${mvDate}</span><div class="body">${head}${note}</div></div>`;
+      } else {
+        eventLine = `<div class="sn-event-empty">● No active alerts</div>`;
+      }
+      return `<div class="sn-card ${v.urgency==='expired'?'overdue':''}" data-aid="${a.id}">
+        <div class="sn-card-hd">
+          <div>
+            <div class="nm">${a.name}</div>
+            <div class="jur">${jur}</div>
+          </div>
+          <div class="sc">
+            <span class="v">${a.composite.toFixed(1)}</span>
+            <span class="vdot ${vdotCls(a.verdict)}"></span>
+          </div>
+        </div>
+        <div class="sn-cadence">
+          <span class="dates">Last ${v.lastRefresh||'—'} · Next ${v.nextRefresh||'—'}</span>
+          <span class="sn-days ${chipCls}">${daysCopy}</span>
+        </div>
+        ${eventLine}
+        <div class="sn-actions">
+          <button type="button" class="sn-refresh" data-cid="${a.id}" data-cname="${a.name}" aria-label="Request refresh for ${a.name}" title="Request off-cycle refresh · routed to CS lead">${refreshSvg}<span>Request refresh</span></button>
+          <button type="button" class="sn-draft" data-cid="${a.id}" data-cname="${a.name}" data-cls="${evClsAttr}" aria-label="Draft Watch Note for ${a.name}" title="Open Watch Note creator with this carrier pre-selected · PRD §3.4.1">${draftSvg}<span>Draft Watch Note</span></button>
+        </div>
+      </div>`;
+    }).join('');
+    ctr.querySelectorAll('.sn-card').forEach(r=>r.addEventListener('click',e=>{
+      if(e.target.closest('.sn-refresh')||e.target.closest('.sn-draft'))return;
+      showAirline(r.dataset.aid);
+    }));
+    // PRD §3.2.4 Refresh request — routed to CS lead. Same pattern as Market Overview rows.
+    ctr.querySelectorAll('.sn-refresh').forEach(btn=>btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      toast('Refresh requested', `Routed to CS lead for ${btn.dataset.cname}`);
+    }));
+    // PRD §3.4.1 Draft Watch Note — jump to workspace form with carrier + classification pre-filled.
+    ctr.querySelectorAll('.sn-draft').forEach(btn=>btn.addEventListener('click',e=>{
+      e.stopPropagation();
+      const prefillCls = btn.dataset.cls ? btn.dataset.cls.split(',').filter(Boolean) : [];
+      snGoToDraftWatchNote(btn.dataset.cid, prefillCls);
+    }));
+  });
+}
+
+// PRD §3.4.1 — navigate to Analyst Workspace, pre-select the carrier in the Watch Note
+// creator (parent SF auto-links via the existing change handler), pre-check the matching
+// classification chips, and scroll the form into view. Headline / body / source are left
+// blank — Watch Notes are analyst-written commentary, not a republish of the FEED item.
+function snGoToDraftWatchNote(cid, prefillCls){
+  const sitem = document.querySelector('.sitem[data-v="workspace"]');
+  if(sitem) sitem.click();
+  setTimeout(()=>{
+    const wnSel = el('wnCarrier');
+    if(wnSel){
+      wnSel.value = cid;
+      wnSel.dispatchEvent(new Event('change'));
+    }
+    const cls = new Set(prefillCls||[]);
+    document.querySelectorAll('#wnClassRow input').forEach(inp=>{ inp.checked = cls.has(inp.value); });
+    const wnForm = el('wnForm');
+    if(wnForm) wnForm.scrollIntoView({behavior:'smooth', block:'start'});
+    const carrier = ALL_CARRIERS.find(x=>x.id===cid);
+    if(carrier) toast('Watch Note creator', `${carrier.name} pre-selected · classifications inherited`);
+  }, 60);
 }
 
 function buildFeed(){
