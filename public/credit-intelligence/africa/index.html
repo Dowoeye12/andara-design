@@ -1017,6 +1017,19 @@ select{
 .sig-cohort{margin-bottom:0;flex-shrink:0}
 .sig-tools{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
 .sig-search,.sig-region{background-color:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--mono);font-size:12px;padding:0 12px;height:32px;outline:none;border-radius:4px;box-sizing:border-box}
+/* Clear-button affordance — attachSearchClears() wraps every search input
+   (.sig-search + #gsearch) in a .search-wrap and appends a × that appears
+   only when the input has content. inline-flex so the wrap behaves both as
+   a fixed-width child (Signal/Audit toolbars) and as a flex:1 child inside
+   the top-nav .cmd shell. */
+.search-wrap{position:relative;display:inline-flex;align-items:center;vertical-align:middle}
+.search-wrap .sig-search{padding-right:30px}
+.search-wrap input#gsearch{padding-right:22px}
+.cmd .search-wrap{flex:1;min-width:0}
+.cmd .search-wrap input#gsearch{width:100%}
+.search-wrap .search-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:20px;height:20px;border:none;background:transparent;color:var(--t3);cursor:pointer;display:none;align-items:center;justify-content:center;padding:0;border-radius:50%;font-family:var(--mono);font-size:14px;line-height:1;transition:background .12s,color .12s}
+.search-wrap.has-value .search-clear{display:inline-flex}
+.search-wrap .search-clear:hover{color:var(--t1);background:var(--bg3)}
 .sig-region{padding:0 36px 0 12px;background-position:right 12px center}
 .sig-search{width:220px}
 .sig-search::placeholder{color:var(--t4)}
@@ -1079,6 +1092,8 @@ select{
   .sig-toolbar{flex-direction:column;align-items:stretch}
   .sig-tools{margin-left:0;width:100%}
   .sig-search{flex:1;min-width:0;width:auto}
+  .search-wrap{flex:1;min-width:0;display:flex}
+  .search-wrap .sig-search{width:100%}
 }
 
 /* Signal — horizon inline chip + override flag + kebab + popover */
@@ -1641,10 +1656,28 @@ select{
 /* ══════════════════════════════════════════
    AUDIT
 ══════════════════════════════════════════ */
-.atbl{width:100%;border-collapse:collapse;font-size:10.5px}
-.atbl th{padding:8px 11px;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600;background:var(--bg3);border-bottom:1px solid var(--line)}
-.atbl td{padding:7px 11px;border-bottom:1px solid var(--line);color:var(--t2);font-family:var(--mono);font-size:10px}
-.atbl tr:hover td{background:rgba(255,255,255,.02)}
+/* Audit table — follows the system table canon (14px tabular floor; mono cells
+   with the same padding rhythm as .sig-tbl / .aw-queue / .mo-rank-tbl).
+   Every td is single-line with the same line-height so rows stay flush; the
+   parent .pb has overflow-x:auto for horizontal scroll when content overflows. */
+.atbl{width:100%;border-collapse:collapse;font-size:14px;table-layout:auto}
+.atbl thead th{padding:12px 14px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.18em;background:var(--bg3);border-bottom:1px solid var(--line);white-space:nowrap;line-height:1.4}
+.atbl tbody td{padding:12px 14px;border-bottom:1px solid var(--line);color:var(--t2);font-family:var(--mono);font-size:14px;vertical-align:middle;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px}
+.atbl tbody tr:last-child td{border-bottom:none}
+.atbl tbody tr[data-aidx]{cursor:pointer;transition:background .12s}
+.atbl tbody tr[data-aidx]:hover td{background:var(--bg3)}
+/* Cell classes are c-* prefixed because the global stylesheet already owns
+   .user / .carrier / .status / .note etc. for unrelated chrome (top-nav user
+   chip, carrier sidebar row, warning banner, etc.) and those rules cascade
+   into td unless we namespace. */
+.atbl td.c-ts{color:var(--t3);font-size:13px;letter-spacing:.04em;width:140px;max-width:140px}
+.atbl td.c-user{color:var(--t1)}
+.atbl td.c-email{color:var(--t3);font-size:13px}
+.atbl td.c-email.empty{color:var(--t4)}
+.atbl td.c-carrier{font-family:var(--sans);font-weight:600;color:var(--t1)}
+.atbl td.c-src{color:var(--t3);font-size:13px;letter-spacing:.04em}
+.atbl td.c-status{font-size:13px;color:var(--t2)}
+.atbl td.c-note{font-family:var(--sans);font-size:13px;color:var(--t2);max-width:320px}
 .af{color:var(--dnd)}.at{color:var(--deploy)}
 
 /* ══════════════════════════════════════════
@@ -1665,11 +1698,22 @@ select{
 /* ══════════════════════════════════════════
    EVIDENCE
 ══════════════════════════════════════════ */
-.evlist{display:flex;flex-direction:column;gap:6px}
-.evitem{display:grid;grid-template-columns:28px 1fr auto;gap:9px;align-items:center;padding:8px 12px;border:1px solid var(--line);background:var(--bg2)}
-.evicon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--t2);font-family:var(--mono);font-size:10px}
-.evinfo h5{font-size:12px;color:var(--t1);font-weight:500;margin-bottom:1px}
-.evinfo p{font-size:10px;color:var(--t3);font-family:var(--mono);letter-spacing:.04em}
+.evlist{display:flex;flex-direction:column;gap:8px}
+.evitem{display:grid;grid-template-columns:36px 1fr auto;gap:12px;align-items:center;padding:14px 16px;border:1px solid var(--line);background:var(--bg2);border-radius:4px}
+.evitem:hover{background:var(--bg3);border-color:var(--line2)}
+.evicon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--t2);font-family:var(--mono);font-size:10px;letter-spacing:.12em;border-radius:3px}
+.evinfo{min-width:0;display:flex;flex-direction:column;gap:4px}
+.evinfo h5{font-size:14px;color:var(--t1);font-weight:600;font-family:var(--sans);margin:0;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evinfo p{font-size:13px;color:var(--t3);font-family:var(--mono);letter-spacing:.04em;margin:0;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evempty{padding:32px 16px;text-align:center;color:var(--t3);font-family:var(--sans);font-size:14px}
+/* Reports toolbar — 3-row stack. Each row is flex with space-between so the
+   left and right anchors balance instead of clumping like the legacy
+   .sig-toolbar wrap. Row 3 (meta) shows the active-filter chip full-width. */
+.rpt-toolbar{display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.rpt-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.rpt-row-meta{justify-content:flex-start}
+.rpt-actions{display:flex;align-items:center;gap:8px}
+.rpt-selects{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
 /* ══════════════════════════════════════════
    FILTER BAR
@@ -2054,7 +2098,7 @@ select{
   .wsform{max-width:100%;}
 
   /* Table min-widths (already inside scrollable wrappers) */
-  .atbl{min-width:700px;}
+  .atbl{min-width:1240px;}
   .ctbl{min-width:600px;}
 
   /* Toast → bottom-center */
@@ -2354,13 +2398,28 @@ select{
 <script>
 // Standalone login — isolated from the main script so it works regardless
 // of any error elsewhere in the app.
+// PRD §3.3.7: authentication events (login, failed attempts, restore) must land
+// on the platform-wide audit log. Pre-script can't touch AUDIT yet, so it
+// persists to localStorage; enterTerminal drains the queue.
+function _logAuthEvent(action, email, status, note){
+  try{
+    var key='andara.audit.auth.v1';
+    var arr=JSON.parse(localStorage.getItem(key)||'[]');
+    var d=new Date(),p=function(n){return String(n).padStart(2,'0');};
+    var ts=d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes());
+    arr.unshift({ts:ts,user:email||'—',carrier:'Session',crit:action,fr:'—',to:'—',src:'Auth',status:status,note:note||'',ip:'—'});
+    if(arr.length>200)arr.length=200;
+    localStorage.setItem(key,JSON.stringify(arr));
+  }catch(_){}
+}
 function _login(){
   var em=(document.getElementById('em').value||'').trim();
   var pw=(document.getElementById('pw').value||'').trim();
   var err=document.getElementById('lerr');
-  if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';return;}
-  if(pw!=='andara2026'){err.textContent='Access key not recognised.';err.style.display='block';return;}
+  if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';_logAuthEvent('Login attempt',em||'—','Rejected · missing fields','Both email and access key required');return;}
+  if(pw!=='andara2026'){err.textContent='Access key not recognised.';err.style.display='block';_logAuthEvent('Login attempt',em,'Rejected · bad key','Access key not recognised');return;}
   try{localStorage.setItem('andara.auth',JSON.stringify({email:em,ts:Date.now()}));}catch(_){}
+  _logAuthEvent('Login',em,'Authenticated','Session opened');
   document.getElementById('login').style.display='none';
   document.getElementById('app').style.display='grid';
   if(typeof enterTerminal==='function'){try{enterTerminal(em);}catch(e){console.error('[login] enterTerminal threw:',e);}}
@@ -2456,7 +2515,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       </div>
       <div class="sitem" data-v="reports">
         <span class="ico"><svg viewBox="0 0 17 17"><path d="M4 2.5 H10 L13 5.5 V14.5 H4 Z"/><line x1="6" y1="9" x2="11" y2="9"/><line x1="6" y1="11.5" x2="11" y2="11.5"/></svg></span>
-        <span class="lbl">Report Centre</span>
+        <span class="lbl">Reports &amp; Downloads</span>
       </div>
     </div>
 
@@ -3120,42 +3179,99 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <h1 class="vtitle">Version History &amp; <em>Audit Trail</em></h1>
       <p class="vsub">Every score movement, every evidence submission, every methodology run. Institutional-grade audit integrity is non-negotiable.</p>
       <div class="sig-toolbar audit-toolbar">
-        <div class="sig-tools" style="margin-left:0;width:100%">
-          <input type="text" class="sig-search" id="auditSearch" placeholder="Search carrier, criterion, note…" style="width:280px">
+        <div class="rtabs" id="auditRange" style="margin:0">
+          <button class="rtab active" data-range="all">All time</button>
+          <button class="rtab" data-range="24h">Last 24h</button>
+          <button class="rtab" data-range="7d">Last 7d</button>
+          <button class="rtab" data-range="30d">Last 30d</button>
+        </div>
+        <div class="sig-tools">
+          <input type="text" class="sig-search" id="auditSearch" placeholder="Search carrier, criterion, note…" style="width:240px">
           <select class="sig-region" id="auditSource">
             <option value="all">All sources</option>
+            <option value="Auth">Auth</option>
             <option value="Signal">Signal</option>
             <option value="Signal Triage">Signal Triage</option>
             <option value="Methodology">Methodology</option>
             <option value="Reports">Reports</option>
-            <option value="Compare">Compare</option>
+            <option value="Comparison">Comparison</option>
             <option value="Sentinel">Sentinel</option>
+            <option value="Workspace">Workspace</option>
+            <option value="Scoring Committee">Scoring Committee</option>
+            <option value="Data ingestion">Data ingestion</option>
+          </select>
+          <select class="sig-region" id="auditUser">
+            <option value="all">All users</option>
           </select>
           <button class="sig-mbtn" id="auditClear" style="height:32px">Clear</button>
-          <span class="sig-live" id="auditScope" style="margin-left:auto;color:var(--t3)">No filter active</span>
+          <button class="sig-mbtn primary" id="auditExport" style="height:32px">Export CSV</button>
         </div>
+        <span class="sig-live" id="auditScope" style="flex-basis:100%;color:var(--t3);font-family:var(--mono);font-size:12px">No filter active</span>
       </div>
-      <div class="panel"><div class="ph"><h3>Audit log</h3><span class="meta" id="auditCount">Last 50 events</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="atbl" id="atbl"></table></div></div>
+      <div class="panel"><div class="ph"><h3>Audit log</h3><span class="meta" id="auditCount">Loading…</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="atbl atbl-rows" id="atbl"></table></div></div>
+      <div class="sig-drawer-back" id="auditDrawerBack"></div>
+      <div class="sig-drawer" id="auditDrawer" aria-hidden="true"></div>
     </div>
 
     <!-- REPORTS -->
     <div class="view" id="vw-reports">
-      <h1 class="vtitle">Report <em>Export Centre</em></h1>
-      <p class="vsub">Generate institutional-grade briefings and Credit Committee summaries. Reports reflect latest validated data and methodology outputs across Nigeria and West Africa.</p>
+      <h1 class="vtitle">Reports &amp; <em>Downloads</em></h1>
+      <p class="vsub">Generate institutional-grade briefings and Credit Committee summaries across the full Sub-Saharan Africa cohort — 85 carriers, 5 regions, methodologies v1.5-NG / v1.0-WA / v1.0-EA. Every deliverable is watermarked with a per-user token and logged to the audit trail (PRD §3.2.6).</p>
       <div class="rptg">
-        <div class="rptc"><h4>Individual carrier brief</h4><p>Single-carrier deep dive. Scorecard, intelligence timeline, risk breakdown, differentiated verdicts, conditions for upgrade, and monitoring triggers — formatted for institutional Credit Committee consumption.</p><div class="rptm"><span>~14 pages</span><span>PDF · DOCX</span></div></div>
-        <div class="rptc"><h4>Nigeria market summary</h4><p>Nigeria-scoped credit climate, cohort distribution, sector trends, regulatory environment, FX outlook, and bank aviation footprint matrix. Quarterly cadence.</p><div class="rptm"><span>~22 pages</span><span>PDF · PPTX</span></div></div>
-        <div class="rptc"><h4>West Africa market summary</h4><p>West Africa regional credit climate across 15 Tier 1 active carriers. Country-level RCS modifiers, AES-bloc analysis, DFI-anchored carrier profiling, and BARS-certified cohort.</p><div class="rptm"><span>~26 pages</span><span>PDF · PPTX</span></div></div>
-        <div class="rptc"><h4>Comparative analysis</h4><p>Side-by-side analysis across selected carriers. Cross-region comparison supported. Designed for portfolio-concentration review and Credit Committee sub-cohort assessment.</p><div class="rptm"><span>~10 pages</span><span>PDF · XLSX</span></div></div>
-        <div class="rptc"><h4>IC summary</h4><p>Single-pager for Investment Committee consumption. Verdict, differentiated verdict by client tier, conditions for upgrade, hard-floor checks, monitoring tier, and signing recommendation framework.</p><div class="rptm"><span>1 page</span><span>PDF</span></div></div>
-        <div class="rptc"><h4>Africa-wide portfolio memo</h4><p>Combined Nigeria + West Africa portfolio view. Cohort distribution, region-by-region verdict summary, cross-region comparison anchors, and institutional client-tier differentiation analysis.</p><div class="rptm"><span>~18 pages</span><span>PDF</span></div></div>
+        <div class="rptc" data-deliverable="Carrier brief" data-scope-kind="carrier" data-format="PDF"><h4>Individual carrier brief</h4><p>Single-carrier deep dive. Scorecard, intelligence timeline, risk breakdown, differentiated verdicts, conditions for upgrade, and monitoring triggers — formatted for institutional Credit Committee consumption.</p><div class="rptm"><span>~14 pages</span><span>PDF · DOCX</span></div></div>
+        <div class="rptc" data-deliverable="Nigeria market summary" data-scope-kind="region" data-scope="nigeria" data-format="PDF"><h4>Nigeria market summary</h4><p>Nigeria-scoped credit climate, cohort distribution, sector trends, regulatory environment, FX outlook, and bank aviation footprint matrix. Quarterly cadence.</p><div class="rptm"><span>~22 pages</span><span>PDF · PPTX</span></div></div>
+        <div class="rptc" data-deliverable="West Africa market summary" data-scope-kind="region" data-scope="west-africa" data-format="PDF"><h4>West Africa market summary</h4><p>West Africa regional credit climate across 15 Tier 1 active carriers. Country-level RCS modifiers, AES-bloc analysis, DFI-anchored carrier profiling, and BARS-certified cohort.</p><div class="rptm"><span>~26 pages</span><span>PDF · PPTX</span></div></div>
+        <div class="rptc" data-deliverable="East Africa market summary" data-scope-kind="region" data-scope="east-africa" data-format="PDF"><h4>East Africa market summary</h4><p>East African cohort across 21 carriers. Ethiopian Group JV modifier mechanics, EU Air Safety List exposure (Tanzania), and conflict-adjusted scoring for active-conflict jurisdictions.</p><div class="rptm"><span>~24 pages</span><span>PDF · PPTX</span></div></div>
+        <div class="rptc" data-deliverable="Southern Africa market summary" data-scope-kind="region" data-scope="southern-africa" data-format="PDF"><h4>Southern Africa market summary</h4><p>Southern African cohort: 58-carrier universe (10 Full Pass 3 / 2 Ethiopian JV / 46 Preliminary). Airlink + FlySafair Deploy anchors; SAA / LAM / Air Zimbabwe / Air Botswana DND set.</p><div class="rptm"><span>~28 pages</span><span>PDF · PPTX</span></div></div>
+        <div class="rptc" data-deliverable="Central Africa market summary" data-scope-kind="region" data-scope="central-africa" data-format="PDF"><h4>Central Africa market summary</h4><p>Central African cohort across 11 carriers / 8 jurisdictions. No Deploy verdicts; 4 Watch (Afrijet/FlyGabon, Air Congo, Equaflight, Trans Air Congo) / 7 DND. Sovereign opacity narrative.</p><div class="rptm"><span>~20 pages</span><span>PDF · PPTX</span></div></div>
+        <div class="rptc" data-deliverable="Comparative analysis" data-scope-kind="compare" data-format="PDF"><h4>Comparative analysis</h4><p>Side-by-side analysis across selected carriers. Cross-region comparison supported. Designed for portfolio-concentration review and Credit Committee sub-cohort assessment.</p><div class="rptm"><span>~10 pages</span><span>PDF · XLSX</span></div></div>
+        <div class="rptc" data-deliverable="IC summary" data-scope-kind="carrier" data-format="PDF"><h4>IC summary</h4><p>Single-pager for Investment Committee consumption. Verdict, differentiated verdict by client tier, conditions for upgrade, hard-floor checks, monitoring tier, and signing recommendation framework.</p><div class="rptm"><span>1 page</span><span>PDF</span></div></div>
+        <div class="rptc" data-deliverable="Africa-wide portfolio memo" data-scope-kind="all" data-format="PDF"><h4>Africa-wide portfolio memo</h4><p>Combined pan-African portfolio view across 5 regions and 85 carriers. Cohort distribution, region-by-region verdict summary, cross-region comparison anchors, and institutional client-tier differentiation analysis.</p><div class="rptm"><span>~18 pages</span><span>PDF</span></div></div>
       </div>
-      <div class="panel" style="margin-top:20px"><div class="ph"><h3>Recent exports</h3><span class="meta">Last generated</span></div><div class="pb"><div class="evlist">
-        <div class="evitem"><div class="evicon">PDF</div><div class="evinfo"><h5>ASKY Airlines · IC Summary · West Africa Pass 3</h5><p>2026-05-13 · 09:00 · v1.0-WA · Subscriber · Deploy verdict confirmed</p></div><button class="btn btn-sm">Download</button></div>
-        <div class="evitem"><div class="evicon">PDF</div><div class="evinfo"><h5>West Africa · Tier 1 Market Brief · May 2026</h5><p>2026-05-13 · 09:00 · v1.0-WA · Subscriber distribution</p></div><button class="btn btn-sm">Download</button></div>
-        <div class="evitem"><div class="evicon">PDF</div><div class="evinfo"><h5>Ibom Air · IC Summary · Nigeria v1.5</h5><p>2026-05-04 · 14:22 · v1.5-NG · Internal</p></div><button class="btn btn-sm">Download</button></div>
-        <div class="evitem"><div class="evicon">XLSX</div><div class="evinfo"><h5>Compare · ASKY × Air Côte d'Ivoire × Ibom Air × AWA</h5><p>2026-05-13 · Cross-region comparison</p></div><button class="btn btn-sm">Download</button></div>
-      </div></div></div>
+      <!-- Row 1: scope (date range) + global actions. Row 2: filters (search + dropdowns).
+           Each row uses justify-content:space-between so left/right anchors balance. -->
+      <div class="rpt-toolbar" style="margin-top:24px">
+        <div class="rpt-row">
+          <div class="rtabs" id="rptRange" style="margin:0">
+            <button class="rtab active" data-range="all">All time</button>
+            <button class="rtab" data-range="24h">Last 24h</button>
+            <button class="rtab" data-range="7d">Last 7d</button>
+            <button class="rtab" data-range="30d">Last 30d</button>
+          </div>
+          <div class="rpt-actions">
+            <button class="sig-mbtn" id="rptClear" style="height:32px">Clear</button>
+            <button class="sig-mbtn primary" id="rptAccessLog" style="height:32px">Access log (CSV)</button>
+          </div>
+        </div>
+        <div class="rpt-row">
+          <input type="text" class="sig-search" id="rptSearch" placeholder="Search deliverable, carrier, token…" style="width:280px">
+          <div class="rpt-selects">
+            <select class="sig-region" id="rptRegion">
+              <option value="all">All regions</option>
+              <option value="nigeria">Nigeria</option>
+              <option value="west-africa">West Africa</option>
+              <option value="east-africa">East Africa</option>
+              <option value="southern-africa">Southern Africa</option>
+              <option value="central-africa">Central Africa</option>
+            </select>
+            <select class="sig-region" id="rptCarrier">
+              <option value="all">All carriers</option>
+            </select>
+            <select class="sig-region" id="rptFormat">
+              <option value="all">All formats</option>
+              <option value="PDF">PDF</option>
+              <option value="DOCX">DOCX</option>
+              <option value="XLSX">XLSX</option>
+              <option value="PPTX">PPTX</option>
+              <option value="CSV">CSV</option>
+            </select>
+          </div>
+        </div>
+        <div class="rpt-row rpt-row-meta">
+          <span class="sig-live" id="rptScope" style="color:var(--t3);font-family:var(--mono);font-size:12px">No filter active</span>
+        </div>
+      </div>
+      <div class="panel"><div class="ph"><h3>Recent exports</h3><span class="meta" id="rptRecentMeta">Live · sourced from audit trail</span></div><div class="pb"><div class="evlist" id="rptRecentList"></div></div></div>
     </div>
   </main>
 </div>
@@ -3409,6 +3525,25 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <div class="sig-mfooter">
       <button class="sig-mbtn" data-sig-close="ccDecisionModal">Cancel</button>
       <button class="sig-mbtn primary" id="ccDecisionConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reports: carrier-picker modal (per PRD §3.2.6 — single-carrier deliverables) -->
+<div class="sig-mback" id="rptCarrierModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3 id="rptCarrierTitle">Select carrier</h3><button class="close" data-sig-close="rptCarrierModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="rptCarrierSummary"></div>
+      <div class="sig-mfield">
+        <label>Carrier</label>
+        <select id="rptCarrierSelect"></select>
+        <div class="helper">Pick the carrier this deliverable will scope. Watermark + audit-log entry both stamp the carrier name.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="rptCarrierModal">Cancel</button>
+      <button class="sig-mbtn primary" id="rptCarrierConfirm">Generate</button>
     </div>
   </div>
 </div>
@@ -4639,20 +4774,20 @@ const FEED = [
 ];
 
 const AUDIT = [
-  {ts:'2026-05-13 11:00',user:'lead.analyst',carrier:'Central Africa Tier 1',crit:'Pass 4 integration',fr:'—',to:'11 carriers · 8 jurisdictions',src:'methodology',status:'Approved · CCC',note:'CA Pass 4 ingested. DEPLOY: 0. WATCH: 4 (Afrijet/FlyGabon, Air Congo, Equaflight, Trans Air Congo). DND: 7. Sub-Saharan Africa complete.'},
-  {ts:'2026-05-13 10:00',user:'lead.analyst',carrier:'Southern Africa Tier 1',crit:'Pass 4 integration',fr:'—',to:'58 carriers · 10 jurisdictions',src:'methodology',status:'Approved · CCC',note:'58-carrier SA universe ingested. 10 Full Pass 3 · 2 Ethiopian JV · 46 Preliminary. DEPLOY: Airlink (80.2) + FlySafair (79.6). DND: SAA + Air Zimbabwe + LAM + Air Botswana.'},
-  {ts:'2026-05-13 09:00',user:'lead.analyst',carrier:'West Africa Tier 1',crit:'Pass 4 integration',fr:'—',to:'15 carriers',src:'methodology',status:'Approved · CCC',note:'Pass 4 ingestion package integrated. Canonical model applied across all carriers.'},
-  {ts:'2026-05-13 09:00',user:'lead.analyst',carrier:'Nigeria Tier 1',crit:'Data model upgrade',fr:'Legacy flat format',to:'Canonical Pass 4 format',src:'methodology',status:'Approved · CCC',note:'All 19 Nigerian carriers upgraded to canonical data model.'},
-  {ts:'2026-05-13 09:00',user:'lead.analyst',carrier:'ASKY Airlines',crit:'Composite',fr:'—',to:'76.8 DEPLOY',src:'Pass 3 Wave 1',status:'Approved · CCC',note:'First Deploy verdict in combined universe. Tier-1-anchor.'},
-  {ts:'2026-04-30 14:22',user:'lead.analyst',carrier:'Allied Air',crit:'Composite',fr:'—',to:'61.5 WATCH',src:'private+public',status:'Approved · CCC',note:'New v1.5-NG addition. IOSA pioneer. 25-year GSA.'},
-  {ts:'2026-04-25 09:30',user:'lead.analyst',carrier:'United Nigeria',crit:'Composite',fr:'44.3',to:'54.8',src:'private',status:'Auto-recalculated',note:'Verdict moved DND → WATCH on three counterparty relationships.'},
-  {ts:'2026-04-22 11:08',user:'data.fetcher',carrier:'Sector',crit:'USOAP CMA',fr:'70.23%',to:'91.45%',src:'public',status:'Validated',note:'ICVM EI April 2026 audit.'},
-  {ts:'2026-04-15 16:55',user:'analyst.field',carrier:'Enugu Air',crit:'AOC status',fr:'Virtual (XEJet)',to:'Independent',src:'regulatory',status:'Approved',note:'NCAA AOC issued 10 March 2026.'},
-  {ts:'2026-04-12 08:22',user:'data.fetcher',carrier:'Arik Air',crit:'APS',fr:'2.8',to:'2.5',src:'public',status:'Auto-applied',note:'CFM56 uncontained failure 5N-MJF.'},
-  {ts:'2026-04-08 13:00',user:'data.fetcher',carrier:'Sector',crit:'FX reserves',fr:'$48.1B',to:'$49.4B',src:'macro',status:'Validated',note:'CBN end-March 2026.'},
-  {ts:'2026-03-15 15:42',user:'data.fetcher',carrier:'Air Peace',crit:'Regulatory enforcement',fr:'2 open',to:'3 open',src:'regulatory',status:'Auto-applied',note:'NCAA summons LHR–ABV stranding.'},
-  {ts:'2026-02-28 11:11',user:'data.fetcher',carrier:'Green Africa',crit:'Fleet',fr:'0 owned',to:'2 owned (5N-GAB, 5N-GAC)',src:'financial',status:'Validated',note:'Access Bank financing confirmed.'},
-  {ts:'2026-01-25 08:15',user:'lead.analyst',carrier:'United Nigeria',crit:'Lender stack',fr:'Opaque',to:'Zenith Bank named',src:'private',status:'Approved · CCC',note:'Andara ground intelligence B737 financing.'}
+  {ts:'2026-05-13 11:00',user:'lead.analyst',carrier:'Central Africa Tier 1',crit:'Pass 4 integration',fr:'—',to:'11 carriers · 8 jurisdictions',src:'Methodology',status:'Approved · CCC',note:'CA Pass 4 ingested. DEPLOY: 0. WATCH: 4 (Afrijet/FlyGabon, Air Congo, Equaflight, Trans Air Congo). DND: 7. Sub-Saharan Africa complete.'},
+  {ts:'2026-05-13 10:00',user:'lead.analyst',carrier:'Southern Africa Tier 1',crit:'Pass 4 integration',fr:'—',to:'58 carriers · 10 jurisdictions',src:'Methodology',status:'Approved · CCC',note:'58-carrier SA universe ingested. 10 Full Pass 3 · 2 Ethiopian JV · 46 Preliminary. DEPLOY: Airlink (80.2) + FlySafair (79.6). DND: SAA + Air Zimbabwe + LAM + Air Botswana.'},
+  {ts:'2026-05-13 09:00',user:'lead.analyst',carrier:'West Africa Tier 1',crit:'Pass 4 integration',fr:'—',to:'15 carriers',src:'Methodology',status:'Approved · CCC',note:'Pass 4 ingestion package integrated. Canonical model applied across all carriers.'},
+  {ts:'2026-05-13 09:00',user:'lead.analyst',carrier:'Nigeria Tier 1',crit:'Data model upgrade',fr:'Legacy flat format',to:'Canonical Pass 4 format',src:'Methodology',status:'Approved · CCC',note:'All 19 Nigerian carriers upgraded to canonical data model.'},
+  {ts:'2026-05-13 09:00',user:'lead.analyst',carrier:'ASKY Airlines',crit:'Composite',fr:'—',to:'76.8 DEPLOY',src:'Data ingestion',status:'Approved · CCC',note:'First Deploy verdict in combined universe. Tier-1-anchor. Pass 3 Wave 1.'},
+  {ts:'2026-04-30 14:22',user:'lead.analyst',carrier:'Allied Air',crit:'Composite',fr:'—',to:'61.5 WATCH',src:'Data ingestion',status:'Approved · CCC',note:'New v1.5-NG addition. IOSA pioneer. 25-year GSA. Private + public sources.'},
+  {ts:'2026-04-25 09:30',user:'lead.analyst',carrier:'United Nigeria',crit:'Composite',fr:'44.3',to:'54.8',src:'Data ingestion',status:'Auto-recalculated',note:'Verdict moved DND → WATCH on three counterparty relationships. Private source.'},
+  {ts:'2026-04-22 11:08',user:'data.fetcher',carrier:'Sector',crit:'USOAP CMA',fr:'70.23%',to:'91.45%',src:'Data ingestion',status:'Validated',note:'ICVM EI April 2026 audit. Public source.'},
+  {ts:'2026-04-15 16:55',user:'analyst.field',carrier:'Enugu Air',crit:'AOC status',fr:'Virtual (XEJet)',to:'Independent',src:'Data ingestion',status:'Approved',note:'NCAA AOC issued 10 March 2026. Regulatory source.'},
+  {ts:'2026-04-12 08:22',user:'data.fetcher',carrier:'Arik Air',crit:'APS',fr:'2.8',to:'2.5',src:'Data ingestion',status:'Auto-applied',note:'CFM56 uncontained failure 5N-MJF. Public source.'},
+  {ts:'2026-04-08 13:00',user:'data.fetcher',carrier:'Sector',crit:'FX reserves',fr:'$48.1B',to:'$49.4B',src:'Data ingestion',status:'Validated',note:'CBN end-March 2026. Macro source.'},
+  {ts:'2026-03-15 15:42',user:'data.fetcher',carrier:'Air Peace',crit:'Regulatory enforcement',fr:'2 open',to:'3 open',src:'Data ingestion',status:'Auto-applied',note:'NCAA summons LHR–ABV stranding. Regulatory source.'},
+  {ts:'2026-02-28 11:11',user:'data.fetcher',carrier:'Green Africa',crit:'Fleet',fr:'0 owned',to:'2 owned (5N-GAB, 5N-GAC)',src:'Data ingestion',status:'Validated',note:'Access Bank financing confirmed. Financial source.'},
+  {ts:'2026-01-25 08:15',user:'lead.analyst',carrier:'United Nigeria',crit:'Lender stack',fr:'Opaque',to:'Zenith Bank named',src:'Data ingestion',status:'Approved · CCC',note:'Andara ground intelligence B737 financing. Private source.'}
 ];
 
 // ============================================================================
@@ -4800,7 +4935,10 @@ function moWatermarkToken(deliverable,carrierIdOrCohort){
   const ts=(function(){const d=new Date(),p=n=>String(n).padStart(2,'0');return`${d.getUTCFullYear()}${p(d.getUTCMonth()+1)}${p(d.getUTCDate())}T${p(d.getUTCHours())}${p(d.getUTCMinutes())}${p(d.getUTCSeconds())}Z`;})();
   const seed=`${user}|${ts}|${deliverable}|${carrierIdOrCohort}|${Math.random()}`;
   const id=moHashStr(seed);
-  return{user,ts,deliverableId:`AND-${deliverable.toUpperCase()}-${id}`,token:`tok-${id.slice(0,8)}`};
+  // PRD §3.3.7: deliverable-download log must capture user, IP, watermark
+  // token, deliverable ID. IP is unavailable in the browser; at M1 the field
+  // is stubbed '—' and the M2 backend will populate it server-side.
+  return{user,ip:'—',ts,deliverableId:`AND-${deliverable.toUpperCase()}-${id}`,token:`tok-${id.slice(0,8)}`};
 }
 function moLogDeliverable(opts){
   // opts: {carrier, deliverable ('Verdict letter'|'Cohort export'|...), format, scope}
@@ -4809,16 +4947,277 @@ function moLogDeliverable(opts){
   AUDIT.unshift({
     ts,
     user:wm.user,
+    ip:wm.ip,
     carrier:opts.carrier||opts.scope||'Cohort',
     crit:`${opts.deliverable} download`,
     fr:'—',
     to:`${opts.format||'PDF'} · watermarked`,
     src:'Reports',
     status:'Delivered',
+    deliverableId:wm.deliverableId,
+    token:wm.token,
     note:`${wm.deliverableId} · ${wm.token} · scope=${opts.scope||'single'}`
   });
   if(typeof buildAudit==='function')buildAudit();
   return wm;
+}
+
+// ── Report Centre generators (PRD §3.2.6 — watermarked download) ──────────
+// Every card click flows through rptOnCardClick. Region/all/compare scopes
+// generate immediately; carrier-scoped cards (Individual brief, IC summary)
+// open the picker modal first. All flows funnel through rptGenerate which
+// calls moLogDeliverable (writes AUDIT row), emits a stub Blob with the
+// watermark stamp baked in, and triggers the browser download.
+function rptHumanScope(scope){
+  if(!scope||scope==='all')return'Sub-Saharan Africa (85 carriers)';
+  if(scope==='nigeria')return'Nigeria';
+  if(scope==='west-africa')return'West Africa';
+  if(scope==='east-africa')return'East Africa';
+  if(scope==='southern-africa')return'Southern Africa';
+  if(scope==='central-africa')return'Central Africa';
+  return scope;
+}
+function rptCarriersInScope(scope){
+  if(!scope||scope==='all')return ALL_CARRIERS;
+  return ALL_CARRIERS.filter(a=>a.region===scope);
+}
+function rptStubBody(opts,wm){
+  // Plain-text stub — at M1 the renderer is server-side; here we ship a
+  // text envelope that proves the watermark + scope chain end-to-end.
+  const lines=[
+    `ANDARA CREDIT INTELLIGENCE — ${opts.deliverable.toUpperCase()}`,
+    `=`.repeat(72),
+    ``,
+    `Deliverable ID : ${wm.deliverableId}`,
+    `Watermark token: ${wm.token}`,
+    `Issued (UTC)   : ${wm.ts}`,
+    `User           : ${wm.user}`,
+    `IP             : ${wm.ip||'—'}`,
+    `Scope          : ${opts.scope||'single'}`,
+    `Carrier        : ${opts.carrier||'—'}`,
+    ``,
+    `─`.repeat(72),
+    `This is the M1 stub envelope for the ${opts.deliverable}. The full PDF`,
+    `is rendered server-side at M2 via the report-generation pipeline.`,
+    ``,
+    `Methodology version: v1.5-NG / v1.0-WA / v1.0-EA (per region scope).`,
+    `Approved by the Scoring Committee. Watermarked per PRD §3.2.6.`,
+    ``
+  ];
+  return lines.join('\r\n');
+}
+function rptDownloadBlob(wm,opts){
+  const body=rptStubBody(opts,wm);
+  const ext=(opts.format||'PDF').toLowerCase()==='csv'?'csv':(opts.format||'PDF').toLowerCase()==='xlsx'?'xlsx':'txt';
+  const mime=ext==='csv'?'text/csv;charset=utf-8':'text/plain;charset=utf-8';
+  const blob=new Blob(['﻿'+body],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`${wm.deliverableId}.${ext}`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},0);
+}
+function rptGenerate(opts){
+  const wm=moLogDeliverable(opts);
+  rptDownloadBlob(wm,opts);
+  toast(`${opts.deliverable} delivered`,`${opts.carrier||rptHumanScope(opts.scope)} · ${wm.deliverableId} · ${wm.token}`);
+  if(typeof buildReportsRecent==='function')buildReportsRecent();
+}
+function rptOnCardClick(card){
+  const kind=card.dataset.scopeKind;
+  const deliverable=card.dataset.deliverable;
+  const format=card.dataset.format||'PDF';
+  if(kind==='carrier'){
+    rptOpenCarrierPicker(deliverable,format);
+    return;
+  }
+  if(kind==='compare'){
+    const ids=(typeof cmpSlots!=='undefined'?cmpSlots:[]).filter(Boolean);
+    if(!ids.length){
+      toast('Comparative analysis · no carriers selected','Open Comparison and add at least 2 carriers to a saved set, then re-export.');
+      return;
+    }
+    const names=ids.map(id=>{const c=ALL_CARRIERS.find(x=>x.id===id);return c?c.name:id;});
+    rptGenerate({carrier:names.join(' × '),deliverable,format,scope:`compare-${ids.length}`});
+    return;
+  }
+  if(kind==='region'){
+    const scope=card.dataset.scope;
+    rptGenerate({carrier:rptHumanScope(scope),deliverable,format,scope});
+    return;
+  }
+  // 'all' → pan-African portfolio memo
+  rptGenerate({carrier:rptHumanScope('all'),deliverable,format,scope:'all'});
+}
+function rptOpenCarrierPicker(deliverable,format){
+  const sel=el('rptCarrierSelect');
+  if(!sel)return;
+  sel.innerHTML=[...ALL_CARRIERS].sort((a,b)=>a.name.localeCompare(b.name))
+    .map(a=>`<option value="${a.id}">${a.name} · ${a.jurisdiction||a.region}</option>`).join('');
+  if(typeof ddInitAll==='function')ddInitAll(document.getElementById('rptCarrierModal'));
+  el('rptCarrierTitle').textContent=deliverable;
+  el('rptCarrierSummary').innerHTML=`<strong>${deliverable}</strong> · single-carrier deliverable · format ${format}`;
+  el('rptCarrierConfirm').dataset.deliverable=deliverable;
+  el('rptCarrierConfirm').dataset.format=format;
+  sigOpenModal('rptCarrierModal');
+}
+// Live Recent exports — sourced from AUDIT entries where src='Reports'. These
+// are the rows moLogDeliverable wrote when a deliverable was generated; any
+// new export auto-appears here via the rptGenerate → buildReportsRecent call.
+const rptRecentFilter={region:'all',carrier:'all',format:'all',range:'all',q:''};
+function rptAuditRows(){
+  return AUDIT.filter(l=>l.src==='Reports');
+}
+function rptFormatOf(l){
+  const t=(l.to||'').toUpperCase();
+  if(t.includes('XLSX'))return'XLSX';
+  if(t.includes('CSV'))return'CSV';
+  if(t.includes('DOCX'))return'DOCX';
+  if(t.includes('PPTX'))return'PPTX';
+  return'PDF';
+}
+function rptDeliverableOf(l){
+  // crit shape: '<Deliverable> download'
+  return (l.crit||'').replace(/\s*download\s*$/i,'').trim()||'Deliverable';
+}
+function rptScopeOf(l){
+  // note shape: '<deliverableId> · <token> · scope=<scope>'
+  const m=(l.note||'').match(/scope=([^\s·]+)/);
+  return m?m[1]:'single';
+}
+function rptCarrierToRegion(carrierName){
+  const a=ALL_CARRIERS.find(x=>x.name===carrierName);
+  return a?a.region:null;
+}
+function rptMatchesRecentFilter(l){
+  const fmt=rptFormatOf(l);
+  if(rptRecentFilter.format!=='all'&&fmt!==rptRecentFilter.format)return false;
+  if(rptRecentFilter.region!=='all'){
+    const scope=rptScopeOf(l);
+    const region=rptCarrierToRegion(l.carrier);
+    if(scope!==rptRecentFilter.region&&region!==rptRecentFilter.region)return false;
+  }
+  if(rptRecentFilter.carrier!=='all'){
+    const a=ALL_CARRIERS.find(x=>x.id===rptRecentFilter.carrier);
+    if(!a||l.carrier!==a.name)return false;
+  }
+  const cutoff=(typeof auditRangeCutoffMs==='function')?auditRangeCutoffMs(rptRecentFilter.range):null;
+  if(cutoff!==null&&(typeof auditRowTsMs==='function')&&auditRowTsMs(l)<cutoff)return false;
+  if(rptRecentFilter.q){
+    const q=rptRecentFilter.q;
+    if(!(l.carrier||'').toLowerCase().includes(q)&&!(l.crit||'').toLowerCase().includes(q)&&!(l.note||'').toLowerCase().includes(q))return false;
+  }
+  return true;
+}
+function buildReportsRecent(){
+  const host=el('rptRecentList');
+  if(!host)return;
+  const all=rptAuditRows();
+  const filtered=all.filter(rptMatchesRecentFilter);
+  const meta=el('rptRecentMeta');
+  if(meta)meta.textContent=`${filtered.length} of ${all.length} exports`;
+  if(!filtered.length){
+    host.innerHTML=`<div class="evempty">${all.length?'No exports match the current filter.':'No exports yet. Generate a deliverable above to populate this list.'}</div>`;
+    return;
+  }
+  host.innerHTML=filtered.slice(0,40).map((l,i)=>{
+    const fmt=rptFormatOf(l);
+    const deliverable=rptDeliverableOf(l);
+    const scope=rptScopeOf(l);
+    const noteParts=(l.note||'').split('·').map(s=>s.trim());
+    const did=noteParts[0]||'';
+    const token=noteParts[1]||'';
+    return `<div class="evitem">
+      <div class="evicon">${fmt}</div>
+      <div class="evinfo">
+        <h5>${deliverable} · ${l.carrier||rptHumanScope(scope)}</h5>
+        <p>${l.ts} · ${l.user} · ${did}${token?' · '+token:''}</p>
+      </div>
+      <button class="sig-mbtn" data-rpt-redl="${i}">Re-download</button>
+    </div>`;
+  }).join('');
+  host.querySelectorAll('button[data-rpt-redl]').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();
+    const i=parseInt(b.dataset.rptRedl,10);
+    const l=filtered[i];
+    if(!l)return;
+    rptGenerate({carrier:l.carrier,deliverable:rptDeliverableOf(l),format:rptFormatOf(l),scope:rptScopeOf(l)});
+  }));
+}
+function bindReportsFilter(){
+  if(window._rptFilterBound)return;window._rptFilterBound=true;
+  const q=el('rptSearch'),reg=el('rptRegion'),car=el('rptCarrier'),fmt=el('rptFormat'),clr=el('rptClear'),rng=el('rptRange'),acc=el('rptAccessLog');
+  // Populate carrier select from ALL_CARRIERS.
+  if(car){
+    car.innerHTML='<option value="all">All carriers</option>'+[...ALL_CARRIERS].sort((a,b)=>a.name.localeCompare(b.name)).map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  }
+  const sync=()=>{
+    const bits=[];
+    if(rptRecentFilter.q)bits.push(`"${rptRecentFilter.q}"`);
+    if(rptRecentFilter.region!=='all')bits.push(`region=${rptRecentFilter.region}`);
+    if(rptRecentFilter.carrier!=='all'){const a=ALL_CARRIERS.find(x=>x.id===rptRecentFilter.carrier);bits.push(`carrier=${a?a.name:rptRecentFilter.carrier}`);}
+    if(rptRecentFilter.format!=='all')bits.push(`format=${rptRecentFilter.format}`);
+    if(rptRecentFilter.range!=='all')bits.push(`window=${rptRecentFilter.range}`);
+    const scope=el('rptScope');
+    if(scope){scope.textContent=bits.length?`Filter: ${bits.join(' · ')}`:'No filter active';scope.style.color=bits.length?'var(--amber)':'var(--t3)';}
+    buildReportsRecent();
+  };
+  if(q)q.addEventListener('input',e=>{rptRecentFilter.q=e.target.value.trim().toLowerCase();sync();});
+  if(reg)reg.addEventListener('change',e=>{rptRecentFilter.region=e.target.value;sync();});
+  if(car)car.addEventListener('change',e=>{rptRecentFilter.carrier=e.target.value;sync();});
+  if(fmt)fmt.addEventListener('change',e=>{rptRecentFilter.format=e.target.value;sync();});
+  if(rng)rng.addEventListener('click',e=>{
+    const btn=e.target.closest('.rtab');if(!btn)return;
+    rptRecentFilter.range=btn.dataset.range||'all';
+    rng.querySelectorAll('.rtab').forEach(b=>b.classList.toggle('active',b===btn));
+    sync();
+  });
+  if(clr)clr.addEventListener('click',()=>{
+    rptRecentFilter.q='';rptRecentFilter.region='all';rptRecentFilter.carrier='all';rptRecentFilter.format='all';rptRecentFilter.range='all';
+    if(q)q.value='';if(reg)reg.value='all';if(car)car.value='all';if(fmt)fmt.value='all';
+    if(rng)rng.querySelectorAll('.rtab').forEach(b=>b.classList.toggle('active',b.dataset.range==='all'));
+    sync();
+  });
+  if(acc)acc.addEventListener('click',rptExportAccessLog);
+  // Re-enhance the selects with the modern dropdown system.
+  if(typeof ddInitAll==='function')ddInitAll(document.querySelector('#vw-reports .rpt-toolbar'));
+}
+// PRD §3.2.6 audit-export — CSV of every deliverable-download row (src='Reports'),
+// scoped to the current filter. Itself watermarked + audited via moLogDeliverable.
+function rptExportAccessLog(){
+  const rows=rptAuditRows().filter(rptMatchesRecentFilter);
+  if(!rows.length){toast('No exports to log','Adjust the filter so at least one delivery matches.');return;}
+  const scopeBits=[];
+  if(rptRecentFilter.region!=='all')scopeBits.push('region='+rptRecentFilter.region);
+  if(rptRecentFilter.carrier!=='all'){const a=ALL_CARRIERS.find(x=>x.id===rptRecentFilter.carrier);scopeBits.push('carrier='+(a?a.name:rptRecentFilter.carrier));}
+  if(rptRecentFilter.format!=='all')scopeBits.push('format='+rptRecentFilter.format);
+  if(rptRecentFilter.range!=='all')scopeBits.push('window='+rptRecentFilter.range);
+  if(rptRecentFilter.q)scopeBits.push('q="'+rptRecentFilter.q+'"');
+  const scope=scopeBits.length?scopeBits.join('|'):'all-exports';
+  const wm=moLogDeliverable({carrier:'Access log',deliverable:'Reports access log',format:'CSV',scope});
+  const headers=['ts','user','ip','carrier','deliverable','format','deliverableId','token','scope'];
+  const lines=[headers.join(',')];
+  const cell=(typeof auditCsvCell==='function')?auditCsvCell:(v=>{const s=v==null?'':String(v);return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;});
+  rows.forEach(l=>{
+    const noteParts=(l.note||'').split('·').map(s=>s.trim());
+    lines.push([l.ts,l.user,l.ip||'',l.carrier,rptDeliverableOf(l),rptFormatOf(l),noteParts[0]||'',noteParts[1]||'',rptScopeOf(l)].map(cell).join(','));
+  });
+  const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=wm.deliverableId+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},0);
+  toast('Access log delivered',`${rows.length} rows · ${wm.deliverableId} · ${wm.token}`);
+}
+function rptCarrierConfirmGen(){
+  const sel=el('rptCarrierSelect');
+  const cid=sel?sel.value:'';
+  const a=ALL_CARRIERS.find(x=>x.id===cid);
+  if(!a){toast('Pick a carrier','Select one carrier to generate this deliverable.');return;}
+  const deliverable=el('rptCarrierConfirm').dataset.deliverable||'Carrier brief';
+  const format=el('rptCarrierConfirm').dataset.format||'PDF';
+  sigCloseModal('rptCarrierModal');
+  rptGenerate({carrier:a.name,deliverable,format,scope:'single'});
 }
 
 //  — refresh request logged to AUDIT so it surfaces on /audit and /intel.
@@ -4837,9 +5236,9 @@ function logRefreshRequest(cid, cname, origin){
     crit: 'Refresh request',
     fr: 'Active verdict',
     to: 'CS queue',
-    src: origin || 'Sentinel',
+    src: 'Sentinel',
     status: 'Routed to CS lead',
-    note: `${tier} · ${nextLbl}`
+    note: `${tier} · ${nextLbl} · origin=${origin||'Sentinel'}`
   });
   if(typeof buildAudit==='function')buildAudit();
   if(typeof intelRender==='function' && document.getElementById('fullFeed')) intelRender();
@@ -5566,12 +5965,16 @@ const VIEW_TO_NAV = {
   'vw-workspace':{v:'workspace',lbl:'Analyst Workspace'},
   'vw-committee':{v:'committee',lbl:'Scoring Committee'},
   'vw-audit':{v:'audit',lbl:'Audit Trail'},
-  'vw-reports':{v:'reports',lbl:'Report Centre'},
+  'vw-reports':{v:'reports',lbl:'Reports & Downloads'},
 };
 let lastOriginNav = VIEW_TO_NAV['vw-dashboard'];
 
 function showAirline(id){
   const a=ALL_CARRIERS.find(x=>x.id===id);if(!a)return;
+  // Position:fixed drawers survive view changes — close them before navigating
+  // so their backdrops don't black out the carrier profile.
+  if(typeof auditCloseDrawer==='function')auditCloseDrawer();
+  if(typeof sigCloseSrcDrawer==='function')sigCloseSrcDrawer();
   // Capture origin BEFORE switching view. Carrier-to-carrier nav preserves
   // the prior origin.
   const active=document.querySelector('.view.active');
@@ -6333,15 +6736,89 @@ function buildCountryModTable(){
   t.innerHTML=`<thead><tr><th>Jurisdiction</th><th>Bloc</th><th>CTC Status</th><th>EU Blacklist</th><th>Sovereign context</th><th>RCS.6 anchor band</th></tr></thead><tbody>${COUNTRY_METADATA.map(c=>`<tr><td>${c.jurisdiction}${c.aesBloc?` <span style="color:var(--dnd);font-family:var(--mono);font-size:10px">AES</span>`:''}</td><td>${c.bloc}</td><td style="color:${c.ctcStatus.includes('IDERA')?'var(--deploy)':'var(--watch)'}">${c.ctcStatus}</td><td style="color:${c.euBlacklist?'var(--dnd)':'var(--deploy)'}">${c.euBlacklist?'YES — since '+c.euBlacklistSince:'No'}</td><td>${c.sovereignContext}</td><td style="color:${c.rcs6AnchorBand[0]>=6?'var(--deploy)':c.rcs6AnchorBand[0]>=4?'var(--watch)':'var(--dnd)'}">${c.rcs6AnchorBand[0]}–${c.rcs6AnchorBand[1]}/10</td></tr>`).join('')}</tbody>`;
 }
 
-const auditFilter={q:'',src:'all'};
-function buildAudit(){
-  let rows=AUDIT.slice();
-  if(auditFilter.src!=='all')rows=rows.filter(l=>l.src===auditFilter.src);
+const auditFilter={q:'',src:'all',user:'all',range:'all'};
+// Window cutoffs are computed lazily per render so 'last 24h' tracks the wall clock.
+function auditRangeCutoffMs(range){
+  if(range==='24h')return Date.now()-24*3600*1000;
+  if(range==='7d') return Date.now()-7*24*3600*1000;
+  if(range==='30d')return Date.now()-30*24*3600*1000;
+  return null;
+}
+function auditRowTsMs(l){
+  // ts shape is 'YYYY-MM-DD HH:MM' (UTC). Parse defensively.
+  if(!l||!l.ts)return 0;
+  const m=String(l.ts).match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/);
+  if(!m)return 0;
+  return Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5]);
+}
+function auditMatchesFilter(l){
+  if(auditFilter.src!=='all'&&l.src!==auditFilter.src)return false;
+  if(auditFilter.user!=='all'&&l.user!==auditFilter.user)return false;
+  const cutoff=auditRangeCutoffMs(auditFilter.range);
+  if(cutoff!==null&&auditRowTsMs(l)<cutoff)return false;
   if(auditFilter.q){
     const q=auditFilter.q;
-    rows=rows.filter(l=>(l.carrier||'').toLowerCase().includes(q)||(l.crit||'').toLowerCase().includes(q)||(l.note||'').toLowerCase().includes(q)||(l.user||'').toLowerCase().includes(q));
+    if(!(l.carrier||'').toLowerCase().includes(q)&&!(l.crit||'').toLowerCase().includes(q)&&!(l.note||'').toLowerCase().includes(q)&&!(l.user||'').toLowerCase().includes(q))return false;
   }
-  el('atbl').innerHTML=`<thead><tr><th>Timestamp</th><th>User</th><th>Carrier</th><th>Criterion</th><th>From</th><th>To</th><th>Source</th><th>Status</th><th>Note</th></tr></thead><tbody>${rows.length?rows.map(l=>`<tr><td>${l.ts}</td><td>${l.user}</td><td style="color:#fff">${l.carrier}</td><td>${l.crit}</td><td class="af">${l.fr}</td><td class="at">${l.to}</td><td>${l.src}</td><td>${l.status}</td><td style="max-width:200px">${l.note}</td></tr>`).join(''):`<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--t3);font-size:14px">No audit entries match the current filter.</td></tr>`}</tbody>`;
+  return true;
+}
+// PRD §3.3.7 — drain persisted auth events (login / failed / restore) onto AUDIT
+// on each boot. The standalone login script can't touch AUDIT directly, so it
+// writes to localStorage; we replay here. AUDIT is re-seeded fresh on every
+// page load, so no double-replay risk.
+// Wrap each .sig-search input in a .search-wrap and append a × clear button
+// that shows only when the input has a value. Click clears the input and
+// dispatches an 'input' event so the consumer's keyup/input handlers re-render.
+function attachSearchClears(){
+  document.querySelectorAll('input.sig-search, input#gsearch').forEach(inp=>{
+    if(inp.dataset.searchClear)return;inp.dataset.searchClear='1';
+    const wrap=document.createElement('span');
+    wrap.className='search-wrap';
+    inp.parentNode.insertBefore(wrap,inp);
+    wrap.appendChild(inp);
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='search-clear';
+    btn.setAttribute('aria-label','Clear search');
+    btn.innerHTML='&times;';
+    wrap.appendChild(btn);
+    const sync=()=>wrap.classList.toggle('has-value',!!inp.value);
+    inp.addEventListener('input',sync);
+    btn.addEventListener('click',()=>{
+      inp.value='';
+      sync();
+      inp.dispatchEvent(new Event('input',{bubbles:true}));
+      inp.focus();
+    });
+    sync();
+  });
+}
+function authAuditReplay(){
+  try{
+    const arr=JSON.parse(localStorage.getItem('andara.audit.auth.v1')||'[]');
+    if(!Array.isArray(arr)||!arr.length)return;
+    AUDIT.unshift(...arr);
+  }catch(_){}
+}
+// Audit User column carries a mix of kebab-case service accounts (lead.analyst,
+// data.fetcher) and real emails from sigCurrentUser(). Split into User (display
+// handle) + Email (full address; '—' for non-email actors) so the table reads
+// consistently at a glance.
+function auditSplitUser(raw){
+  const s=(raw==null?'':String(raw)).trim();
+  if(!s)return{user:'—',email:''};
+  if(s.indexOf('@')>=0){
+    const local=s.split('@')[0]||s;
+    return{user:local,email:s};
+  }
+  return{user:s,email:''};
+}
+function buildAudit(){
+  auditRefreshUserOptions();
+  const rows=AUDIT.map((l,i)=>({l,i})).filter(o=>auditMatchesFilter(o.l));
+  const tbl=el('atbl');
+  tbl.innerHTML=`<thead><tr><th>Timestamp</th><th>User</th><th>Email</th><th>Carrier</th><th>Criterion</th><th>From</th><th>To</th><th>Source</th><th>Status</th><th>Note</th></tr></thead><tbody>${rows.length?rows.map(o=>{const l=o.l;const u=auditSplitUser(l.user);return`<tr data-aidx="${o.i}"><td class="c-ts">${l.ts||''}</td><td class="c-user">${u.user}</td><td class="c-email${u.email?'':' empty'}">${u.email||'—'}</td><td class="c-carrier">${l.carrier||''}</td><td>${l.crit||''}</td><td class="af">${l.fr||''}</td><td class="at">${l.to||''}</td><td class="c-src">${l.src||''}</td><td class="c-status">${l.status||''}</td><td class="c-note" title="${(l.note||'').replace(/"/g,'&quot;')}">${l.note||''}</td></tr>`;}).join(''):`<tr><td colspan="10" style="padding:32px 14px;text-align:center;color:var(--t3);font-family:var(--sans);font-size:14px">No audit entries match the current filter.</td></tr>`}</tbody>`;
+  tbl.querySelectorAll('tr[data-aidx]').forEach(r=>r.addEventListener('click',()=>auditOpenDrawer(parseInt(r.dataset.aidx,10))));
   const meta=el('auditCount');
   if(meta)meta.textContent=`${rows.length} of ${AUDIT.length} events`;
   const scope=el('auditScope');
@@ -6349,16 +6826,155 @@ function buildAudit(){
     const bits=[];
     if(auditFilter.q)bits.push(`"${auditFilter.q}"`);
     if(auditFilter.src!=='all')bits.push(`source=${auditFilter.src}`);
+    if(auditFilter.user!=='all')bits.push(`user=${auditFilter.user}`);
+    if(auditFilter.range!=='all')bits.push(`window=${auditFilter.range}`);
     scope.textContent=bits.length?`Filter: ${bits.join(' · ')}`:'No filter active';
     scope.style.color=bits.length?'var(--amber)':'var(--t3)';
   }
 }
+function auditRefreshUserOptions(){
+  const sel=el('auditUser');
+  if(!sel)return;
+  // Dedupe by raw user value (filter matches against l.user), label with the
+  // parsed display so emails don't clutter the dropdown.
+  const users=Array.from(new Set(AUDIT.map(l=>l.user).filter(Boolean))).sort((a,b)=>auditSplitUser(a).user.localeCompare(auditSplitUser(b).user));
+  const current=auditFilter.user;
+  const existing=Array.from(sel.options).map(o=>o.value).slice(1);
+  if(existing.length!==users.length||existing.some((u,i)=>u!==users[i])){
+    sel.innerHTML='<option value="all">All users</option>'+users.map(u=>{const p=auditSplitUser(u);return `<option value="${u}">${p.user}</option>`;}).join('');
+    sel.value=current;
+  }
+}
 function bindAuditFilters(){
   if(window._auditBound)return;window._auditBound=true;
-  const q=el('auditSearch'),s=el('auditSource'),c=el('auditClear');
+  const q=el('auditSearch'),s=el('auditSource'),u=el('auditUser'),c=el('auditClear'),x=el('auditExport'),r=el('auditRange');
   if(q)q.addEventListener('input',e=>{auditFilter.q=e.target.value.trim().toLowerCase();buildAudit();});
   if(s)s.addEventListener('change',e=>{auditFilter.src=e.target.value;buildAudit();});
-  if(c)c.addEventListener('click',()=>{auditFilter.q='';auditFilter.src='all';if(q)q.value='';if(s)s.value='all';buildAudit();});
+  if(u)u.addEventListener('change',e=>{auditFilter.user=e.target.value;buildAudit();});
+  if(r)r.addEventListener('click',e=>{
+    const btn=e.target.closest('.rtab');if(!btn)return;
+    auditFilter.range=btn.dataset.range||'all';
+    r.querySelectorAll('.rtab').forEach(b=>b.classList.toggle('active',b===btn));
+    buildAudit();
+  });
+  if(c)c.addEventListener('click',()=>{
+    auditFilter.q='';auditFilter.src='all';auditFilter.user='all';auditFilter.range='all';
+    if(q)q.value='';if(s)s.value='all';if(u)u.value='all';
+    if(r)r.querySelectorAll('.rtab').forEach(b=>b.classList.toggle('active',b.dataset.range==='all'));
+    buildAudit();
+  });
+  if(x)x.addEventListener('click',auditExportCsv);
+}
+// PRD §3.3.7 "exportable" + §3.2.6 "Audit export" — emit the filtered rows as a
+// CSV, watermark the deliverable via moLogDeliverable so the export itself is
+// auditable, and surface the watermark token to the user.
+function auditFilteredRows(){
+  return AUDIT.filter(auditMatchesFilter);
+}
+function auditCsvCell(v){
+  const s=(v==null?'':String(v));
+  if(/[",\r\n]/.test(s))return'"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+function auditFmtKv(k,v){
+  if(v==null||v==='')return '';
+  return `<div class="sig-drawer-row"><span class="k">${k}</span><span class="v" style="word-break:break-word">${v}</span></div>`;
+}
+function auditOpenDrawer(idx){
+  const l=AUDIT[idx];
+  if(!l)return;
+  const isReport=l.src==='Reports'||l.deliverableId||l.token;
+  const isAuth=l.src==='Auth';
+  const verdictish=/Verdict|Composite|Committee decision/i.test(l.crit||'');
+  const html=`
+    <div class="sig-drawer-hd">
+      <div class="ttl">
+        <h3>${l.crit||'Audit event'}</h3>
+        <span class="sub">${l.ts||''} · ${l.src||'—'}</span>
+      </div>
+      <button class="close" id="auditDrawerClose" aria-label="Close">✕</button>
+    </div>
+    <div class="sig-drawer-body">
+      <div class="sig-drawer-sect">
+        <h4>Event</h4>
+        ${auditFmtKv('Timestamp',l.ts)}
+        ${auditFmtKv('Source',l.src)}
+        ${auditFmtKv('Carrier',l.carrier)}
+        ${auditFmtKv('Criterion',l.crit)}
+        ${auditFmtKv('Status',l.status)}
+      </div>
+      <div class="sig-drawer-sect">
+        <h4>Transition</h4>
+        ${auditFmtKv('From',l.fr)}
+        ${auditFmtKv('To',l.to)}
+      </div>
+      <div class="sig-drawer-sect">
+        <h4>Actor</h4>
+        ${(function(){const u=auditSplitUser(l.user);return auditFmtKv('User',u.user)+auditFmtKv('Email',u.email||'—');})()}
+        ${auditFmtKv('IP',l.ip||'—')}
+      </div>
+      ${isReport?`<div class="sig-drawer-sect">
+        <h4>Deliverable</h4>
+        ${auditFmtKv('Deliverable ID',l.deliverableId||'—')}
+        ${auditFmtKv('Watermark token',l.token||'—')}
+      </div>`:''}
+      ${isAuth?`<div class="sig-drawer-sect">
+        <h4>Authentication</h4>
+        <div class="sig-drawer-row"><span class="k">Outcome</span><span class="v ${/Authenticated/i.test(l.status)?'pos':'neg'}">${l.status||'—'}</span></div>
+      </div>`:''}
+      ${verdictish?`<div class="sig-drawer-sect">
+        <h4>Verdict</h4>
+        ${auditFmtKv('From',l.fr)}
+        ${auditFmtKv('To',l.to)}
+      </div>`:''}
+      <div class="sig-drawer-sect">
+        <h4>Note</h4>
+        <div style="font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.55;white-space:pre-wrap;word-break:break-word">${l.note||'<span style="color:var(--t3)">No additional note.</span>'}</div>
+      </div>
+    </div>
+  `;
+  const d=el('auditDrawer');
+  d.innerHTML=html;
+  d.classList.add('open');
+  d.setAttribute('aria-hidden','false');
+  el('auditDrawerBack').classList.add('open');
+  el('auditDrawerClose').addEventListener('click',auditCloseDrawer);
+}
+function auditCloseDrawer(){
+  const d=el('auditDrawer');
+  if(!d)return;
+  d.classList.remove('open');
+  d.setAttribute('aria-hidden','true');
+  const b=el('auditDrawerBack');if(b)b.classList.remove('open');
+}
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='auditDrawerBack')auditCloseDrawer();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const d=el('auditDrawer');if(d&&d.classList.contains('open'))auditCloseDrawer();}});
+function auditExportCsv(){
+  const rows=auditFilteredRows();
+  if(!rows.length){toast('No rows to export','Adjust the filter so at least one row matches.');return;}
+  const scopeBits=[];
+  if(auditFilter.src!=='all')scopeBits.push('src='+auditFilter.src);
+  if(auditFilter.q)scopeBits.push('q="'+auditFilter.q+'"');
+  const scope=scopeBits.length?scopeBits.join('|'):'all';
+  const wm=moLogDeliverable({carrier:'Audit log',deliverable:'Audit export',format:'CSV',scope:scope});
+  const headers=['ts','user','email','ip','carrier','criterion','from','to','source','status','deliverableId','token','note'];
+  const lines=[headers.join(',')];
+  rows.forEach(l=>{
+    const u=auditSplitUser(l.user);
+    lines.push([
+      l.ts,u.user,u.email||'',l.ip||'',l.carrier,l.crit,l.fr,l.to,l.src,l.status,
+      l.deliverableId||'',l.token||'',l.note
+    ].map(auditCsvCell).join(','));
+  });
+  // BOM keeps Excel happy on UTF-8 unicode.
+  const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=wm.deliverableId+'.csv';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},0);
+  toast('Audit export delivered',rows.length+' rows · '+wm.deliverableId+' · '+wm.token);
 }
 
 function buildWorkspace(){
@@ -6382,7 +6998,7 @@ function buildWorkspace(){
       cls:el('evClass').value, crit:el('evCrit').value, conf:el('evConf').value,
       headline, source, observation};
     EVIDENCE.unshift(rec);
-    const entry={ts:rec.ts,user:rec.user,carrier:a.name,crit:`Evidence submission · ${rec.crit.toUpperCase()}`,fr:'Workspace',to:'Evidence corpus',src:'Scoring Workspace',status:'Logged',note:`${id} · ${rec.cls} · ${headline.slice(0,140)}`};
+    const entry={ts:rec.ts,user:rec.user,carrier:a.name,crit:`Evidence submission · ${rec.crit.toUpperCase()}`,fr:'Workspace',to:'Evidence corpus',src:'Workspace',status:'Logged',note:`${id} · ${rec.cls} · ${headline.slice(0,140)}`};
     AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
     sfPersist();
     if(typeof buildAudit==='function')buildAudit();
@@ -7035,7 +7651,7 @@ function awShipVerdict(sf){
   const wm=moLogDeliverable({carrier:c.name,deliverable:`Verdict letter (${sf.id})`,format:'PDF',scope:'single'});
   sf.status='shipped'; sf.shippedTs=sigNowTs(); sf.shippedToken=wm.token;
   // Also unshift a Workspace-flavoured AUDIT entry so the analyst sees the lifecycle close
-  const entry={ts:sf.shippedTs,user:sigCurrentUser(),carrier:c.name,crit:`Verdict letter shipped · ${v.lbl}`,fr:'Approved',to:'SHIPPED',src:'Scoring Workspace',status:'Delivered',note:`${sf.id} · composite ${eff.toFixed(1)} · ${wm.deliverableId} · ${wm.token}`};
+  const entry={ts:sf.shippedTs,user:sigCurrentUser(),carrier:c.name,crit:`Verdict letter shipped · ${v.lbl}`,fr:'Approved',to:'SHIPPED',src:'Workspace',status:'Delivered',note:`${sf.id} · composite ${eff.toFixed(1)} · ${wm.deliverableId} · ${wm.token}`};
   AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
   sfPersist();
   toast(`Verdict shipped · ${sf.id}`,`${c.name} · ${v.lbl} · watermark ${wm.token}`);
@@ -7051,7 +7667,7 @@ function awConfirmSubmit(){
   const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
   const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
   sf.status='submitted'; sf.submitTs=sigNowTs(); sf.submitter=sigCurrentUser(); sf.rationale=r;
-  const entry={ts:sf.submitTs,user:sf.submitter,carrier:c.name,crit:`Scoring file submission · ${v.lbl}`,fr:'Workspace',to:'Scoring Committee inbox',src:'Scoring Workspace',status:'Notified · awaiting SC',note:`${sf.id} · composite ${eff.toFixed(1)}${hf.any?' · HF TRIP':''} · ${r.slice(0,140)}`};
+  const entry={ts:sf.submitTs,user:sf.submitter,carrier:c.name,crit:`Scoring file submission · ${v.lbl}`,fr:'Workspace',to:'Scoring Committee inbox',src:'Workspace',status:'Notified · awaiting SC',note:`${sf.id} · composite ${eff.toFixed(1)}${hf.any?' · HF TRIP':''} · ${r.slice(0,140)}`};
   AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
   sfPersist();
   sigCloseModal('awSubmitModal');
@@ -7248,6 +7864,10 @@ function bindNav(){
   document.querySelectorAll('.sitem[data-v]').forEach(it=>{
     it.addEventListener('click',()=>{
       const v=it.dataset.v;
+      // Drawers are position:fixed and survive view changes — close any open one
+      // so the backdrop doesn't black out the new view.
+      if(typeof auditCloseDrawer==='function')auditCloseDrawer();
+      if(typeof sigCloseSrcDrawer==='function')sigCloseSrcDrawer();
       document.querySelectorAll('.sitem').forEach(x=>x.classList.remove('active'));
       it.classList.add('active');
       document.querySelectorAll('.arow').forEach(r=>r.classList.remove('active'));
@@ -7257,8 +7877,9 @@ function bindNav(){
     });
   });
   el('closeModal').addEventListener('click',()=>el('cmpModal').classList.remove('open'));
-  document.querySelectorAll('.rptc').forEach(c=>c.addEventListener('click',()=>toast('Generating report','PDF queued · audit reference logged')));
-  document.querySelectorAll('.btn-sm').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();toast('Download queued','File ready shortly')}));
+  document.querySelectorAll('.rptc').forEach(c=>c.addEventListener('click',()=>rptOnCardClick(c)));
+  const rptCarrierConfirm=el('rptCarrierConfirm');
+  if(rptCarrierConfirm&&!rptCarrierConfirm._bound){rptCarrierConfirm._bound=1;rptCarrierConfirm.addEventListener('click',rptCarrierConfirmGen);}
   el('regionTabs').querySelectorAll('.rtab').forEach(b=>{
     b.addEventListener('click',()=>{
       el('regionTabs').querySelectorAll('.rtab').forEach(x=>x.classList.remove('active'));
@@ -7296,7 +7917,8 @@ function bindNav(){
 
 // ── Andara Signal portfolio ────────────────────────────────────────────────
 let sigFilter={band:'all',region:'all',q:''};
-// In-memory analyst overrides + escalation register — const sigOverrides={};   // {carrierId: {severity, rationale, ts, user}}
+// In-memory analyst overrides + escalation register
+const sigOverrides={};   // {carrierId: {severity, rationale, ts, user}}
 const sigPromotions={};  // {carrierId: {impact, rationale, ts, user, status}}
 let sigPopCarrier=null;
 let sigOpenSrc=null;
@@ -8268,6 +8890,7 @@ function enterTerminal(em){
   // Each step wrapped so one broken builder can't lock the user out.
   const safe = (label, fn) => { try { fn(); } catch (e) { console.error('[boot] '+label+' failed:', e); } };
   safe('sfRestore',         () => sfRestore());
+  safe('authAuditReplay',   () => authAuditReplay());
   safe('buildSidebar',      () => buildSidebar());
   safe('buildDashboard',    () => buildDashboard());
   safe('buildSentinel',     () => buildSentinel());
@@ -8283,6 +8906,9 @@ function enterTerminal(em){
   safe('bindNav',           () => bindNav());
   safe('startClock',        () => startClock());
   safe('ddInitAll',         () => ddInitAll());
+  safe('attachSearchClears',() => attachSearchClears());
+  safe('buildReportsRecent',() => buildReportsRecent());
+  safe('bindReportsFilter', () => bindReportsFilter());
   const runSearch = () => {
     const q = (el('gsearch').value||'').trim().toLowerCase();
     if(!q) return;
@@ -8302,6 +8928,7 @@ function tryRestoreSession(){
     if(!raw) return;
     const a = JSON.parse(raw);
     if(!a || !a.email) return;
+    if(typeof _logAuthEvent==='function') _logAuthEvent('Session restore', a.email, 'Authenticated', 'Restored from local session token');
     enterTerminal(a.email);
   } catch(_){}
 }
