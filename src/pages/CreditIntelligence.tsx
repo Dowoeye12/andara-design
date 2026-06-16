@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { TerminalChrome, ArrowRightIcon, CtaBand } from "@/components/terminal/TerminalChrome";
 
-// 5-Score dimensions, names and weights per Andara Master Build PRD §3.3.6.
+// 5-Score dimensions, names and weights — canonical Andara methodology.
 // Weights: SVS 15, PPS 25, APS 20, RCS 25, RAS 15.
 const SCORES = [
   {
@@ -170,7 +170,7 @@ const CreditIntelligence = () => {
         </div>
       </section>
 
-      {/* methodology constants — verified against PRD §3.3.6 */}
+      {/* methodology constants — canonical */}
       <section className="fw-metrics">
         <div className="fw-metrics-grid">
           <div className="fw-metric fw-arRise">

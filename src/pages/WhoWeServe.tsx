@@ -301,7 +301,7 @@ const WhoWeServe = () => {
         </p>
       </section>
 
-      {/* operating posture — verified against PRD */}
+      {/* operating posture — verified */}
       <section className="fw-metrics">
         <div className="fw-metrics-grid">
           <div className="fw-metric fw-arRise">

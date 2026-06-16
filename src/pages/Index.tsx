@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { TerminalChrome, ArrowRightIcon, CtaBand } from "@/components/terminal/TerminalChrome";
 
 // Illustrative platform activity — generic, non-defamatory placeholders.
-// Verdict letters on real carriers are confidential to commissioning clients
-// per PRD §3.2.4. We do not publish real verdicts on the marketing site.
+// Verdict letters on real carriers are confidential to commissioning clients.
+// We do not publish real verdicts on the marketing site.
 const MONITOR_ROWS = [
   { sym: "VERDICT 412", meta: "ARBITER · COMPOSITE ISSUED", base: 78.4, deploy: "up" },
   { sym: "VERDICT 411", meta: "ARBITER · WATCH NOTE FILED", base: 62.1, deploy: "neutral" },

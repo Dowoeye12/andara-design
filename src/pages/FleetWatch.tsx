@@ -10,8 +10,8 @@ const MONITOR_ROWS = [
   { sym: "ZS-SXE", meta: "A350-900 · J'BURG", base: 161.2 },
 ];
 
-// Surveillance cadence is quarterly per PRD §3.4.5 (Quarterly report generator)
-// and §3.6 (First FleetWatch quarterly report shipped to Fidelity Bank).
+// Surveillance cadence is quarterly (Quarterly report generator)
+// and first FleetWatch quarterly report shipped to Fidelity Bank.
 // AOG-class alerts are dispatched off-cycle between quarterly reports.
 const STEPS = [
   {
@@ -147,7 +147,7 @@ const FleetWatch = () => {
         </div>
       </section>
 
-      {/* operating constants — verified against PRD + AIR Issue 001 */}
+      {/* operating constants — verified against AIR Issue 001 */}
       <section className="fw-metrics">
         <div className="fw-metrics-grid">
           <div className="fw-metric fw-arRise">

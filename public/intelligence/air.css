@@ -248,7 +248,7 @@ body {
   border-radius: 50%;
 }
 
-/* AAV — Andara Analytical View. PRD §3.4.6 mandates visual distinction
+/* AAV — Andara Analytical View. Mandates visual distinction
    between reported fact and Andara analysis. */
 .aav {
   display: inline-flex;
@@ -1070,7 +1070,7 @@ body {
 
 /* --------------------------------------------------------------------------
    13. RECIPIENT WATERMARK — placeholder for tokenised per-user watermark
-   (PRD §3.2.5 / §3.2.6 — every PDF/page regenerated with downloading user's token)
+   (every PDF/page regenerated with downloading user's token)
    -------------------------------------------------------------------------- */
 .recipient-mark {
   position: fixed;

@@ -437,7 +437,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 /* scorecard panel */
 .mo-scorecard{margin-bottom:24px;}
 
-/* ── Composite Market Score + right rail (PRD §4.2.3 portfolio view) ──── */
+/* ── Composite Market Score + right rail (portfolio view) ──── */
 .mo-cms-row{margin-bottom:24px;gap:16px}
 .mo-cms .pb{display:flex;flex-direction:column;gap:16px;padding:16px}
 .mo-cms-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
@@ -502,7 +502,7 @@ input,select,textarea{font-family:inherit;color:inherit}
   .mo-vchart{height:180px}
 }
 
-/* ── Carrier heat-map (PRD §4.2.3 aggregate verdict distribution) ──────── */
+/* ── Carrier heat-map (aggregate verdict distribution) ──────── */
 .mo-heat-panel{margin-bottom:24px}
 .mo-heat-tools{margin-left:auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .mo-heat-legend{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em}
@@ -569,7 +569,7 @@ select{
 .mo-mover-delta.new{color:var(--amber);border-color:rgba(232,162,58,.4);background:rgba(232,162,58,.08)}
 .mo-empty{padding:24px 16px;text-align:center;color:var(--t3);font-size:14px;font-family:var(--sans)}
 
-/* ── Refresh schedule panel · PRD §4.2.3 ─────────────────────────────── */
+/* ── Refresh schedule panel ─────────────────────────────── */
 .mo-refresh-panel{margin-bottom:24px}
 .mo-refresh-panel .pb{padding:16px}
 .mo-refresh-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
@@ -673,7 +673,7 @@ select{
 
 .upd{font-family:var(--mono);font-size:12px;color:var(--t3);white-space:nowrap;}
 
-/* PRD §3.2.4 Verdict list — validity-until column with urgency colour tiers */
+/*  Verdict list — validity-until column with urgency colour tiers */
 .mo-val{display:flex;flex-direction:column;gap:2px;line-height:1.2;min-width:96px}
 .mo-val-d{font-family:var(--mono);font-size:12px;color:var(--display);letter-spacing:.02em;white-space:nowrap}
 .mo-val-c{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.04em;white-space:nowrap}
@@ -685,7 +685,7 @@ select{
 .mo-val.mo-val-expired .mo-val-c{color:var(--dnd);font-weight:600}
 .mo-val.mo-val-na      .mo-val-d{color:var(--t4)}
 
-/* PRD §3.2.4 Refresh request affordance — per-row, routed to CS lead */
+/*  Refresh request affordance — per-row, routed to CS lead */
 .mo-refresh-cell{width:1%}
 .mo-refresh{
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
@@ -1096,7 +1096,7 @@ select{
 .sig-pop button.danger{color:var(--dnd)}
 .sig-pop .divider{height:1px;background:var(--line);margin:4px 0}
 
-/* Signal — source-health drawer · PRD §4.4.5 (fetch health) */
+/* Signal — source-health drawer ·  (fetch health) */
 .sig-source{cursor:pointer;transition:background .12s,border-color .12s}
 .sig-source:hover{background:var(--bg3);border-color:var(--line2)}
 .sig-source.open{background:var(--bg3);border-color:var(--amber)}
@@ -1137,7 +1137,7 @@ select{
 .sig-fail-empty{font-family:var(--mono);font-size:12px;color:var(--t4);font-style:italic;letter-spacing:.04em}
 .sig-drawer-foot{padding:16px;border-top:1px solid var(--line);background:var(--bg);flex-shrink:0;display:flex;justify-content:flex-end;gap:8px}
 
-/* Signal — triage queue mode · PRD §4.4.5 Signal triage queue */
+/* Signal — triage queue mode ·  Signal triage queue */
 .sig-mode{display:inline-flex;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:4px;padding:3px;margin-bottom:24px;gap:0}
 .sig-mode-btn{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;background:transparent;border:none;color:var(--t2);font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;border-radius:3px;letter-spacing:0;transition:.12s}
 .sig-mode-btn:hover{color:var(--t1)}
@@ -1202,7 +1202,8 @@ select{
 .sig-mhd h3{font-family:var(--sans);font-size:16px;font-weight:700;color:var(--display);margin:0;flex:1;letter-spacing:-.01em}
 .sig-mhd .close{background:none;border:none;color:var(--t3);font-family:var(--mono);font-size:18px;cursor:pointer;line-height:1;padding:0}
 .sig-mhd .close:hover{color:var(--t1)}
-.sig-mbody{padding:16px;display:flex;flex-direction:column;gap:16px}
+/* Modal field container — 20px between input fields, matching .wsform canon. */
+.sig-mbody{padding:16px;display:flex;flex-direction:column;gap:20px}
 .sig-mfield{display:flex;flex-direction:column;gap:8px}
 .sig-mfield label{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);font-weight:600}
 .sig-mfield select,.sig-mfield textarea,.sig-mfield input{background-color:var(--bg);border:1px solid var(--line);color:var(--t1);font-family:var(--sans);font-size:13px;padding:10px 12px;border-radius:3px;outline:none;width:100%;box-sizing:border-box}
@@ -1294,7 +1295,7 @@ select{
 .vt-row.vt-dnd{background:rgba(201,116,116,.04)}
 .vt-row.vt-dnd .vt-val,.vt-row.vt-dnd .vt-lbl{color:var(--dnd)}
 
-/* Methodology — active version indicator (PRD §3.3.6 + §4.3.5 forward note) */
+/* Methodology — active version indicator  */
 .m-ver{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 24px}
 .m-ver-lbl{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px}
 .m-ver-chip{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--t2);border:1px solid var(--info-line);background:var(--info-soft);border-radius:3px;box-sizing:border-box;margin:0;white-space:nowrap}
@@ -1314,7 +1315,7 @@ select{
 @media (max-width:1023px){.m-cr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:639px){.m-cr-grid{grid-template-columns:1fr}}
 
-/* Scoring Committee minutes index (PRD §3.3.6) — list-row canon */
+/* Scoring Committee minutes index  — list-row canon */
 .sc-mins{display:flex;flex-direction:column}
 .sc-min{display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .1s}
 .sc-min:last-child{border-bottom:none}
@@ -1334,14 +1335,80 @@ select{
 /* ══════════════════════════════════════════
    WORKSPACE
 ══════════════════════════════════════════ */
-.wsform{display:grid;gap:11px;max-width:700px}
-.wsf{display:flex;flex-direction:column;gap:5px}
-.wsf label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3)}
-.wsf input,.wsf select,.wsf textarea{background-color:var(--bg2);border:1px solid var(--line);padding:8px 10px;color:var(--t1);font-size:12px;outline:none;transition:border-color .12s}
-.wsf select{padding:8px 32px 8px 10px;background-position:right 10px center}
-.wsf input:focus,.wsf select:focus,.wsf textarea:focus{border-color:rgba(255,177,46,.5)}
-.wsf textarea{min-height:85px;resize:vertical}
-.wsr{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+/* Workspace forms — canonical 14px label + 20/32 spacing rhythm.
+   Applies to Evidence + Watch Note tabs (and any future workspace form). */
+.wsform{display:grid;gap:20px;max-width:720px}
+.wsf{display:flex;flex-direction:column;gap:8px}
+.wsf label{font-family:var(--sans);font-size:14px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--t1)}
+.wsf input,.wsf select,.wsf textarea{background-color:var(--bg2);border:1px solid var(--line);padding:10px 12px;color:var(--t1);font-family:var(--sans);font-size:14px;outline:none;transition:border-color .12s;border-radius:4px;box-sizing:border-box}
+.wsf select{padding:10px 36px 10px 12px;background-position:right 12px center;height:42px}
+.wsf input:focus,.wsf select:focus,.wsf textarea:focus{border-color:rgba(232,162,58,.5)}
+.wsf textarea{min-height:96px;resize:vertical;line-height:1.5}
+.wsr{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+/* Action button row — 32px above the form per the spacing rhythm. */
+.wsa{display:flex;gap:12px;margin-top:32px}
+
+/* ═════ Modern custom dropdown (.dd) — wraps the native <select> so existing
+   JS (el('evC').value, .addEventListener('change'…)) keeps working. ═════ */
+.dd{position:relative;display:block}
+.dd > select{display:none}
+.dd-trigger{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  width:100%;height:42px;padding:0 14px;
+  background:var(--bg2);border:1px solid var(--line);border-radius:4px;
+  color:var(--t1);font-family:var(--sans);font-size:14px;font-weight:500;
+  cursor:pointer;outline:none;text-align:left;box-sizing:border-box;
+  transition:border-color .15s,background .15s;
+}
+.dd-trigger:hover{border-color:var(--line2);background:var(--bg3)}
+.dd-trigger:focus-visible{border-color:rgba(232,162,58,.5)}
+.dd-trigger .dd-value{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dd-trigger.placeholder .dd-value{color:var(--t3);font-weight:400}
+.dd-trigger .dd-caret{flex-shrink:0;color:var(--t3);transition:transform .18s ease,color .12s}
+.dd.open .dd-trigger{border-color:rgba(232,162,58,.55);background:var(--bg3)}
+.dd.open .dd-trigger .dd-caret{transform:rotate(180deg);color:var(--amber)}
+
+.dd-menu{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  background:var(--bg2);border:1px solid var(--line2);border-radius:6px;
+  box-shadow:0 12px 32px rgba(0,0,0,.55),0 4px 8px rgba(0,0,0,.35);
+  max-height:280px;overflow-y:auto;
+  z-index:1000;padding:6px;display:none;min-width:200px;
+}
+.dd.open .dd-menu{display:block;animation:ddIn .15s ease-out}
+@keyframes ddIn{from{opacity:0;transform:translateY(-4px) scale(.985)}to{opacity:1;transform:none}}
+.dd-option{
+  display:flex;align-items:center;gap:8px;
+  min-height:36px;padding:8px 12px;
+  font-family:var(--sans);font-size:14px;color:var(--t2);
+  border-radius:4px;cursor:pointer;
+  transition:background .1s,color .1s;
+  white-space:normal;line-height:1.4;
+}
+.dd-option:hover{background:var(--bg3);color:var(--t1)}
+.dd-option.active{background:rgba(232,162,58,.12);color:var(--amber);font-weight:600}
+.dd-option.active::after{content:"✓";margin-left:auto;color:var(--amber);font-size:13px;font-weight:700;flex-shrink:0}
+.dd-option.placeholder{color:var(--t3)}
+
+/* Size variants — auto-applied by ddEnhance based on the original select's class.
+   Mirror the heights of legacy .sig-region (32px), .mo-heat-sort (28px),
+   .sig-mfield (~40px modal) so toolbars and modals don't reflow on enhancement. */
+.dd--sm .dd-trigger{height:32px;padding:0 12px;font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+.dd--sm{min-width:160px}
+.dd--sm .dd-menu{min-width:200px}
+.dd--sm .dd-option{font-family:var(--mono);font-size:12px;letter-spacing:.04em;min-height:32px;padding:6px 12px}
+
+.dd--xs .dd-trigger{height:28px;padding:0 10px;font-family:var(--mono);font-size:12px}
+.dd--xs{min-width:140px}
+.dd--xs .dd-menu{min-width:180px}
+.dd--xs .dd-option{font-family:var(--mono);font-size:12px;min-height:30px;padding:6px 10px}
+
+.dd--md .dd-trigger{height:40px;font-size:13px}
+
+/* Inline / toolbar dropdowns must not stretch their flex parent — shrink-to-content
+   so .sig-toolbar / .sig-tools / .page-actions keep their inline layout. */
+.sig-toolbar .dd,.sig-tools .dd,.page-actions .dd,.cmp-toolbar .dd{display:inline-block;width:auto}
+.sig-tools-triage .dd--sm{max-width:170px}
 .wn-helper{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em;text-transform:none;margin-left:6px;font-weight:400}
 .wn-class-row{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
 .wn-class-chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;background:var(--bg2);border:1px solid var(--line);border-radius:4px;font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.04em;cursor:pointer;transition:.12s;box-sizing:border-box;margin:0;text-transform:uppercase}
@@ -1349,8 +1416,227 @@ select{
 .wn-class-chip input{accent-color:var(--amber);margin:0;width:13px;height:13px}
 .wn-class-chip input:checked + span,.wn-class-chip:has(input:checked){color:var(--amber);border-color:rgba(232,162,58,.5);background:rgba(232,162,58,.08)}
 
+/* ══════════════════════════════════════════
+   ANALYST WORKSPACE v1 —    Tabs · Queue · Scoring file editor · Composite preview
+   Plus Scoring Committee surface (.cc-*) — ══════════════════════════════════════════ */
+.aw-tabs{display:flex;gap:0;margin:0 0 24px;border-bottom:1px solid var(--line)}
+.aw-tab{display:inline-flex;align-items:center;height:38px;padding:0 18px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--t3);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;letter-spacing:.01em;transition:.12s;margin-bottom:-1px}
+.aw-tab:hover{color:var(--t1)}
+.aw-tab.active{color:var(--amber);border-bottom-color:var(--amber)}
+.aw-tab .cnt{margin-left:8px;display:inline-flex;align-items:center;justify-content:center;height:18px;min-width:22px;padding:0 6px;font-family:var(--mono);font-size:10px;font-weight:500;color:var(--t2);background:var(--bg3);border:1px solid var(--line2);border-radius:3px}
+.aw-tab.active .cnt{color:var(--amber);background:rgba(232,162,58,.10);border-color:rgba(232,162,58,.40)}
+.aw-pane{display:none}
+.aw-pane.active{display:block}
+.aw-back{display:inline-flex;align-items:center;height:30px;padding:0 12px;margin-bottom:16px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#000;background:#fff;border:1px solid #fff;border-radius:4px;cursor:pointer;transition:.12s}
+.aw-back:hover{color:#000;background:var(--amber);border-color:var(--amber)}
+
+.aw-queue{width:100%;border-collapse:collapse;font-size:14px}
+.aw-queue thead th{padding:12px 14px;text-align:left;font-family:var(--mono);font-size:10px;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.18em;background:var(--bg3);border-bottom:1px solid var(--line)}
+.aw-queue tbody td{padding:14px;border-bottom:1px solid var(--line);color:var(--t1);vertical-align:middle}
+.aw-queue tbody tr{cursor:pointer;transition:.12s}
+.aw-queue tbody tr:hover{background:var(--bg3)}
+.aw-queue tbody tr.active{background:var(--bg3);box-shadow:inset 2px 0 0 var(--amber)}
+/* Tabular-data canon — 14px floor, only carrier name carries weight 600. */
+.aw-queue td.nm{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1)}
+.aw-queue td.meta{font-family:var(--mono);font-size:14px;font-weight:400;color:var(--t2)}
+.aw-queue td.cmp{font-family:var(--mono);font-size:14px;font-weight:600}
+.aw-queue td.sfid{font-family:var(--mono);font-size:14px;font-weight:400;color:var(--t2);letter-spacing:.04em;white-space:nowrap}
+.aw-queue td.ts{font-family:var(--mono);font-size:14px;font-weight:400;color:var(--t2);white-space:nowrap}
+.aw-queue td.note{font-family:var(--sans);font-size:14px;font-weight:400;color:var(--t2);line-height:1.5}
+.aw-queue td.chair{font-family:var(--mono);font-size:14px;font-weight:400;color:var(--t2);white-space:nowrap}
+.aw-queue td.hint{font-family:var(--mono);font-size:14px;font-weight:400;color:var(--t3);letter-spacing:.04em}
+.aw-queue td.act{text-align:right;white-space:nowrap;width:1%}
+.aw-queue.no-row-click tbody tr{cursor:default}
+.aw-queue.no-row-click tbody tr:hover{background:transparent}
+.aw-queue tbody tr.is-action-row:hover{background:transparent}
+.aw-q-empty{padding:36px;text-align:center;color:var(--t3);font-size:13px}
+
+/* Row "View details" button — consistent across queue / history / inbox / log */
+.aw-view-btn{display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 14px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:#000;background:#fff;border:1px solid #fff;border-radius:4px;cursor:pointer;transition:.12s;box-sizing:border-box}
+.aw-view-btn:hover{color:#000;background:var(--amber);border-color:var(--amber)}
+
+/* Outcome chip — reused inside table cells for decisions log */
+.aw-out{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 10px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:4px;box-sizing:border-box;margin:0}
+.aw-out.approved{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+/* SHIPPED = approved + watermarked deliverable issued · filled style signals terminal */
+.aw-out.shipped{color:#000;background:var(--deploy);border-color:var(--deploy)}
+/* RETURNED uses the system purple (same hue as RAS / EU-ban / legal tags) */
+.aw-out.returned{color:#C19EFF;background:rgba(193,158,255,0.10);border-color:rgba(193,158,255,0.40)}
+.aw-out.rejected{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+
+/* SF detail drawer — extends the .sig-drawer-* primitive with a wider footprint
+   so 5-Score breakdowns + committee rationale fit comfortably. */
+.sf-drawer{width:760px;max-width:95vw}
+.sf-drawer .sf-dim-row{display:grid;grid-template-columns:minmax(280px,1fr) 110px 160px;gap:20px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:13px;white-space:nowrap}
+.sf-drawer .sf-dim-row .code,.sf-drawer .sf-dim-row .avg,.sf-drawer .sf-dim-row .wt{overflow:hidden;text-overflow:ellipsis}
+.sf-drawer .sf-dim-row:last-child{border-bottom:none}
+.sf-drawer .sf-dim-row .code{color:var(--t3);font-weight:600;letter-spacing:.10em}
+.sf-drawer .sf-dim-row .avg{text-align:right;color:var(--t1);font-weight:600}
+.sf-drawer .sf-dim-row .wt{text-align:right;color:var(--t3);font-size:11px}
+.sf-drawer .sf-rationale{padding:12px 14px;background:var(--bg);border:1px solid var(--line);font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.55;white-space:pre-wrap;border-radius:4px}
+.sf-drawer .sf-decision-card{padding:12px 14px;background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--ac);border-radius:4px;display:flex;flex-direction:column;gap:8px}
+.sf-drawer .sf-decision-card[data-out="approved"]{--ac:var(--deploy)}
+.sf-drawer .sf-decision-card[data-out="returned"]{--ac:var(--watch)}
+.sf-drawer .sf-decision-card[data-out="rejected"]{--ac:var(--dnd)}
+.sf-drawer .sf-decision-card .meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em}
+.sf-drawer .sf-decision-card .body{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.55;white-space:pre-wrap}
+
+.aw-sf-st{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 10px;line-height:1;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:4px;box-sizing:border-box;margin:0}
+/* Scoring-file lifecycle per  — draft / submitted / approved / shipped
+   plus committee return / reject states from §3.4.2 */
+.aw-sf-st.idle{color:var(--t3);background:var(--bg3);border-color:var(--line2)}
+.aw-sf-st.draft{color:var(--amber);background:rgba(232,162,58,.10);border-color:rgba(232,162,58,.40)}
+.aw-sf-st.submitted{color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
+.aw-sf-st.approved{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+/* SHIPPED = approved + watermarked deliverable issued · filled style signals terminal */
+.aw-sf-st.shipped{color:#000;background:var(--deploy);border-color:var(--deploy)}
+/* RETURNED uses the system purple (same hue as RAS / EU-ban / legal tags) */
+.aw-sf-st.returned{color:#C19EFF;background:rgba(193,158,255,0.10);border-color:rgba(193,158,255,0.40)}
+.aw-sf-st.rejected{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+
+.aw-urg{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 10px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border:1px solid;border-radius:4px;box-sizing:border-box;margin:0}
+.aw-urg.expired{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.aw-urg.urgent{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.aw-urg.soon{color:var(--amber);background:rgba(232,162,58,.10);border-color:rgba(232,162,58,.40)}
+.aw-urg.ok{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+
+.aw-sf-empty{padding:48px 24px;text-align:center;color:var(--t3);font-size:14px;border:1px dashed var(--line);background:var(--bg2)}
+.aw-sf-empty strong{display:block;color:var(--t1);font-family:var(--sans);font-size:16px;font-weight:600;margin-bottom:8px}
+
+.aw-sf-hd{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px;background:var(--bg2);border:1px solid var(--line);margin-bottom:24px}
+.aw-sf-hd .nm{font-family:var(--sans);font-size:18px;font-weight:700;color:var(--display)}
+.aw-sf-hd .sfid{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em}
+.aw-sf-hd .spc{flex:1}
+.aw-sf-hd .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.aw-scores{display:flex;flex-direction:column;gap:16px}
+.aw-score{background:var(--bg2);border:1px solid var(--line);padding:16px;position:relative;display:flex;flex-direction:column;gap:12px}
+.aw-score::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac)}
+.aw-score[data-d="svs"]{--ac:#7DABE3}
+.aw-score[data-d="pps"]{--ac:var(--amber)}
+.aw-score[data-d="aps"]{--ac:#FF9E64}
+.aw-score[data-d="rcs"]{--ac:var(--watch)}
+.aw-score[data-d="ras"]{--ac:#C19EFF}
+.aw-score-hd{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.aw-score-hd .code{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--ac)}
+.aw-score-hd .name{font-family:var(--sans);font-size:16px;font-weight:600;color:var(--display)}
+.aw-score-hd .spc{flex:1}
+.aw-score-hd .agg{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--t1)}
+.aw-score-hd .agg .max{color:var(--t3);font-size:13px;font-weight:400}
+.aw-score-hd .hf-warn{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--dnd);text-transform:uppercase;padding:0 8px;height:22px;display:none;align-items:center;border:1px solid var(--dnd-line);background:var(--dnd-soft);border-radius:4px;margin:0}
+.aw-score.hf-trip .hf-warn{display:inline-flex}
+
+.aw-subs{display:grid;grid-template-columns:1fr;gap:8px}
+.aw-sub{display:grid;grid-template-columns:1fr 90px 36px;gap:12px;align-items:center;padding:10px 12px;background:var(--bg);border:1px solid var(--line);border-radius:4px}
+.aw-sub:hover{border-color:var(--line2)}
+.aw-sub .lbl{font-family:var(--sans);font-size:13px;color:var(--t1)}
+.aw-sub input[type="number"]{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--mono);font-size:13px;text-align:center;padding:6px 8px;outline:none;border-radius:3px}
+.aw-sub input[type="number"]:focus{border-color:rgba(232,162,58,.5)}
+.aw-sub .ev-btn{height:28px;min-width:28px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;background:var(--bg2);border:1px solid var(--line);color:var(--t3);cursor:pointer;border-radius:3px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;transition:.12s;white-space:nowrap}
+.aw-sub .ev-btn:hover{color:var(--amber);border-color:rgba(232,162,58,.40);background:rgba(232,162,58,.08)}
+.aw-sub .ev-btn.has{color:var(--amber);background:rgba(232,162,58,.08);border-color:rgba(232,162,58,.40)}
+
+/* Per-sub-score evidence list — inside the attach modal */
+.aw-ev-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.aw-ev-list .ev-item{padding:10px 12px;background:var(--bg);border:1px solid var(--line);border-radius:4px;display:flex;flex-direction:column;gap:4px}
+.aw-ev-list .ev-item .meta{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em}
+.aw-ev-list .ev-item .src{font-family:var(--mono);font-size:12px;color:var(--t2);word-break:break-all}
+.aw-ev-list .ev-item .note{font-family:var(--sans);font-size:13px;color:var(--t1);line-height:1.5}
+.aw-ev-list .ev-empty{font-family:var(--mono);font-size:12px;color:var(--t3);text-align:center;padding:12px}
+
+.aw-prv{background:var(--bg2);border:1px solid var(--line);padding:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-top:24px;align-items:stretch}
+.aw-prv .cell{padding:8px 16px;border-right:1px solid var(--line)}
+.aw-prv .cell:last-child{border-right:none}
+.aw-prv .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.aw-prv .val{font-family:var(--mono);font-size:28px;font-weight:600;color:var(--display);line-height:1}
+.aw-prv .val.deploy{color:var(--deploy)}
+.aw-prv .val.watch{color:var(--watch)}
+.aw-prv .val.dnd{color:var(--dnd)}
+.aw-prv .sub{font-family:var(--mono);font-size:11px;color:var(--t3);margin-top:8px;line-height:1.5}
+.aw-prv-hf{margin-top:16px;padding:12px 16px;background:rgba(201,116,116,.10);border:1px solid var(--dnd-line);color:var(--dnd);font-family:var(--sans);font-size:13px;line-height:1.55;display:none}
+.aw-prv-hf.on{display:block}
+.aw-prv-hf strong{font-family:var(--mono);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+@media(max-width:760px){.aw-prv{grid-template-columns:1fr}.aw-prv .cell{border-right:none;border-bottom:1px solid var(--line);padding:12px 8px}.aw-prv .cell:last-child{border-bottom:none}}
+
+.aw-hist{display:flex;flex-direction:column;gap:0}
+.aw-hist-row{display:grid;grid-template-columns:150px 1fr 160px 110px;gap:16px;padding:12px 16px;border-bottom:1px solid var(--line);align-items:center}
+.aw-hist-row:last-child{border-bottom:none}
+.aw-hist-row .sfid{font-family:var(--mono);font-size:12px;color:var(--t2)}
+.aw-hist-row .outcome{font-family:var(--sans);font-size:13px;color:var(--t2)}
+.aw-hist-row .ts{font-family:var(--mono);font-size:11px;color:var(--t3)}
+.aw-hist-empty{padding:24px 16px;color:var(--t3);font-size:13px;text-align:center}
+@media(max-width:760px){.aw-hist-row{grid-template-columns:1fr;gap:6px}}
+
+/* Scoring Committee Surface —  */
+.cc-grid{display:grid;grid-template-columns:1.05fr 1.45fr;gap:24px;margin-bottom:24px;align-items:start}
+@media(max-width:1100px){.cc-grid{grid-template-columns:1fr}}
+
+.cc-inbox{display:flex;flex-direction:column;gap:0}
+.cc-inbox-row{padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;gap:8px;transition:.12s}
+.cc-inbox-row:hover{background:var(--bg3)}
+.cc-inbox-row.active{background:var(--bg3);box-shadow:inset 2px 0 0 var(--amber)}
+.cc-inbox-row:last-child{border-bottom:none}
+.cc-inbox-row .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cc-inbox-row .nm{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1)}
+.cc-inbox-row .sfid{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em}
+.cc-inbox-row .meta{font-family:var(--mono);font-size:11px;color:var(--t3)}
+.cc-inbox-row .spc{flex:1}
+.cc-empty{padding:36px;text-align:center;color:var(--t3);font-size:13px}
+
+.cc-viewer .placeholder{padding:48px 24px;text-align:center;color:var(--t3);font-size:14px;border:1px dashed var(--line);background:var(--bg2)}
+.cc-vhd{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.cc-vhd .nm{font-family:var(--sans);font-size:18px;font-weight:700;color:var(--display)}
+.cc-vhd .sfid{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em}
+.cc-vhd .spc{flex:1}
+
+.cc-vsc{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.cc-vsc .cell{padding:10px 8px;background:var(--bg);border:1px solid var(--line);text-align:center;border-top:2px solid var(--ac);position:relative}
+.cc-vsc .cell[data-d="svs"]{--ac:#7DABE3}
+.cc-vsc .cell[data-d="pps"]{--ac:var(--amber)}
+.cc-vsc .cell[data-d="aps"]{--ac:#FF9E64}
+.cc-vsc .cell[data-d="rcs"]{--ac:var(--watch)}
+.cc-vsc .cell[data-d="ras"]{--ac:#C19EFF}
+.cc-vsc .code{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--t3);margin-bottom:6px}
+.cc-vsc .val{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--display);line-height:1}
+.cc-vsc .wt{font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:4px}
+
+.cc-vmeta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.cc-vmeta .m{padding:10px 12px;background:var(--bg);border:1px solid var(--line)}
+.cc-vmeta .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.cc-vmeta .v{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--t1)}
+.cc-vmeta .v.deploy{color:var(--deploy)}.cc-vmeta .v.watch{color:var(--watch)}.cc-vmeta .v.dnd{color:var(--dnd)}
+
+.cc-rationale{padding:12px 14px;background:var(--bg);border:1px solid var(--line);font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.55;margin-bottom:16px;white-space:pre-wrap}
+.cc-rationale-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+
+.cc-act{display:flex;gap:8px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--line)}
+.cc-act .btn-d{flex:1;min-width:130px;height:40px;display:inline-flex;align-items:center;justify-content:center;font-family:var(--sans);font-size:13px;font-weight:600;border:1px solid;background:transparent;cursor:pointer;transition:.12s;border-radius:4px}
+.cc-act .btn-d.approve{color:var(--deploy);border-color:var(--deploy-line);background:var(--deploy-soft)}
+.cc-act .btn-d.approve:hover{background:rgba(107,179,138,.20)}
+.cc-act .btn-d.return{color:var(--watch);border-color:var(--watch-line);background:var(--watch-soft)}
+.cc-act .btn-d.return:hover{background:rgba(214,168,90,.20)}
+.cc-act .btn-d.reject{color:var(--dnd);border-color:var(--dnd-line);background:var(--dnd-soft)}
+.cc-act .btn-d.reject:hover{background:rgba(201,116,116,.20)}
+
+.cc-log{display:flex;flex-direction:column}
+.cc-log-row{display:grid;grid-template-columns:130px 110px 1fr 1fr 130px;gap:16px;padding:12px 16px;border-bottom:1px solid var(--line);align-items:center}
+.cc-log-row:last-child{border-bottom:none}
+.cc-log-row .ts{font-family:var(--mono);font-size:11px;color:var(--t3)}
+.cc-log-row .out{display:inline-flex;align-items:center;justify-content:center;height:22px;padding:0 10px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;border:1px solid;border-radius:4px;text-transform:uppercase}
+.cc-log-row .out.approved{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.cc-log-row .out.returned{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.cc-log-row .out.rejected{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.cc-log-row .nm{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--t1)}
+.cc-log-row .note{font-family:var(--sans);font-size:12px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-log-row .chair{font-family:var(--mono);font-size:11px;color:var(--t3);text-align:right}
+@media(max-width:900px){.cc-log-row{grid-template-columns:1fr;gap:6px}.cc-log-row .chair{text-align:left}}
+
 .warn{padding:11px 13px;background:rgba(255,194,75,.06);border:1px solid rgba(255,194,75,.2);font-size:11px;color:var(--watch);line-height:1.5;font-family:var(--mono);letter-spacing:.03em;margin-bottom:14px}
 .warn strong{color:#fff;display:block;margin-bottom:4px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+/* Informational banner — same shape as .warn but uses the system info-blue
+   per the chip-colour rule (informational, no action, no state). */
+.notice{padding:11px 13px;background:var(--info-soft);border:1px solid var(--info-line);font-size:11px;color:var(--info);line-height:1.5;font-family:var(--mono);letter-spacing:.03em;margin-bottom:14px}
+.notice strong{color:#fff;display:block;margin-bottom:4px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
 
 /* ══════════════════════════════════════════
    AUDIT
@@ -1449,8 +1735,7 @@ select{
 .toast strong{color:var(--amber);display:block;margin-bottom:1px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
 
 /* ══════════════════════════════════════════
-   SENTINEL — cadence enforcement + off-cycle queue (PRD §3.2.4)
-══════════════════════════════════════════ */
+   SENTINEL — cadence enforcement + off-cycle queue ══════════════════════════════════════════ */
 .sn-roll{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
 .sn-rcell{background:var(--bg2);border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;gap:8px}
 .sn-rcell .lbl{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase}
@@ -1952,7 +2237,7 @@ select{
 .cp-cscore-mark{position:absolute;top:-3px;width:3px;height:12px;background:var(--t1);border-radius:1px;transform:translateX(-50%);box-shadow:0 0 0 2px rgba(0,0,0,.5)}
 .cp-cscore-ends{display:flex;justify-content:space-between;margin-top:10px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--t3)}
 
-/* Carrier-profile Signal history strip · PRD §3.4.5 (M2 backlog: real time-series). */
+/* Carrier-profile Signal history strip ·  (M2 backlog: real time-series). */
 .cp-history{display:flex;flex-direction:column;gap:12px;padding-top:18px;border-top:1px solid var(--line);margin-top:18px}
 .cp-history-hd{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .cp-history-hd .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);font-weight:600}
@@ -2055,17 +2340,35 @@ select{
       <div class="fld"><label>Access key</label>
         <div class="pw-wrap">
           <input id="pw" type="password" placeholder="•••••••••" autocomplete="current-password"/>
-          <button type="button" id="pwToggle" class="pw-eye" aria-label="Show access key" aria-pressed="false">
+          <button type="button" id="pwToggle" class="pw-eye" aria-label="Show access key" aria-pressed="false" onclick="(function(b){var p=document.getElementById('pw');if(!p)return;var s=p.type==='text';p.type=s?'password':'text';b.setAttribute('aria-pressed',String(!s));b.setAttribute('aria-label',s?'Show access key':'Hide access key');var on=b.querySelector('.pw-eye-on'),off=b.querySelector('.pw-eye-off');if(on)on.style.display=s?'':'none';if(off)off.style.display=s?'none':'';})(this)">
             <svg class="pw-eye-on"  viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
             <svg class="pw-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M3 3l18 18"/><path d="M10.6 6.1A10.7 10.7 0 0 1 12 6c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.3 4.2"/><path d="M6.6 7.5C3.8 9.4 2 12 2 12s3.5 7 10 7c1.7 0 3.2-.3 4.5-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
           </button>
         </div>
       </div>
-      <button class="lbtn" id="lbtn">Enter terminal →</button>
+      <button type="button" class="lbtn" id="lbtn" onclick="_login();return false;">Enter terminal →</button>
       <div id="lerr" class="lerr">Access key not recognised.</div>
     </div>
   </div>
 </div>
+<script>
+// Standalone login — isolated from the main script so it works regardless
+// of any error elsewhere in the app.
+function _login(){
+  var em=(document.getElementById('em').value||'').trim();
+  var pw=(document.getElementById('pw').value||'').trim();
+  var err=document.getElementById('lerr');
+  if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';return;}
+  if(pw!=='andara2026'){err.textContent='Access key not recognised.';err.style.display='block';return;}
+  try{localStorage.setItem('andara.auth',JSON.stringify({email:em,ts:Date.now()}));}catch(_){}
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='grid';
+  if(typeof enterTerminal==='function'){try{enterTerminal(em);}catch(e){console.error('[login] enterTerminal threw:',e);}}
+}
+// Enter key submits without form-submit behaviour
+document.getElementById('em').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('pw').focus();}});
+document.getElementById('pw').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();_login();}});
+</script>
 
 <!-- APP -->
 <div id="app">
@@ -2142,6 +2445,11 @@ select{
     <!-- GOVERNANCE -->
     <div class="sgrp">
       <div class="sgrp-hd"><span class="lbl">Governance</span><span class="rule"></span></div>
+      <div class="sitem" data-v="committee">
+        <span class="ico"><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5 L8.5 3 L14 13.5 Z"/><line x1="3" y1="13.5" x2="14" y2="13.5"/><line x1="6" y1="10" x2="11" y2="10"/></svg></span>
+        <span class="lbl">Scoring Committee</span>
+        <span class="cnt" id="ccSidebarCnt">0</span>
+      </div>
       <div class="sitem" data-v="audit">
         <span class="ico"><svg viewBox="0 0 17 17"><circle cx="8.5" cy="8.5" r="6.2"/><path d="M8.5 5 V8.5 L11 10.5"/></svg></span>
         <span class="lbl">Audit Trail</span>
@@ -2186,7 +2494,7 @@ select{
         <button class="rtab" data-region="central-africa">Central Africa<span class="rcount">11</span></button>
       </div>
 
-      <!-- Composite Market Score + right rail · PRD §4.2.3 portfolio view -->
+      <!-- Composite Market Score + right rail portfolio view -->
       <div class="g g12 mo-cms-row">
         <div class="panel c8 mo-cms">
           <div class="ph">
@@ -2248,7 +2556,7 @@ select{
         </div>
       </div>
 
-      <!-- Carrier credit heat-map · PRD §4.2.3 aggregate verdict distribution -->
+      <!-- Carrier credit heat-map aggregate verdict distribution -->
       <div class="panel mo-heat-panel">
         <div class="ph">
           <h3>Carrier credit heat-map</h3>
@@ -2271,7 +2579,7 @@ select{
         </div>
       </div>
 
-      <!-- Watch Notes feed + Recent verdict movers · PRD §3.2.4 + §4.2.3 -->
+      <!-- Watch Notes feed + Recent verdict movers + §4.2.3 -->
       <div class="g g12 mo-row-strip">
         <div class="panel c6">
           <div class="ph">
@@ -2293,7 +2601,7 @@ select{
         </div>
       </div>
 
-      <!-- Refresh schedule · PRD §4.2.3 -->
+      <!-- Refresh schedule -->
       <div class="panel mo-refresh-panel">
         <div class="ph">
           <h3>Refresh schedule</h3>
@@ -2353,7 +2661,7 @@ select{
       <h1 class="vtitle">Andara <em>Signal</em></h1>
       <p class="vsub">Predictive payments and performance indicator. Monitored carriers ranked by Signal band. Select a carrier to view the full proxy evidence panel.</p>
 
-      <!-- Mode toggle · PRD §4.4.5 Signal triage queue + portfolio view -->
+      <!-- Mode toggle ·  Signal triage queue + portfolio view -->
       <div class="sig-mode" id="sigMode">
         <button class="sig-mode-btn active" data-mode="portfolio">Portfolio</button>
         <button class="sig-mode-btn" data-mode="triage">Triage queue <span class="sig-mode-count" id="sigTrNewCount">0</span> new</button>
@@ -2364,7 +2672,7 @@ select{
       <!-- Stat strip — triage mode -->
       <div class="summary sig-summary sig-mode-triage" id="sigTrSummary" style="display:none"></div>
 
-      <!-- Source ingestion health (PRD §4.4.5) — shared across modes -->
+      <!-- Source ingestion health  — shared across modes -->
       <div class="sig-sources" id="sigSources"></div>
 
       <!-- Toolbar — portfolio mode: cohort chips · search · region · live badge -->
@@ -2436,7 +2744,7 @@ select{
         </div>
       </div>
 
-      <!-- Triage queue table · PRD §4.4.5 -->
+      <!-- Triage queue table ·  -->
       <div class="panel sig-panel sig-mode-triage" style="display:none">
         <div class="ph"><h3>Signal Triage Queue — Market Monitoring Agent</h3><span class="meta" id="sigTrCount">— events</span></div>
         <div class="pb" style="padding:0;overflow-x:auto">
@@ -2468,7 +2776,7 @@ select{
         </div>
       </div>
 
-      <!-- Source-health detail drawer · PRD §4.4.5 fetch health -->
+      <!-- Source-health detail drawer ·  fetch health -->
       <div class="sig-drawer-back" id="sigSrcDrawerBack"></div>
       <div class="sig-drawer" id="sigSrcDrawer" aria-hidden="true"></div>
     </div>
@@ -2549,7 +2857,7 @@ select{
       </div>
       <div class="cpks" id="cpks"></div>
 
-      <!-- Comparative AAV · PRD §3.4.6 -->
+      <!-- Comparative AAV -->
       <div class="panel cmp-aav-panel" id="cmpAavPanel" style="display:none">
         <div class="ph"><h3>Comparative Andara Analytical View</h3><span class="meta"><span class="aav-inline">AAV</span></span></div>
         <div class="pb"><div class="cmp-aav-body" id="cmpAavBody"></div></div>
@@ -2569,7 +2877,7 @@ select{
       <h1 class="vtitle">The 5-Score <em>Methodology</em></h1>
       <p class="vsub">Five weighted dimensions, five distinct questions. Weighted average produces a 0–100 composite. Verdicts are calculated outputs — never analyst opinions. The methodology is geography-agnostic and applies uniformly across all African regions.</p>
 
-      <!-- Active methodology versions · PRD §3.3.6 read-only · §4.3.5 versioning ships M2 -->
+      <!-- Active methodology versions ·  read-only · §4.3.5 versioning ships M2 -->
       <div class="m-ver">
         <span class="m-ver-lbl">Active versions</span>
         <span class="m-ver-chip"><strong>v1.5-NG</strong> Nigeria</span>
@@ -2614,20 +2922,20 @@ select{
           <div class="warn" style="margin:16px"><strong>Hard floor</strong>Composite cannot exceed 65 if PPS &lt; 40 or RCS &lt; 40, regardless of other scores. Exercised on 7 carriers across the combined universe.</div>
         </div>
       </div>
-      <!-- Scoring Committee minutes index · PRD §3.3.6 -->
+      <!-- Scoring Committee minutes index ·  -->
       <div class="panel">
-        <div class="ph"><h3>Scoring Committee · recent decisions</h3><span class="meta">PRD §3.3.6 · minutes index</span></div>
+        <div class="ph"><h3>Scoring Committee · recent decisions</h3><span class="meta"> · minutes index</span></div>
         <div class="pb" style="padding:0"><div class="sc-mins" id="scMinutes"></div></div>
       </div>
 
       <div class="panel"><div class="ph"><h3>Country-level RCS modifier</h3><span class="meta">West Africa · 12 jurisdictions + East Africa · 11 jurisdictions</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="ctbl" id="countryModTable"></table></div></div>
       <div class="panel"><div class="ph"><h3>Client-tier verdict differentiation</h3><span class="meta">Pass 3–4 doctrine · v1.0-WA + v1.0-EA</span></div><div class="pb"><p style="font-size:12.5px;color:var(--t2);line-height:1.65;max-width:800px">West Africa: <strong style="color:#fff">Air Burkina</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese institutional), <strong style="color:#fff">Sky Mali</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese), and <strong style="color:#fff">Global Aviation</strong> (Watch-mid for Western; Watch-high for Chinese, Regional African, Mining/oil-and-gas). East Africa: <strong style="color:#fff">Air Tanzania</strong>, <strong style="color:#fff">Precision Air</strong>, <strong style="color:#fff">African Express Airways</strong> (westernInstitutional Do Not Deploy reflecting EU ban or fleet ineligibility; other tiers Watch). <strong style="color:#fff">Tarco Aviation</strong> and <strong style="color:#fff">Badr Airlines</strong> (conflict-adjusted: westernInstitutional, Chinese, and miningOilGas Do Not Deploy; regionalAfricanInstitutional Watch). The underlying evidence is identical across all tiers; the risk weighting differs by mandate.</p></div></div>
 
-      <!-- Methodology change requests · PRD §3.3.6 read-only placeholder · §4.3.5 workflow ships M2 -->
+      <!-- Methodology change requests ·  read-only placeholder · §4.3.5 workflow ships M2 -->
       <div class="panel">
         <div class="ph"><h3>Change requests</h3></div>
         <div class="pb m-cr">
-          <p class="m-cr-lead">Methodology changes — weights, hard floor parameters, verdict thresholds — are gated by the <strong>Scoring Committee</strong>. The propose-review-approve workflow ships in <strong>M2 (PRD §4.3.5)</strong>. Until then, change requests are routed manually.</p>
+          <p class="m-cr-lead">Methodology changes — weights, hard floor parameters, verdict thresholds — are gated by the <strong>Scoring Committee</strong>. The propose-review-approve workflow ships in <strong>M2 ()</strong>. Until then, change requests are routed manually.</p>
           <div class="m-cr-grid">
             <div class="m-cr-cell">
               <div class="m-cr-lbl">Route to</div>
@@ -2654,32 +2962,85 @@ select{
     <!-- WORKSPACE -->
     <div class="view" id="vw-workspace">
       <h1 class="vtitle">Analyst <em>Workspace</em></h1>
-      <p class="vsub">Submit new evidence to the Andara database. Scores update only through the approved methodology engine — never manually.</p>
-      <div class="warn"><strong>Scoring governance · v1.5-NG / 1.0-WA / 1.0-EA</strong>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>
-      <div class="panel"><div class="ph"><h3>New evidence submission</h3><span class="meta">Audited · attributable</span></div><div class="pb"><form class="wsform" id="wsForm">
+      <p class="vsub">Carrier-scoped scoring files, evidence corpus, and Watch Notes — Arbiter v1. Scores update only through the approved methodology engine — never manually.</p>
+      <div class="notice"><strong>Scoring governance · v1.5-NG / 1.0-WA / 1.0-EA</strong>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>
+
+      <!-- Tab bar — Queue · Evidence · Watch Note -->
+      <div class="aw-tabs" role="tablist">
+        <button type="button" class="aw-tab active" data-awtab="queue">Queue<span class="cnt" id="awQueueCnt">0</span></button>
+        <button type="button" class="aw-tab" data-awtab="evidence">Evidence</button>
+        <button type="button" class="aw-tab" data-awtab="watch">Watch Note</button>
+      </div>
+
+      <!-- QUEUE — analyst-scoped carrier list + drill-down scoring file ·  -->
+      <div class="aw-pane active" data-awp="queue">
+        <!-- List mode: assigned carriers -->
+        <div id="awQueueList">
+          <div class="panel">
+            <div class="ph"><h3>My carriers</h3><span class="meta" id="awQueueMeta">Assigned to <span id="awQueueUser">analyst</span> · click a row to open scoring file</span></div>
+            <div class="pb" style="padding:0">
+              <!-- Scoring-file state filter ·  -->
+              <div class="fb" id="awStateFilter" style="padding:16px 16px 0;margin-bottom:16px">
+                <span style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px">State</span>
+                <button type="button" class="fp active" data-awstate="all">All</button>
+                <button type="button" class="fp" data-awstate="none">No file</button>
+                <button type="button" class="fp" data-awstate="draft">Draft</button>
+                <button type="button" class="fp" data-awstate="submitted">Submitted</button>
+                <button type="button" class="fp" data-awstate="returned">Returned</button>
+                <button type="button" class="fp" data-awstate="approved">Approved</button>
+                <button type="button" class="fp" data-awstate="shipped">Shipped</button>
+                <button type="button" class="fp" data-awstate="rejected">Rejected</button>
+              </div>
+              <div style="overflow-x:auto">
+                <table class="aw-queue" id="awQueueTbl">
+                  <thead><tr>
+                    <th>Carrier</th>
+                    <th>Jurisdiction</th>
+                    <th>Current verdict</th>
+                    <th>Composite</th>
+                    <th>Validity</th>
+                    <th>Scoring file</th>
+                  </tr></thead>
+                  <tbody id="awQueueBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Detail mode: scoring file editor (hidden until a carrier is opened) -->
+        <div id="awQueueDetail" style="display:none">
+          <button type="button" class="aw-back" id="awBackToQueue">← Back to queue</button>
+          <div id="awSfHost"></div>
+        </div>
+      </div>
+
+      <!-- EVIDENCE — corpus submission tied to a carrier ·  -->
+      <div class="aw-pane" data-awp="evidence">
+        <div class="panel"><div class="ph"><h3>New evidence submission</h3><span class="meta">Audited · attributable</span></div><div class="pb"><form class="wsform" id="wsForm">
         <div class="wsr">
-          <div class="wsf"><label>Affected carrier</label><select id="evC"><option value="">— Select —</option></select></div>
-          <div class="wsf"><label>Source classification</label><select><option>Public-domain</option><option>Private Andara intelligence</option><option>Regulatory filing</option><option>Financial / lender</option><option>Legal / court</option><option>Operational</option><option>Macroeconomic</option></select></div>
+          <div class="wsf"><label>Affected Carrier</label><select id="evC"><option value="">— Select —</option></select></div>
+          <div class="wsf"><label>Source Classification</label><select id="evClass"><option value="public">Public-domain</option><option value="private">Private Andara intelligence</option><option value="regulatory">Regulatory filing</option><option value="financial">Financial / lender</option><option value="legal">Legal / court</option><option value="ops">Operational</option><option value="macro">Macroeconomic</option></select></div>
         </div>
         <div class="wsr">
-          <div class="wsf"><label>Mapped scoring criterion</label><select><option>SVS — Strategic Value</option><option>PPS — Payment Priority</option><option>APS — Airline Performance</option><option>RCS — Risk Containment</option><option>RAS — Redeployment Suitability</option></select></div>
-          <div class="wsf"><label>Confidence level</label><select><option>High · two+ sources</option><option>Medium · one reputable trade source</option><option>Low · single secondary</option></select></div>
+          <div class="wsf"><label>Mapped Scoring Criterion</label><select id="evCrit"><option value="svs">SVS — Strategic Value</option><option value="pps">PPS — Payment Priority</option><option value="aps">APS — Airline Performance</option><option value="rcs">RCS — Risk Containment</option><option value="ras">RAS — Redeployment Suitability</option></select></div>
+          <div class="wsf"><label>Confidence Level</label><select id="evConf"><option value="high">High · two+ sources</option><option value="medium">Medium · one reputable trade source</option><option value="low">Low · single secondary</option></select></div>
         </div>
-        <div class="wsf"><label>Headline</label><input type="text" placeholder="e.g. ASKY executes B787-9 purchase agreement with [Lessor]"/></div>
-        <div class="wsf"><label>Source citation</label><input type="text" placeholder="https://… or ANAC-Togo Bulletin 2026/05/xxx"/></div>
-        <div class="wsf"><label>Analyst observation</label><textarea placeholder="What the source says. What it means for the score. What confidence the analyst attaches. What should be triangulated against this."></textarea></div>
-        <div style="display:flex;gap:9px;margin-top:6px">
+        <div class="wsf"><label>Headline</label><input type="text" id="evHead" placeholder="e.g. ASKY executes B787-9 purchase agreement with [Lessor]"/></div>
+        <div class="wsf"><label>Source Citation</label><input type="text" id="evSrc" placeholder="https://… or ANAC-Togo Bulletin 2026/05/xxx"/></div>
+        <div class="wsf"><label>Analyst Observation</label><textarea id="evObs" placeholder="What the source says. What it means for the score. What confidence the analyst attaches. What should be triangulated against this."></textarea></div>
+        <div class="wsa">
           <button type="button" class="btn btn-p" id="subEv">Submit to methodology engine</button>
-          <button type="button" class="btn">Save draft</button>
         </div>
       </form></div></div>
+      </div><!-- /pane:evidence -->
 
-      <!-- Watch Note creator · PRD §3.4.1 (off-cycle Watch Note tied to parent scoring file) -->
-      <div class="panel" style="margin-top:24px">
-        <div class="ph"><h3>Watch Note creator</h3><span class="meta">Off-cycle · PRD §3.4.1</span></div>
+      <!-- WATCH NOTE — off-cycle Watch Note tied to parent scoring file ·  -->
+      <div class="aw-pane" data-awp="watch">
+      <div class="panel">
+        <div class="ph"><h3>Watch Note creator</h3></div>
         <div class="pb"><form class="wsform" id="wnForm">
           <div class="wsr">
-            <div class="wsf"><label>Affected carrier</label><select id="wnCarrier"><option value="">— Select —</option></select></div>
+            <div class="wsf"><label>Affected Carrier</label><select id="wnCarrier"><option value="">— Select —</option></select></div>
             <div class="wsf"><label>Severity</label><select id="wnSeverity">
               <option value="info">Info — informational, no verdict implication</option>
               <option value="watch" selected>Watch Note — material, monitor for follow-on</option>
@@ -2687,7 +3048,7 @@ select{
             </select></div>
           </div>
           <div class="wsf">
-            <label>Classification <span class="wn-helper">— PRD §3.2.4 eligible classes</span></label>
+            <label>Classification</label>
             <div class="wn-class-row" id="wnClassRow">
               <label class="wn-class-chip"><input type="checkbox" value="regulatory"> Regulatory</label>
               <label class="wn-class-chip"><input type="checkbox" value="legal"> Legal</label>
@@ -2699,17 +3060,58 @@ select{
           <div class="wsf"><label>Headline</label><input type="text" id="wnHeadline" placeholder="e.g. Lessor IDERA filed against 5N-XXX following 90-day arrears"></div>
           <div class="wsf"><label>Body</label><textarea id="wnBody" placeholder="What changed, what it means for the verdict, what the client should expect next. Min 80 characters." style="min-height:110px"></textarea></div>
           <div class="wsr">
-            <div class="wsf"><label>Source citation</label><input type="text" id="wnSource" placeholder="https://… or Field intelligence W23 2026/06/xxx"></div>
-            <div class="wsf"><label>Parent scoring file</label><input type="text" id="wnParent" disabled placeholder="Auto-linked to latest scoring file"></div>
+            <div class="wsf"><label>Source Citation</label><input type="text" id="wnSource" placeholder="https://… or Field intelligence W23 2026/06/xxx"></div>
+            <div class="wsf"><label>Parent Scoring File</label><input type="text" id="wnParent" disabled placeholder="Auto-linked to latest scoring file"></div>
           </div>
           <div class="wsf">
             <label><input type="checkbox" id="wnAav" style="margin-right:8px;vertical-align:middle"> Mark as <strong style="color:var(--amber)">Andara Analytical View</strong> — body carries the AAV chip on dispatch</label>
           </div>
-          <div style="display:flex;gap:9px;margin-top:6px">
+          <div class="wsa">
             <button type="button" class="btn btn-p" id="wnDispatch">Dispatch Watch Note</button>
-            <button type="button" class="btn" id="wnDraft">Save draft</button>
           </div>
         </form></div>
+      </div>
+      </div><!-- /pane:watch -->
+    </div>
+
+    <!-- SCORING COMMITTEE —  -->
+    <div class="view" id="vw-committee">
+      <h1 class="vtitle">Scoring <em>Committee</em></h1>
+      <p class="vsub">Per  — committee inbox, decision capture with chair signature, and immutable decisions log. Click <strong>View details</strong> on any row to open the full submission in the side drawer. Every decision propagates to the audit trail.</p>
+      <div class="panel">
+        <div class="ph"><h3>Committee inbox</h3><span class="meta" id="ccInboxMeta">Submissions awaiting review</span></div>
+        <div class="pb" style="padding:0;overflow-x:auto">
+          <table class="aw-queue no-row-click" id="ccInboxTbl">
+            <thead><tr>
+              <th>Carrier</th>
+              <th>Scoring file</th>
+              <th>Submitter</th>
+              <th>Submitted</th>
+              <th>Composite</th>
+              <th>Verdict preview</th>
+              <th>Hard floor</th>
+              <th></th>
+            </tr></thead>
+            <tbody id="ccInboxBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:24px">
+        <div class="ph"><h3>Decisions log</h3><span class="meta">Immutable · committee history</span></div>
+        <div class="pb" style="padding:0;overflow-x:auto">
+          <table class="aw-queue no-row-click" id="ccLogTbl">
+            <thead><tr>
+              <th>Decided</th>
+              <th>Outcome</th>
+              <th>Carrier</th>
+              <th>Scoring file</th>
+              <th>Chair</th>
+              <th>Rationale</th>
+              <th></th>
+            </tr></thead>
+            <tbody id="ccLogBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -2766,7 +3168,7 @@ select{
   </div>
 </div>
 
-<!-- Signal: promote-to-Scoring-Committee modal · PRD §4.4.5 -->
+<!-- Signal: promote-to-Scoring-Committee modal ·  -->
 <div class="sig-mback" id="sigPromoteModal">
   <div class="sig-mbox">
     <div class="sig-mhd"><h3>Promote Signal to Scoring Committee</h3><button class="close" data-sig-close="sigPromoteModal">✕</button></div>
@@ -2795,7 +3197,7 @@ select{
   </div>
 </div>
 
-<!-- Signal: severity override modal · PRD §4.4.5 -->
+<!-- Signal: severity override modal ·  -->
 <div class="sig-mback" id="sigOverrideModal">
   <div class="sig-mbox">
     <div class="sig-mhd"><h3>Override predicted severity</h3><button class="close" data-sig-close="sigOverrideModal">✕</button></div>
@@ -2825,7 +3227,7 @@ select{
   </div>
 </div>
 
-<!-- Signal triage: Mark triaged modal · PRD §4.4.5 -->
+<!-- Signal triage: Mark triaged modal ·  -->
 <div class="sig-mback" id="sigTriagedModal">
   <div class="sig-mbox">
     <div class="sig-mhd"><h3>Mark event triaged</h3><button class="close" data-sig-close="sigTriagedModal">✕</button></div>
@@ -2858,7 +3260,7 @@ select{
   </div>
 </div>
 
-<!-- Signal triage: View raw payload modal · PRD §4.4.5 (read-only) -->
+<!-- Signal triage: View raw payload modal ·  (read-only) -->
 <div class="sig-mback" id="sigPayloadModal">
   <div class="sig-mbox">
     <div class="sig-mhd"><h3>Raw event payload</h3><button class="close" data-sig-close="sigPayloadModal">✕</button></div>
@@ -2870,7 +3272,7 @@ select{
   </div>
 </div>
 
-<!-- Signal triage: Dismiss as noise modal · PRD §4.4.5 -->
+<!-- Signal triage: Dismiss as noise modal ·  -->
 <div class="sig-mback" id="sigDismissModal">
   <div class="sig-mbox">
     <div class="sig-mhd"><h3>Dismiss event as noise</h3><button class="close" data-sig-close="sigDismissModal">✕</button></div>
@@ -2889,7 +3291,7 @@ select{
   </div>
 </div>
 
-<!-- Compare: Save set modal · PRD §4.2.5 -->
+<!-- Compare: Save set modal ·  -->
 <div class="sig-mback" id="cmpSaveModal">
   <div class="sig-mbox">
     <div class="sig-mhd"><h3>Save comparison set</h3><button class="close" data-sig-close="cmpSaveModal">✕</button></div>
@@ -2908,7 +3310,7 @@ select{
   </div>
 </div>
 
-<!-- Compare: Submit-to-SC modal · PRD §3.4.1 / §4.4.5 -->
+<!-- Compare: Submit-to-SC modal ·  / §4.4.5 -->
 <div class="sig-mback" id="cmpSubmitModal">
   <div class="sig-mbox">
     <div class="sig-mhd"><h3>Submit comparison to Scoring Committee</h3><button class="close" data-sig-close="cmpSubmitModal">✕</button></div>
@@ -2933,6 +3335,80 @@ select{
     <div class="sig-mfooter">
       <button class="sig-mbtn" data-sig-close="cmpSubmitModal">Cancel</button>
       <button class="sig-mbtn primary" id="cmpSubmitConfirm">Notify Scoring Committee</button>
+    </div>
+  </div>
+</div>
+
+<!-- Workspace: Submit-scoring-file-to-SC modal ·  -->
+<div class="sig-mback" id="awSubmitModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Submit scoring file to Scoring Committee</h3><button class="close" data-sig-close="awSubmitModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="awSubmitSummary"></div>
+      <div class="sig-mfield">
+        <label>Submission rationale</label>
+        <textarea id="awSubmitRationale" placeholder="What does the committee need to know? Cite material evidence, hard-floor proximity, and any methodology questions. Min 60 chars."></textarea>
+        <div class="helper">Routed to the committee inbox with the full scoring file (5 dimensions, sub-inputs, composite, hard-floor state, preview verdict). Decision logged on the audit trail.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="awSubmitModal">Cancel</button>
+      <button class="sig-mbtn primary" id="awSubmitConfirm">Submit to Scoring Committee</button>
+    </div>
+  </div>
+</div>
+
+<!-- Shared SF detail drawer — used by Analyst Workspace history,
+     Committee inbox (with decision actions), and Decisions log (read-only) ·  + §3.4.2 -->
+<div class="sig-drawer-back" id="sfDetailDrawerBack"></div>
+<div class="sig-drawer sf-drawer" id="sfDetailDrawer" aria-hidden="true"></div>
+
+<!-- Per-sub-score evidence attach modal ·  -->
+<div class="sig-mback" id="awEvSubModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Attach evidence to sub-score</h3><button class="close" data-sig-close="awEvSubModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="awEvSubSummary"></div>
+      <div class="sig-mfield">
+        <label>Source link / reference</label>
+        <input type="text" id="awEvSubSource" placeholder="https://… or Field intelligence W23 2026/06/xxx">
+      </div>
+      <div class="sig-mfield">
+        <label>Evidence file <span style="font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em;text-transform:none;font-weight:400;margin-left:6px">(optional · ≤2 MB)</span></label>
+        <input type="file" id="awEvSubFile" style="font-family:var(--sans);font-size:13px;color:var(--t2);padding:8px 12px;background:var(--bg2);border:1px solid var(--line);border-radius:4px;width:100%;box-sizing:border-box">
+        <div class="helper">Held client-side at M1. The warehouse-backed object store (signed URLs, virus scan) ships at M2.</div>
+      </div>
+      <div class="sig-mfield">
+        <label>Analyst note</label>
+        <textarea id="awEvSubNote" placeholder="What does the evidence show? Min 20 characters."></textarea>
+      </div>
+      <div class="sig-mfield">
+        <label>Already attached</label>
+        <div class="aw-ev-list" id="awEvSubList"></div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="awEvSubModal">Done</button>
+      <button class="sig-mbtn primary" id="awEvSubAdd">Attach</button>
+    </div>
+  </div>
+</div>
+
+<!-- Committee: Decision capture modal -->
+<div class="sig-mback" id="ccDecisionModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3 id="ccDecisionTitle">Decision</h3><button class="close" data-sig-close="ccDecisionModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="ccDecisionSummary"></div>
+      <div class="sig-mfield">
+        <label>Chair rationale</label>
+        <textarea id="ccDecisionRationale" placeholder="Reasoning for this decision — referenced in the immutable decisions log and the audit trail. Min 40 chars."></textarea>
+        <div class="helper">Recorded with your session identity as chair signature. Decisions are immutable; corrections require a new submission.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="ccDecisionModal">Cancel</button>
+      <button class="sig-mbtn primary" id="ccDecisionConfirm">Confirm</button>
     </div>
   </div>
 </div>
@@ -4285,13 +4761,13 @@ function buildDashboard(){
       if(e.target.closest('.mo-refresh-cell'))return;
       showAirline(r.dataset.aid);
     }));
-    // PRD §3.2.4 Refresh request — routed to CS lead. AUDIT-logged so it surfaces on /audit and /intel.
+    //  Refresh request — routed to CS lead. AUDIT-logged so it surfaces on /audit and /intel.
     rowsEl.querySelectorAll('.mo-refresh').forEach(btn => btn.addEventListener('click', e => {
       e.stopPropagation();
       logRefreshRequest(btn.dataset.cid, btn.dataset.cname, 'Market Overview');
       toast('Refresh requested', `Routed to CS lead for ${btn.dataset.cname}`);
     }));
-    // PRD §3.2.4 + §3.2.6 — verdict letter download, watermarked + audited.
+    //  + §3.2.6 — verdict letter download, watermarked + audited.
     rowsEl.querySelectorAll('.mo-pdf').forEach(btn => btn.addEventListener('click', e => {
       e.stopPropagation();
       const wm = moLogDeliverable({carrier:btn.dataset.cname,deliverable:'Verdict letter',format:'PDF',scope:'single'});
@@ -4311,7 +4787,7 @@ function buildDashboard(){
   renderMoRefreshSchedule(carriers);
 }
 
-// ── Watermark + deliverable logging · PRD §3.2.6 ─────────────────────────
+// ── Watermark + deliverable logging ─────────────────────────
 // Every PDF / cohort export regenerated with the downloading user's token + logged.
 function moHashStr(s){
   // Small non-cryptographic hash used only as the deliverable id seed.
@@ -4345,7 +4821,7 @@ function moLogDeliverable(opts){
   return wm;
 }
 
-// PRD §3.2.4 — refresh request logged to AUDIT so it surfaces on /audit and /intel.
+//  — refresh request logged to AUDIT so it surfaces on /audit and /intel.
 // origin: 'Sentinel' or 'Market Overview' (sets src). Returns the entry timestamp.
 function logRefreshRequest(cid, cname, origin){
   const a = (cid && typeof ALL_CARRIERS!=='undefined') ? ALL_CARRIERS.find(x=>x.id===cid) : null;
@@ -4370,7 +4846,7 @@ function logRefreshRequest(cid, cname, origin){
   return ts;
 }
 
-// ── Refresh schedule panel · PRD §4.2.3 ──────────────────────────────────
+// ── Refresh schedule panel ──────────────────────────────────
 function renderMoRefreshSchedule(carriers){
   const exp=[],d30=[],d90=[];
   carriers.forEach(c=>{
@@ -4401,7 +4877,7 @@ function renderMoRefreshSchedule(carriers){
   renderCol('moRef90',d90,'soon','None within 31 – 90 days.');
 }
 
-// ── Composite Market Score + right rail (PRD §4.2.3) ──────────────────────
+// ── Composite Market Score + right rail  ──────────────────────
 function activeRegionScopeLabel(){
   const m={all:'Sub-Saharan Africa',nigeria:'Nigeria','west-africa':'West Africa','east-africa':'East Africa','south-africa':'South Africa','southern-africa':'Southern Africa ex-SA','central-africa':'Central Africa'};
   return m[activeRegion]||'Cohort';
@@ -4493,7 +4969,7 @@ function renderMoVchart(carriers){
 }
 
 // ── Market Overview — heat map · Watch Notes · movers ──────────────────────
-// PRD §4.2.3 aggregate verdict distribution + §3.2.4 Watch Note feed.
+//  aggregate verdict distribution + §3.2.4 Watch Note feed.
 function moHeatCellStyle(c){
   const v=c.composite;
   if(v>=75){const a=0.18+Math.min(0.55,(v-75)/25*0.55);return`background:rgba(107,179,138,${a});`;}
@@ -4548,7 +5024,7 @@ function renderMoWatchNotes(carriers){
 }
 
 // Recent movers panel: AUDIT entries with crit=Composite or crit=Verdict where
-// `to` reflects a band change or new addition. PRD §4.2.3 historical verdict trail.
+// `to` reflects a band change or new addition.  historical verdict trail.
 function renderMoMovers(carriers){
   const wrap=el('moMoverList');if(!wrap)return;
   const cidNames=new Map(ALL_CARRIERS.map(c=>[c.name,c.id]));
@@ -4595,8 +5071,7 @@ function renderMoMovers(carriers){
 // Renders a row per carrier for the Market Overview scorecard.
 // Signal column draws from SIGNAL_DATA when present; otherwise shown as N/A.
 // Refresh schedule helpers — shared by Market Overview, Monitoring tab, and
-// any future surface that needs validity-until per PRD §3.2.4
-// (Verdict list: "Verdict class, validity-until, last refresh date").
+// any future surface that needs validity-until per // (Verdict list: "Verdict class, validity-until, last refresh date").
 const REFRESH_CADENCE = {
   1: {label:'Monthly review',     refreshMo:1, validityMo:3},
   2: {label:'Quarterly review',   refreshMo:3, validityMo:6},
@@ -4673,7 +5148,7 @@ function moRenderRows(list){
                    : val.urgency === 'soon'    ? `${val.days}d left`
                    : val.days != null          ? `${val.days}d left`
                    : '';
-    // Row flags: hard floor + EU blacklist (PRD §3.3.6, COUNTRY_METADATA)
+    // Row flags: hard floor + EU blacklist (, COUNTRY_METADATA)
     const hf=c.hardFloor;
     const cm=(typeof COUNTRY_METADATA!=='undefined')?COUNTRY_METADATA.find(m=>m.iso===c.iso):null;
     const flags=[];
@@ -4700,7 +5175,7 @@ function moRenderRows(list){
 }
 
 function buildSentinel(){
-  // PRD §3.2.4 — Watch-Note-eligible classes that define a "fired event" line on a card.
+  //  — Watch-Note-eligible classes that define a "fired event" line on a card.
   const SN_WN_CLASSES = new Set(['regulatory','legal','ops','financial','private']);
   const refreshSvg = `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5v3h-3"/><path d="M13.5 5.5A6 6 0 1 0 14 9"/></svg>`;
   const draftSvg = `<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 2.5l2.5 2.5L5 13.5H2.5V11z"/><path d="M9.5 4l2.5 2.5"/></svg>`;
@@ -4805,7 +5280,7 @@ function buildSentinel(){
       let eventLine;
       if(evKind === 'wn'){
         const wnBadge = ev.wnId ? `<span class="sn-wn-id" title="Watch Note reference">${ev.wnId}</span>` : '';
-        const head = `<div class="sn-ev-head">${wnBadge}<strong>${ev.title}</strong><span class="aav-inline" title="Andara Analytical View — analyst-curated commentary on the source, not a restatement of fact (PRD §3.4.6)">AAV</span></div>`;
+        const head = `<div class="sn-ev-head">${wnBadge}<strong>${ev.title}</strong><span class="aav-inline" title="Andara Analytical View — analyst-curated commentary on the source, not a restatement of fact ">AAV</span></div>`;
         const note = ev.desc ? `<div class="sn-ev-note">${ev.desc}</div>` : '';
         eventLine = `<div class="sn-event"><span class="when">${ev.date}</span><div class="body">${head}${note}</div></div>`;
       } else if(evKind === 'verdict'){
@@ -4836,7 +5311,7 @@ function buildSentinel(){
         ${eventLine}
         <div class="sn-actions">
           <button type="button" class="sn-refresh" data-cid="${a.id}" data-cname="${a.name}" aria-label="Request refresh for ${a.name}" title="Request off-cycle refresh · routed to CS lead">${refreshSvg}<span>Request refresh</span></button>
-          <button type="button" class="sn-draft" data-cid="${a.id}" data-cname="${a.name}" data-cls="${evClsAttr}" aria-label="Draft Watch Note for ${a.name}" title="Open Watch Note creator with this carrier pre-selected · PRD §3.4.1">${draftSvg}<span>Draft Watch Note</span></button>
+          <button type="button" class="sn-draft" data-cid="${a.id}" data-cname="${a.name}" data-cls="${evClsAttr}" aria-label="Draft Watch Note for ${a.name}" title="Open Watch Note creator with this carrier pre-selected · ">${draftSvg}<span>Draft Watch Note</span></button>
         </div>
       </div>`;
     }).join('');
@@ -4844,13 +5319,13 @@ function buildSentinel(){
       if(e.target.closest('.sn-refresh')||e.target.closest('.sn-draft'))return;
       showAirline(r.dataset.aid);
     }));
-    // PRD §3.2.4 Refresh request — routed to CS lead. AUDIT-logged so it surfaces on /audit and /intel.
+    //  Refresh request — routed to CS lead. AUDIT-logged so it surfaces on /audit and /intel.
     ctr.querySelectorAll('.sn-refresh').forEach(btn=>btn.addEventListener('click',e=>{
       e.stopPropagation();
       logRefreshRequest(btn.dataset.cid, btn.dataset.cname, 'Sentinel');
       toast('Refresh requested', `Routed to CS lead for ${btn.dataset.cname}`);
     }));
-    // PRD §3.4.1 Draft Watch Note — jump to workspace form with carrier + classification pre-filled.
+    //  Draft Watch Note — jump to workspace form with carrier + classification pre-filled.
     ctr.querySelectorAll('.sn-draft').forEach(btn=>btn.addEventListener('click',e=>{
       e.stopPropagation();
       const prefillCls = btn.dataset.cls ? btn.dataset.cls.split(',').filter(Boolean) : [];
@@ -4859,7 +5334,7 @@ function buildSentinel(){
   });
 }
 
-// PRD §3.4.1 — navigate to Analyst Workspace, pre-select the carrier in the Watch Note
+//  — navigate to Analyst Workspace, pre-select the carrier in the Watch Note
 // creator (parent SF auto-links via the existing change handler), pre-check the matching
 // classification chips, and scroll the form into view. Headline / body / source are left
 // blank — Watch Notes are analyst-written commentary, not a republish of the FEED item.
@@ -4908,7 +5383,7 @@ const intelVerdictDelta = (l)=>{
 // AUDIT entries → cid lookup. Captures every analyst-actionable AUDIT row:
 // • Composite / Verdict / Signal (incl. Signal escalation / override / override cleared / triage)
 // • Comparison submission to SC
-// • Refresh request (PRD §3.2.4 affordance — both Sentinel and Market Overview origins)
+// • Refresh request ( affordance — both Sentinel and Market Overview origins)
 // Watch Note dispatches are excluded — they already surface in FEED via the unshift.
 function intelAuditItems(){
   const byName = new Map(ALL_CARRIERS.map(a=>[a.name, a]));
@@ -5034,7 +5509,7 @@ function feedItem(it){
   const wnBadge = it.wnId ? `<span class="sn-wn-id" title="Watch Note reference">${it.wnId}</span>` : '';
   const sev = it.severity;
   const sevPill = sev ? `<span class="isev ${sev==='alert'?'alert':sev==='watch'?'watch':'info'}" title="Watch Note severity">${sev}</span>` : '';
-  const aav = it.aav ? `<span class="aav-inline" title="Andara Analytical View — analyst commentary (PRD §3.4.6)">AAV</span>` : '';
+  const aav = it.aav ? `<span class="aav-inline" title="Andara Analytical View — analyst commentary ">AAV</span>` : '';
   const tags = (it.cls||[]).map(c=>`<span class="itag ${c}">${c}</span>`).join('');
   return`<div class="iitem" data-cid="${it.cid||''}" data-cls="${(it.cls||[]).join(' ')}">
     <div class="itime"><strong>${it.date}</strong>${it.time||''}<br><span style="color:var(--amber)">●</span> ${carrier}</div>
@@ -5089,6 +5564,7 @@ const VIEW_TO_NAV = {
   'vw-compare':{v:'compare',lbl:'Comparison'},
   'vw-method':{v:'method',lbl:'Methodology'},
   'vw-workspace':{v:'workspace',lbl:'Analyst Workspace'},
+  'vw-committee':{v:'committee',lbl:'Scoring Committee'},
   'vw-audit':{v:'audit',lbl:'Audit Trail'},
   'vw-reports':{v:'reports',lbl:'Report Centre'},
 };
@@ -5525,7 +6001,7 @@ function renderCmp(){
     const color=lo>=6?'var(--deploy)':lo>=4?'var(--watch)':'var(--dnd)';
     return`<span style="color:${color};font-family:var(--mono)">${lo}–${hi}/10</span>`;
   };
-  // PRD §3.3.6 — Cape Town Convention + EU blacklist from COUNTRY_METADATA.
+  //  — Cape Town Convention + EU blacklist from COUNTRY_METADATA.
   const ctcCell=a=>{
     if(a.iso==='NG')return`<span style="color:var(--deploy)">Ratified · IDERA</span>`;
     const cm=COUNTRY_METADATA.find(c=>c.iso===a.iso);
@@ -5553,7 +6029,7 @@ function renderCmp(){
   });
   // Same shape but for paragraph (not list) content. Used for verdict
   // narrative where the source is a single AAV-classed paragraph.
-  // `aav:true` prepends the AAV chip per PRD §3.4.6.
+  // `aav:true` prepends the AAV chip per .
   const expandRowText = (metricLabel, summaryFn, textFn, opts={}) => ({
     expandable:true, m:metricLabel, f:summaryFn,
     detail: id=>{
@@ -5587,16 +6063,16 @@ function renderCmp(){
     {m:'Validity-until',f:validityCell},
     expandRow('Active triggers',watchNoteCell,a=>a.monitoringTriggers||[]),
     expandRow('Data-gap profile',dataGapCell,a=>a.dataGapFlags||[]),
-    // PRD §3.3.6 Pass 3–4 doctrine — what needs to change for Watch → Deploy.
+    //  Pass 3–4 doctrine — what needs to change for Watch → Deploy.
     expandRow('Conditions for upgrade',
       a=>{const n=(a.conditions||[]).length;return n?`<span style="color:var(--watch)">${n} on file</span>`:'<span style="color:var(--t3)">—</span>';},
       a=>a.conditions||[]),
-    // PRD §3.4.6 — analytical narrative, must carry AAV label.
+    //  — analytical narrative, must carry AAV label.
     expandRowText('Verdict narrative',
       a=>a.verdictNarrative?`<span style="color:var(--amber)">AAV available</span>`:'<span style="color:var(--t3)">—</span>',
       a=>a.verdictNarrative,
       {aav:true}),
-    // PRD §4.2.3 — historical verdict trail per carrier.
+    //  — historical verdict trail per carrier.
     expandRow('Verdict trail',
       a=>{const n=AUDIT.filter(l=>l.carrier===a.name).length;return n?`<span style="color:var(--info)">${n} entries</span>`:'<span style="color:var(--t3)">—</span>';},
       a=>AUDIT.filter(l=>l.carrier===a.name).slice(0,8).map(l=>{
@@ -5635,7 +6111,7 @@ function openCmpModal(slot){
 window.openCmpModal=openCmpModal;
 window.cmpRemove=(idx,e)=>{e.stopPropagation();cmpSlots[idx]=null;renderCmp();};
 
-// ── Comparison radar overlay · PRD §3.3.6 ────────────────────────────────
+// ── Comparison radar overlay ·  ────────────────────────────────
 const CMP_SLOT_COLORS=['#FF9A1F','#7DABE3','#9bd1a5','#d2a3e0'];
 function renderCmpRadar(filled){
   const panel=el('cmpRadarPanel');
@@ -5690,7 +6166,7 @@ function renderCmpRadar(filled){
   el('cmpRadarLegend').innerHTML=rows+bandkey;
 }
 
-// ── Comparative AAV · PRD §3.4.6 ──────────────────────────────────────────
+// ── Comparative AAV ──────────────────────────────────────────
 function renderCmpAav(filled){
   const panel=el('cmpAavPanel');
   if(filled.length<2){panel.style.display='none';return;}
@@ -5725,7 +6201,7 @@ function renderCmpAav(filled){
   el('cmpAavBody').innerHTML=lines.map(l=>`<div class="row ${l.cls}"><span class="dot"></span><div>${l.html}</div></div>`).join('');
 }
 
-// ── Saved comparison sets · PRD §4.2.5 ──────────────────────────────────
+// ── Saved comparison sets ·  ──────────────────────────────────
 const CMP_SETS_KEY='andara.cmp.sets';
 function cmpLoadSets(){try{return JSON.parse(localStorage.getItem(CMP_SETS_KEY)||'[]');}catch(_){return[];}}
 function cmpSaveSets(arr){try{localStorage.setItem(CMP_SETS_KEY,JSON.stringify(arr));}catch(_){}}
@@ -5812,8 +6288,7 @@ function cmpDoLoadSet(idx){
   if(document.readyState!=='loading')ready();else document.addEventListener('DOMContentLoaded',ready);
 })();
 
-// Scoring Committee minutes index · PRD §3.3.6
-// Surfaces AUDIT entries that represent committee-gated decisions:
+// Scoring Committee minutes index// Surfaces AUDIT entries that represent committee-gated decisions:
 // • Approved · CCC (verdicts / composite / methodology integrations)
 // • Notified · awaiting SC (Signal escalations + Comparison submissions to SC)
 // Top 10 most recent. Click → carrier profile when the row carries a known carrier name.
@@ -5893,11 +6368,29 @@ function buildWorkspace(){
     const cid=sel.value;
     if(!cid){toast('Select a carrier','Submission requires affected carrier');return;}
     const a=ALL_CARRIERS.find(x=>x.id===cid);
-    toast('Evidence submitted','Routed to '+a.name+' methodology engine for re-run');
+    const headline=(el('evHead').value||'').trim();
+    if(headline.length<10){toast('Headline required','Min 10 characters — make it scannable in the corpus.');return;}
+    const source=(el('evSrc').value||'').trim();
+    if(source.length<5){toast('Source citation required','Cite a URL or field-intelligence reference.');return;}
+    const observation=(el('evObs').value||'').trim();
+    if(observation.length<40){toast('Observation too short','Min 40 characters — explain what the source says and what it means for the score.');return;}
+    // Build record ·  evidence corpus
+    const ym=(new Date()).toISOString().slice(0,7).replace('-','');
+    const seq=EVIDENCE.filter(e=>(e.id||'').startsWith(`EV-${ym}-`)).length+1;
+    const id=`EV-${ym}-${String(seq).padStart(3,'0')}`;
+    const rec={id, cid, ts:sigNowTs(), user:sigCurrentUser(),
+      cls:el('evClass').value, crit:el('evCrit').value, conf:el('evConf').value,
+      headline, source, observation};
+    EVIDENCE.unshift(rec);
+    const entry={ts:rec.ts,user:rec.user,carrier:a.name,crit:`Evidence submission · ${rec.crit.toUpperCase()}`,fr:'Workspace',to:'Evidence corpus',src:'Scoring Workspace',status:'Logged',note:`${id} · ${rec.cls} · ${headline.slice(0,140)}`};
+    AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
+    sfPersist();
+    if(typeof buildAudit==='function')buildAudit();
+    toast(`Evidence logged · ${id}`, `${a.name} · mapped to ${rec.crit.toUpperCase()} · confidence ${rec.conf}`);
     el('wsForm').reset();
   });
 
-  // Watch Note creator · PRD §3.4.1
+  // Watch Note creator
   const wnSel=el('wnCarrier');
   if(wnSel){
     wnSel.innerHTML='<option value="">— Select —</option>'+[...ALL_CARRIERS].sort((a,b)=>a.name.localeCompare(b.name)).map(a=>`<option value="${a.id}">${a.name} (${a.region==='west-africa'?a.jurisdiction:a.region==='nigeria'?'Nigeria':a.jurisdiction||''})</option>`).join('');
@@ -5909,9 +6402,88 @@ function buildWorkspace(){
   }
   const wnBtn=el('wnDispatch');
   if(wnBtn)wnBtn.addEventListener('click',wnDispatchNote);
-  const wnDraftBtn=el('wnDraft');
-  if(wnDraftBtn)wnDraftBtn.addEventListener('click',()=>toast('Draft saved','Watch Note draft retained locally · no dispatch.'));
+  //  — analyst queue + scoring file editor
+  bindAwTabs();
+  buildAnalystQueue();
+  // Modern dropdown — wraps every workspace-form <select>
+  ddInitAll(el('vw-workspace'));
 }
+
+// ── Modern dropdown (.dd) — wraps a native <select> with a custom trigger + menu.
+//    The native select stays in the DOM (hidden) so existing accessors
+//    (el(id).value, .addEventListener('change', …)) keep working unchanged.
+function ddEnhance(sel){
+  if(sel.dataset.ddInit)return;
+  // Skip the multiselect / hidden / non-enhanceable cases.
+  if(sel.multiple||sel.size>1)return;
+  sel.dataset.ddInit='1';
+  const wrap=document.createElement('div'); wrap.className='dd';
+  // Auto-size variant based on the original select's existing styling class.
+  if(sel.classList.contains('mo-heat-sort'))            wrap.classList.add('dd--xs');
+  else if(sel.classList.contains('sig-region')
+       || sel.classList.contains('cmp-sets-select'))    wrap.classList.add('dd--sm');
+  else if(sel.closest('.sig-mfield'))                   wrap.classList.add('dd--md');
+  const trig=document.createElement('button');
+  trig.type='button'; trig.className='dd-trigger';
+  trig.setAttribute('aria-haspopup','listbox');
+  trig.setAttribute('aria-expanded','false');
+  trig.innerHTML=`<span class="dd-value"></span><svg class="dd-caret" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 5.5l4 4 4-4" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const menu=document.createElement('div'); menu.className='dd-menu'; menu.setAttribute('role','listbox');
+  // Slot the wrapper in place of the select, then move the select inside.
+  sel.parentNode.insertBefore(wrap, sel);
+  wrap.appendChild(sel); wrap.appendChild(trig); wrap.appendChild(menu);
+
+  function rebuild(){
+    menu.innerHTML='';
+    Array.from(sel.options).forEach(opt=>{
+      const item=document.createElement('div');
+      const isPlaceholder=!opt.value||opt.textContent.trim().startsWith('—');
+      item.className='dd-option'+(opt.value===sel.value?' active':'')+(isPlaceholder?' placeholder':'');
+      item.dataset.value=opt.value;
+      item.setAttribute('role','option');
+      item.textContent=opt.textContent;
+      item.addEventListener('click',e=>{
+        e.stopPropagation();
+        sel.value=opt.value;
+        sel.dispatchEvent(new Event('change',{bubbles:true}));
+        updateTrig(); closeDd();
+      });
+      menu.appendChild(item);
+    });
+  }
+  function updateTrig(){
+    const cur=sel.options[sel.selectedIndex];
+    const lbl=cur?cur.textContent:'';
+    trig.querySelector('.dd-value').textContent=lbl;
+    const isPlaceholder=!cur||!cur.value||lbl.trim().startsWith('—');
+    trig.classList.toggle('placeholder',isPlaceholder);
+  }
+  function openDd(){
+    document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
+    rebuild();
+    wrap.classList.add('open');
+    trig.setAttribute('aria-expanded','true');
+  }
+  function closeDd(){
+    wrap.classList.remove('open');
+    trig.setAttribute('aria-expanded','false');
+  }
+  trig.addEventListener('click',e=>{e.stopPropagation();wrap.classList.contains('open')?closeDd():openDd();});
+  // External code that mutates sel.value (or its options) should re-sync the trigger.
+  sel.addEventListener('change',updateTrig);
+  updateTrig();
+}
+// System-wide enhancement — runs after every builder so dynamically populated
+// selects (e.g. carrier lists) are wrapped after their options exist.
+function ddInitAll(scope){(scope||document).querySelectorAll('select').forEach(ddEnhance);}
+
+// Global close behaviour — outside-click + Escape
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.dd'))document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
+});
 
 // Watch Note dispatcher — appends to FEED so it lights up the Market Overview
 // Watch Notes panel; watermarks via moLogDeliverable; unshifts onto AUDIT.
@@ -5932,7 +6504,7 @@ function wnDispatchNote(){
   const source=el('wnSource').value.trim();
   if(source.length<5){toast('Source citation required','Watch Notes are audited. Cite a URL or field-intelligence reference.');return;}
   const cls=Array.from(document.querySelectorAll('#wnClassRow input:checked')).map(i=>i.value);
-  if(!cls.length){toast('Classification required','Pick at least one PRD §3.2.4 class so the client portal can route the note.');return;}
+  if(!cls.length){toast('Classification required','Pick at least one  class so the client portal can route the note.');return;}
   const severity=el('wnSeverity').value;
   const aav=el('wnAav').checked;
   const wnId=wnNextId();
@@ -5953,6 +6525,723 @@ function wnDispatchNote(){
   el('wnForm').reset();
   const pp=el('wnParent');if(pp)pp.value='';
   toast(`Watch Note dispatched · ${wnId}`,`${a.name} · ${cls.join(' + ').toUpperCase()} · ${severity.toUpperCase()} · Watermark ${wm.token}`);
+}
+
+// ============================================================================
+// ANALYST WORKSPACE v1 —  (Arbiter v1)
+//   · SCORING_FILES store, sub-input dimensions, helpers
+//   · Analyst queue, scoring-file editor, composite preview, submit-to-SC
+// ============================================================================
+
+// Sub-input scaffolding — mirrors Methodology view §3.3.6
+const SF_DIMENSIONS = [
+  {k:'svs', code:'SVS', name:'Strategic Value',         weight:15, subs:['Network strategic importance','Route monopoly / connectivity','Employment footprint','Government / sovereign relationship','Brand equity and recognition','Years in continuous operation','Domestic market share','IATA / AFRAA membership']},
+  {k:'pps', code:'PPS', name:'Payment Priority',        weight:25, subs:['Lessor payment history','MRO vendor payment','Fuel supplier payment','Regulator fee compliance','Tax / PAYE compliance','Bank facility servicing','Cash position / buffers','Revenue trend (3–5 yr)']},
+  {k:'aps', code:'APS', name:'Airline Performance',     weight:20, subs:['IOSA registration','AOC currency','USOAP CMA proxy','Accident / incident record','Average fleet age','Fleet commonality','Enforcement record','In-house ATO / AMO']},
+  {k:'rcs', code:'RCS', name:'Risk Containment',        weight:25, subs:['Cape Town Convention','IDERA practice','Repossession case law','FX repatriation risk','Ownership transparency','Audited financials','Insurance coverage','Country-level RCS modifier']},
+  {k:'ras', code:'RAS', name:'Redeployment Suitability',weight:15, subs:['Aircraft type liquidity','Engine type liquidity','Configuration heaviness','AD / SB compliance','Technical records','C-check / D-check status','African operator demand','Re-export timeline']},
+];
+
+// In-memory stores (would persist to warehouse at M2)
+const SCORING_FILES   = [];   // {id,cid,opened,lastEdit,status,version,scores:{svs:{subs:[…]},…},evidence:{},submitter,submitTs,rationale,decision}
+const SF_DECISIONS    = [];   // {sfId,cid,carrierName,outcome,chair,ts,rationale,composite,verdict,hfTrip}
+const EVIDENCE        = [];   // {id,cid,ts,user,cls,crit,conf,headline,source,observation} ·  evidence corpus
+const WS_AUDIT_DELTA  = [];   // AUDIT entries originated from Workspace + Committee flows — persisted and replayed on boot
+
+// ── Persistence (M2 backend would replace this with the warehouse) ───────
+const SF_STORE_KEY = 'andara.sf.state.v1';
+function sfPersist(){
+  try{localStorage.setItem(SF_STORE_KEY, JSON.stringify({files:SCORING_FILES, decisions:SF_DECISIONS, evidence:EVIDENCE, audit:WS_AUDIT_DELTA}));}catch(_){}
+}
+function sfRestore(){
+  try{
+    const raw=localStorage.getItem(SF_STORE_KEY); if(!raw)return;
+    const o=JSON.parse(raw);
+    if(Array.isArray(o.files)){
+      // Lifecycle migration: legacy records used 'open'; canonical state is 'draft'
+      o.files.forEach(f=>{if(f.status==='open')f.status='draft';});
+      SCORING_FILES.length=0; SCORING_FILES.push(...o.files);
+    }
+    if(Array.isArray(o.decisions)){SF_DECISIONS.length=0; SF_DECISIONS.push(...o.decisions);}
+    if(Array.isArray(o.evidence)){EVIDENCE.length=0; EVIDENCE.push(...o.evidence);}
+    if(Array.isArray(o.audit)){
+      WS_AUDIT_DELTA.length=0; WS_AUDIT_DELTA.push(...o.audit);
+      // Replay onto AUDIT in original order (delta already newest-first)
+      AUDIT.unshift(...o.audit);
+    }
+  }catch(_){}
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────
+function sfNextId(cid){
+  const ym=(new Date()).toISOString().slice(0,7).replace('-','');
+  const seq=SCORING_FILES.filter(s=>s.cid===cid).length+1;
+  return `SF-${ym}-${cid.toUpperCase()}-${String(seq).padStart(2,'0')}`;
+}
+function sfForCarrier(cid){return SCORING_FILES.filter(s=>s.cid===cid).sort((a,b)=>b.opened.localeCompare(a.opened));}
+//  — scoring-file lifecycle is draft / submitted / approved / shipped.
+// §3.4.2 adds committee return + reject. Editable states are draft + returned.
+function sfDraftActive(cid){return SCORING_FILES.find(s=>s.cid===cid && (s.status==='draft'||s.status==='returned'));}
+function sfLatestForCarrier(cid){return sfForCarrier(cid)[0]||null;}
+// Queue display rule — a freshly-spawned OPEN SF (no edits yet) shouldn't mask
+// the prior committee state. Once the analyst edits even one sub-input, lastEdit
+// advances past `opened` and OPEN takes precedence over older decisions.
+function sfQueueDisplayFor(cid){
+  const all=sfForCarrier(cid);
+  const touched=s=>s.status!=='draft'||s.lastEdit!==s.opened;
+  return all.find(touched)||all[0]||null;
+}
+function sfSeedFromCarrier(cid){
+  // Seed sub-inputs from carrier's published dimension score so the editor opens
+  // pre-populated with the current methodology baseline (analyst then refines).
+  const a=ALL_CARRIERS.find(x=>x.id===cid);
+  const out={};
+  SF_DIMENSIONS.forEach(d=>{
+    const base = a?.scores?.[d.k]?.value ?? 5;
+    out[d.k] = {subs: d.subs.map(()=>+base.toFixed(1)), notes:''};
+  });
+  return out;
+}
+function sfCreate(cid){
+  const id=sfNextId(cid);
+  const ts=sigNowTs();
+  const sf={id,cid,opened:ts,lastEdit:ts,status:'draft',version:'v1.5-NG',scores:sfSeedFromCarrier(cid),evidence:{},submitter:sigCurrentUser(),submitTs:null,rationale:'',decision:null,shippedTs:null,shippedToken:null};
+  SCORING_FILES.unshift(sf);
+  sfPersist();
+  return sf;
+}
+function sfDimAvg(sf,k){
+  const subs=sf.scores[k]?.subs||[];
+  if(!subs.length)return 0;
+  return subs.reduce((s,v)=>s+(+v||0),0)/subs.length;
+}
+function sfComposite(sf){
+  // Σ(dimAvg × weight) / 10  → 0–100. Matches existing carrier composites within rounding.
+  let sum=0;
+  SF_DIMENSIONS.forEach(d=>{sum += sfDimAvg(sf,d.k)*d.weight;});
+  return sum/10;
+}
+function sfHfTrip(sf){
+  //  — composite capped at 65 if PPS < 40 or RCS < 40 (0–100 scale; here dim 0–10 < 4)
+  const pps=sfDimAvg(sf,'pps'), rcs=sfDimAvg(sf,'rcs');
+  return {pps:pps<4, rcs:rcs<4, any:(pps<4||rcs<4)};
+}
+function sfEffectiveComposite(sf){
+  const raw=sfComposite(sf);
+  return sfHfTrip(sf).any ? Math.min(raw,65) : raw;
+}
+function sfVerdictPreview(sf){
+  const c=sfEffectiveComposite(sf);
+  if(c>=75)return{cls:'deploy',lbl:'DEPLOY'};
+  if(c>=50)return{cls:'watch',lbl:'WATCH'};
+  return{cls:'dnd',lbl:'DO NOT DEPLOY'};
+}
+function sfStatusChipHtml(status){
+  const cls=status||'idle';
+  const lbl=({draft:'DRAFT',submitted:'SUBMITTED',approved:'APPROVED',shipped:'SHIPPED',returned:'RETURNED',rejected:'REJECTED',idle:'IDLE'})[cls]||'IDLE';
+  return `<span class="aw-sf-st ${cls}">${lbl}</span>`;
+}
+function awUrgencyChip(a){
+  const v=validityUntil(a);
+  const cls=v.urgency==='expired'?'expired':v.urgency==='urgent'?'urgent':v.urgency==='soon'?'soon':'ok';
+  const lbl=v.urgency==='expired'?'EXPIRED':v.urgency==='urgent'?'≤30d':v.urgency==='soon'?'≤90d':'OK';
+  return `<span class="aw-urg ${cls}">${lbl}</span> <span style="font-family:var(--mono);font-size:11px;color:var(--t3)">${v.nextRefresh}</span>`;
+}
+
+// ── State ────────────────────────────────────────────────────────────────
+const awState = {tab:'queue', cid:null, sfId:null, stateFilter:'all'};
+
+// ── Tab controller ───────────────────────────────────────────────────────
+function awSetTab(t){
+  awState.tab=t;
+  document.querySelectorAll('#vw-workspace .aw-tab').forEach(b=>b.classList.toggle('active', b.dataset.awtab===t));
+  document.querySelectorAll('#vw-workspace .aw-pane').forEach(p=>p.classList.toggle('active', p.dataset.awp===t));
+  if(t==='queue')awShowQueueList();
+}
+
+// ── Queue list ↔ scoring-file detail (inside the Queue pane) ─────────────
+function awShowQueueList(){
+  awState.cid=null; awState.sfId=null;
+  const list=el('awQueueList'), det=el('awQueueDetail');
+  if(list)list.style.display='';
+  if(det)det.style.display='none';
+  buildAnalystQueue();
+}
+function awShowQueueDetail(cid){
+  awState.cid=cid;
+  // Continuable SFs (open / returned / submitted) reopen for editing or review.
+  // Decided SFs (approved / rejected) move into history and a fresh SF spawns
+  // for the next scoring cycle — so the analyst can see what was rejected and
+  // why, then start over.
+  const latest=sfLatestForCarrier(cid);
+  const continuable = latest && ['draft','returned','submitted'].includes(latest.status);
+  awState.sfId = continuable ? latest.id : sfCreate(cid).id;
+  const list=el('awQueueList'), det=el('awQueueDetail');
+  if(list)list.style.display='none';
+  if(det)det.style.display='';
+  buildScoringFilePane();
+}
+
+// ── Analyst queue ·  "Carrier list" ────────────────────────────
+//  M1 scope is Nigerian commercial AOCs only; M2 widens to pan-African.
+// Pre-unlocked here because the rest of the platform (Market Overview, Signal,
+// Compare, Sentinel, Methodology) already exposes all five regions via the
+// Pass 4 ingestion, so analysts can already see — and therefore should be able
+// to score — every carrier in the universe.
+function awAssignedCarriers(){
+  return [...ALL_CARRIERS].sort((a,b)=>{
+    const va=validityUntil(a), vb=validityUntil(b);
+    return (va.days??1e9) - (vb.days??1e9);
+  });
+}
+function buildAnalystQueue(){
+  const body=el('awQueueBody'); if(!body)return;
+  const all=awAssignedCarriers();
+  // Apply state-filter chips
+  const f=awState.stateFilter||'all';
+  const list=all.filter(c=>{
+    if(f==='all')return true;
+    const sf=sfQueueDisplayFor(c.id);
+    if(f==='none')return !sf;
+    return sf && sf.status===f;
+  });
+  el('awQueueCnt').textContent=all.length;
+  const u=el('awQueueUser'); if(u)u.textContent=sigCurrentUser();
+  if(!list.length){
+    const msg = f==='all'
+      ? 'No carriers assigned. Speak to your lead analyst about scope.'
+      : `No carriers match the <strong>${f.toUpperCase()}</strong> filter.`;
+    body.innerHTML=`<tr><td colspan="6" class="aw-q-empty">${msg}</td></tr>`;
+    return;
+  }
+  body.innerHTML=list.map(c=>{
+    const sf=sfQueueDisplayFor(c.id);
+    const stCls = sf? sf.status : null;
+    const stLbl = sf? ({draft:'DRAFT',returned:'RETURNED',submitted:'SUBMITTED',approved:'APPROVED',shipped:'SHIPPED',rejected:'REJECTED'})[sf.status]||sf.status.toUpperCase() : null;
+    const sfMeta = sf? `${sf.id}` : 'Click to start scoring file';
+    const verd = vbadge(c.verdict);
+    return `<tr data-cid="${c.id}" class="${awState.cid===c.id?'active':''}">
+      <td class="nm">${c.name}</td>
+      <td class="meta">${c.jurisdiction||'—'}</td>
+      <td>${verd}</td>
+      <td class="cmp" style="color:${c.composite>=75?'var(--deploy)':c.composite>=50?'var(--watch)':'var(--dnd)'}">${c.composite.toFixed(1)}</td>
+      <td>${awUrgencyChip(c)}</td>
+      <td>${sf?`<span class="aw-sf-st ${stCls}">${stLbl}</span> <span class="hint" style="margin-left:8px">${sfMeta}</span>`:`<span class="hint">${sfMeta}</span>`}</td>
+    </tr>`;
+  }).join('');
+  body.querySelectorAll('tr[data-cid]').forEach(tr=>{
+    tr.addEventListener('click',()=>awShowQueueDetail(tr.dataset.cid));
+  });
+}
+
+// ── Scoring file editor ·  Score input panels ──────────────────
+function buildScoringFilePane(){
+  const host=el('awSfHost'); if(!host||!awState.cid)return;
+  const c=ALL_CARRIERS.find(x=>x.id===awState.cid);
+  const sf=SCORING_FILES.find(s=>s.id===awState.sfId) || sfDraftActive(awState.cid) || sfCreate(awState.cid);
+  awState.sfId=sf.id;
+  const editable = (sf.status==='draft' || sf.status==='returned');
+  const submitDisabled = editable ? '' : 'disabled style="opacity:.45;cursor:not-allowed"';
+  const shippable = sf.status==='approved';
+  const shipped   = sf.status==='shipped';
+  host.innerHTML = `
+    <div class="aw-sf-hd">
+      <span class="nm">${c.name}</span>
+      <span class="sfid">${sf.id} · opened ${sf.opened} · ${sf.version}</span>
+      ${sfStatusChipHtml(sf.status)}
+      <span class="spc"></span>
+      <div class="actions">
+        ${editable?`<button class="sig-mbtn primary" id="awSubmit">Submit to Scoring Committee</button>`:''}
+        ${shippable?'<button class="sig-mbtn primary" id="awShip">Ship verdict</button>':''}
+        ${shipped?`<span class="aw-sf-st shipped" style="height:30px;padding:0 14px">SHIPPED · ${sf.shippedToken||''}</span>`:''}
+      </div>
+    </div>
+    <div class="aw-scores">
+      ${SF_DIMENSIONS.map(d=>{
+        const dimAvg=sfDimAvg(sf,d.k);
+        const hfTrip = (d.k==='pps'||d.k==='rcs') && dimAvg<4;
+        return `<div class="aw-score ${hfTrip?'hf-trip':''}" data-d="${d.k}">
+          <div class="aw-score-hd">
+            <span class="code">${d.code} · ${d.weight}%</span>
+            <span class="name">${d.name}</span>
+            <span class="spc"></span>
+            <span class="hf-warn">Hard floor · cap @ 65</span>
+            <span class="agg" data-dimagg="${d.k}">${dimAvg.toFixed(2)}<span class="max"> / 10</span></span>
+          </div>
+          <div class="aw-subs">
+            ${d.subs.map((label,i)=>{
+              const tag=`${d.k}.${i}`;
+              const evList=Array.isArray(sf.evidence[tag])?sf.evidence[tag]:(sf.evidence[tag]?[sf.evidence[tag]]:[]);
+              const n=evList.length;
+              return `
+              <div class="aw-sub">
+                <div class="lbl">${label}</div>
+                <input type="number" min="0" max="10" step="0.1" value="${sf.scores[d.k].subs[i]??5}" data-dim="${d.k}" data-sub="${i}" ${editable?'':'disabled'}>
+                <button type="button" class="ev-btn ${n?'has':''}" title="${n?`${n} evidence piece${n===1?'':'s'} attached`:'Attach evidence'}" data-evdim="${d.k}" data-evsub="${i}">${n?n:'＋'}</button>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="aw-prv">
+      <div class="cell"><div class="lbl">Composite preview</div><div class="val" id="awPrvComposite">—</div><div class="sub"> weighted average</div></div>
+      <div class="cell"><div class="lbl">Hard floor</div><div class="val" id="awPrvHf">CLEAR</div><div class="sub" id="awPrvHfSub">PPS &amp; RCS ≥ 40</div></div>
+      <div class="cell"><div class="lbl">Verdict preview</div><div class="val" id="awPrvVerdict">—</div><div class="sub">Calculated · not yet SC-approved</div></div>
+    </div>
+    <div class="aw-prv-hf" id="awHfBanner"></div>
+
+    <div class="panel" style="margin-top:24px"><div class="ph"><h3>Prior verdicts · ${c.name}</h3><span class="meta">From audit trail · </span></div><div class="pb" style="padding:0;overflow-x:auto">
+      <table class="aw-queue no-row-click" id="awVerdictHistTbl">
+        <thead><tr>
+          <th>When</th>
+          <th>Event</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Source</th>
+        </tr></thead>
+        <tbody id="awVerdictHist"></tbody>
+      </table>
+    </div></div>
+
+    <div class="panel" style="margin-top:24px"><div class="ph"><h3>Scoring-file history · ${c.name}</h3><span class="meta">Most recent first</span></div><div class="pb" style="padding:0;overflow-x:auto">
+      <table class="aw-queue no-row-click" id="awHistTbl">
+        <thead><tr>
+          <th>Scoring file</th>
+          <th>Status</th>
+          <th>Composite</th>
+          <th>Verdict</th>
+          <th>Decided / last edit</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="awHist"></tbody>
+      </table>
+    </div></div>
+
+    <div class="panel" style="margin-top:24px"><div class="ph"><h3>Evidence corpus · ${c.name}</h3><span class="meta" id="awEvCorpusMeta"></span></div><div class="pb" style="padding:0;overflow-x:auto">
+      <table class="aw-queue no-row-click" id="awEvCorpusTbl">
+        <thead><tr>
+          <th>ID</th>
+          <th>Logged</th>
+          <th>Mapped to</th>
+          <th>Confidence</th>
+          <th>Source / headline</th>
+        </tr></thead>
+        <tbody id="awEvCorpus"></tbody>
+      </table>
+    </div></div>
+  `;
+  // Wire inputs
+  host.querySelectorAll('input[type="number"][data-dim]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const k=inp.dataset.dim, i=+inp.dataset.sub;
+      let v=parseFloat(inp.value); if(isNaN(v))v=0; if(v<0)v=0; if(v>10)v=10;
+      sf.scores[k].subs[i]=v;
+      sf.lastEdit=sigNowTs();
+      awRecalcOne(sf,k);
+      awRecalcComposite(sf);
+      sfPersist();
+    });
+  });
+  // Evidence chips — open per-sub-score attach modal
+  host.querySelectorAll('.ev-btn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const k=b.dataset.evdim, i=+b.dataset.evsub;
+      awOpenEvidenceSubModal(sf, k, i);
+    });
+  });
+  el('awSubmit')?.addEventListener('click',()=>{if(editable)awOpenSubmitModal(sf);});
+  el('awShip')?.addEventListener('click',()=>{if(sf.status==='approved')awShipVerdict(sf);});
+  awRecalcComposite(sf);
+  buildAwVerdictHistory(c.id);
+  buildAwEvidenceCorpus(c.id);
+  buildSfHistory(c.id);
+}
+
+// Evidence corpus per carrier ·  "Carrier detail — evidence corpus"
+function buildAwEvidenceCorpus(cid){
+  const host=el('awEvCorpus'); if(!host)return;
+  const list=EVIDENCE.filter(e=>e.cid===cid);
+  const meta=el('awEvCorpusMeta');
+  if(meta)meta.textContent = list.length ? `${list.length} record${list.length===1?'':'s'} · most recent first` : 'No evidence yet';
+  if(!list.length){host.innerHTML=`<tr><td colspan="5" class="aw-q-empty">No evidence logged for this carrier yet. Submissions from the Evidence tab land here.</td></tr>`;return;}
+  const critLbl=({svs:'SVS',pps:'PPS',aps:'APS',rcs:'RCS',ras:'RAS'});
+  const confChip=cf=>{
+    const cls=cf==='high'?'approved':cf==='medium'?'returned':'rejected';
+    return `<span class="aw-out ${cls}">${(cf||'').toUpperCase()}</span>`;
+  };
+  host.innerHTML=list.slice(0,20).map(e=>`<tr>
+    <td class="sfid">${e.id}</td>
+    <td class="ts">${e.ts}</td>
+    <td class="nm">${critLbl[e.crit]||e.crit||'—'}</td>
+    <td>${confChip(e.conf)}</td>
+    <td class="note"><strong style="color:var(--t1)">${(e.headline||'').replace(/</g,'&lt;')}</strong><br><span style="font-family:var(--mono);font-size:12px;color:var(--t3)">${(e.source||'').replace(/</g,'&lt;')} · ${e.cls||'—'}</span></td>
+  </tr>`).join('');
+}
+
+// Prior verdicts strip ·  Carrier detail · sourced from AUDIT
+function buildAwVerdictHistory(cid){
+  const host=el('awVerdictHist'); if(!host)return;
+  const c=ALL_CARRIERS.find(x=>x.id===cid); if(!c)return;
+  const rx=/^(Verdict|Composite|Committee decision|Verdict letter|Scoring file submission)/i;
+  const rows=AUDIT.filter(e=>e.carrier===c.name && rx.test(e.crit||''));
+  if(!rows.length){host.innerHTML=`<tr><td colspan="5" class="aw-q-empty">No prior verdict events for ${c.name}. Audit entries will appear here as the scoring lifecycle advances.</td></tr>`;return;}
+  host.innerHTML=rows.slice(0,12).map(e=>`<tr>
+    <td class="ts">${e.ts}</td>
+    <td class="nm">${e.crit}</td>
+    <td class="meta">${(e.fr||'—').replace(/</g,'&lt;')}</td>
+    <td class="meta">${(e.to||'—').replace(/</g,'&lt;')}</td>
+    <td class="chair">${e.src||'—'}</td>
+  </tr>`).join('');
+}
+
+function awRecalcOne(sf,k){
+  const avg=sfDimAvg(sf,k);
+  const cell=document.querySelector(`#awSfHost [data-dimagg="${k}"]`);
+  if(cell)cell.innerHTML=`${avg.toFixed(2)}<span class="max"> / 10</span>`;
+  const card=document.querySelector(`#awSfHost .aw-score[data-d="${k}"]`);
+  if(card){const hfTrip=(k==='pps'||k==='rcs')&&avg<4; card.classList.toggle('hf-trip',hfTrip);}
+}
+function awRecalcComposite(sf){
+  const raw=sfComposite(sf);
+  const hf=sfHfTrip(sf);
+  const eff=hf.any?Math.min(raw,65):raw;
+  const v=sfVerdictPreview(sf);
+  const cmpEl=el('awPrvComposite'); if(cmpEl){cmpEl.textContent=eff.toFixed(1); cmpEl.className='val '+v.cls;}
+  const hfEl=el('awPrvHf'); const hfSub=el('awPrvHfSub'); const bn=el('awHfBanner');
+  if(hf.any){
+    if(hfEl){hfEl.textContent='TRIPPED'; hfEl.className='val dnd';}
+    if(hfSub)hfSub.textContent = (hf.pps?'PPS<40 ':'') + (hf.rcs?'RCS<40':'') + ' · composite capped at 65';
+    if(bn){bn.classList.add('on'); bn.innerHTML=`<strong>HARD FLOOR ENGAGED · §3.3.6.</strong> Composite is capped at 65 because ${hf.pps?'PPS':'RCS'}${hf.pps&&hf.rcs?' and RCS':''} fell below the 40-point threshold. Verdict cannot exceed Watch until the failed dimension recovers.`;}
+  }else{
+    if(hfEl){hfEl.textContent='CLEAR'; hfEl.className='val deploy';}
+    if(hfSub)hfSub.textContent='PPS & RCS ≥ 40';
+    if(bn)bn.classList.remove('on');
+  }
+  const vEl=el('awPrvVerdict'); if(vEl){vEl.textContent=v.lbl; vEl.className='val '+v.cls;}
+}
+
+function buildSfHistory(cid){
+  const host=el('awHist'); if(!host)return;
+  // History = prior scoring files for this carrier (latest first, excluding the active one).
+  const cur=awState.sfId;
+  const prior=sfForCarrier(cid).filter(s=>s.id!==cur);
+  if(!prior.length){host.innerHTML=`<tr><td colspan="6" class="aw-q-empty">No prior scoring files for this carrier. This is the first scoring file in workspace history.</td></tr>`;return;}
+  host.innerHTML=prior.map(s=>{
+    const eff=sfEffectiveComposite(s), v=sfVerdictPreview(s);
+    const decided=s.decision;
+    const ts=decided?decided.ts:s.lastEdit;
+    const cmpColor = eff>=75?'var(--deploy)':eff>=50?'var(--watch)':'var(--dnd)';
+    return `<tr class="is-action-row">
+      <td class="sfid">${s.id}</td>
+      <td>${sfStatusChipHtml(s.status)}</td>
+      <td class="cmp" style="color:${cmpColor}">${eff.toFixed(1)}</td>
+      <td>${vbadge(v.cls==='dnd'?'do-not-deploy':v.cls)}</td>
+      <td class="ts">${ts}</td>
+      <td class="act"><button class="aw-view-btn" data-sfdetail="${s.id}" data-mode="workspace">View details</button></td>
+    </tr>`;
+  }).join('');
+  host.querySelectorAll('[data-sfdetail]').forEach(b=>b.addEventListener('click',()=>sfOpenDetailDrawer(b.dataset.sfdetail, b.dataset.mode)));
+}
+
+// ── Submit-to-SC modal ·  Submit to committee ──────────────────
+function awOpenSubmitModal(sf){
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
+  el('awSubmitSummary').innerHTML = `<strong>${c.name}</strong> · ${sf.id} · composite <strong>${eff.toFixed(1)}</strong> · preview <strong>${v.lbl}</strong>${hf.any?' · <span style="color:var(--dnd)">HF</span>':''}`;
+  el('awSubmitRationale').value='';
+  sigOpenModal('awSubmitModal');
+}
+//  — per sub-score evidence (source links + analyst notes).
+// State: which (sf, k, i) the modal is currently editing.
+const awEvSubState = {sfId:null, k:null, i:null};
+function awOpenEvidenceSubModal(sf, k, i){
+  awEvSubState.sfId=sf.id; awEvSubState.k=k; awEvSubState.i=i;
+  const dim=SF_DIMENSIONS.find(d=>d.k===k);
+  const subLabel=dim?.subs[i]||'';
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  el('awEvSubSummary').innerHTML = `<strong>${c.name}</strong> · ${dim?.code||k.toUpperCase()} · <em>${subLabel}</em>`;
+  el('awEvSubSource').value=''; el('awEvSubNote').value=''; const f=el('awEvSubFile'); if(f)f.value='';
+  awRenderEvSubList(sf, k, i);
+  sigOpenModal('awEvSubModal');
+}
+function awRenderEvSubList(sf, k, i){
+  const host=el('awEvSubList'); if(!host)return;
+  const tag=`${k}.${i}`;
+  // Migrate legacy {ts,user} singletons → [{ts,user}]
+  let list=sf.evidence[tag];
+  if(list && !Array.isArray(list)) list=[list];
+  list=list||[];
+  if(!list.length){host.innerHTML=`<div class="ev-empty">No evidence attached yet.</div>`;return;}
+  const fmtBytes=n=>n<1024?`${n} B`:n<1048576?`${(n/1024).toFixed(1)} KB`:`${(n/1048576).toFixed(2)} MB`;
+  host.innerHTML=list.map((e,idx)=>`<div class="ev-item">
+    <div class="meta"><span>${e.ts||'—'} · ${e.user||'—'}</span><button type="button" class="aw-view-btn" style="height:22px;padding:0 8px;font-size:10px" data-evrm="${idx}">Remove</button></div>
+    ${e.source?`<div class="src">${e.source.replace(/</g,'&lt;')}</div>`:''}
+    ${e.file?`<div class="src" style="display:flex;align-items:center;gap:6px"><span style="font-family:var(--mono);font-size:11px;color:var(--amber);background:rgba(232,162,58,.10);border:1px solid rgba(232,162,58,.40);padding:2px 6px;border-radius:3px;letter-spacing:.04em">FILE</span><span>${e.file.name.replace(/</g,'&lt;')} · ${fmtBytes(e.file.size||0)}</span></div>`:''}
+    ${e.note?`<div class="note">${e.note.replace(/</g,'&lt;')}</div>`:''}
+  </div>`).join('');
+  host.querySelectorAll('[data-evrm]').forEach(b=>b.addEventListener('click',()=>{
+    list.splice(+b.dataset.evrm,1);
+    sf.evidence[tag]=list;
+    sf.lastEdit=sigNowTs();
+    sfPersist();
+    awRenderEvSubList(sf, k, i);
+    buildScoringFilePane();
+  }));
+}
+function awEvSubAdd(){
+  const sf=SCORING_FILES.find(s=>s.id===awEvSubState.sfId); if(!sf)return;
+  const k=awEvSubState.k, i=awEvSubState.i;
+  if(k==null||i==null)return;
+  const src=el('awEvSubSource').value.trim();
+  const note=el('awEvSubNote').value.trim();
+  const fileInput=el('awEvSubFile');
+  const file=fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+  // At least one of (source link, file) is required so we always have a citeable reference.
+  if(!src && !file){toast('Source or file required','Provide a source link OR attach a file (or both).');return;}
+  if(src && src.length<5){toast('Source too short','Min 5 characters — cite a URL or field-intelligence reference.');return;}
+  if(note.length<20){toast('Note too short','Min 20 characters — explain what the evidence shows.');return;}
+  if(file && file.size>2*1024*1024){toast('File too large','Max 2 MB at M1 (browser localStorage limit). Use a source link for larger artefacts.');return;}
+  const tag=`${k}.${i}`;
+  let list=sf.evidence[tag];
+  if(list && !Array.isArray(list)) list=[list];
+  list=list||[];
+  const finishAdd=(fileMeta)=>{
+    list.push({ts:sigNowTs(), user:sigCurrentUser(), source:src||null, note, file:fileMeta||null});
+    sf.evidence[tag]=list;
+    sf.lastEdit=sigNowTs();
+    sfPersist();
+    el('awEvSubSource').value=''; el('awEvSubNote').value=''; if(fileInput)fileInput.value='';
+    awRenderEvSubList(sf, k, i);
+    buildScoringFilePane();
+    toast('Evidence attached', `${SF_DIMENSIONS.find(d=>d.k===k)?.code} · sub ${i+1}${fileMeta?` · ${fileMeta.name}`:''}`);
+  };
+  if(!file){finishAdd(null);return;}
+  // Read the file as a data URL so it persists across reloads via localStorage.
+  // Production (M2) will swap this for a signed-URL upload to the warehouse.
+  const reader=new FileReader();
+  reader.onload=()=>finishAdd({name:file.name, size:file.size, type:file.type||'application/octet-stream', dataUrl:reader.result});
+  reader.onerror=()=>{toast('File read failed','Could not read the selected file.');};
+  reader.readAsDataURL(file);
+}
+
+//  — "shipped" is the terminal state after approved.
+// Generates the watermarked deliverable (§3.2.6) and logs to the audit trail.
+function awShipVerdict(sf){
+  if(sf.status!=='approved'){toast('Cannot ship','Verdict letter can only be shipped after Scoring Committee approval.');return;}
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf);
+  // Watermark + audit-log the deliverable (§3.2.6)
+  const wm=moLogDeliverable({carrier:c.name,deliverable:`Verdict letter (${sf.id})`,format:'PDF',scope:'single'});
+  sf.status='shipped'; sf.shippedTs=sigNowTs(); sf.shippedToken=wm.token;
+  // Also unshift a Workspace-flavoured AUDIT entry so the analyst sees the lifecycle close
+  const entry={ts:sf.shippedTs,user:sigCurrentUser(),carrier:c.name,crit:`Verdict letter shipped · ${v.lbl}`,fr:'Approved',to:'SHIPPED',src:'Scoring Workspace',status:'Delivered',note:`${sf.id} · composite ${eff.toFixed(1)} · ${wm.deliverableId} · ${wm.token}`};
+  AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
+  sfPersist();
+  toast(`Verdict shipped · ${sf.id}`,`${c.name} · ${v.lbl} · watermark ${wm.token}`);
+  if(typeof buildAudit==='function')buildAudit();
+  buildScoringFilePane();
+  buildAnalystQueue();
+}
+
+function awConfirmSubmit(){
+  const sf=SCORING_FILES.find(s=>s.id===awState.sfId); if(!sf)return;
+  const r=el('awSubmitRationale').value.trim();
+  if(r.length<60){toast('Rationale too short','Min 60 characters — the committee reads this first.');return;}
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
+  sf.status='submitted'; sf.submitTs=sigNowTs(); sf.submitter=sigCurrentUser(); sf.rationale=r;
+  const entry={ts:sf.submitTs,user:sf.submitter,carrier:c.name,crit:`Scoring file submission · ${v.lbl}`,fr:'Workspace',to:'Scoring Committee inbox',src:'Scoring Workspace',status:'Notified · awaiting SC',note:`${sf.id} · composite ${eff.toFixed(1)}${hf.any?' · HF TRIP':''} · ${r.slice(0,140)}`};
+  AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
+  sfPersist();
+  sigCloseModal('awSubmitModal');
+  toast('Submitted to Scoring Committee', `${c.name} · ${sf.id} · ${v.lbl} preview · routed to committee inbox`);
+  if(typeof buildAudit==='function')buildAudit();
+  if(typeof buildCcInbox==='function'){buildCcInbox();updateCcSidebarCnt();}
+  if(typeof buildCcLog==='function')buildCcLog();
+  buildScoringFilePane();
+  buildAnalystQueue();
+}
+
+// ============================================================================
+// SCORING COMMITTEE SURFACE — //   · Committee inbox · Submission viewer · Decision capture · Decisions log
+// ============================================================================
+const ccState = {activeSfId:null};
+
+function updateCcSidebarCnt(){
+  const n=SCORING_FILES.filter(s=>s.status==='submitted').length;
+  const e=el('ccSidebarCnt'); if(e){e.textContent=n; e.style.display=n?'inline-flex':'none';}
+}
+
+function buildCommittee(){
+  buildCcInbox(); buildCcLog(); updateCcSidebarCnt();
+}
+
+function buildCcInbox(){
+  const body=el('ccInboxBody'); if(!body)return;
+  const queue=SCORING_FILES.filter(s=>s.status==='submitted').sort((a,b)=>(b.submitTs||'').localeCompare(a.submitTs||''));
+  el('ccInboxMeta').textContent = queue.length ? `${queue.length} submission${queue.length===1?'':'s'} awaiting review` : 'Empty Inbox';
+  if(!queue.length){body.innerHTML=`<tr><td colspan="8" class="aw-q-empty">No pending submissions. Analysts will queue scoring files here for committee review.</td></tr>`;return;}
+  body.innerHTML=queue.map(sf=>{
+    const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+    const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
+    const cmpColor = eff>=75?'var(--deploy)':eff>=50?'var(--watch)':'var(--dnd)';
+    return `<tr class="is-action-row">
+      <td class="nm">${c.name}</td>
+      <td class="sfid">${sf.id}</td>
+      <td class="ts">${sf.submitter}</td>
+      <td class="ts">${sf.submitTs}</td>
+      <td class="cmp" style="color:${cmpColor}">${eff.toFixed(1)}</td>
+      <td>${vbadge(v.cls==='dnd'?'do-not-deploy':v.cls)}</td>
+      <td>${hf.any?'<span class="aw-out rejected">HF</span>':'<span style="font-family:var(--mono);font-size:12px;color:var(--t3)">—</span>'}</td>
+      <td class="act"><button class="aw-view-btn" data-sfdetail="${sf.id}" data-mode="committee">View details</button></td>
+    </tr>`;
+  }).join('');
+  body.querySelectorAll('[data-sfdetail]').forEach(b=>b.addEventListener('click',()=>sfOpenDetailDrawer(b.dataset.sfdetail, b.dataset.mode)));
+}
+
+function buildCcLog(){
+  const body=el('ccLogBody'); if(!body)return;
+  if(!SF_DECISIONS.length){body.innerHTML=`<tr><td colspan="7" class="aw-q-empty">No committee decisions logged yet. Approve, return, or reject a submission to populate this log.</td></tr>`;return;}
+  body.innerHTML=SF_DECISIONS.map(d=>`<tr class="is-action-row">
+    <td class="ts">${d.ts}</td>
+    <td><span class="aw-out ${d.outcome}">${d.outcome}</span></td>
+    <td class="nm">${d.carrierName}</td>
+    <td class="sfid">${d.sfId}</td>
+    <td class="chair">${d.chair}</td>
+    <td class="note">${(d.rationale||'').replace(/</g,'&lt;').slice(0,140)}${(d.rationale||'').length>140?'…':''}</td>
+    <td class="act"><button class="aw-view-btn" data-sfdetail="${d.sfId}" data-mode="log">View detail</button></td>
+  </tr>`).join('');
+  body.querySelectorAll('[data-sfdetail]').forEach(b=>b.addEventListener('click',()=>sfOpenDetailDrawer(b.dataset.sfdetail, b.dataset.mode)));
+}
+
+// ── SF detail drawer · shared across workspace history + committee inbox + log
+// mode: 'workspace' (read-only) | 'committee' (read-only or with decision actions) | 'log' (read-only)
+function sfOpenDetailDrawer(sfId, mode){
+  const sf=SCORING_FILES.find(s=>s.id===sfId); if(!sf)return;
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
+  const decided=!!sf.decision;
+  const showActions = mode==='committee' && sf.status==='submitted';
+  const drawer=el('sfDetailDrawer');
+  drawer.dataset.sfid=sfId;
+  drawer.innerHTML=`
+    <div class="sig-drawer-hd">
+      <div class="ttl">
+        <h3>${c.name}</h3>
+        <span class="sub">${sf.id} · ${sf.version}</span>
+      </div>
+      <button class="close" id="sfDrawerClose" title="Close">✕</button>
+    </div>
+    <div class="sig-drawer-body">
+      <div class="sig-drawer-sect">
+        <h4>Submission</h4>
+        <div class="sig-drawer-row"><span class="k">Status</span><span class="v">${sfStatusChipHtml(sf.status)}</span></div>
+        <div class="sig-drawer-row"><span class="k">Submitter</span><span class="v">${sf.submitter||'—'}</span></div>
+        <div class="sig-drawer-row"><span class="k">Submitted</span><span class="v">${sf.submitTs||'—'}</span></div>
+        <div class="sig-drawer-row"><span class="k">Composite</span><span class="v ${v.cls==='deploy'?'pos':v.cls==='watch'?'warn':'neg'}">${eff.toFixed(1)}</span></div>
+        <div class="sig-drawer-row"><span class="k">Hard floor</span><span class="v ${hf.any?'neg':'pos'}">${hf.any?((hf.pps?'PPS':'')+(hf.pps&&hf.rcs?' + ':'')+(hf.rcs?'RCS':'')):'CLEAR'}</span></div>
+        <div class="sig-drawer-row"><span class="k">Verdict preview</span><span class="v ${v.cls==='deploy'?'pos':v.cls==='watch'?'warn':'neg'}">${v.lbl}</span></div>
+      </div>
+      <div class="sig-drawer-sect">
+        <h4>5-Score breakdown</h4>
+        ${SF_DIMENSIONS.map(d=>{const avg=sfDimAvg(sf,d.k);return `<div class="sf-dim-row">
+          <span class="code">${d.code} · ${d.name}</span>
+          <span class="avg">${avg.toFixed(2)} / 10</span>
+          <span class="wt">${d.weight}% · ${(avg*d.weight/10).toFixed(2)} pts</span>
+        </div>`;}).join('')}
+      </div>
+      <div class="sig-drawer-sect">
+        <h4>Analyst rationale</h4>
+        <div class="sf-rationale">${(sf.rationale||'—').replace(/</g,'&lt;')}</div>
+      </div>
+      ${decided?`
+        <div class="sig-drawer-sect">
+          <h4>Committee decision</h4>
+          <div class="sf-decision-card" data-out="${sf.decision.outcome}">
+            <div class="meta">
+              <span><span class="aw-out ${sf.decision.outcome}">${sf.decision.outcome}</span></span>
+              <span>${sf.decision.chair} · ${sf.decision.ts}</span>
+            </div>
+            <div class="body">${(sf.decision.rationale||'—').replace(/</g,'&lt;')}</div>
+          </div>
+        </div>
+      `:''}
+    </div>
+    ${showActions?`
+      <div class="sig-drawer-foot">
+        <button class="cc-act-btn" data-ccact="returned" style="height:36px;padding:0 14px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--watch);background:var(--watch-soft);border:1px solid var(--watch-line);border-radius:4px;cursor:pointer">Return</button>
+        <button class="cc-act-btn" data-ccact="rejected" style="height:36px;padding:0 14px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--dnd);background:var(--dnd-soft);border:1px solid var(--dnd-line);border-radius:4px;cursor:pointer">Reject</button>
+        <button class="cc-act-btn" data-ccact="approved" style="height:36px;padding:0 14px;font-family:var(--sans);font-size:13px;font-weight:600;color:var(--deploy);background:var(--deploy-soft);border:1px solid var(--deploy-line);border-radius:4px;cursor:pointer">Approve</button>
+      </div>
+    `:''}
+  `;
+  drawer.classList.add('open');
+  el('sfDetailDrawerBack').classList.add('open');
+  el('sfDrawerClose').addEventListener('click',sfCloseDetailDrawer);
+  drawer.querySelectorAll('[data-ccact]').forEach(b=>b.addEventListener('click',()=>ccOpenDecision(sf,b.dataset.ccact)));
+}
+function sfCloseDetailDrawer(){
+  const d=el('sfDetailDrawer'); if(d)d.classList.remove('open');
+  const b=el('sfDetailDrawerBack'); if(b)b.classList.remove('open');
+}
+
+function ccOpenDecision(sf,outcome){
+  ccState.pendingOutcome=outcome;
+  ccState.pendingSfId=sf.id;
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf);
+  el('ccDecisionTitle').textContent = ({approved:'Approve submission',returned:'Return for revision',rejected:'Reject submission'})[outcome]||'Decision';
+  el('ccDecisionSummary').innerHTML = `<strong>${c.name}</strong> · ${sf.id} · composite ${eff.toFixed(1)} · preview ${v.lbl}`;
+  el('ccDecisionRationale').value='';
+  el('ccDecisionConfirm').textContent = ({approved:'Approve & sign',returned:'Return to analyst',rejected:'Reject & sign'})[outcome]||'Confirm';
+  sigOpenModal('ccDecisionModal');
+}
+function ccConfirmDecision(){
+  const sf=SCORING_FILES.find(s=>s.id===ccState.pendingSfId); if(!sf)return;
+  const outcome=ccState.pendingOutcome;
+  const r=el('ccDecisionRationale').value.trim();
+  if(r.length<40){toast('Rationale required','Min 40 characters — decisions are immutable and audited.');return;}
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
+  const chair=sigCurrentUser(), ts=sigNowTs();
+  sf.status=outcome; sf.decision={outcome,chair,ts,rationale:r};
+  SF_DECISIONS.unshift({sfId:sf.id,cid:sf.cid,carrierName:c.name,outcome,chair,ts,rationale:r,composite:eff,verdict:v.lbl,hfTrip:hf.any});
+  const entry={ts,user:chair,carrier:c.name,crit:`Committee decision · ${outcome.toUpperCase()}`,fr:'Submitted',to:outcome.toUpperCase(),src:'Scoring Committee',status:`Chair signed · ${chair}`,note:`${sf.id} · ${v.lbl} · composite ${eff.toFixed(1)} · ${r.slice(0,140)}`};
+  AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
+  sfPersist();
+  sigCloseModal('ccDecisionModal');
+  toast(`Decision recorded · ${outcome.toUpperCase()}`,`${c.name} · ${sf.id} · chair ${chair}`);
+  buildCcInbox(); buildCcLog(); updateCcSidebarCnt();
+  if(typeof buildAudit==='function')buildAudit();
+  buildAnalystQueue();
+  // If the drawer is still open on the just-decided SF, close it — the row it
+  // came from is no longer in the inbox.
+  const dr=el('sfDetailDrawer');
+  if(dr && dr.classList.contains('open') && dr.dataset.sfid===sf.id) sfCloseDetailDrawer();
+}
+
+// Tabs bind once — called by buildWorkspace()
+function bindAwTabs(){
+  document.querySelectorAll('#vw-workspace .aw-tab').forEach(b=>{
+    b.addEventListener('click',()=>awSetTab(b.dataset.awtab));
+  });
+  // State-filter chips
+  document.querySelectorAll('#awStateFilter .fp').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      awState.stateFilter=chip.dataset.awstate||'all';
+      document.querySelectorAll('#awStateFilter .fp').forEach(x=>x.classList.toggle('active', x===chip));
+      buildAnalystQueue();
+    });
+  });
+  // Back-to-queue from the scoring-file detail view
+  const back=el('awBackToQueue'); if(back)back.addEventListener('click',awShowQueueList);
+  // SC submit modal confirm
+  const submitBtn=el('awSubmitConfirm'); if(submitBtn)submitBtn.addEventListener('click',awConfirmSubmit);
+  // Committee decision modal confirm
+  const ccConfirm=el('ccDecisionConfirm'); if(ccConfirm)ccConfirm.addEventListener('click',ccConfirmDecision);
+  // Per-sub-score evidence attach
+  const evAdd=el('awEvSubAdd'); if(evAdd)evAdd.addEventListener('click',awEvSubAdd);
 }
 
 function bindNav(){
@@ -5980,14 +7269,14 @@ function bindNav(){
   });
   const goExport = el('moExport');
   if (goExport) goExport.addEventListener('click', ()=>{
-    // PRD §3.2.6 — watermarked cohort export, logged.
+    //  — watermarked cohort export, logged.
     const scope = activeRegionScopeLabel();
     const wm = moLogDeliverable({scope,deliverable:'Cohort export',format:'XLSX'});
     toast(`Cohort export · ${scope}`, `Watermark <strong>${wm.token}</strong> · ${wm.deliverableId}. Audit recorded.`);
   });
   const goReport = el('moOpenReport');
   if (goReport) goReport.addEventListener('click', ()=>{
-    // PRD §3.2.6 — watermarked market report, logged. Then navigate.
+    //  — watermarked market report, logged. Then navigate.
     const scope = activeRegionScopeLabel();
     const wm = moLogDeliverable({scope,deliverable:'Market report',format:'PDF'});
     toast(`Market report · ${scope}`, `Watermark <strong>${wm.token}</strong> · ${wm.deliverableId}. Opening report centre…`);
@@ -6007,13 +7296,12 @@ function bindNav(){
 
 // ── Andara Signal portfolio ────────────────────────────────────────────────
 let sigFilter={band:'all',region:'all',q:''};
-// In-memory analyst overrides + escalation register — PRD §4.4.5
-const sigOverrides={};   // {carrierId: {severity, rationale, ts, user}}
+// In-memory analyst overrides + escalation register — const sigOverrides={};   // {carrierId: {severity, rationale, ts, user}}
 const sigPromotions={};  // {carrierId: {impact, rationale, ts, user, status}}
 let sigPopCarrier=null;
 let sigOpenSrc=null;
 
-// Source adapter registry — PRD §4.4.5 ingestion health.
+// Source adapter registry —  ingestion health.
 // Demo data; in production the fetch-health fields are populated by the
 // Market Monitoring Agent's adapter telemetry.
 const SIGNAL_SOURCES=[
@@ -6296,7 +7584,7 @@ function renderSigSummary(){
 }
 
 function renderSigSources(){
-  // Per-source ingestion health — PRD §4.4.5.
+  // Per-source ingestion health — .
   // Dot is fetch-health-based (live/degraded/absent on 24h success ratio);
   // numeric chip is signal volume (carriers live / monitored).
   const html=SIGNAL_SOURCES.map(src=>{
@@ -6315,9 +7603,14 @@ function renderSigSources(){
 // Drawer backdrop click + Esc close
 document.addEventListener('click',e=>{
   if(e.target&&e.target.id==='sigSrcDrawerBack')sigCloseSrcDrawer();
+  if(e.target&&e.target.id==='sfDetailDrawerBack')sfCloseDetailDrawer();
 });
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'&&sigOpenSrc)sigCloseSrcDrawer();
+  if(e.key==='Escape'){
+    const sfd=el('sfDetailDrawer');
+    if(sfd&&sfd.classList.contains('open'))sfCloseDetailDrawer();
+  }
 });
 
 function buildSignalPortfolio(){
@@ -6325,7 +7618,7 @@ function buildSignalPortfolio(){
   renderSigSources();
   renderSigTable();
   bindSigFilters();
-  // Triage queue · PRD §4.4.5
+  // Triage queue
   renderSigTriageSummary();
   renderSigTriage();
   bindSigTriageFilters();
@@ -6336,7 +7629,7 @@ function buildSignalPortfolio(){
   if(savedMode==='triage')sigSwitchMode('triage',{silent:true});
 }
 
-// ── Signal triage queue · PRD §4.4.5 ───────────────────────────────────────
+// ── Signal triage queue ·  ───────────────────────────────────────
 const sigTriageFilter={state:'new',source:'all',region:'all',q:''};
 let sigTriagePopEvtId=null;
 
@@ -6972,7 +8265,24 @@ function enterTerminal(em){
     const initials = (parts[0]?parts[0][0]:'') + (parts[1]?parts[1][0]:'');
     av.textContent = (initials || localPart.slice(0,1) || 'S').toUpperCase();
   }
-  buildSidebar();buildDashboard();buildSentinel();buildFeed();buildCompare();buildAudit();bindAuditFilters();buildWorkspace();buildCountryModTable();buildScMinutes();buildSignalPortfolio();bindNav();startClock();
+  // Each step wrapped so one broken builder can't lock the user out.
+  const safe = (label, fn) => { try { fn(); } catch (e) { console.error('[boot] '+label+' failed:', e); } };
+  safe('sfRestore',         () => sfRestore());
+  safe('buildSidebar',      () => buildSidebar());
+  safe('buildDashboard',    () => buildDashboard());
+  safe('buildSentinel',     () => buildSentinel());
+  safe('buildFeed',         () => buildFeed());
+  safe('buildCompare',      () => buildCompare());
+  safe('buildAudit',        () => buildAudit());
+  safe('bindAuditFilters',  () => bindAuditFilters());
+  safe('buildWorkspace',    () => buildWorkspace());
+  safe('buildCommittee',    () => buildCommittee());
+  safe('buildCountryModTable', () => buildCountryModTable());
+  safe('buildScMinutes',    () => buildScMinutes());
+  safe('buildSignalPortfolio', () => buildSignalPortfolio());
+  safe('bindNav',           () => bindNav());
+  safe('startClock',        () => startClock());
+  safe('ddInitAll',         () => ddInitAll());
   const runSearch = () => {
     const q = (el('gsearch').value||'').trim().toLowerCase();
     if(!q) return;
@@ -6997,14 +8307,22 @@ function tryRestoreSession(){
 }
 el('em').addEventListener('keydown',e=>{if(e.key==='Enter')el('pw').focus();});
 el('pw').addEventListener('keydown',e=>{if(e.key==='Enter')el('lbtn').click();});
-el('pwToggle').addEventListener('click',()=>{
-  const pw=el('pw'),btn=el('pwToggle');
-  const showing=pw.type==='text';
-  pw.type=showing?'password':'text';
-  btn.setAttribute('aria-pressed',String(!showing));
-  btn.setAttribute('aria-label',showing?'Show access key':'Hide access key');
-  btn.querySelector('.pw-eye-on').style.display=showing?'':'none';
-  btn.querySelector('.pw-eye-off').style.display=showing?'none':'';
+// Eye-toggle bound via delegation so a click on the inner <svg> or <path>
+// (event target is the SVG element, not the button) still toggles correctly,
+// and the binding survives any earlier script error.
+document.addEventListener('click', e => {
+  const btn = e.target.closest && e.target.closest('#pwToggle');
+  if (!btn) return;
+  const pw = document.getElementById('pw');
+  if (!pw) return;
+  const showing = pw.type === 'text';
+  pw.type = showing ? 'password' : 'text';
+  btn.setAttribute('aria-pressed', String(!showing));
+  btn.setAttribute('aria-label', showing ? 'Show access key' : 'Hide access key');
+  const on  = btn.querySelector('.pw-eye-on');
+  const off = btn.querySelector('.pw-eye-off');
+  if (on)  on.style.display  = showing ? '' : 'none';
+  if (off) off.style.display = showing ? 'none' : '';
 });
 
 /* ══════════════════════════════════════════
@@ -7293,10 +8611,10 @@ function cpSigSubDisp(v){
 // Synthesises a clean "no data yet" Signal record so every carrier renders the
 // full panel structure (composite, 8 proxies, horizon, AAV, footer) even when
 // SIGNAL_DATA hasn't been populated. Live carriers continue to use real data.
-// Monitoring tab body — three panels, PRD-aligned:
-//   1) Refresh schedule (tier, last/next/validity dates per PRD §3.2.4)
-//   2) Sentinel events — the trigger list that would force off-cycle review (Watch Notes — PRD-backed)
-//   3) Data gap flags — analytical disclosure (PRD §3.4.6 AAV requirement)
+// Monitoring tab body — three panels, platform-aligned:
+//   1) Refresh schedule (tier, last/next/validity dates per )
+//   2) Sentinel events — the trigger list that would force off-cycle review (Watch Notes — spec-backed)
+//   3) Data gap flags — analytical disclosure ( AAV requirement)
 function monitorTabBody(a){
   const tier = a.monitoringTier || 2;
   const val = validityUntil(a);
@@ -7385,7 +8703,7 @@ function cpDefaultSignal(a){
   };
 }
 
-// ── Carrier Signal history · PRD §3.4.5 (M2 surface) ──────────────────────
+// ── Carrier Signal history ·  (M2 surface) ──────────────────────
 // Synthesised 13-week trail per carrier — final value clamps to live SIGNAL_DATA.composite.
 // In production, populated from the warehouse SIGNAL_SNAPSHOT table.
 const SIGNAL_HISTORY=(function(){
