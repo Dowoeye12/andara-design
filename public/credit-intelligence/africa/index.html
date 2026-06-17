@@ -2355,6 +2355,210 @@ select{
   .cp-horizon{flex-direction:column;align-items:flex-start;gap:6px}
   .cp-horizon .rt{margin-left:0}
 }
+
+/* ==========================================================================
+   M2 — Scoring Workspace v2 + Committee v2 + Methodology v2 extensions
+   §4.4.1 Refresh workflow · Multi-jurisdiction · Counterparty vault · AI draft · RAG
+   §4.4.2 Batch submission · Throughput metrics · Code-change ledger
+   ========================================================================== */
+
+/* —— Refresh workflow (workspace 4th tab) —— */
+.aw-rfq{display:flex;flex-direction:column;gap:8px}
+.aw-rfq-roll{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px;border-bottom:1px solid var(--line)}
+.aw-rfq-cell{display:flex;flex-direction:column;gap:6px;padding:14px;background:var(--bg3);border:1px solid var(--line);border-radius:6px}
+.aw-rfq-cell .lbl{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase}
+.aw-rfq-cell .num{font-family:var(--mono);font-size:24px;color:var(--display);font-weight:600}
+.aw-rfq-cell.expired .num{color:var(--dnd)}
+.aw-rfq-cell.urgent .num{color:var(--watch)}
+.aw-rfq-cell.soon .num{color:var(--info)}
+.aw-rfq-cell.ok .num{color:var(--deploy)}
+.aw-rfq-row-act{display:flex;align-items:center;gap:8px}
+.aw-rfq-row-act .rfq-go{display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 12px;border:1px solid var(--line2);background:var(--bg3);color:var(--t1);font-family:var(--sans);font-size:12px;font-weight:600;border-radius:4px;cursor:pointer;margin:0}
+.aw-rfq-row-act .rfq-go:hover{background:var(--amber-soft);border-color:var(--amber-line);color:var(--amber)}
+.aw-rfq-row-act .rfq-go.warn{color:var(--watch);border-color:var(--watch-line);background:var(--watch-soft)}
+.aw-rfq-row-act .rfq-go.danger{color:var(--dnd);border-color:var(--dnd-line);background:var(--dnd-soft)}
+.aw-sf-st.refresh{background:rgba(124,159,199,.16);color:var(--info);border:1px solid rgba(124,159,199,.40)}
+.aw-refresh-hint{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;background:rgba(124,159,199,.10);border:1px solid rgba(124,159,199,.30);color:var(--info);font-family:var(--mono);font-size:10px;letter-spacing:.10em;border-radius:3px;margin-left:8px}
+
+/* —— Jurisdiction + FX chip —— */
+.aw-jur-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;background:rgba(124,159,199,.10);border:1px solid rgba(124,159,199,.30);color:var(--info);font-family:var(--mono);font-size:10px;letter-spacing:.06em;border-radius:3px;margin:0}
+.aw-fx-strip{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px;background:var(--bg3);border:1px solid var(--line);border-radius:6px;margin-top:16px}
+.aw-fx-strip .lbl{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px}
+.aw-fx-strip .fx{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;background:var(--bg2);border:1px solid var(--line);color:var(--t2);font-family:var(--mono);font-size:11px;border-radius:3px}
+.aw-fx-strip .fx strong{color:var(--display)}
+
+/* —— Counterparty vault —— */
+.aw-vault-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;background:rgba(232,162,58,.10);border:1px solid rgba(232,162,58,.40);color:var(--amber);font-family:var(--mono);font-size:10px;letter-spacing:.10em;border-radius:3px;margin:0}
+.aw-vault-banner{display:flex;align-items:center;gap:12px;padding:12px 16px;margin:16px;background:rgba(232,162,58,.06);border:1px solid rgba(232,162,58,.30);border-radius:6px}
+.aw-vault-banner .ico{font-size:18px}
+.aw-vault-banner .body{flex:1;font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.aw-vault-banner .body strong{color:var(--amber)}
+.aw-vault-banner button{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 12px;background:var(--amber);color:#1a1206;border:none;border-radius:4px;font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer}
+.aw-vault-masked{color:var(--t4);font-style:italic}
+
+/* —— AI-drafted commentary —— */
+.aw-ai-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;background:rgba(167,139,250,.10);border:1px solid rgba(167,139,250,.40);color:#a78bfa;font-family:var(--mono);font-size:10px;letter-spacing:.10em;border-radius:3px;margin:0}
+.aw-ai-block{margin-top:16px;padding:16px;background:var(--bg3);border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;gap:8px}
+.aw-ai-block .hd{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.10em;text-transform:uppercase}
+.aw-ai-block .body{font-family:var(--sans);font-size:14px;color:var(--t1);line-height:1.6;white-space:pre-wrap}
+.aw-ai-block .meta{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.06em}
+.aw-ai-actions{display:flex;gap:8px}
+.aw-ai-actions button{display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 12px;border:1px solid var(--line2);background:var(--bg2);color:var(--t1);font-family:var(--sans);font-size:12px;font-weight:600;border-radius:4px;cursor:pointer;margin:0}
+.aw-ai-actions button:hover{background:var(--bg3)}
+.aw-ai-actions button.primary{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.40);color:#a78bfa}
+
+/* —— RAG retrieved-context panel —— */
+.aw-rag{display:flex;flex-direction:column;gap:10px;padding:16px}
+.aw-rag-hd{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.10em;text-transform:uppercase}
+.aw-rag-snip{display:flex;flex-direction:column;gap:6px;padding:12px;background:var(--bg3);border:1px solid var(--line);border-radius:5px}
+.aw-rag-snip .src{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.08em}
+.aw-rag-snip .src .tag{display:inline-flex;align-items:center;padding:1px 6px;background:var(--bg2);border:1px solid var(--line2);border-radius:3px}
+.aw-rag-snip .body{font-family:var(--sans);font-size:13px;color:var(--t1);line-height:1.55}
+.aw-rag-snip .act{display:flex;align-items:center;gap:8px}
+.aw-rag-snip .act button{display:inline-flex;align-items:center;justify-content:center;height:26px;padding:0 10px;border:1px solid var(--line2);background:var(--bg2);color:var(--t2);font-family:var(--sans);font-size:11px;font-weight:600;border-radius:3px;cursor:pointer;margin:0}
+.aw-rag-snip .act button:hover{color:var(--amber);border-color:var(--amber-line)}
+.aw-rag-empty{padding:14px;color:var(--t3);font-family:var(--mono);font-size:11px;text-align:center}
+
+/* —— Committee throughput strip —— */
+.cc-thru{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.cc-thru-cell{display:flex;flex-direction:column;gap:6px;padding:14px 16px;background:var(--bg2);border:1px solid var(--line);border-radius:6px}
+.cc-thru-cell .lbl{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase}
+.cc-thru-cell .num{font-family:var(--mono);font-size:24px;color:var(--display);font-weight:600}
+.cc-thru-cell .sub{font-family:var(--mono);font-size:11px;color:var(--t4)}
+.cc-thru-cell.pos .num{color:var(--deploy)}
+.cc-thru-cell.warn .num{color:var(--watch)}
+
+/* —— Committee batch grouping —— */
+.cc-toolbar{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cc-toolbar .lbl{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:4px}
+.cc-toolbar .spc{flex:1}
+.cc-toolbar button.batch{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:0 12px;background:var(--deploy-soft);border:1px solid var(--deploy-line);color:var(--deploy);font-family:var(--sans);font-size:12px;font-weight:600;border-radius:4px;cursor:pointer;margin:0}
+.cc-toolbar button.batch:disabled{opacity:.45;cursor:not-allowed}
+.cc-group-row{background:var(--bg3);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cc-group-row td{padding:10px 14px !important;font-family:var(--mono);font-size:11px;color:var(--t2);letter-spacing:.12em;text-transform:uppercase}
+.cc-group-row td .cnt{font-family:var(--mono);font-size:10px;color:var(--t3);margin-left:8px}
+.cc-batch-list{display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;padding:4px 0}
+.cc-batch-list .row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--line);border-radius:4px;font-family:var(--sans);font-size:13px;color:var(--t1)}
+.cc-batch-list .row .id{font-family:var(--mono);font-size:11px;color:var(--t3);margin-left:auto}
+
+/* —— Notification bell + alerts drawer —— */
+.bell-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:36px;height:34px;background:transparent;border:1px solid var(--line);border-radius:4px;cursor:pointer;color:var(--t2);margin-right:8px;padding:0;transition:background-color .12s ease,border-color .12s ease,color .12s ease}
+.bell-btn:hover{background:var(--bg3);border-color:var(--line2);color:var(--t1)}
+.bell-btn.has-unread{color:var(--amber)}
+.bell-btn svg{width:16px;height:16px}
+.bell-badge{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 5px;background:var(--dnd);color:#fff;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.02em;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;border:2px solid var(--bg);box-sizing:border-box;line-height:1}
+.bell-badge.hidden{display:none}
+.bell-badge.aog{background:var(--dnd)}
+.bell-badge.warn{background:var(--watch);color:#1a1206}
+
+.nc-drawer-back{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:998;display:none}
+.nc-drawer-back.open{display:block}
+.nc-drawer{position:fixed;top:0;right:0;bottom:0;width:460px;max-width:96vw;background:var(--bg2);border-left:1px solid var(--line);z-index:999;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .2s ease}
+.nc-drawer.open{transform:translateX(0)}
+.nc-hd{display:flex;align-items:center;gap:10px;padding:18px 20px;border-bottom:1px solid var(--line);background:var(--bg3)}
+.nc-hd h3{margin:0;font-family:var(--sans);font-size:16px;font-weight:600;color:var(--display)}
+.nc-hd .sub{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;margin-left:auto}
+.nc-hd .close{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:transparent;border:1px solid var(--line);color:var(--t2);font-size:14px;border-radius:4px;cursor:pointer;margin:0}
+.nc-hd .close:hover{background:var(--bg);color:var(--t1)}
+
+.nc-tools{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--bg2)}
+.nc-tools .fp{height:26px;padding:0 10px;font-family:var(--mono);font-size:10px;letter-spacing:.10em;text-transform:uppercase;border:1px solid var(--line);background:var(--bg3);color:var(--t2);border-radius:13px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;margin:0}
+.nc-tools .fp:hover{border-color:var(--line2);color:var(--t1)}
+.nc-tools .fp.active{background:var(--amber-soft);border-color:var(--amber-line);color:var(--amber)}
+.nc-tools .fp .n{font-family:var(--mono);font-size:9px;background:var(--bg);color:var(--t3);padding:1px 5px;border-radius:8px;border:1px solid var(--line)}
+.nc-tools .fp.active .n{background:rgba(232,162,58,.20);color:var(--amber);border-color:rgba(232,162,58,.40)}
+.nc-tools .spc{flex:1}
+.nc-tools .mark-all{display:inline-flex;align-items:center;height:26px;padding:0 10px;font-family:var(--sans);font-size:11px;font-weight:600;color:var(--t2);background:var(--bg3);border:1px solid var(--line);border-radius:4px;cursor:pointer;margin:0}
+.nc-tools .mark-all:hover{color:var(--t1);border-color:var(--line2)}
+
+.nc-body{flex:1;overflow-y:auto;padding:8px 0}
+.nc-empty{padding:40px 20px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.10em;text-transform:uppercase}
+.nc-day{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;padding:14px 20px 8px;border-top:1px solid var(--line)}
+.nc-day:first-child{border-top:none}
+
+.nc-item{display:flex;flex-direction:column;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:background-color .12s ease;position:relative}
+.nc-item:hover{background:var(--bg3)}
+.nc-item.unread::before{content:'';position:absolute;top:14px;left:8px;width:6px;height:6px;background:var(--amber);border-radius:50%;box-shadow:0 0 0 2px rgba(232,162,58,.20)}
+.nc-item.unread{padding-left:24px}
+.nc-item-hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nc-item-hd .time{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em}
+.nc-item-hd .spc{flex:1}
+.nc-cls-chip{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-family:var(--mono);font-size:10px;letter-spacing:.10em;text-transform:uppercase;border-radius:3px;border:1px solid;margin:0;height:20px;box-sizing:border-box}
+.nc-cls-chip.aog{color:#fff;background:var(--dnd);border-color:var(--dnd)}
+.nc-cls-chip.verdict{color:var(--info);background:rgba(124,159,199,.10);border-color:rgba(124,159,199,.40)}
+.nc-cls-chip.watch{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.nc-cls-chip.air{color:#a78bfa;background:rgba(167,139,250,.10);border-color:rgba(167,139,250,.40)}
+.nc-cls-chip.code{color:var(--amber);background:var(--amber-soft);border-color:var(--amber-line)}
+.nc-cls-chip.account{color:var(--t2);background:var(--bg3);border-color:var(--line2)}
+.nc-item-body{font-family:var(--sans);font-size:13px;color:var(--t1);line-height:1.5;font-weight:600}
+.nc-item-meta{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em}
+.nc-item-meta strong{color:var(--t2);font-weight:600}
+.nc-item-acts{display:flex;align-items:center;gap:8px;margin-top:4px}
+.nc-item-acts button{display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 10px;font-family:var(--sans);font-size:11px;font-weight:600;border:1px solid var(--line2);background:var(--bg2);color:var(--t2);border-radius:3px;cursor:pointer;margin:0}
+.nc-item-acts button:hover{color:var(--t1);border-color:var(--line2)}
+.nc-item-acts button.ack{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.nc-item-acts button.ack:hover{background:var(--dnd);color:#fff;border-color:var(--dnd)}
+.nc-item-acks{font-family:var(--mono);font-size:10px;color:var(--deploy);letter-spacing:.10em;text-transform:uppercase}
+
+/* —— User profile chip + settings modal —— */
+.user{cursor:pointer;transition:background-color .12s ease}
+.user:hover{background:var(--bg3)}
+.user .who{flex:1;min-width:0}
+.user .who b{display:block;font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:600;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user .who span{display:block;font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.10em;text-transform:uppercase;line-height:1.15}
+.user .caret{font-family:var(--mono);font-size:20px;color:var(--t3);margin-left:4px;line-height:1;transition:transform .15s ease}
+.user.open .caret{transform:rotate(180deg)}
+.up-modal .sig-mbox{max-width:560px}
+.up-sect{display:flex;flex-direction:column;gap:10px;padding:16px;background:var(--bg3);border:1px solid var(--line);border-radius:6px}
+.up-sect-hd{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin:0}
+.up-sect-hd .spc{flex:1}
+.up-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
+.up-row:first-of-type{border-top:none;padding-top:0}
+.up-row .k{font-family:var(--sans);font-size:13px;color:var(--t2);min-width:140px}
+.up-row .v{flex:1;font-family:var(--sans);font-size:13px;color:var(--t1);text-align:right;word-break:break-word}
+.up-row .v.mono{font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.04em}
+.up-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg2);border:1px solid var(--line);border-radius:5px;cursor:pointer}
+.up-toggle:hover{border-color:var(--line2)}
+.up-toggle .lbl{display:flex;flex-direction:column;gap:2px}
+.up-toggle .lbl h5{margin:0;font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:600}
+.up-toggle .lbl p{margin:0;font-family:var(--sans);font-size:11px;color:var(--t3);line-height:1.4}
+.up-toggle .sw{position:relative;width:36px;height:20px;background:var(--bg3);border:1px solid var(--line2);border-radius:10px;flex-shrink:0;transition:background-color .15s ease,border-color .15s ease}
+.up-toggle .sw::after{content:'';position:absolute;top:2px;left:2px;width:14px;height:14px;background:var(--t3);border-radius:50%;transition:left .15s ease,background-color .15s ease}
+.up-toggle.on .sw{background:rgba(107,179,138,.20);border-color:var(--deploy-line)}
+.up-toggle.on .sw::after{left:18px;background:var(--deploy)}
+.up-toggle input[type=checkbox]{display:none}
+.up-role-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.up-role-chip{display:flex;align-items:center;gap:8px;padding:10px;background:var(--bg2);border:1px solid var(--line);border-radius:5px;cursor:pointer;font-family:var(--sans);font-size:12px;color:var(--t2)}
+.up-role-chip:hover{border-color:var(--line2)}
+.up-role-chip.active{background:var(--amber-soft);border-color:var(--amber-line);color:var(--amber)}
+.up-role-chip .ico{font-size:14px;line-height:1}
+.up-vault-chip-state{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;font-family:var(--mono);font-size:10px;letter-spacing:.10em;border-radius:3px}
+.up-vault-chip-state.cleared{color:var(--deploy);background:var(--deploy-soft);border:1px solid var(--deploy-line)}
+.up-vault-chip-state.masked{color:var(--t3);background:var(--bg2);border:1px solid var(--line)}
+.up-act{display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 12px;background:var(--bg2);border:1px solid var(--line2);color:var(--t2);font-family:var(--sans);font-size:12px;font-weight:600;border-radius:4px;cursor:pointer;margin:0}
+.up-act:hover{background:var(--bg3);color:var(--t1)}
+.up-act.danger{color:var(--dnd);border-color:var(--dnd-line);background:var(--dnd-soft)}
+.up-act.primary{color:var(--amber);border-color:var(--amber-line);background:var(--amber-soft)}
+
+/* —— Code-change ledger —— */
+.cc-ledger{display:flex;flex-direction:column}
+.cc-ledger-row{display:grid;grid-template-columns:130px 1fr 130px 140px;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:center}
+.cc-ledger-row:last-child{border-bottom:none}
+.cc-ledger-row .id{font-family:var(--mono);font-size:11px;color:var(--t3)}
+.cc-ledger-row .ttl{display:flex;flex-direction:column;gap:4px}
+.cc-ledger-row .ttl .h{font-family:var(--sans);font-size:14px;color:var(--t1);font-weight:600}
+.cc-ledger-row .ttl .d{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.45}
+.cc-ledger-row .ttl .tags{display:flex;gap:6px;margin-top:2px}
+.cc-ledger-row .ttl .tags .tg{font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:1px 6px;border-radius:3px;background:var(--bg3);border:1px solid var(--line2);color:var(--t3)}
+.cc-ledger-row .st{font-family:var(--mono);font-size:11px;letter-spacing:.10em;text-transform:uppercase}
+.cc-ledger-row .st.pending{color:var(--watch)}
+.cc-ledger-row .st.approved{color:var(--deploy)}
+.cc-ledger-row .st.returned{color:var(--info)}
+.cc-ledger-row .acts{display:flex;gap:6px;justify-content:flex-end}
+.cc-ledger-row .acts button{display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 10px;border:1px solid var(--line2);background:var(--bg2);color:var(--t2);font-family:var(--sans);font-size:11px;font-weight:600;border-radius:3px;cursor:pointer;margin:0}
+.cc-ledger-row .acts button.app{color:var(--deploy);border-color:var(--deploy-line);background:var(--deploy-soft)}
+.cc-ledger-row .acts button.ret{color:var(--watch);border-color:var(--watch-line);background:var(--watch-soft)}
+.cc-ledger-row .acts button:disabled{opacity:.4;cursor:not-allowed}
 </style>
 </head>
 <body>
@@ -2417,7 +2621,10 @@ function _login(){
   var pw=(document.getElementById('pw').value||'').trim();
   var err=document.getElementById('lerr');
   if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';_logAuthEvent('Login attempt',em||'—','Rejected · missing fields','Both email and access key required');return;}
-  if(pw!=='andara2026'){err.textContent='Access key not recognised.';err.style.display='block';_logAuthEvent('Login attempt',em,'Rejected · bad key','Access key not recognised');return;}
+  // Master demo key OR per-email user-set password (set via Profile → Security)
+  var userOk=false;
+  try{var users=JSON.parse(localStorage.getItem('andara.users.v1')||'{}');var u=users[em.toLowerCase()];if(u&&u.password&&pw===u.password)userOk=true;}catch(_){}
+  if(pw!=='andara2026' && !userOk){err.textContent='Access key not recognised.';err.style.display='block';_logAuthEvent('Login attempt',em,'Rejected · bad key','Access key not recognised');return;}
   try{localStorage.setItem('andara.auth',JSON.stringify({email:em,ts:Date.now()}));}catch(_){}
   _logAuthEvent('Login',em,'Authenticated','Session opened');
   document.getElementById('login').style.display='none';
@@ -2450,10 +2657,15 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <div class="tick"><div class="k">Universe</div><div class="v" id="tb-universe">85 Carriers</div></div>
       <div class="tick"><div class="k">Methodology</div><div class="v">v1.5-NG</div></div>
       <div class="tick"><div class="k">UTC</div><div class="v" id="clk">--:--:--</div></div>
-      <div class="user">
+      <button type="button" class="bell-btn" id="bellBtn" aria-label="Open notifications" title="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="bell-badge hidden" id="bellBadge">0</span>
+      </button>
+      <button type="button" class="user" id="userChip" aria-label="Open profile settings">
         <div class="av" id="uavatar">SB</div>
-        <div class="who"><b id="uname">Subscriber</b><span>Subscriber</span></div>
-      </div>
+        <div class="who"><b id="uname">Subscriber</b><span id="urole">Subscriber</span></div>
+        <span class="caret">▾</span>
+      </button>
     </div>
   </header>
 
@@ -2990,31 +3202,10 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <div class="panel"><div class="ph"><h3>Country-level RCS modifier</h3><span class="meta">West Africa · 12 jurisdictions + East Africa · 11 jurisdictions</span></div><div class="pb" style="padding:0;overflow-x:auto"><table class="ctbl" id="countryModTable"></table></div></div>
       <div class="panel"><div class="ph"><h3>Client-tier verdict differentiation</h3><span class="meta">Pass 3–4 doctrine · v1.0-WA + v1.0-EA</span></div><div class="pb"><p style="font-size:12.5px;color:var(--t2);line-height:1.65;max-width:800px">West Africa: <strong style="color:#fff">Air Burkina</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese institutional), <strong style="color:#fff">Sky Mali</strong> (Do Not Deploy for Western/Regional; Watch-mid for Chinese), and <strong style="color:#fff">Global Aviation</strong> (Watch-mid for Western; Watch-high for Chinese, Regional African, Mining/oil-and-gas). East Africa: <strong style="color:#fff">Air Tanzania</strong>, <strong style="color:#fff">Precision Air</strong>, <strong style="color:#fff">African Express Airways</strong> (westernInstitutional Do Not Deploy reflecting EU ban or fleet ineligibility; other tiers Watch). <strong style="color:#fff">Tarco Aviation</strong> and <strong style="color:#fff">Badr Airlines</strong> (conflict-adjusted: westernInstitutional, Chinese, and miningOilGas Do Not Deploy; regionalAfricanInstitutional Watch). The underlying evidence is identical across all tiers; the risk weighting differs by mandate.</p></div></div>
 
-      <!-- Methodology change requests ·  read-only placeholder · §4.3.5 workflow ships M2 -->
+      <!-- Verdict-affecting code change ledger · §4.4.2 -->
       <div class="panel">
-        <div class="ph"><h3>Change requests</h3></div>
-        <div class="pb m-cr">
-          <p class="m-cr-lead">Methodology changes — weights, hard floor parameters, verdict thresholds — are gated by the <strong>Scoring Committee</strong>. The propose-review-approve workflow ships in <strong>M2 ()</strong>. Until then, change requests are routed manually.</p>
-          <div class="m-cr-grid">
-            <div class="m-cr-cell">
-              <div class="m-cr-lbl">Route to</div>
-              <div class="m-cr-val">Scoring Committee Chair</div>
-            </div>
-            <div class="m-cr-cell">
-              <div class="m-cr-lbl">Required artefact</div>
-              <div class="m-cr-val">Proposal memo + supporting evidence</div>
-            </div>
-            <div class="m-cr-cell">
-              <div class="m-cr-lbl">Decision cadence</div>
-              <div class="m-cr-val">Next scheduled SC session</div>
-            </div>
-            <div class="m-cr-cell">
-              <div class="m-cr-lbl">Audit</div>
-              <div class="m-cr-val">Decision recorded on minutes index above</div>
-            </div>
-          </div>
-          <button type="button" class="btn" id="mCrDraft" disabled title="Workflow ships M2 — currently routed manually">Draft change request <span class="m-cr-soon">M2</span></button>
-        </div>
+        <div class="ph"><h3>Verdict-affecting code changes</h3><span class="meta">Engineering changes gated by Scoring Committee sign-off · §4.4.2</span></div>
+        <div class="pb cc-ledger" id="codeChangeLedger" style="padding:0"></div>
       </div>
     </div>
 
@@ -3024,9 +3215,10 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <p class="vsub">Carrier-scoped scoring files, evidence corpus, and Watch Notes — Arbiter v1. Scores update only through the approved methodology engine — never manually.</p>
       <div class="notice"><strong>Scoring governance · v1.5-NG / 1.0-WA / 1.0-EA</strong>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>
 
-      <!-- Tab bar — Queue · Evidence · Watch Note -->
+      <!-- Tab bar — Queue · Refresh · Evidence · Watch Note -->
       <div class="aw-tabs" role="tablist">
         <button type="button" class="aw-tab active" data-awtab="queue">Queue<span class="cnt" id="awQueueCnt">0</span></button>
+        <button type="button" class="aw-tab" data-awtab="refresh">Refresh<span class="cnt" id="awRefreshCnt">0</span></button>
         <button type="button" class="aw-tab" data-awtab="evidence">Evidence</button>
         <button type="button" class="aw-tab" data-awtab="watch">Watch Note</button>
       </div>
@@ -3073,6 +3265,38 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         </div>
       </div>
 
+      <!-- REFRESH — structured workflow for verdicts approaching validity expiry · §4.4.1 -->
+      <div class="aw-pane" data-awp="refresh">
+        <div class="panel">
+          <div class="ph"><h3>Refresh queue</h3><span class="meta">Verdicts approaching or past validity · sorted by urgency · §3.2.4 refresh schedule</span></div>
+          <div class="pb" style="padding:0">
+            <div class="aw-rfq-roll" id="awRfqRoll"></div>
+            <div class="fb" id="awRfqFilter" style="padding:16px 16px 0;margin-bottom:16px">
+              <span style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px">Urgency</span>
+              <button type="button" class="fp active" data-rfqf="due">Due (≤60d + expired)</button>
+              <button type="button" class="fp" data-rfqf="expired">Expired only</button>
+              <button type="button" class="fp" data-rfqf="urgent">≤30d</button>
+              <button type="button" class="fp" data-rfqf="soon">31–60d</button>
+              <button type="button" class="fp" data-rfqf="all">All carriers</button>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="aw-queue" id="awRfqTbl">
+                <thead><tr>
+                  <th>Carrier</th>
+                  <th>Jurisdiction</th>
+                  <th>Current verdict</th>
+                  <th>Composite</th>
+                  <th>Validity</th>
+                  <th>Last SF</th>
+                  <th>Action</th>
+                </tr></thead>
+                <tbody id="awRfqBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!-- /pane:refresh -->
+
       <!-- EVIDENCE — corpus submission tied to a carrier ·  -->
       <div class="aw-pane" data-awp="evidence">
         <div class="panel"><div class="ph"><h3>New evidence submission</h3><span class="meta">Audited · attributable</span></div><div class="pb"><form class="wsform" id="wsForm">
@@ -3083,6 +3307,16 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         <div class="wsr">
           <div class="wsf"><label>Mapped Scoring Criterion</label><select id="evCrit"><option value="svs">SVS — Strategic Value</option><option value="pps">PPS — Payment Priority</option><option value="aps">APS — Airline Performance</option><option value="rcs">RCS — Risk Containment</option><option value="ras">RAS — Redeployment Suitability</option></select></div>
           <div class="wsf"><label>Confidence Level</label><select id="evConf"><option value="high">High · two+ sources</option><option value="medium">Medium · one reputable trade source</option><option value="low">Low · single secondary</option></select></div>
+        </div>
+        <div class="wsr">
+          <div class="wsf"><label>Jurisdiction <span style="font-family:var(--mono);font-size:10px;color:var(--t4);font-weight:400;letter-spacing:.10em;text-transform:uppercase">· §4.4.1 multi-jurisdiction</span></label><select id="evJur"><option value="">— Auto from carrier —</option><option value="NG">Nigeria · NGN</option><option value="TG">Togo · XOF</option><option value="GH">Ghana · GHS</option><option value="CI">Côte d'Ivoire · XOF</option><option value="SN">Senegal · XOF</option><option value="KE">Kenya · KES</option><option value="ET">Ethiopia · ETB</option><option value="TZ">Tanzania · TZS</option><option value="UG">Uganda · UGX</option><option value="ZA">South Africa · ZAR</option><option value="EG">Egypt · EGP</option><option value="MA">Morocco · MAD</option><option value="AO">Angola · AOA</option></select></div>
+          <div class="wsf"><label>Classification</label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--line);border-radius:5px;cursor:pointer;height:42px;box-sizing:border-box">
+              <input type="checkbox" id="evVault" style="margin:0">
+              <span style="font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:600">Counterparty vault</span>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.10em;text-transform:uppercase;background:rgba(232,162,58,.10);padding:2px 6px;border-radius:3px;border:1px solid rgba(232,162,58,.30)">RESTRICTED</span>
+            </label>
+          </div>
         </div>
         <div class="wsf"><label>Headline</label><input type="text" id="evHead" placeholder="e.g. ASKY executes B787-9 purchase agreement with [Lessor]"/></div>
         <div class="wsf"><label>Source Citation</label><input type="text" id="evSrc" placeholder="https://… or ANAC-Togo Bulletin 2026/05/xxx"/></div>
@@ -3137,11 +3371,25 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <div class="view" id="vw-committee">
       <h1 class="vtitle">Scoring <em>Committee</em></h1>
       <p class="vsub">Per  — committee inbox, decision capture with chair signature, and immutable decisions log. Click <strong>View details</strong> on any row to open the full submission in the side drawer. Every decision propagates to the audit trail.</p>
+
+      <!-- Throughput metrics · §4.4.2 -->
+      <div class="cc-thru" id="ccThru"></div>
+
       <div class="panel">
         <div class="ph"><h3>Committee inbox</h3><span class="meta" id="ccInboxMeta">Submissions awaiting review</span></div>
+        <!-- Batch submission toolbar · §4.4.2 -->
+        <div class="cc-toolbar">
+          <span class="lbl">Group by</span>
+          <button type="button" class="fp active" data-ccgrp="none">None</button>
+          <button type="button" class="fp" data-ccgrp="region">Region</button>
+          <button type="button" class="fp" data-ccgrp="window">Submission window</button>
+          <span class="spc"></span>
+          <button type="button" class="batch" id="ccBatchApprove" disabled>Batch approve selected</button>
+        </div>
         <div class="pb" style="padding:0;overflow-x:auto">
           <table class="aw-queue no-row-click" id="ccInboxTbl">
             <thead><tr>
+              <th style="width:36px"><input type="checkbox" id="ccSelAll" title="Select all" style="cursor:pointer"></th>
               <th>Carrier</th>
               <th>Scoring file</th>
               <th>Submitter</th>
@@ -3525,6 +3773,198 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <div class="sig-mfooter">
       <button class="sig-mbtn" data-sig-close="ccDecisionModal">Cancel</button>
       <button class="sig-mbtn primary" id="ccDecisionConfirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- Batch SC decision modal · §4.4.2 -->
+<div class="sig-mback" id="ccBatchModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Batch approve submissions</h3><button class="close" data-sig-close="ccBatchModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="ccBatchSummary"></div>
+      <div class="sig-mfield">
+        <label>Submissions in this batch</label>
+        <div class="cc-batch-list" id="ccBatchList"></div>
+        <div class="helper">Hard-floor-tripped submissions are excluded — they require individual rationale per §3.3.6.</div>
+      </div>
+      <div class="sig-mfield">
+        <label>Shared chair rationale</label>
+        <textarea id="ccBatchRationale" placeholder="The single rationale stamped against every SF in the batch. Make it generic enough to hold across every carrier listed above (e.g. cohort uplift, methodology refresh, scheduled validity rollover). Min 60 chars."></textarea>
+        <div class="helper">Every SF gets the same rationale; per-carrier nuance belongs in the individual review path.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="ccBatchModal">Cancel</button>
+      <button class="sig-mbtn primary" id="ccBatchConfirm">Approve all & sign</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI-drafted commentary modal · §4.4.1 Credit Report Drafting Agent stub -->
+<div class="sig-mback" id="awAiDraftModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Draft commentary</h3><button class="close" data-sig-close="awAiDraftModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="awAiDraftSummary"></div>
+      <div class="sig-mfield">
+        <label>Credit Report Drafting Agent · proposed prose</label>
+        <textarea id="awAiDraftBody" style="min-height:240px;font-family:var(--sans);line-height:1.6"></textarea>
+        <div class="helper"><span class="aw-ai-chip" style="vertical-align:middle">AI-DRAFTED</span>&nbsp; Edit before accepting — analyst remains the author of record. Accepting attaches the prose to the scoring file with AI-drafted disclosure stamped in audit. M1 stub uses canned templates; M2 swaps in the live drafting agent.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="awAiDraftModal">Discard</button>
+      <button class="sig-mbtn" id="awAiDraftRegen">Re-generate</button>
+      <button class="sig-mbtn primary" id="awAiDraftAccept">Accept as analyst</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vault clearance prompt · §4.4.1 Counterparty vault access -->
+<div class="sig-mback" id="awVaultModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Counterparty vault clearance</h3><button class="close" data-sig-close="awVaultModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary"><strong>Restricted</strong> — vault contents are counterparty-sourced and visible only to cleared analysts. Each reveal is audited.</div>
+      <div class="sig-mfield">
+        <label>Clearance phrase</label>
+        <input type="password" id="awVaultPhrase" placeholder="Enter vault clearance phrase">
+        <div class="helper">Demo phrase: <code style="font-family:var(--mono);color:var(--amber)">VAULT-2026</code>. Clearance persists for this session; revoke via Sign out. Production (M2) reads role from SSO claim.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="awVaultModal">Cancel</button>
+      <button class="sig-mbtn primary" id="awVaultConfirm">Reveal vault</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notification center · §3.2.7 Alerts & Notifications -->
+<div class="nc-drawer-back" id="ncDrawerBack"></div>
+<aside class="nc-drawer" id="ncDrawer" aria-label="Notification center">
+  <div class="nc-hd">
+    <h3>Notifications</h3>
+    <span class="sub" id="ncHdSub">— unread</span>
+    <button type="button" class="close" id="ncClose" title="Close" aria-label="Close">✕</button>
+  </div>
+  <div class="nc-tools" id="ncTools">
+    <button type="button" class="fp active" data-ncf="all">All <span class="n" id="ncCntAll">0</span></button>
+    <button type="button" class="fp" data-ncf="aog">AOG <span class="n" id="ncCntAog">0</span></button>
+    <button type="button" class="fp" data-ncf="verdict">Verdict <span class="n" id="ncCntVerdict">0</span></button>
+    <button type="button" class="fp" data-ncf="watch">Watch Notes <span class="n" id="ncCntWatch">0</span></button>
+    <button type="button" class="fp" data-ncf="air">AIR <span class="n" id="ncCntAir">0</span></button>
+    <button type="button" class="fp" data-ncf="code">Code <span class="n" id="ncCntCode">0</span></button>
+    <button type="button" class="fp" data-ncf="account">Account <span class="n" id="ncCntAccount">0</span></button>
+    <span class="spc"></span>
+    <button type="button" class="mark-all" id="ncMarkAll">Mark all read</button>
+  </div>
+  <div class="nc-body" id="ncBody"></div>
+</aside>
+
+<!-- User profile settings modal -->
+<div class="sig-mback up-modal" id="profileModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3>Profile &amp; preferences</h3><button class="close" data-sig-close="profileModal">✕</button></div>
+    <div class="sig-mbody">
+      <!-- Identity -->
+      <div class="up-sect">
+        <h4 class="up-sect-hd">Identity</h4>
+        <div class="up-row" style="align-items:flex-start"><span class="k" style="padding-top:8px">Display name</span><span class="v" style="flex:1"><input type="text" id="upNameInput" placeholder="How your name appears in the terminal" maxlength="60" style="width:100%;height:36px;padding:0 12px;background:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--sans);font-size:13px;border-radius:4px;box-sizing:border-box"></span></div>
+        <div class="up-row"><span class="k">Email</span><span class="v mono" id="upEmail">—</span></div>
+        <div class="up-row"><span class="k">Signed in</span><span class="v mono" id="upSignedIn">—</span></div>
+      </div>
+
+      <!-- Security · change password -->
+      <div class="up-sect" style="margin-top:14px">
+        <h4 class="up-sect-hd">Security</h4>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div><label style="display:block;font-family:var(--sans);font-size:12px;color:var(--t2);margin-bottom:6px">Current password</label><input type="password" id="upPwCur" placeholder="Current access key" autocomplete="current-password" style="width:100%;height:36px;padding:0 12px;background:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--sans);font-size:13px;border-radius:4px;box-sizing:border-box"></div>
+          <div><label style="display:block;font-family:var(--sans);font-size:12px;color:var(--t2);margin-bottom:6px">New password</label><input type="password" id="upPwNew" placeholder="Min 8 characters" autocomplete="new-password" style="width:100%;height:36px;padding:0 12px;background:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--sans);font-size:13px;border-radius:4px;box-sizing:border-box"></div>
+          <div><label style="display:block;font-family:var(--sans);font-size:12px;color:var(--t2);margin-bottom:6px">Confirm new password</label><input type="password" id="upPwConfirm" placeholder="Repeat new password" autocomplete="new-password" style="width:100%;height:36px;padding:0 12px;background:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--sans);font-size:13px;border-radius:4px;box-sizing:border-box"></div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><button type="button" class="up-act primary" id="upPwSave">Change password</button><span id="upPwStatus" style="font-family:var(--mono);font-size:10px;letter-spacing:.10em;text-transform:uppercase"></span></div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.06em;margin-top:4px">Demo: master key <code style="font-family:var(--mono);color:var(--amber)">andara2026</code> always works. Once you set your own password, it works in addition to the master key. M2 swaps to backend bcrypt.</div>
+      </div>
+      <!-- Role -->
+      <div class="up-sect" style="margin-top:14px">
+        <h4 class="up-sect-hd">Role</h4>
+        <div class="up-role-grid" id="upRoleGrid">
+          <button type="button" class="up-role-chip" data-uprole="analyst"><span class="ico">●</span><span>Analyst</span></button>
+          <button type="button" class="up-role-chip" data-uprole="lead"><span class="ico">●</span><span>Lead analyst</span></button>
+          <button type="button" class="up-role-chip" data-uprole="chair"><span class="ico">●</span><span>SC chair</span></button>
+          <button type="button" class="up-role-chip" data-uprole="cs"><span class="ico">●</span><span>Customer Success</span></button>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.06em;margin-top:4px">Role affects which surfaces and actions are exposed. M1 demo control; M2 reads from SSO claim.</div>
+      </div>
+      <!-- Vault clearance -->
+      <div class="up-sect" style="margin-top:14px">
+        <h4 class="up-sect-hd">Counterparty vault <span class="spc"></span><span class="up-vault-chip-state masked" id="upVaultState">MASKED</span></h4>
+        <div style="font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5">Vault contents are counterparty-sourced and visible only to cleared analysts. Each reveal is audited per §3.4.1.</div>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="up-act primary" id="upVaultGrant">Grant clearance</button>
+          <button type="button" class="up-act danger" id="upVaultRevoke" style="display:none">Revoke for session</button>
+        </div>
+      </div>
+      <!-- Notifications -->
+      <div class="up-sect" style="margin-top:14px">
+        <h4 class="up-sect-hd">Notifications · §3.2.7</h4>
+        <div class="up-toggle" data-uptog="aog">
+          <div class="lbl"><h5>AOG alerts</h5><p>Aircraft-on-ground events — immediate institutional attention. Acknowledgement required.</p></div>
+          <input type="checkbox" checked><span class="sw"></span>
+        </div>
+        <div class="up-toggle" data-uptog="verdict">
+          <div class="lbl"><h5>Verdict changes</h5><p>Carrier verdict moves (Deploy / Watch / DND) and composite shifts &gt; 3 pts.</p></div>
+          <input type="checkbox" checked><span class="sw"></span>
+        </div>
+        <div class="up-toggle" data-uptog="watch">
+          <div class="lbl"><h5>Watch Notes</h5><p>Off-cycle Watch Notes dispatched against carriers in your scope.</p></div>
+          <input type="checkbox" checked><span class="sw"></span>
+        </div>
+        <div class="up-toggle" data-uptog="air">
+          <div class="lbl"><h5>AIR issues</h5><p>Andara Intelligence Report — quarterly issue published.</p></div>
+          <input type="checkbox" checked><span class="sw"></span>
+        </div>
+        <div class="up-toggle" data-uptog="code">
+          <div class="lbl"><h5>Code-change decisions</h5><p>Verdict-affecting methodology changes approved or returned by SC.</p></div>
+          <input type="checkbox"><span class="sw"></span>
+        </div>
+        <div class="up-toggle" data-uptog="account">
+          <div class="lbl"><h5>Account events</h5><p>Sign-ins, seat changes, watermark export receipts.</p></div>
+          <input type="checkbox"><span class="sw"></span>
+        </div>
+      </div>
+      <!-- Session -->
+      <div class="up-sect" style="margin-top:14px">
+        <h4 class="up-sect-hd">Session</h4>
+        <div class="up-row"><span class="k">Access key</span><span class="v mono">andara2026 (demo)</span></div>
+        <div class="up-row"><span class="k">Vault phrase</span><span class="v mono">VAULT-2026 (demo)</span></div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn danger" id="upSignOut" style="background:var(--dnd-soft);border-color:var(--dnd-line);color:var(--dnd)">Sign out</button>
+      <span style="flex:1"></span>
+      <button class="sig-mbtn" data-sig-close="profileModal">Close</button>
+      <button class="sig-mbtn primary" id="upSave">Save preferences</button>
+    </div>
+  </div>
+</div>
+
+<!-- Code-change decision modal · §4.4.2 -->
+<div class="sig-mback" id="ccCodeModal">
+  <div class="sig-mbox">
+    <div class="sig-mhd"><h3 id="ccCodeTitle">Code change decision</h3><button class="close" data-sig-close="ccCodeModal">✕</button></div>
+    <div class="sig-mbody">
+      <div class="sig-msummary" id="ccCodeSummary"></div>
+      <div class="sig-mfield">
+        <label>Chair rationale</label>
+        <textarea id="ccCodeRationale" placeholder="Why this code change is approved or returned. Min 40 characters. Stamped against the change record and the audit trail."></textarea>
+        <div class="helper">Verdict-affecting code changes ship only after Scoring Committee sign-off per §4.3.5.</div>
+      </div>
+    </div>
+    <div class="sig-mfooter">
+      <button class="sig-mbtn" data-sig-close="ccCodeModal">Cancel</button>
+      <button class="sig-mbtn primary" id="ccCodeConfirm">Confirm</button>
     </div>
   </div>
 </div>
@@ -6994,16 +7434,21 @@ function buildWorkspace(){
     const ym=(new Date()).toISOString().slice(0,7).replace('-','');
     const seq=EVIDENCE.filter(e=>(e.id||'').startsWith(`EV-${ym}-`)).length+1;
     const id=`EV-${ym}-${String(seq).padStart(3,'0')}`;
+    // §4.4.1 jurisdiction — auto-derive from carrier when blank
+    const jurSel=el('evJur'); const jurCode = (jurSel && jurSel.value) || jurForCarrier(cid) || '';
+    // §4.4.1 counterparty vault flag
+    const vaultBox=el('evVault'); const vault = !!(vaultBox && vaultBox.checked);
     const rec={id, cid, ts:sigNowTs(), user:sigCurrentUser(),
       cls:el('evClass').value, crit:el('evCrit').value, conf:el('evConf').value,
-      headline, source, observation};
+      headline, source, observation, jur:jurCode, vault};
     EVIDENCE.unshift(rec);
-    const entry={ts:rec.ts,user:rec.user,carrier:a.name,crit:`Evidence submission · ${rec.crit.toUpperCase()}`,fr:'Workspace',to:'Evidence corpus',src:'Workspace',status:'Logged',note:`${id} · ${rec.cls} · ${headline.slice(0,140)}`};
+    const entry={ts:rec.ts,user:rec.user,carrier:a.name,crit:`Evidence submission · ${rec.crit.toUpperCase()}${vault?' · VAULT':''}`,fr:'Workspace',to:'Evidence corpus',src:'Workspace',status:'Logged',note:`${id} · ${rec.cls}${jurCode?` · ${jurCode}`:''}${vault?' · vault':''} · ${headline.slice(0,140)}`};
     AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
     sfPersist();
     if(typeof buildAudit==='function')buildAudit();
-    toast(`Evidence logged · ${id}`, `${a.name} · mapped to ${rec.crit.toUpperCase()} · confidence ${rec.conf}`);
+    toast(`Evidence logged · ${id}`, `${a.name} · mapped to ${rec.crit.toUpperCase()} · confidence ${rec.conf}${vault?' · VAULT':''}`);
     el('wsForm').reset();
+    if(awState.cid===cid)buildAwEvidenceCorpus(cid);
   });
 
   // Watch Note creator
@@ -7273,6 +7718,7 @@ function awSetTab(t){
   document.querySelectorAll('#vw-workspace .aw-tab').forEach(b=>b.classList.toggle('active', b.dataset.awtab===t));
   document.querySelectorAll('#vw-workspace .aw-pane').forEach(p=>p.classList.toggle('active', p.dataset.awp===t));
   if(t==='queue')awShowQueueList();
+  if(t==='refresh' && typeof buildRefreshQueue==='function')buildRefreshQueue();
 }
 
 // ── Queue list ↔ scoring-file detail (inside the Queue pane) ─────────────
@@ -7360,18 +7806,29 @@ function buildScoringFilePane(){
   const submitDisabled = editable ? '' : 'disabled style="opacity:.45;cursor:not-allowed"';
   const shippable = sf.status==='approved';
   const shipped   = sf.status==='shipped';
+  const jcode=jurForCarrier(c.id);
+  const refreshChip = sf.isRefresh ? `<span class="aw-refresh-hint" title="${sf.refreshOf?`Supersedes ${sf.refreshOf}`:'Scheduled refresh'}">↻ REFRESH${sf.refreshOf?` · supersedes ${sf.refreshOf}`:''}</span>` : '';
+  const commentaryBlock = sf.commentary && sf.commentary.body ? `
+    <div class="aw-ai-block">
+      <div class="hd">${sf.commentary.aiDrafted ? '<span class="aw-ai-chip">AI-DRAFTED</span>' : ''} Analyst commentary · ${sf.commentary.user||'—'} · ${sf.commentary.ts||'—'}</div>
+      <div class="body">${(sf.commentary.body||'').replace(/</g,'&lt;')}</div>
+      <div class="aw-ai-actions">${editable?`<button id="awDraftReopen">Edit / re-draft</button>`:''}<button id="awDraftRemove" style="color:var(--dnd)">Remove</button></div>
+    </div>` : '';
   host.innerHTML = `
     <div class="aw-sf-hd">
       <span class="nm">${c.name}</span>
-      <span class="sfid">${sf.id} · opened ${sf.opened} · ${sf.version}</span>
+      <span class="sfid">${sf.id} · opened ${sf.opened} · ${sf.version}${jcode?` · ${jcode}/${JURISDICTIONS[jcode].currency}`:''}</span>
       ${sfStatusChipHtml(sf.status)}
+      ${refreshChip}
       <span class="spc"></span>
       <div class="actions">
+        ${editable?`<button class="sig-mbtn" id="awDraftCommentary">${sf.commentary?'Re-draft commentary':'Draft commentary'}</button>`:''}
         ${editable?`<button class="sig-mbtn primary" id="awSubmit">Submit to Scoring Committee</button>`:''}
         ${shippable?'<button class="sig-mbtn primary" id="awShip">Ship verdict</button>':''}
         ${shipped?`<span class="aw-sf-st shipped" style="height:30px;padding:0 14px">SHIPPED · ${sf.shippedToken||''}</span>`:''}
       </div>
     </div>
+    ${jcode?jurFxStripHtml(jcode):''}
     <div class="aw-scores">
       ${SF_DIMENSIONS.map(d=>{
         const dimAvg=sfDimAvg(sf,d.k);
@@ -7406,6 +7863,20 @@ function buildScoringFilePane(){
       <div class="cell"><div class="lbl">Verdict preview</div><div class="val" id="awPrvVerdict">—</div><div class="sub">Calculated · not yet SC-approved</div></div>
     </div>
     <div class="aw-prv-hf" id="awHfBanner"></div>
+
+    ${commentaryBlock}
+
+    <!-- RAG-assisted research · §4.4.1 -->
+    <div class="panel" style="margin-top:24px">
+      <div class="ph"><h3>Retrieved context · RAG</h3><span class="meta">Per-dimension snippets · M1 stub seed · §4.4.1</span></div>
+      <div class="pb" style="padding:0">
+        <div class="fb" style="padding:16px 16px 0;margin-bottom:8px">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.16em;text-transform:uppercase;margin-right:6px">Dimension</span>
+          ${SF_DIMENSIONS.map(d=>`<button type="button" class="fp ${(awState.ragDim||'pps')===d.k?'active':''}" data-ragdim="${d.k}">${d.code}</button>`).join('')}
+        </div>
+        <div class="aw-rag" id="awRagBody"></div>
+      </div>
+    </div>
 
     <div class="panel" style="margin-top:24px"><div class="ph"><h3>Prior verdicts · ${c.name}</h3><span class="meta">From audit trail · </span></div><div class="pb" style="padding:0;overflow-x:auto">
       <table class="aw-queue no-row-click" id="awVerdictHistTbl">
@@ -7468,10 +7939,24 @@ function buildScoringFilePane(){
   });
   el('awSubmit')?.addEventListener('click',()=>{if(editable)awOpenSubmitModal(sf);});
   el('awShip')?.addEventListener('click',()=>{if(sf.status==='approved')awShipVerdict(sf);});
+  el('awDraftCommentary')?.addEventListener('click',()=>awOpenAiDraftModal());
+  el('awDraftReopen')?.addEventListener('click',()=>awOpenAiDraftModal());
+  el('awDraftRemove')?.addEventListener('click',()=>{
+    sf.commentary=null; sf.lastEdit=sigNowTs(); sfPersist();
+    toast('Commentary removed','Scoring file no longer carries drafted prose.');
+    buildScoringFilePane();
+  });
+  // RAG dimension chips
+  host.querySelectorAll('[data-ragdim]').forEach(b=>b.addEventListener('click',()=>{
+    awState.ragDim=b.dataset.ragdim;
+    host.querySelectorAll('[data-ragdim]').forEach(x=>x.classList.toggle('active', x===b));
+    awBuildRagPanel();
+  }));
   awRecalcComposite(sf);
   buildAwVerdictHistory(c.id);
   buildAwEvidenceCorpus(c.id);
   buildSfHistory(c.id);
+  awBuildRagPanel();
 }
 
 // Evidence corpus per carrier ·  "Carrier detail — evidence corpus"
@@ -7479,20 +7964,33 @@ function buildAwEvidenceCorpus(cid){
   const host=el('awEvCorpus'); if(!host)return;
   const list=EVIDENCE.filter(e=>e.cid===cid);
   const meta=el('awEvCorpusMeta');
-  if(meta)meta.textContent = list.length ? `${list.length} record${list.length===1?'':'s'} · most recent first` : 'No evidence yet';
+  if(meta){
+    const vaultCount=list.filter(e=>e.vault).length;
+    const vaultMeta=vaultCount?` · <span style="color:var(--amber)">${vaultCount} vault</span>${vaultCleared()?'':' (masked)'}`:'';
+    const revealBtn=vaultCount && !vaultCleared() ? ` · <button type="button" onclick="awOpenVaultModal()" style="display:inline-flex;align-items:center;height:22px;padding:0 8px;background:rgba(232,162,58,.10);border:1px solid rgba(232,162,58,.40);color:var(--amber);font-family:var(--sans);font-size:11px;font-weight:600;border-radius:3px;cursor:pointer;margin-left:6px">Reveal vault</button>` : '';
+    meta.innerHTML = list.length ? `${list.length} record${list.length===1?'':'s'} · most recent first${vaultMeta}${revealBtn}` : 'No evidence yet';
+  }
   if(!list.length){host.innerHTML=`<tr><td colspan="5" class="aw-q-empty">No evidence logged for this carrier yet. Submissions from the Evidence tab land here.</td></tr>`;return;}
   const critLbl=({svs:'SVS',pps:'PPS',aps:'APS',rcs:'RCS',ras:'RAS'});
   const confChip=cf=>{
     const cls=cf==='high'?'approved':cf==='medium'?'returned':'rejected';
     return `<span class="aw-out ${cls}">${(cf||'').toUpperCase()}</span>`;
   };
-  host.innerHTML=list.slice(0,20).map(e=>`<tr>
-    <td class="sfid">${e.id}</td>
-    <td class="ts">${e.ts}</td>
-    <td class="nm">${critLbl[e.crit]||e.crit||'—'}</td>
-    <td>${confChip(e.conf)}</td>
-    <td class="note"><strong style="color:var(--t1)">${(e.headline||'').replace(/</g,'&lt;')}</strong><br><span style="font-family:var(--mono);font-size:12px;color:var(--t3)">${(e.source||'').replace(/</g,'&lt;')} · ${e.cls||'—'}</span></td>
-  </tr>`).join('');
+  const cleared=vaultCleared();
+  host.innerHTML=list.slice(0,20).map(e=>{
+    const masked = e.vault && !cleared;
+    const head = masked ? `<span class="aw-vault-masked">${vaultMaskHeadline(e.headline||'')}</span>` : (e.headline||'').replace(/</g,'&lt;');
+    const src  = masked ? `<span class="aw-vault-masked">${vaultMaskSource(e.source||'')}</span>` : (e.source||'').replace(/</g,'&lt;');
+    const jurC = e.jur ? jurChipHtml(e.jur) : '';
+    const vChip = e.vault ? `<span class="aw-vault-chip" title="Counterparty vault · restricted">🔒 VAULT</span>` : '';
+    return `<tr>
+      <td class="sfid">${e.id}</td>
+      <td class="ts">${e.ts}</td>
+      <td class="nm">${critLbl[e.crit]||e.crit||'—'} ${jurC}</td>
+      <td>${confChip(e.conf)} ${vChip}</td>
+      <td class="note"><strong style="color:var(--t1)">${head}</strong><br><span style="font-family:var(--mono);font-size:12px;color:var(--t3)">${src} · ${e.cls||'—'}</span></td>
+    </tr>`;
+  }).join('');
 }
 
 // Prior verdicts strip ·  Carrier detail · sourced from AUDIT
@@ -7689,20 +8187,83 @@ function updateCcSidebarCnt(){
   const e=el('ccSidebarCnt'); if(e){e.textContent=n; e.style.display=n?'inline-flex':'none';}
 }
 
+// §4.4.2 — Committee surface state extension (grouping + batch selection + throughput)
+const ccGroupState = {by:'none', selected:new Set()};
+
 function buildCommittee(){
-  buildCcInbox(); buildCcLog(); updateCcSidebarCnt();
+  buildCcThroughput(); buildCcInbox(); buildCcLog(); updateCcSidebarCnt();
+}
+
+// §4.4.2 throughput metrics — derived from SF state + AUDIT
+function buildCcThroughput(){
+  const host=el('ccThru'); if(!host)return;
+  const inFlight=SCORING_FILES.filter(s=>s.status==='submitted').length;
+  // Median submitted→decided latency from SF_DECISIONS (last 30d)
+  const cutoff=Date.now()-30*86400000;
+  const recent=SF_DECISIONS.filter(d=>{const t=Date.parse((d.ts||'').replace(' ','T')+'Z'); return !isNaN(t)&&t>=cutoff;});
+  const latencies=recent.map(d=>{
+    const sf=SCORING_FILES.find(s=>s.id===d.sfId); if(!sf||!sf.submitTs)return null;
+    const sub=Date.parse(sf.submitTs.replace(' ','T')+'Z'), dec=Date.parse(d.ts.replace(' ','T')+'Z');
+    return (isNaN(sub)||isNaN(dec))?null:(dec-sub)/3600000;
+  }).filter(v=>v!=null).sort((a,b)=>a-b);
+  const median = latencies.length ? latencies[Math.floor(latencies.length/2)] : null;
+  const medianStr = median==null ? '—' : median<24 ? `${median.toFixed(1)} h` : `${(median/24).toFixed(1)} d`;
+  const approved=recent.filter(d=>d.outcome==='approved').length;
+  const returned=recent.filter(d=>d.outcome==='returned'||d.outcome==='rejected').length;
+  host.innerHTML=`
+    <div class="cc-thru-cell ${inFlight?'warn':'pos'}"><div class="lbl">In flight</div><div class="num">${inFlight}</div><div class="sub">awaiting committee decision</div></div>
+    <div class="cc-thru-cell"><div class="lbl">Median latency · 30d</div><div class="num">${medianStr}</div><div class="sub">submitted → decided</div></div>
+    <div class="cc-thru-cell pos"><div class="lbl">Approvals · 30d</div><div class="num">${approved}</div><div class="sub">verdicts cleared</div></div>
+    <div class="cc-thru-cell warn"><div class="lbl">Returns + rejects · 30d</div><div class="num">${returned}</div><div class="sub">sent back or declined</div></div>
+  `;
+}
+
+// Region lookup for grouping — reuses Compare's helper if present, otherwise falls back to jurisdiction
+function ccRegionOf(sf){
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid); if(!c)return 'Unknown';
+  if(typeof cmpRegionLabel==='function') return cmpRegionLabel(c);
+  return c.jurisdiction||c.region||'Unknown';
+}
+function ccWindowOf(sf){
+  // 7-day windows from submission timestamp
+  if(!sf.submitTs)return 'Unknown';
+  const t=Date.parse(sf.submitTs.replace(' ','T')+'Z'); if(isNaN(t))return 'Unknown';
+  const today=Date.now();
+  const days=Math.floor((today-t)/86400000);
+  if(days<=1)return 'Last 24h';
+  if(days<=7)return 'This week';
+  if(days<=14)return '8–14 days ago';
+  if(days<=30)return '15–30 days ago';
+  return 'Older than 30 days';
 }
 
 function buildCcInbox(){
   const body=el('ccInboxBody'); if(!body)return;
   const queue=SCORING_FILES.filter(s=>s.status==='submitted').sort((a,b)=>(b.submitTs||'').localeCompare(a.submitTs||''));
   el('ccInboxMeta').textContent = queue.length ? `${queue.length} submission${queue.length===1?'':'s'} awaiting review` : 'Empty Inbox';
-  if(!queue.length){body.innerHTML=`<tr><td colspan="8" class="aw-q-empty">No pending submissions. Analysts will queue scoring files here for committee review.</td></tr>`;return;}
-  body.innerHTML=queue.map(sf=>{
+  // Prune selections that are no longer in queue
+  const ids=new Set(queue.map(s=>s.id));
+  ccGroupState.selected.forEach(id=>{if(!ids.has(id))ccGroupState.selected.delete(id);});
+  if(!queue.length){
+    body.innerHTML=`<tr><td colspan="9" class="aw-q-empty">No pending submissions. Analysts will queue scoring files here for committee review.</td></tr>`;
+    ccUpdateBatchUi();
+    return;
+  }
+  // Apply grouping
+  const by=ccGroupState.by;
+  const groups={};
+  if(by==='none'){groups['All submissions']=queue;}
+  else if(by==='region'){queue.forEach(sf=>{const k=ccRegionOf(sf);(groups[k]=groups[k]||[]).push(sf);});}
+  else if(by==='window'){queue.forEach(sf=>{const k=ccWindowOf(sf);(groups[k]=groups[k]||[]).push(sf);});}
+  const rowHtml=sf=>{
     const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
     const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
     const cmpColor = eff>=75?'var(--deploy)':eff>=50?'var(--watch)':'var(--dnd)';
+    const checked=ccGroupState.selected.has(sf.id)?'checked':'';
+    // Hard-floor SFs are excluded from batch approve to force individual rationale
+    const disabled=hf.any?'disabled title="HF trip — review individually"':'';
     return `<tr class="is-action-row">
+      <td><input type="checkbox" class="cc-sel" data-sfid="${sf.id}" ${checked} ${disabled} style="cursor:pointer"></td>
       <td class="nm">${c.name}</td>
       <td class="sfid">${sf.id}</td>
       <td class="ts">${sf.submitter}</td>
@@ -7712,8 +8273,77 @@ function buildCcInbox(){
       <td>${hf.any?'<span class="aw-out rejected">HF</span>':'<span style="font-family:var(--mono);font-size:12px;color:var(--t3)">—</span>'}</td>
       <td class="act"><button class="aw-view-btn" data-sfdetail="${sf.id}" data-mode="committee">View details</button></td>
     </tr>`;
+  };
+  const html=Object.keys(groups).map(g=>{
+    const grpHead = by==='none' ? '' : `<tr class="cc-group-row"><td colspan="9">${g}<span class="cnt">${groups[g].length} submission${groups[g].length===1?'':'s'}</span></td></tr>`;
+    return grpHead + groups[g].map(rowHtml).join('');
   }).join('');
+  body.innerHTML=html;
   body.querySelectorAll('[data-sfdetail]').forEach(b=>b.addEventListener('click',()=>sfOpenDetailDrawer(b.dataset.sfdetail, b.dataset.mode)));
+  body.querySelectorAll('.cc-sel').forEach(cb=>{
+    cb.addEventListener('click',e=>e.stopPropagation());
+    cb.addEventListener('change',()=>{
+      if(cb.checked)ccGroupState.selected.add(cb.dataset.sfid);
+      else ccGroupState.selected.delete(cb.dataset.sfid);
+      ccUpdateBatchUi();
+    });
+  });
+  ccUpdateBatchUi();
+}
+
+function ccUpdateBatchUi(){
+  const btn=el('ccBatchApprove'); if(btn){
+    const n=ccGroupState.selected.size;
+    btn.disabled = n===0;
+    btn.textContent = n ? `Batch approve ${n} selected` : 'Batch approve selected';
+  }
+  const all=el('ccSelAll'); if(all){
+    const visible=Array.from(document.querySelectorAll('#ccInboxBody .cc-sel:not([disabled])'));
+    const checkedCount=visible.filter(c=>c.checked).length;
+    all.checked = visible.length>0 && checkedCount===visible.length;
+    all.indeterminate = checkedCount>0 && checkedCount<visible.length;
+  }
+}
+
+function ccOpenBatchModal(){
+  const ids=Array.from(ccGroupState.selected);
+  if(!ids.length)return;
+  const rows=ids.map(id=>{
+    const sf=SCORING_FILES.find(s=>s.id===id); if(!sf)return '';
+    const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+    const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf);
+    return `<div class="row"><span>${c.name}</span><span class="aw-out approved">${v.lbl}</span><span class="id">${sf.id} · ${eff.toFixed(1)}</span></div>`;
+  }).join('');
+  el('ccBatchSummary').innerHTML=`<strong>${ids.length}</strong> submission${ids.length===1?'':'s'} · single chair signature applies to all`;
+  el('ccBatchList').innerHTML=rows;
+  el('ccBatchRationale').value='';
+  sigOpenModal('ccBatchModal');
+}
+
+function ccConfirmBatch(){
+  const ids=Array.from(ccGroupState.selected); if(!ids.length){sigCloseModal('ccBatchModal');return;}
+  const r=el('ccBatchRationale').value.trim();
+  if(r.length<60){toast('Rationale too short','Min 60 characters — batch decisions need a single rationale that holds for every SF in the set.');return;}
+  const chair=sigCurrentUser(), ts=sigNowTs();
+  let n=0;
+  ids.forEach(id=>{
+    const sf=SCORING_FILES.find(s=>s.id===id); if(!sf||sf.status!=='submitted')return;
+    const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+    const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
+    if(hf.any)return; // safety — HF-tripped SFs were disabled but double-check
+    sf.status='approved'; sf.decision={outcome:'approved',chair,ts,rationale:r};
+    SF_DECISIONS.unshift({sfId:sf.id,cid:sf.cid,carrierName:c.name,outcome:'approved',chair,ts,rationale:r,composite:eff,verdict:v.lbl,hfTrip:false});
+    const entry={ts,user:chair,carrier:c.name,crit:`Committee decision · APPROVED · batch`,fr:'Submitted',to:'APPROVED',src:'Scoring Committee',status:`Chair signed · ${chair}`,note:`${sf.id} · ${v.lbl} · composite ${eff.toFixed(1)} · BATCH(${ids.length}) · ${r.slice(0,100)}`};
+    AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry);
+    n++;
+  });
+  sfPersist();
+  ccGroupState.selected.clear();
+  sigCloseModal('ccBatchModal');
+  toast(`Batch decision recorded · ${n} APPROVED`,`Chair ${chair} · ${ids.length} submission${ids.length===1?'':'s'} signed`);
+  buildCcThroughput(); buildCcInbox(); buildCcLog(); updateCcSidebarCnt();
+  if(typeof buildAudit==='function')buildAudit();
+  buildAnalystQueue();
 }
 
 function buildCcLog(){
@@ -7729,6 +8359,747 @@ function buildCcLog(){
     <td class="act"><button class="aw-view-btn" data-sfdetail="${d.sfId}" data-mode="log">View detail</button></td>
   </tr>`).join('');
   body.querySelectorAll('[data-sfdetail]').forEach(b=>b.addEventListener('click',()=>sfOpenDetailDrawer(b.dataset.sfdetail, b.dataset.mode)));
+}
+
+// ============================================================================
+// §4.4.1 EXTENSIONS — Refresh workflow · Multi-jurisdiction · Vault · AI draft · RAG
+// §4.4.2 EXTENSIONS — Code-change ledger
+// ============================================================================
+
+// ── Multi-jurisdiction support · §4.4.1 ──────────────────────────────────
+// Code → {name, currency, fxToUsd (1 USD = N local)}. Demo FX rates (April 2026
+// reference); M2 hop swaps to a live rates feed driven by Treasury data.
+const JURISDICTIONS = {
+  NG:{name:'Nigeria',          currency:'NGN', fxToUsd:1480,  flag:'🇳🇬'},
+  TG:{name:'Togo',              currency:'XOF', fxToUsd:610,   flag:'🇹🇬'},
+  GH:{name:'Ghana',             currency:'GHS', fxToUsd:13.2,  flag:'🇬🇭'},
+  CI:{name:"Côte d'Ivoire",     currency:'XOF', fxToUsd:610,   flag:'🇨🇮'},
+  SN:{name:'Senegal',           currency:'XOF', fxToUsd:610,   flag:'🇸🇳'},
+  KE:{name:'Kenya',             currency:'KES', fxToUsd:129,   flag:'🇰🇪'},
+  ET:{name:'Ethiopia',          currency:'ETB', fxToUsd:57.4,  flag:'🇪🇹'},
+  TZ:{name:'Tanzania',          currency:'TZS', fxToUsd:2615,  flag:'🇹🇿'},
+  UG:{name:'Uganda',            currency:'UGX', fxToUsd:3760,  flag:'🇺🇬'},
+  ZA:{name:'South Africa',      currency:'ZAR', fxToUsd:18.3,  flag:'🇿🇦'},
+  EG:{name:'Egypt',             currency:'EGP', fxToUsd:48.6,  flag:'🇪🇬'},
+  MA:{name:'Morocco',           currency:'MAD', fxToUsd:9.95,  flag:'🇲🇦'},
+  AO:{name:'Angola',            currency:'AOA', fxToUsd:840,   flag:'🇦🇴'},
+};
+// Carrier → jurisdiction code lookup. Pulls from carrier.jurisdiction if it's a
+// recognised name; otherwise falls back to a hand map for the seeded universe.
+function jurForCarrier(cid){
+  const a=ALL_CARRIERS.find(x=>x.id===cid); if(!a)return null;
+  const j=(a.jurisdiction||'').trim();
+  for(const k in JURISDICTIONS){if(JURISDICTIONS[k].name===j)return k;}
+  // Region-based fallback for carriers whose jurisdiction string isn't normalised
+  const r=(a.region||'').toLowerCase();
+  if(r.includes('nigeria'))return 'NG';
+  if(r.includes('west'))return 'TG';
+  if(r.includes('east'))return 'KE';
+  if(r.includes('south'))return 'ZA';
+  if(r.includes('central'))return 'AO';
+  return null;
+}
+function jurChipHtml(code){
+  const j=JURISDICTIONS[code]; if(!j)return '';
+  return `<span class="aw-jur-chip">${j.flag||''} ${code} · ${j.currency}</span>`;
+}
+function jurFxStripHtml(code){
+  const j=JURISDICTIONS[code]; if(!j)return '';
+  const wave=1; // 1 USD reference
+  const ngnRef = JURISDICTIONS.NG ? `<span class="fx"><strong>USD/NGN</strong> ${JURISDICTIONS.NG.fxToUsd.toLocaleString()}</span>` : '';
+  return `<div class="aw-fx-strip">
+    <span class="lbl">FX reference · §4.4.1</span>
+    <span class="fx"><strong>${j.flag||''} ${j.name}</strong></span>
+    <span class="fx"><strong>USD/${j.currency}</strong> ${j.fxToUsd.toLocaleString()}</span>
+    ${code!=='NG' ? ngnRef : ''}
+    <span class="fx" style="color:var(--t3)">Reference Apr 2026 · M2 swaps to live rates</span>
+  </div>`;
+}
+
+// ── Counterparty vault clearance · §4.4.1 ──────────────────────────────
+const VAULT_PHRASE='VAULT-2026';
+function vaultCleared(){return sessionStorage.getItem('andara.vaultCleared')==='1';}
+function vaultMaskHeadline(h){
+  if(!h)return '';
+  // Mask everything after the first 3 words (or 24 chars), keep punctuation density
+  const words=h.split(/\s+/);
+  const keep=words.slice(0,3).join(' ');
+  return `${keep} ███ ███ ███`;
+}
+function vaultMaskSource(s){
+  if(!s)return '';
+  // Mask host/path tail
+  return s.length<=10 ? '███' : s.slice(0,6)+'…████████';
+}
+function awOpenVaultModal(){
+  const inp=el('awVaultPhrase'); if(inp)inp.value='';
+  sigOpenModal('awVaultModal');
+}
+function awConfirmVault(){
+  const v=el('awVaultPhrase').value.trim();
+  if(v!==VAULT_PHRASE){toast('Clearance denied','Phrase did not match. Vault remains masked.');return;}
+  sessionStorage.setItem('andara.vaultCleared','1');
+  const entry={ts:sigNowTs(),user:sigCurrentUser(),carrier:'—',crit:'Vault clearance · granted',fr:'Masked',to:'Cleared (session)',src:'Workspace',status:`Session ${sigCurrentUser()}`,note:'Counterparty vault unmasked for current session'};
+  AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+  sigCloseModal('awVaultModal');
+  toast('Vault unmasked','Counterparty intelligence revealed for this session.');
+  if(typeof buildAudit==='function')buildAudit();
+  if(awState.cid)buildAwEvidenceCorpus(awState.cid);
+}
+
+// ── User profile + preferences ─────────────────────────────────────────
+const PROFILE_KEY='andara.profile.v1';
+const USERS_KEY='andara.users.v1';
+const PROFILE_DEFAULTS={role:'analyst', notif:{aog:true,verdict:true,watch:true,air:true,code:false,account:false}};
+function profileLoad(){
+  try{const raw=localStorage.getItem(PROFILE_KEY); if(!raw)return {...PROFILE_DEFAULTS};
+    const o=JSON.parse(raw);
+    return {role:o.role||PROFILE_DEFAULTS.role, notif:{...PROFILE_DEFAULTS.notif, ...(o.notif||{})}};
+  }catch(_){return {...PROFILE_DEFAULTS};}
+}
+function profileSave(p){try{localStorage.setItem(PROFILE_KEY, JSON.stringify(p));}catch(_){}}
+function profileRoleLabel(r){return ({analyst:'Analyst', lead:'Lead analyst', chair:'Scoring Committee chair', cs:'Customer Success'})[r]||'Analyst';}
+function profileCurrentEmail(){try{return (JSON.parse(localStorage.getItem('andara.auth')||'{}')).email||'';}catch(_){return'';}}
+function profileUsers(){try{return JSON.parse(localStorage.getItem(USERS_KEY)||'{}');}catch(_){return{};}}
+function profileUserRec(em){const u=profileUsers(); return u[(em||profileCurrentEmail()||'').toLowerCase()]||null;}
+function profileUserSave(em,patch){const e=(em||profileCurrentEmail()||'').toLowerCase(); if(!e)return false; const u=profileUsers(); u[e]={...(u[e]||{}),...patch}; try{localStorage.setItem(USERS_KEY,JSON.stringify(u));return true;}catch(_){return false;}}
+function profileDisplayName(em){
+  const e=em||profileCurrentEmail()||'';
+  const u=profileUserRec(e);
+  if(u && u.name && u.name.trim()) return u.name.trim();
+  // Fallback: parse from email local part — "first.last@…" → "First Last"
+  const localPart=(e.split('@')[0]||'').toLowerCase();
+  const parts=localPart.split(/[._-]+/).filter(Boolean);
+  return parts.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' ') || 'Subscriber';
+}
+function profileInitials(em){
+  const e=em||profileCurrentEmail()||'';
+  const u=profileUserRec(e);
+  const src = (u && u.name && u.name.trim()) ? u.name.trim() : (e.split('@')[0]||'');
+  const parts=src.split(/[._\s-]+/).filter(Boolean);
+  const initials=(parts[0]?parts[0][0]:'')+(parts[1]?parts[1][0]:'');
+  return (initials || src.slice(0,1) || 'S').toUpperCase();
+}
+function profileApplyChip(){
+  const p=profileLoad();
+  const r=el('urole'); if(r)r.textContent = profileRoleLabel(p.role);
+  const n=el('uname'); if(n)n.textContent = profileDisplayName();
+  const av=el('uavatar'); if(av)av.textContent = profileInitials();
+}
+function profileOpen(){
+  const p=profileLoad();
+  // Identity
+  let email='—', signedAt='—';
+  try{const a=JSON.parse(localStorage.getItem('andara.auth')||'{}'); email=a.email||'—'; if(a.ts)signedAt=new Date(a.ts).toISOString().slice(0,19).replace('T',' ');}catch(_){}
+  const nameInput=el('upNameInput'); if(nameInput) nameInput.value = profileDisplayName();
+  el('upEmail').textContent = email;
+  el('upSignedIn').textContent = signedAt;
+  // Reset password fields each open
+  ['upPwCur','upPwNew','upPwConfirm'].forEach(id=>{const e=el(id); if(e)e.value='';});
+  const pwSt=el('upPwStatus'); if(pwSt){pwSt.textContent=''; pwSt.style.color='';}
+  // Role chips
+  document.querySelectorAll('#upRoleGrid .up-role-chip').forEach(b=>b.classList.toggle('active', b.dataset.uprole===p.role));
+  // Vault state
+  const cleared=vaultCleared();
+  const st=el('upVaultState'); if(st){st.className='up-vault-chip-state '+(cleared?'cleared':'masked'); st.textContent=cleared?'CLEARED':'MASKED';}
+  el('upVaultGrant').style.display = cleared?'none':'';
+  el('upVaultRevoke').style.display = cleared?'':'none';
+  // Notifications
+  document.querySelectorAll('.up-toggle[data-uptog]').forEach(t=>{
+    const k=t.dataset.uptog; const on=!!p.notif[k];
+    t.classList.toggle('on', on);
+    const cb=t.querySelector('input[type=checkbox]'); if(cb)cb.checked=on;
+  });
+  el('userChip')?.classList.add('open');
+  sigOpenModal('profileModal');
+}
+function profileWireOnce(){
+  if(profileWireOnce._wired)return; profileWireOnce._wired=1;
+  el('userChip')?.addEventListener('click',profileOpen);
+  // Role
+  document.querySelectorAll('#upRoleGrid .up-role-chip').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('#upRoleGrid .up-role-chip').forEach(x=>x.classList.toggle('active', x===b));
+    });
+  });
+  // Notifications
+  document.querySelectorAll('.up-toggle[data-uptog]').forEach(t=>{
+    t.addEventListener('click',e=>{
+      e.preventDefault();
+      t.classList.toggle('on');
+      const cb=t.querySelector('input[type=checkbox]'); if(cb)cb.checked=t.classList.contains('on');
+    });
+  });
+  // Vault grant / revoke
+  el('upVaultGrant')?.addEventListener('click',()=>{
+    sigCloseModal('profileModal');
+    awOpenVaultModal();
+  });
+  el('upVaultRevoke')?.addEventListener('click',()=>{
+    sessionStorage.removeItem('andara.vaultCleared');
+    const entry={ts:sigNowTs(),user:sigCurrentUser(),carrier:'—',crit:'Vault clearance · revoked',fr:'Cleared',to:'Masked',src:'Workspace',status:`Session ${sigCurrentUser()}`,note:'Counterparty vault re-masked by user'};
+    AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+    toast('Vault re-masked','Counterparty intelligence hidden again for this session.');
+    profileOpen();
+    if(typeof buildAudit==='function')buildAudit();
+    if(awState.cid)buildAwEvidenceCorpus(awState.cid);
+  });
+  // Save preferences + display name
+  el('upSave')?.addEventListener('click',()=>{
+    const role = document.querySelector('#upRoleGrid .up-role-chip.active')?.dataset.uprole || 'analyst';
+    const notif={};
+    document.querySelectorAll('.up-toggle[data-uptog]').forEach(t=>{notif[t.dataset.uptog]=t.classList.contains('on');});
+    profileSave({role,notif});
+    // Persist editable display name on the per-email user record
+    const nameInput=el('upNameInput');
+    const newName=(nameInput?nameInput.value:'').trim();
+    const prevName=profileDisplayName();
+    if(newName && newName!==prevName){
+      profileUserSave(null,{name:newName});
+      const entry={ts:sigNowTs(),user:profileCurrentEmail()||sigCurrentUser(),carrier:'—',crit:'Profile · display name updated',fr:prevName||'—',to:newName,src:'Auth',status:'Updated',note:'Display name set via profile menu'};
+      AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+      if(typeof buildAudit==='function')buildAudit();
+    }
+    profileApplyChip();
+    toast('Preferences saved',`Role ${profileRoleLabel(role)}${newName&&newName!==prevName?` · name updated to ${newName}`:''} · ${Object.values(notif).filter(Boolean).length} alert classes enabled`);
+    sigCloseModal('profileModal');
+    el('userChip')?.classList.remove('open');
+  });
+  // Change password
+  el('upPwSave')?.addEventListener('click',()=>{
+    const cur=(el('upPwCur').value||'').trim();
+    const nu=(el('upPwNew').value||'').trim();
+    const cf=(el('upPwConfirm').value||'').trim();
+    const st=el('upPwStatus');
+    const fail=msg=>{if(st){st.textContent=msg;st.style.color='var(--dnd)';}};
+    const ok=msg=>{if(st){st.textContent=msg;st.style.color='var(--deploy)';}};
+    if(!cur||!nu||!cf){fail('All three fields required');return;}
+    // Current password must match either master demo key OR existing user-set password
+    const u=profileUserRec();
+    const curOk = (cur==='andara2026') || (u && u.password && cur===u.password);
+    if(!curOk){fail('Current password incorrect');return;}
+    if(nu.length<8){fail('New password must be 8+ characters');return;}
+    if(nu===cur){fail('New password must differ from current');return;}
+    if(nu!==cf){fail('Confirmation does not match');return;}
+    profileUserSave(null,{password:nu});
+    const entry={ts:sigNowTs(),user:profileCurrentEmail()||sigCurrentUser(),carrier:'—',crit:'Profile · password changed',fr:'—',to:'—',src:'Auth',status:'Updated',note:'Access key rotated via profile menu'};
+    AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+    if(typeof buildAudit==='function')buildAudit();
+    ok('Password updated');
+    el('upPwCur').value=''; el('upPwNew').value=''; el('upPwConfirm').value='';
+    toast('Password updated','You can sign in with the new key on next session.');
+  });
+  // Sign out
+  el('upSignOut')?.addEventListener('click',()=>{
+    const email=(JSON.parse(localStorage.getItem('andara.auth')||'{}')).email||sigCurrentUser();
+    const entry={ts:sigNowTs(),user:email,carrier:'—',crit:'Session · sign out',fr:'Active',to:'Signed out',src:'Auth',status:'Voluntary',note:'User signed out via profile menu'};
+    AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+    localStorage.removeItem('andara.auth');
+    sessionStorage.removeItem('andara.vaultCleared');
+    sigCloseModal('profileModal');
+    setTimeout(()=>{window.location.reload();},300);
+  });
+  // Close clears chip state
+  document.querySelectorAll('#profileModal [data-sig-close]').forEach(b=>b.addEventListener('click',()=>{el('userChip')?.classList.remove('open');}));
+}
+
+// ── Notification center · §3.2.7 Alerts & Notifications ───────────────
+// Read / acked state per-alert-id (stable, derived from source row id)
+const NC_STATE_KEY='andara.alerts.v1';
+const ncState = {filter:'all', open:false, read:new Set(), acked:new Set()};
+function ncStateLoad(){
+  try{const raw=localStorage.getItem(NC_STATE_KEY); if(!raw)return;
+    const o=JSON.parse(raw);
+    if(Array.isArray(o.read))ncState.read=new Set(o.read);
+    if(Array.isArray(o.acked))ncState.acked=new Set(o.acked);
+  }catch(_){}
+}
+function ncStateSave(){
+  try{localStorage.setItem(NC_STATE_KEY, JSON.stringify({read:[...ncState.read], acked:[...ncState.acked]}));}catch(_){}
+}
+
+// Aggregate alerts from AUDIT + FEED + SIGNAL_EVENTS into one ranked stream
+function ncAlerts(){
+  const out=[];
+  const cutoff = Date.now() - 30*86400000; // last 30d
+  const parseTs = s => {
+    if(!s)return 0;
+    const t = Date.parse((s.includes('T')?s:s.replace(' ','T'))+(s.length<=16?'Z':''));
+    return isNaN(t) ? 0 : t;
+  };
+
+  // AOG + critical signal events (sourced from SIGNAL_EVENTS)
+  if(typeof SIGNAL_EVENTS!=='undefined'){
+    SIGNAL_EVENTS.forEach(s=>{
+      const t = parseTs(s.ts); if(t && t<cutoff) return;
+      const sev = s.computedSeverity||'medium';
+      const isAog = sev==='critical';
+      const cls = isAog?'aog':null;
+      if(!cls)return; // only critical signals surface as alerts
+      const c = ALL_CARRIERS.find(x=>x.id===s.carrierId);
+      out.push({
+        id:'sig:'+s.id, cls, ts:s.ts, tsMs:t,
+        carrier: c?c.name:s.carrierId, headline:s.rawHeadline||'(no headline)',
+        meta:`Source ${s.source||'—'} · sev ${sev.toUpperCase()} · conf ${(s.confidence||'').toUpperCase()}`,
+        requireAck:true
+      });
+    });
+  }
+
+  // Watch Notes (FEED dispatches via Workspace) + AIR issue announcements
+  if(typeof FEED!=='undefined'){
+    FEED.forEach(f=>{
+      const ts = f.date + (f.time?' '+f.time:' 00:00');
+      const t = parseTs(ts); if(t && t<cutoff) return;
+      // AIR publish — title contains 'AIR Issue'
+      const isAir = /AIR Issue|AIR issue|Andara Intelligence Report/i.test(f.title||'');
+      // Watch-note-like: severity tag in payload or 'watch' classifications
+      const isWatch = (f.wnId) || (Array.isArray(f.cls)&&(f.cls.includes('private')||f.cls.includes('ops')||f.cls.includes('financial')||f.cls.includes('legal')||f.cls.includes('regulatory')));
+      if(!isAir && !isWatch) return;
+      const c = f.cid ? ALL_CARRIERS.find(x=>x.id===f.cid) : null;
+      out.push({
+        id:'feed:'+f.date+'_'+(f.title||'').slice(0,30),
+        cls: isAir?'air':'watch',
+        ts, tsMs:t,
+        carrier: c?c.name:(f.cid?f.cid:'Sector-level'),
+        headline:f.title||'(no title)',
+        meta: (f.wnId?`${f.wnId} · `:'') + ((f.cls||[]).map(x=>x.toUpperCase()).join(' / ')),
+        requireAck:false
+      });
+    });
+  }
+
+  // Verdict moves + Code changes + Account events from AUDIT
+  if(typeof AUDIT!=='undefined'){
+    AUDIT.forEach(a=>{
+      const t = parseTs(a.ts); if(t && t<cutoff) return;
+      const crit = a.crit||'';
+      let cls=null, requireAck=false;
+      if(/Composite|Verdict letter|Committee decision|Verdict move/i.test(crit)) cls='verdict';
+      else if(/^Code change/i.test(crit)) cls='code';
+      else if(a.src==='Auth' || /Profile|Session|sign out|password|Vault clearance/i.test(crit)) cls='account';
+      if(!cls)return;
+      out.push({
+        id:'aud:'+t+'_'+(crit||'').slice(0,30)+'_'+(a.carrier||'').slice(0,12),
+        cls, ts:a.ts, tsMs:t,
+        carrier: a.carrier||'—',
+        headline: crit,
+        meta: `${a.fr||'—'} → ${a.to||'—'} · src ${a.src||'—'}`,
+        requireAck:false
+      });
+    });
+  }
+
+  // Filter by user notification preferences — silence classes the user disabled
+  const p = profileLoad();
+  return out
+    .filter(x => p.notif[x.cls] !== false)
+    .sort((a,b)=>b.tsMs-a.tsMs);
+}
+
+function ncCountsByCls(list){
+  const out={all:list.length, aog:0, verdict:0, watch:0, air:0, code:0, account:0};
+  list.forEach(x=>{if(out[x.cls]!=null)out[x.cls]++;});
+  return out;
+}
+function ncUnreadCount(){
+  return ncAlerts().filter(a=>!ncState.read.has(a.id)).length;
+}
+function ncAogPendingCount(){
+  return ncAlerts().filter(a=>a.cls==='aog' && !ncState.acked.has(a.id)).length;
+}
+function ncBellPaint(){
+  const badge=el('bellBadge'); const btn=el('bellBtn'); if(!badge||!btn)return;
+  const unread=ncUnreadCount();
+  const aog=ncAogPendingCount();
+  // AOG-pending takes precedence in colour
+  badge.className = 'bell-badge ' + (aog?'aog':'warn') + (unread?'':' hidden');
+  badge.textContent = unread>99 ? '99+' : String(unread);
+  btn.classList.toggle('has-unread', unread>0);
+  btn.title = unread ? `${unread} unread${aog?` · ${aog} AOG awaiting ack`:''}` : 'Notifications';
+}
+
+function ncDayLabel(ts){
+  const d=new Date(ts);
+  const today=new Date(); today.setHours(0,0,0,0);
+  const yest=new Date(today); yest.setDate(yest.getDate()-1);
+  const day=new Date(d); day.setHours(0,0,0,0);
+  if(day.getTime()===today.getTime())return 'Today';
+  if(day.getTime()===yest.getTime())return 'Yesterday';
+  return d.toISOString().slice(0,10);
+}
+function ncBuild(){
+  const list = ncAlerts();
+  // Update per-class chip counts
+  const c = ncCountsByCls(list);
+  el('ncCntAll').textContent     = c.all;
+  el('ncCntAog').textContent     = c.aog;
+  el('ncCntVerdict').textContent = c.verdict;
+  el('ncCntWatch').textContent   = c.watch;
+  el('ncCntAir').textContent     = c.air;
+  el('ncCntCode').textContent    = c.code;
+  el('ncCntAccount').textContent = c.account;
+
+  // Filter by active chip
+  const f=ncState.filter;
+  const filtered = f==='all' ? list : list.filter(x=>x.cls===f);
+  const unread = filtered.filter(x=>!ncState.read.has(x.id)).length;
+  el('ncHdSub').textContent = `${unread} unread of ${filtered.length}`;
+
+  const body=el('ncBody');
+  if(!filtered.length){
+    body.innerHTML=`<div class="nc-empty">No alerts in this window.</div>`;
+    ncBellPaint();
+    return;
+  }
+  // Day-grouped render
+  let html='';
+  let lastDay=null;
+  filtered.forEach(a=>{
+    const day = ncDayLabel(a.tsMs);
+    if(day!==lastDay){html += `<div class="nc-day">${day}</div>`; lastDay=day;}
+    const isRead = ncState.read.has(a.id);
+    const isAcked = ncState.acked.has(a.id);
+    const timeStr = (a.ts||'').slice(11,16) || (a.ts||'').slice(0,10);
+    const labelMap = {aog:'AOG', verdict:'VERDICT', watch:'WATCH NOTE', air:'AIR', code:'CODE', account:'ACCOUNT'};
+    const ackBlock = a.requireAck
+      ? (isAcked
+          ? `<span class="nc-item-acks">✓ Acknowledged</span>`
+          : `<button class="ack" data-ncack="${a.id}">Acknowledge</button>`)
+      : '';
+    const readBtn = !isRead ? `<button data-ncread="${a.id}">Mark read</button>` : '';
+    html += `<div class="nc-item ${isRead?'':'unread'}" data-ncid="${a.id}">
+      <div class="nc-item-hd">
+        <span class="nc-cls-chip ${a.cls}">${labelMap[a.cls]||a.cls.toUpperCase()}</span>
+        <span class="nc-item-meta"><strong>${(a.carrier||'').replace(/</g,'&lt;')}</strong></span>
+        <span class="spc"></span>
+        <span class="time">${timeStr}</span>
+      </div>
+      <div class="nc-item-body">${(a.headline||'').replace(/</g,'&lt;')}</div>
+      <div class="nc-item-meta">${(a.meta||'').replace(/</g,'&lt;')}</div>
+      ${ackBlock||readBtn ? `<div class="nc-item-acts">${ackBlock}${readBtn}</div>` : ''}
+    </div>`;
+  });
+  body.innerHTML = html;
+  // Wire row clicks + actions
+  body.querySelectorAll('.nc-item').forEach(r=>{
+    r.addEventListener('click',e=>{
+      // Don't toggle read when clicking inner buttons — they handle themselves
+      if(e.target.closest('button'))return;
+      const id=r.dataset.ncid; if(!id)return;
+      if(!ncState.read.has(id)){ncState.read.add(id); ncStateSave(); ncBuild();}
+    });
+  });
+  body.querySelectorAll('[data-ncread]').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();
+    ncState.read.add(b.dataset.ncread); ncStateSave(); ncBuild();
+  }));
+  body.querySelectorAll('[data-ncack]').forEach(b=>b.addEventListener('click',e=>{
+    e.stopPropagation();
+    const id=b.dataset.ncack;
+    ncState.acked.add(id); ncState.read.add(id);
+    // §3.2.7 — AOG acknowledgement logged to AUDIT
+    const alert = list.find(x=>x.id===id);
+    const entry={ts:sigNowTs(),user:profileCurrentEmail()||sigCurrentUser(),carrier:alert?alert.carrier:'—',crit:'AOG alert · acknowledged',fr:'Notified',to:'Acknowledged',src:'Auth',status:'Ack',note:(alert?alert.headline:'').slice(0,140)};
+    AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+    if(typeof buildAudit==='function')buildAudit();
+    ncStateSave(); ncBuild();
+    toast('AOG acknowledged','Acknowledgement stamped on audit trail.');
+  }));
+  ncBellPaint();
+}
+
+function ncOpen(){
+  ncBuild();
+  el('ncDrawer').classList.add('open');
+  el('ncDrawerBack').classList.add('open');
+  ncState.open=true;
+}
+function ncClose(){
+  el('ncDrawer').classList.remove('open');
+  el('ncDrawerBack').classList.remove('open');
+  ncState.open=false;
+}
+function ncWireOnce(){
+  if(ncWireOnce._wired)return; ncWireOnce._wired=1;
+  el('bellBtn')?.addEventListener('click',()=>{ncState.open?ncClose():ncOpen();});
+  el('ncClose')?.addEventListener('click',ncClose);
+  el('ncDrawerBack')?.addEventListener('click',ncClose);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ncState.open)ncClose();});
+  document.querySelectorAll('#ncTools [data-ncf]').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      ncState.filter=chip.dataset.ncf;
+      document.querySelectorAll('#ncTools [data-ncf]').forEach(x=>x.classList.toggle('active', x===chip));
+      ncBuild();
+    });
+  });
+  el('ncMarkAll')?.addEventListener('click',()=>{
+    ncAlerts().forEach(a=>ncState.read.add(a.id));
+    ncStateSave(); ncBuild();
+    toast('All read','Notifications cleared from the unread badge.');
+  });
+}
+
+// ── Refresh workflow · §4.4.1 ──────────────────────────────────────────
+// State: filter chip
+const awRfqState = {filter:'due'};
+
+function awRefreshCounts(){
+  // Returns universe counts per urgency tier for the rollup strip
+  const out={expired:0,urgent:0,soon:0,ok:0,total:0};
+  ALL_CARRIERS.forEach(a=>{
+    const v=validityUntil(a);
+    out[v.urgency]++; out.total++;
+  });
+  return out;
+}
+
+function buildRefreshQueue(){
+  // Rollup strip
+  const counts=awRefreshCounts();
+  const roll=el('awRfqRoll');
+  if(roll){
+    roll.innerHTML=`
+      <div class="aw-rfq-cell expired"><span class="lbl">Expired</span><span class="num">${counts.expired}</span></div>
+      <div class="aw-rfq-cell urgent"><span class="lbl">≤30 days</span><span class="num">${counts.urgent}</span></div>
+      <div class="aw-rfq-cell soon"><span class="lbl">31–60 days</span><span class="num">${counts.soon}</span></div>
+      <div class="aw-rfq-cell ok"><span class="lbl">In-validity</span><span class="num">${counts.ok}</span></div>
+    `;
+  }
+  // Header tab badge — "due" = expired + urgent + soon
+  const cnt=el('awRefreshCnt'); if(cnt)cnt.textContent=counts.expired+counts.urgent+counts.soon;
+
+  const body=el('awRfqBody'); if(!body)return;
+  const f=awRfqState.filter;
+  const list=ALL_CARRIERS.filter(a=>{
+    const v=validityUntil(a);
+    if(f==='all')return true;
+    if(f==='due')return v.urgency==='expired'||v.urgency==='urgent'||v.urgency==='soon';
+    return v.urgency===f;
+  }).sort((a,b)=>{
+    const va=validityUntil(a), vb=validityUntil(b);
+    return (va.days??1e9)-(vb.days??1e9);
+  });
+  if(!list.length){
+    body.innerHTML=`<tr><td colspan="7" class="aw-q-empty">No carriers match the current urgency filter.</td></tr>`;
+    return;
+  }
+  body.innerHTML=list.map(c=>{
+    const v=validityUntil(c);
+    const urgencyCls=v.urgency==='expired'?'danger':v.urgency==='urgent'?'warn':'';
+    const lastSf=sfLatestForCarrier(c.id);
+    const lastSfTxt = lastSf ? `<span class="sfid">${lastSf.id}</span> ${sfStatusChipHtml(lastSf.status)}` : '<span class="hint">No prior file</span>';
+    const verd = vbadge(c.verdict);
+    const btnLbl = v.urgency==='expired' ? 'Refresh now' : v.urgency==='urgent' ? 'Start refresh' : 'Start refresh';
+    const inFlight = lastSf && (lastSf.status==='draft'||lastSf.status==='returned'||lastSf.status==='submitted');
+    return `<tr data-cid="${c.id}">
+      <td class="nm">${c.name}</td>
+      <td class="meta">${c.jurisdiction||'—'}</td>
+      <td>${verd}</td>
+      <td class="cmp" style="color:${c.composite>=75?'var(--deploy)':c.composite>=50?'var(--watch)':'var(--dnd)'}">${c.composite.toFixed(1)}</td>
+      <td>${awUrgencyChip(c)}</td>
+      <td>${lastSfTxt}</td>
+      <td class="aw-rfq-row-act">${inFlight ? `<button type="button" class="rfq-go" data-rfqopen="${c.id}">Continue ${lastSf.id.split('-').pop()}</button>` : `<button type="button" class="rfq-go ${urgencyCls}" data-rfqstart="${c.id}">${btnLbl}</button>`}</td>
+    </tr>`;
+  }).join('');
+  body.querySelectorAll('[data-rfqstart]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();awStartRefresh(b.dataset.rfqstart);}));
+  body.querySelectorAll('[data-rfqopen]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();awSetTab('queue');awShowQueueDetail(b.dataset.rfqopen);}));
+}
+
+function awStartRefresh(cid){
+  // Spawn an SF flagged as a refresh of the prior verdict. The lifecycle is
+  // identical to any other SF; the `refreshOf` marker shows in the editor
+  // header and on history so the chain is visible.
+  const prior=sfLatestForCarrier(cid);
+  const sf=sfCreate(cid);
+  sf.isRefresh=true;
+  sf.refreshOf = prior ? prior.id : null;
+  sfPersist();
+  const c=ALL_CARRIERS.find(x=>x.id===cid);
+  const entry={ts:sigNowTs(),user:sigCurrentUser(),carrier:c?.name||cid,crit:`Refresh initiated · ${sf.id}`,fr:prior?prior.id:'—',to:'Draft',src:'Workspace',status:'In progress',note:`Scheduled refresh ahead of validity expiry${prior?` · supersedes ${prior.id}`:''}`};
+  AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+  toast(`Refresh started · ${c?.name||cid}`,`${sf.id} · supersedes ${prior?.id||'—'} on Ship verdict`);
+  if(typeof buildAudit==='function')buildAudit();
+  awSetTab('queue'); awShowQueueDetail(cid);
+}
+
+// ── AI-drafted commentary · §4.4.1 stub ────────────────────────────────
+// In-memory templates keyed off verdict band + hard-floor + jurisdiction.
+// Production (M2) swaps this for the Credit Report Drafting Agent.
+function awGenerateDraftCommentary(sf){
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid); if(!c)return '';
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf), hf=sfHfTrip(sf);
+  // Strongest + weakest dimension by avg
+  const dims=SF_DIMENSIONS.map(d=>({code:d.code,name:d.name,avg:sfDimAvg(sf,d.k)}));
+  dims.sort((a,b)=>b.avg-a.avg);
+  const top=dims[0], bot=dims[dims.length-1];
+  const jcode=jurForCarrier(c.id), j=jcode?JURISDICTIONS[jcode]:null;
+  const jurLine = j ? `${j.name} carriers face a ${j.currency}-denominated revenue base against largely USD-denominated lease and MRO obligations — a structural FX mismatch the methodology weights through PPS and RCS.` : '';
+  // Verdict-band lede
+  const lede = v.cls==='deploy'
+    ? `${c.name} clears the Deploy threshold at a composite of ${eff.toFixed(1)}, placing it in the upper band of the African counterparty universe. Standard covenant packaging is appropriate; bespoke risk protections are not warranted at this verdict.`
+    : v.cls==='watch'
+    ? `${c.name} sits in the Watch band at a composite of ${eff.toFixed(1)}. The methodology supports conditional engagement with structural protections — shortened tenor, IDERA filed at execution, third-party MRO escrow, and a defined refresh cadence are the baseline asks.`
+    : `${c.name} prints below the Watch threshold at a composite of ${eff.toFixed(1)}. The methodology does not support engagement at this composite under standard mandates. A formal decline memo is required for Credit Committee, regardless of the analyst's narrative case.`;
+  const hfLine = hf.any
+    ? `\n\nHard floor engaged — ${hf.pps?'PPS':''}${hf.pps&&hf.rcs?' and ':''}${hf.rcs?'RCS':''} below the 40-point threshold caps the composite at 65. The verdict cannot exceed Watch until the failed dimension recovers; this is a methodology constraint, not an analyst opinion.`
+    : '';
+  const dimLine = `\n\nThe strongest signal is ${top.code} (${top.code==='SVS'?'Strategic Value':top.code==='PPS'?'Payment Priority':top.code==='APS'?'Airline Performance':top.code==='RCS'?'Risk Containment':'Redeployment Suitability'}) at ${top.avg.toFixed(1)} — the carrier's primary credit positive. The weakest is ${bot.code} at ${bot.avg.toFixed(1)}, which is where the conditions for upgrade need to land.`;
+  const jurPara = j ? `\n\n${jurLine}` : '';
+  const close = v.cls==='deploy'
+    ? `\n\nRecommended next steps: cleared for standard deployment under the published methodology; next scheduled refresh per validity calendar.`
+    : v.cls==='watch'
+    ? `\n\nRecommended next steps: structure with the protections noted above; book a 90-day refresh; escalate to Scoring Committee if any of the Watch covenants are renegotiated.`
+    : `\n\nRecommended next steps: decline memo to Credit Committee; carrier remains on the universe for monitoring; verdict is reconsidered at next scheduled refresh.`;
+  return `${lede}${hfLine}${dimLine}${jurPara}${close}`.trim();
+}
+
+function awOpenAiDraftModal(){
+  const sf=SCORING_FILES.find(s=>s.id===awState.sfId); if(!sf){toast('No active scoring file','Open a scoring file before drafting commentary.');return;}
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const eff=sfEffectiveComposite(sf), v=sfVerdictPreview(sf);
+  el('awAiDraftSummary').innerHTML = `<strong>${c.name}</strong> · ${sf.id} · composite ${eff.toFixed(1)} · preview ${v.lbl}`;
+  el('awAiDraftBody').value = awGenerateDraftCommentary(sf);
+  sigOpenModal('awAiDraftModal');
+}
+function awRegenerateDraft(){
+  const sf=SCORING_FILES.find(s=>s.id===awState.sfId); if(!sf)return;
+  el('awAiDraftBody').value = awGenerateDraftCommentary(sf);
+  toast('Re-generated','Draft re-rolled. Edit before accepting.');
+}
+function awAcceptDraft(){
+  const sf=SCORING_FILES.find(s=>s.id===awState.sfId); if(!sf)return;
+  const body=el('awAiDraftBody').value.trim();
+  if(body.length<80){toast('Draft too short','Min 80 characters — accepted commentary anchors the verdict letter.');return;}
+  sf.commentary={body,ts:sigNowTs(),user:sigCurrentUser(),aiDrafted:true};
+  sf.lastEdit=sigNowTs();
+  sfPersist();
+  const c=ALL_CARRIERS.find(x=>x.id===sf.cid);
+  const entry={ts:sf.lastEdit,user:sigCurrentUser(),carrier:c?.name||sf.cid,crit:`Commentary drafted · AI-assisted`,fr:'—',to:`${sf.id} · accepted by analyst`,src:'Workspace',status:'Analyst-of-record',note:`AI-drafted prose accepted, ${body.length} chars · ${body.slice(0,100)}…`};
+  AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+  sigCloseModal('awAiDraftModal');
+  toast('Commentary attached',`Analyst-authored disclosure stamped on ${sf.id}.`);
+  if(typeof buildAudit==='function')buildAudit();
+  buildScoringFilePane();
+}
+
+// ── RAG-assisted research · §4.4.1 stub ────────────────────────────────
+// Static seed library keyed by dimension. Production (M2) swaps for vector
+// retrieval over the warehouse corpus.
+const RAG_SNIPPETS = {
+  svs:[
+    {src:'IATA Africa Outlook · Q1 2026', tag:'TRADE', body:'African intra-continental capacity expanded 8.3% YoY in 2026 Q1, led by SAATM-active routes. Carriers with multi-country network exposure show 12 pts higher SVS on average.'},
+    {src:'AFRAA State of African Aviation 2026', tag:'INDUSTRY', body:'Strategic value premiums apply to carriers serving routes where the next-best alternative requires a >2h connection. ICAO route-monopoly index correlates 0.71 with SVS sub-scores.'},
+    {src:'CAPA · Aviation strategy briefings', tag:'TRADE', body:'Government-equity carriers in the universe show lower volatility on the SVS dimension; ownership structure is the single largest discriminator.'},
+  ],
+  pps:[
+    {src:'Andara counterparty intelligence · WAVE 24', tag:'PRIVATE', body:'Lessor payment ageing across the universe averaged 38 days in Q1 2026, against the methodology 30-day baseline. Carriers paying >60 days score lower-quartile on PPS.'},
+    {src:'IATA Currency Blocked Funds Tracker', tag:'INDUSTRY', body:'Blocked funds in African jurisdictions totalled $1.6B at end-March 2026. Nigeria cleared its $0.85B backlog; Algeria, Ethiopia, Mozambique remain the top three blockers.'},
+    {src:'Lender-side credit committee notes (sanitised)', tag:'FINANCIAL', body:'Facility-servicing track record on USD-denominated bank lines is the single strongest predictor of PPS within the universe; FX repatriation history correlates with RCS instead.'},
+  ],
+  aps:[
+    {src:'IOSA Registry · public extract', tag:'REGULATORY', body:'IOSA-registered carriers in the universe show a 14-point APS premium on average versus non-IOSA peers, holding fleet age constant.'},
+    {src:'ICAO USOAP CMA · effective-implementation data', tag:'REGULATORY', body:'USOAP EI scores below 60% map almost 1:1 to APS sub-floor exposure. Country-level EI is a partial proxy when carrier-level IOSA data is absent.'},
+    {src:'IATA Safety Report 2025', tag:'INDUSTRY', body:'African accident rate in 2025 was 1.8x the global average; carrier-level discipline gaps drive most of the spread, not regulator gaps.'},
+  ],
+  rcs:[
+    {src:'Cape Town Convention · ratification + practice', tag:'REGULATORY', body:'CTC ratification alone is insufficient; the practice score (IDERA usage, court-tested repossession) is what moves RCS. Nigeria, Kenya, South Africa, Ethiopia all show working IDERA practice; the rest of the universe is paper-only.'},
+    {src:'Aviation Working Group · Compliance Index 2026', tag:'INDUSTRY', body:'AWG-CI score is the cleanest external proxy for RCS country modifier. Mapping is published in the methodology appendix.'},
+    {src:'Counsel briefings · repossession case law (sanitised)', tag:'LEGAL', body:'Where IDERA is filed but not court-tested in the jurisdiction, treat RCS as one band lower than a working-practice peer until a case is documented.'},
+  ],
+  ras:[
+    {src:'Cirium Ascend · narrowbody liquidity', tag:'INDUSTRY', body:'B737-800 and A320ceo remain the most liquid African-operator types. B737 MAX 8 liquidity has recovered; widebody redeployment routes outside Africa rely on Middle East or South Asian secondary demand.'},
+    {src:'Andara redeployment tracker · 2026 H1', tag:'PRIVATE', body:'Median Andara-tracked re-export timeline for narrowbodies from African operators was 96 days in H1 2026 (range 41–180). Configuration weight (galleys, IFE) is the largest soft-cost driver.'},
+    {src:'AFRAA fleet-strategy survey', tag:'INDUSTRY', body:'African operator demand for second-hand narrowbodies grew 18% YoY; this directly lifts RAS sub-scores for B737/A320 operators in the universe.'},
+  ],
+};
+function awBuildRagPanel(){
+  const sf=SCORING_FILES.find(s=>s.id===awState.sfId);
+  const host=el('awRagBody'); if(!host)return;
+  if(!sf){host.innerHTML='<div class="aw-rag-empty">Open a scoring file to fetch retrieved context.</div>';return;}
+  const k=awState.ragDim||'pps';
+  const snips=RAG_SNIPPETS[k]||[];
+  host.innerHTML=snips.map((s,i)=>`
+    <div class="aw-rag-snip">
+      <div class="src"><span class="tag">${s.tag}</span><span>${s.src}</span></div>
+      <div class="body">${s.body.replace(/</g,'&lt;')}</div>
+      <div class="act">
+        <button type="button" data-ragev="${k}.${i}">Add as evidence note</button>
+      </div>
+    </div>
+  `).join('');
+  host.querySelectorAll('[data-ragev]').forEach(b=>b.addEventListener('click',()=>{
+    const [dim,idx]=b.dataset.ragev.split('.');
+    awAttachRagAsEvidence(dim,+idx);
+  }));
+}
+function awAttachRagAsEvidence(dim,idx){
+  const sf=SCORING_FILES.find(s=>s.id===awState.sfId); if(!sf)return;
+  const snip=(RAG_SNIPPETS[dim]||[])[idx]; if(!snip)return;
+  // Attach to first sub-input of the dimension (i=0) — analyst can move it later
+  const tag=`${dim}.0`;
+  let list=sf.evidence[tag]; if(list&&!Array.isArray(list))list=[list]; list=list||[];
+  list.push({ts:sigNowTs(),user:sigCurrentUser(),source:snip.src,note:`[RAG-retrieved · ${snip.tag}] ${snip.body}`,file:null,rag:true});
+  sf.evidence[tag]=list; sf.lastEdit=sigNowTs(); sfPersist();
+  toast('Retrieved context attached',`${dim.toUpperCase()} · sub 1 — analyst owns the citation.`);
+  buildScoringFilePane();
+}
+
+// ── Verdict-affecting code-change ledger · §4.4.2 ──────────────────────
+const CODE_CHANGES = [
+  {id:'CC-2026-014',title:'PPS sub-input 8 · widen revenue-trend lookback to 5 yr (was 3 yr)',body:'Aligns the lookback window with Pass 4 carriers where the 3-yr window leaves COVID artefacts in the denominator. Impacts 18 carriers · would lift PPS by ≤0.6 on 12 of them. Methodology v1.5-NG patch.',tags:['methodology','weight-neutral'],status:'pending'},
+  {id:'CC-2026-013',title:'RCS country modifier · Egypt downgrade −2 (FX repatriation backlog)',body:'EGP repatriation backlog widened to $1.4B at end-Q1 2026; modifier table updates from −1 to −3. Impacts 4 EG carriers · would shift 1 from Watch → DND. Requires SC sign-off before code lands.',tags:['country-modifier','verdict-shifting'],status:'pending'},
+  {id:'CC-2026-012',title:'Hard floor · clarify symmetric application (PPS OR RCS < 40)',body:'Codebase currently checks PPS<40 OR RCS<40 with short-circuit; rewrite to evaluate both independently and surface which dimension tripped. No verdict movement expected — read-side change.',tags:['hf','read-side'],status:'pending'},
+  {id:'CC-2026-011',title:'APS · add USOAP CMA carrier-level override',body:'Where carrier-level audit is available, override the country-level proxy. Affects 3 EA carriers · would lift APS by 0.4–1.1.',tags:['methodology','verdict-shifting'],status:'approved',decision:{chair:'lead.analyst',ts:'2026-05-12 14:22',rationale:'Approved · USOAP carrier data is more authoritative than country proxy where present. Implementation tracked in ENG-441.'}},
+  {id:'CC-2026-010',title:'RAS · re-export timeline floor moved to 30 days (was 14)',body:'Andara redeployment tracker median is 96 days; 14-day floor was unrealistic. Read-side only — no carrier shifts band.',tags:['methodology','read-side'],status:'approved',decision:{chair:'lead.analyst',ts:'2026-04-30 11:08',rationale:'Approved · brings the parameter in line with observed re-export data.'}},
+  {id:'CC-2026-009',title:'Watch threshold · drop to 48 (was 50) for v1.0-WA',body:'Proposed during WA Pass 3 review. Would reclassify 2 WA carriers DND → Watch. Returned to analyst for a regional consistency check vs. v1.0-EA.',tags:['threshold','verdict-shifting'],status:'returned',decision:{chair:'lead.analyst',ts:'2026-04-22 10:00',rationale:'Returned · cross-region threshold drift requires a paired EA proposal or a written rationale for why WA differs.'}},
+];
+
+function buildCodeChangeLedger(){
+  const host=el('codeChangeLedger'); if(!host)return;
+  if(!CODE_CHANGES.length){host.innerHTML='<div class="aw-q-empty" style="padding:18px">No code changes awaiting committee.</div>';return;}
+  host.innerHTML=CODE_CHANGES.map(cc=>{
+    const stCls = cc.status==='approved'?'approved':cc.status==='returned'?'returned':'pending';
+    const stLbl = cc.status.toUpperCase();
+    const acts = cc.status==='pending'
+      ? `<button class="app" data-ccact="approve" data-ccid="${cc.id}">Approve</button><button class="ret" data-ccact="return" data-ccid="${cc.id}">Return</button>`
+      : `<button disabled>${cc.status==='approved'?'Signed':'Returned'}</button>`;
+    const decisionTip = cc.decision ? `<div style="font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.06em;margin-top:4px">${cc.decision.chair} · ${cc.decision.ts} — ${(cc.decision.rationale||'').slice(0,80)}${(cc.decision.rationale||'').length>80?'…':''}</div>` : '';
+    return `<div class="cc-ledger-row">
+      <div class="id">${cc.id}</div>
+      <div class="ttl">
+        <div class="h">${cc.title}</div>
+        <div class="d">${cc.body}</div>
+        <div class="tags">${cc.tags.map(t=>`<span class="tg">${t}</span>`).join('')}</div>
+        ${decisionTip}
+      </div>
+      <div class="st ${stCls}">${stLbl}</div>
+      <div class="acts">${acts}</div>
+    </div>`;
+  }).join('');
+  host.querySelectorAll('[data-ccact]').forEach(b=>b.addEventListener('click',()=>ccOpenCodeDecision(b.dataset.ccid, b.dataset.ccact)));
+}
+function ccOpenCodeDecision(ccid, action){
+  const cc=CODE_CHANGES.find(x=>x.id===ccid); if(!cc)return;
+  awState.pendingCcId=ccid; awState.pendingCcAct=action;
+  el('ccCodeTitle').textContent = action==='approve' ? 'Approve code change' : 'Return code change';
+  el('ccCodeSummary').innerHTML = `<strong>${cc.id}</strong> · ${cc.title}`;
+  el('ccCodeRationale').value='';
+  sigOpenModal('ccCodeModal');
+}
+function ccConfirmCodeDecision(){
+  const cc=CODE_CHANGES.find(x=>x.id===awState.pendingCcId); if(!cc)return;
+  const r=el('ccCodeRationale').value.trim();
+  if(r.length<40){toast('Rationale too short','Min 40 chars — code-change decisions are auditable.');return;}
+  const chair=sigCurrentUser(), ts=sigNowTs();
+  const outcome = awState.pendingCcAct==='approve' ? 'approved' : 'returned';
+  cc.status=outcome; cc.decision={chair,ts,rationale:r};
+  const entry={ts,user:chair,carrier:'—',crit:`Code change · ${outcome.toUpperCase()}`,fr:'Pending',to:outcome.toUpperCase(),src:'Methodology',status:`Chair signed · ${chair}`,note:`${cc.id} · ${cc.title.slice(0,80)} · ${r.slice(0,120)}`};
+  AUDIT.unshift(entry); WS_AUDIT_DELTA.unshift(entry); sfPersist();
+  sigCloseModal('ccCodeModal');
+  toast(`Code change ${outcome.toUpperCase()}`,`${cc.id} · chair ${chair}`);
+  buildCodeChangeLedger();
+  if(typeof buildAudit==='function')buildAudit();
 }
 
 // ── SF detail drawer · shared across workspace history + committee inbox + log
@@ -7858,6 +9229,40 @@ function bindAwTabs(){
   const ccConfirm=el('ccDecisionConfirm'); if(ccConfirm)ccConfirm.addEventListener('click',ccConfirmDecision);
   // Per-sub-score evidence attach
   const evAdd=el('awEvSubAdd'); if(evAdd)evAdd.addEventListener('click',awEvSubAdd);
+  // §4.4.1 Refresh queue filter chips
+  document.querySelectorAll('#awRfqFilter .fp').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      awRfqState.filter=chip.dataset.rfqf||'due';
+      document.querySelectorAll('#awRfqFilter .fp').forEach(x=>x.classList.toggle('active', x===chip));
+      buildRefreshQueue();
+    });
+  });
+  // §4.4.1 AI draft modal — regen + accept
+  el('awAiDraftRegen')?.addEventListener('click',awRegenerateDraft);
+  el('awAiDraftAccept')?.addEventListener('click',awAcceptDraft);
+  // §4.4.1 Vault clearance
+  el('awVaultConfirm')?.addEventListener('click',awConfirmVault);
+  // §4.4.2 Batch SC controls
+  document.querySelectorAll('.cc-toolbar [data-ccgrp]').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      ccGroupState.by=chip.dataset.ccgrp;
+      document.querySelectorAll('.cc-toolbar [data-ccgrp]').forEach(x=>x.classList.toggle('active', x===chip));
+      buildCcInbox();
+    });
+  });
+  el('ccBatchApprove')?.addEventListener('click',ccOpenBatchModal);
+  el('ccBatchConfirm')?.addEventListener('click',ccConfirmBatch);
+  el('ccSelAll')?.addEventListener('change',()=>{
+    const checked=el('ccSelAll').checked;
+    document.querySelectorAll('#ccInboxBody .cc-sel:not([disabled])').forEach(cb=>{
+      cb.checked=checked;
+      if(checked)ccGroupState.selected.add(cb.dataset.sfid);
+      else ccGroupState.selected.delete(cb.dataset.sfid);
+    });
+    ccUpdateBatchUi();
+  });
+  // §4.4.2 Code-change ledger decision
+  el('ccCodeConfirm')?.addEventListener('click',ccConfirmCodeDecision);
 }
 
 function bindNav(){
@@ -8876,16 +10281,13 @@ el('lbtn').addEventListener('click',()=>{
 function enterTerminal(em){
   el('login').style.display='none';
   el('app').style.display='grid';
-  const localPart = (em||'').split('@')[0] || 'subscriber';
-  // "dikko" → "Dikko", "first.last" → "First Last"
-  const display = localPart.split(/[._-]+/).filter(Boolean)
-    .map(s => s.charAt(0).toUpperCase()+s.slice(1)).join(' ') || 'Subscriber';
+  // Respect user-set display name from the per-email user record (Profile → Identity).
+  // Falls back to parsing the email local part — "dikko" → "Dikko", "first.last" → "First Last".
+  const display = (typeof profileDisplayName==='function') ? profileDisplayName(em) : ((em||'').split('@')[0].split(/[._-]+/).filter(Boolean).map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join(' ')||'Subscriber');
   el('uname').textContent = display;
   const av = el('uavatar');
   if(av){
-    const parts = localPart.split(/[._-]+/).filter(Boolean);
-    const initials = (parts[0]?parts[0][0]:'') + (parts[1]?parts[1][0]:'');
-    av.textContent = (initials || localPart.slice(0,1) || 'S').toUpperCase();
+    av.textContent = (typeof profileInitials==='function') ? profileInitials(em) : ((em||'').split('@')[0][0]||'S').toUpperCase();
   }
   // Each step wrapped so one broken builder can't lock the user out.
   const safe = (label, fn) => { try { fn(); } catch (e) { console.error('[boot] '+label+' failed:', e); } };
@@ -8900,6 +10302,13 @@ function enterTerminal(em){
   safe('bindAuditFilters',  () => bindAuditFilters());
   safe('buildWorkspace',    () => buildWorkspace());
   safe('buildCommittee',    () => buildCommittee());
+  safe('buildRefreshQueue', () => buildRefreshQueue());
+  safe('buildCodeChangeLedger', () => buildCodeChangeLedger());
+  safe('profileApplyChip',  () => profileApplyChip());
+  safe('profileWireOnce',   () => profileWireOnce());
+  safe('ncStateLoad',       () => ncStateLoad());
+  safe('ncWireOnce',        () => ncWireOnce());
+  safe('ncBellPaint',       () => ncBellPaint());
   safe('buildCountryModTable', () => buildCountryModTable());
   safe('buildScMinutes',    () => buildScMinutes());
   safe('buildSignalPortfolio', () => buildSignalPortfolio());
