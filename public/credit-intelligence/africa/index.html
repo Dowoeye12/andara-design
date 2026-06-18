@@ -332,7 +332,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 
 /* MAIN */
 .mn{grid-area:mn;overflow-y:auto;background:var(--bg)}
-.view{padding:20px 26px 60px;display:none;animation:fade .2s;max-width:1320px;margin:0 auto}
+.view{padding:20px 16px 60px;display:none;animation:fade .2s;max-width:1480px;margin:0 auto}
 .view.active{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
 
@@ -7173,7 +7173,7 @@ function buildScMinutes(){
 function buildCountryModTable(){
   const t=el('countryModTable');
   if(!t)return;
-  t.innerHTML=`<thead><tr><th>Jurisdiction</th><th>Bloc</th><th>CTC Status</th><th>EU Blacklist</th><th>Sovereign context</th><th>RCS.6 anchor band</th></tr></thead><tbody>${COUNTRY_METADATA.map(c=>`<tr><td>${c.jurisdiction}${c.aesBloc?` <span style="color:var(--dnd);font-family:var(--mono);font-size:10px">AES</span>`:''}</td><td>${c.bloc}</td><td style="color:${c.ctcStatus.includes('IDERA')?'var(--deploy)':'var(--watch)'}">${c.ctcStatus}</td><td style="color:${c.euBlacklist?'var(--dnd)':'var(--deploy)'}">${c.euBlacklist?'YES — since '+c.euBlacklistSince:'No'}</td><td>${c.sovereignContext}</td><td style="color:${c.rcs6AnchorBand[0]>=6?'var(--deploy)':c.rcs6AnchorBand[0]>=4?'var(--watch)':'var(--dnd)'}">${c.rcs6AnchorBand[0]}–${c.rcs6AnchorBand[1]}/10</td></tr>`).join('')}</tbody>`;
+  t.innerHTML=`<colgroup><col style="width:12%"><col style="width:13%"><col style="width:13%"><col style="width:10%"><col style="width:40%"><col style="width:12%"></colgroup><thead><tr><th>Jurisdiction</th><th>Bloc</th><th>CTC Status</th><th>EU Blacklist</th><th>Sovereign context</th><th>RCS.6 anchor band</th></tr></thead><tbody>${COUNTRY_METADATA.map(c=>`<tr><td>${c.jurisdiction}${c.aesBloc?` <span style="color:var(--dnd);font-family:var(--mono);font-size:10px">AES</span>`:''}</td><td>${c.bloc}</td><td style="color:${c.ctcStatus.includes('IDERA')?'var(--deploy)':'var(--watch)'}">${c.ctcStatus}</td><td style="color:${c.euBlacklist?'var(--dnd)':'var(--deploy)'}">${c.euBlacklist?'YES — since '+c.euBlacklistSince:'No'}</td><td>${c.sovereignContext}</td><td style="color:${c.rcs6AnchorBand[0]>=6?'var(--deploy)':c.rcs6AnchorBand[0]>=4?'var(--watch)':'var(--dnd)'}">${c.rcs6AnchorBand[0]}–${c.rcs6AnchorBand[1]}/10</td></tr>`).join('')}</tbody>`;
 }
 
 const auditFilter={q:'',src:'all',user:'all',range:'all'};
