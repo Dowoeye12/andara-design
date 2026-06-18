@@ -153,6 +153,20 @@ Pure-black canvas with layered near-black surfaces. Set in `:root`.
 
 Every verdict / status colour is intentionally desaturated. Do not push them back toward the original Bloomberg-bright hues.
 
+### Canvas width — `.view` padding + max-width
+
+The main content area is `.view` inside `.mn` (grid-area `mn`):
+
+```css
+.view{padding:20px 16px 60px; max-width:1480px; margin:0 auto}
+```
+
+- **Horizontal padding 16px** — gutter between content and the sidebar/right edge. Was 26px historically; tightened so panels/tables get more usable width.
+- **`max-width: 1480px`** — hard cap on the content column. Was 1320px historically. Don't push past 1480 without testing — the 5-Score scorecards, country-modifier table, and Compare slot cards all balance against this width.
+- **`margin: 0 auto`** — content centres inside the viewport once it exceeds 1480px.
+
+If a single panel needs to breathe wider (e.g. a future portfolio heat-map), give that panel a negative horizontal margin against `.view` rather than raising the global cap.
+
 ### Ink tiers — WCAG AA on pure black
 
 | Token | Value | Contrast vs #000 | Use |
@@ -428,6 +442,25 @@ The legacy `.warn` class (warning banner) adds `padding`, `background`, `border`
 ### Table-cell class collision guard — `.c-*` namespacing
 
 The global stylesheet owns several short class names for unrelated chrome: `.user{display:flex; border-left; height:34px; padding-left:18px}` (top-nav user chip), `.carrier{display:flex; gap:11px}` (sidebar carrier row), `.status` / `.note` / `.src` / `.ts` (various). When a `<td>` takes any of those classes the global rules cascade in — `display:flex` breaks the table layout, `border-left` adds a stray vertical seam between cells, `height:34px` forces uneven row heights. **All table-cell classes must be namespaced.** The Audit table uses `c-ts / c-user / c-email / c-carrier / c-src / c-status / c-note`. If you add a new table, follow the same convention (`<surface>-<cell>` or a short `c-*` prefix). The user's "rows are not straight" bug report traced to exactly this cascade.
+
+### Wide-table column balance — `<colgroup>` over browser auto-layout
+
+Browsers auto-size table columns by content width. For tables whose narrative cell carries most of the text (country-modifier table on Methodology, evidence corpus on Workspace, etc.), auto-layout gives Jurisdiction / Bloc / CTC roughly equal width to Sovereign context — even though Sovereign context holds 5× the characters. Result: a wide, mostly empty left half and a cramped narrative column.
+
+**Fix:** prepend an explicit `<colgroup>` with `%`-based widths. Example, country-modifier table in `buildCountryModTable()`:
+
+```html
+<colgroup>
+  <col style="width:12%">  <!-- Jurisdiction -->
+  <col style="width:13%">  <!-- Bloc -->
+  <col style="width:13%">  <!-- CTC Status -->
+  <col style="width:10%">  <!-- EU Blacklist -->
+  <col style="width:40%">  <!-- Sovereign context — narrative -->
+  <col style="width:12%">  <!-- RCS.6 anchor band -->
+</colgroup>
+```
+
+Rule of thumb: give the narrative column ≥35% and trim short categorical columns to 10–13%. Any table where one cell is a multi-line description and the rest are 1–3 word tags should ship with a colgroup — don't trust auto-layout to allocate sensibly.
 
 ### System-wide search-input clear button — `attachSearchClears()`
 
