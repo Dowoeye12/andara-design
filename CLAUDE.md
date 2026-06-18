@@ -315,6 +315,7 @@ Sizes in use: 28px (chips next to large titles, refresh-request button), 26px (S
 - **Lifecycle state is the PRD vocabulary** — `draft / submitted / approved / shipped` (§3.2.3 line 232) plus `returned / rejected` from §3.4.2. Do not use the old `open` label anywhere — `sfRestore()` migrates it to `draft` on boot.
 - **Boot sequence is wrapped in `safe()` try-catch** so one broken builder can't lock the user out. If you add a new builder to `enterTerminal()`, wrap it the same way: `safe('myBuilder', () => myBuilder())` — failures log to console as `[boot] <name> failed:` but the rest still runs.
 - **Login is isolated.** `_login()` is defined in its own `<script>` tag right after the login modal HTML (not in the main `<script>` block) so it works even if the main script has a syntax error. The eye-toggle on `#pwToggle` is also bound via event delegation on `document` for the same robustness reason. Don't move these into the main script.
+- **`#pwToggle` MUST NOT have an inline `onclick`.** The button is wired *only* through the delegated `document.addEventListener('click', …)` handler (search for `#pwToggle` in the script). If you add an inline `onclick` "for safety", it will run *and then* the bubble fires the document handler, toggling the password type twice — net effect is the eye icon does nothing and the user can't reveal the access key. This has regressed twice already. If the delegated handler appears broken, fix it in place — do not add a second handler. Same rule applies to any other element wired by document-level delegation in this file.
 - **Every form-field container gets 20px gap.** `.wsform { gap: 20px }` and `.sig-mbody { gap: 20px }` are the system canon. Action button row (`.wsa`) sits **32px** below the last field. Per-pair horizontal gap is also 20px (`.wsr`).
 - **Scoring-file editor convention.** Sub-input changes auto-persist on every keystroke via `sfPersist()` (debounce not needed at M1 scale). There is no Save-draft button — the PRD doesn't define one and auto-save already satisfies the spec. If you find yourself adding one, you're probably duplicating work.
 - **Per-sub-score evidence schema** is an array of `{ts, user, source, note, file}` records. Single-object legacy values auto-migrate on first render via `awRenderEvSubList`. The file object is `{name, size, type, dataUrl}` — a data URL is fine at M1 (caps at 2 MB, localStorage-backed); the M2 hop is to a warehouse object store with signed URLs (helper text in the attach modal documents this).
@@ -434,6 +435,14 @@ Chips fall into two buckets and use different palette tokens. Get this right whe
 Amber is reserved. Don't use it for a chip whose only job is to label something the user already understood. If the chip carries no action and no state, it goes blue (`--info`).
 
 If you're recolouring an existing chip from amber to blue (or back), update the chip's class CSS, not inline styles. Search for the class first to confirm reuse.
+
+### Grid row height — `.panel { margin-bottom: 24px }` shrinks the item
+
+Every `.panel` carries `margin-bottom: 24px` for stacked-panel rhythm. When a panel sits as a grid item next to a non-`.panel` wrapper (e.g. `.panel.c8.mo-cms` paired with `.c4.mo-rail` in the Composite Market Score row), the row stretches both items to row-height but **subtracts each item's margin from its effective height**. The panel ends up 24px shorter than its sibling wrapper, leaving an unbalanced bottom edge. The fix is to zero the bottom margin on the in-row panel (`.mo-cms { margin-bottom: 0 }`); the row already owns the section gap via its own `margin-bottom`. Any new "panel + sidebar rail" row needs the same override on the panel.
+
+### Subpage navigation — preserve the origin sidebar highlight
+
+`showAirline()` is the only sub-page entry point and runs `document.querySelectorAll('.sitem').forEach(s => s.classList.toggle('active', s.dataset.v === lastOriginNav.v))` so the originating top-level nav item stays highlighted on the carrier profile. Do NOT change this back to `classList.remove('active')` — the user explicitly needs a persistent "you are here" anchor on subpages, and the highlighted item must match the breadcrumb's first segment. If you add a new top-level view, add it to `VIEW_TO_NAV` so this hook resolves the right `data-v`.
 
 ### Pill / chip margin — `.warn` collision guard
 
