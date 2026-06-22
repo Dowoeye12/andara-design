@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Andara FleetWatch — Client Portal | Aircraft Surveillance</title>
+<meta name="description" content="Andara FleetWatch client portal — your fleet under surveillance. Quarterly reports, open anomalies, AOG alerts and the full deliverable index, per aircraft."/>
+<meta name="theme-color" content="#000000"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════
+   ANDARA FLEETWATCH — CLIENT PORTAL DASHBOARD (PRD §3.2.3)
+   Features: Fleet list · Aircraft detail · Latest quarterly
+   report viewer · Open anomalies · Alert history · Document
+   index. Design system inherited from Andara Credit
+   Intelligence terminal (pure-black canvas, desaturated
+   amber, Hanken Grotesk + IBM Plex Mono).
+══════════════════════════════════════════════════════ */
+:root{
+  --bg:#000;--bg4:#070809;--bg2:#0b0d10;--bg3:#13161c;--bg-hover:#191d24;
+  --line:#1e232b;--line2:#2a313c;--line3:#343c49;
+  --t1:#f2f5fa;--t2:#c2cad8;--t3:#a4adba;--t4:#8a93a3;
+  --display:rgba(255,255,255,0.92);
+  --amber:#e8a23a;--amber2:#f1b85a;--amber-dim:#b8801f;
+  --amber-soft:rgba(232,162,58,0.11);--amber-line:rgba(232,162,58,0.30);
+  --deploy:#6bb38a;--deploy-soft:rgba(107,179,138,0.11);--deploy-line:rgba(107,179,138,0.28);
+  --watch:#d6a85a; --watch-soft:rgba(214,168,90,0.11); --watch-line:rgba(214,168,90,0.28);
+  --dnd:#c97474;   --dnd-soft:rgba(201,116,116,0.11);  --dnd-line:rgba(201,116,116,0.28);
+  --info:#7c9fc7;  --info-soft:rgba(124,159,199,0.11); --info-line:rgba(124,159,199,0.28);
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --serif:"Hanken Grotesk",ui-sans-serif,system-ui,sans-serif;
+  --sans:"Hanken Grotesk",ui-sans-serif,system-ui,sans-serif;
+  --r:6px;--r-lg:9px;--tb-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.14)}
+
+/* ── shared chips / pills — fixed height + inline-flex (canon) ── */
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:24px;padding:0 11px;line-height:1;margin:0;
+  border:1px solid;border-radius:4px;box-sizing:border-box;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sv-ok{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.sv-ok .dot{background:var(--deploy)}
+.sv-due{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.sv-due .dot{background:var(--watch)}
+.sv-over{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.sv-over .dot{background:var(--dnd)}
+.sv-rep{color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
+.sv-rep .dot{background:var(--info)}
+.sev-high{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.sev-med{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.sev-low{color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
+.ast-open{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.ast-mon{color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
+.ast-res{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.ack-pend{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.ack-ok{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.ichip{height:22px;padding:0 10px;font-size:10px;letter-spacing:.1em;color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
+.ichip.muted{color:var(--t4);background:var(--bg3);border-color:var(--line)}
+.ichip.amber{color:var(--amber);background:var(--amber-soft);border-color:var(--amber-line)}
+
+/* ══════════════════════════════════════════ LOGIN ══════════════════════════════════════════ */
+#login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);overflow:auto}
+#login::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 70% at 30% 30%,#000 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 80% 70% at 30% 30%,#000 20%,transparent 80%)}
+#login::after{content:"";position:absolute;top:-15%;left:-5%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(255,177,46,.10),transparent 60%);pointer-events:none}
+.ls{display:grid;grid-template-columns:1.1fr 1fr;width:100%;max-width:880px;min-height:505px;border:1px solid var(--line);background:var(--bg2);position:relative;overflow:hidden;z-index:2}
+.ls::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amber) 50%,transparent)}
+.ll{padding:36px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--line);gap:20px}
+.bm{display:flex;align-items:center;gap:12px}
+.lh{font-family:var(--serif);font-weight:600;font-size:31px;line-height:1.06;letter-spacing:-.03em;color:var(--display)}
+.lh em{font-style:normal;color:var(--amber)}
+.lsub{color:var(--t2);font-size:12.5px;margin-top:14px;line-height:1.62;max-width:360px}
+.lmeta{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase}
+.lmr{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:8px;margin-top:8px}
+.lmr strong{color:var(--t2);text-align:right}
+.lr{padding:36px;display:flex;flex-direction:column;justify-content:center;background:var(--bg3)}
+.lr h2{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--display);margin-bottom:6px}
+.lr p{color:var(--t2);font-size:12.5px;margin-bottom:24px}
+.fld{margin-bottom:16px}
+.fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.fld input{width:100%;background:var(--bg);border:1px solid var(--line2);padding:12px 14px;font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--t1);outline:none;transition:border-color .18s,background .18s}
+.fld input:focus{border-color:var(--amber);background:var(--bg)}
+.fld input::placeholder{color:var(--t3)}
+.pw-wrap{position:relative}.pw-wrap input{padding-right:46px}
+.pw-eye{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:30px;height:30px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;color:var(--t3);cursor:pointer;transition:color .15s,background .15s,border-color .15s}
+.pw-eye:hover{color:var(--t1);background:var(--bg-hover);border-color:var(--line2)}
+.pw-eye svg{display:block}
+.lbtn{margin-top:10px;width:100%;background:var(--amber);color:#000;padding:14px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;border:none;cursor:pointer;transition:background .2s,color .2s}
+.lbtn:hover{background:#fff;color:#000}
+.lerr{margin-top:10px;color:var(--dnd);font-family:var(--mono);font-size:10px;letter-spacing:.06em;display:none}
+.lnote{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em;line-height:1.85}
+.lnote b{color:var(--t2);font-weight:600}.lnote span{color:var(--amber)}
+
+/* ══════════════════════════════════════════ SHELL ══════════════════════════════════════════ */
+#app{display:none;flex-direction:column;min-height:100vh;background:var(--bg)}
+.tb{position:sticky;top:0;z-index:30;height:var(--tb-h);display:flex;align-items:center;gap:14px;padding:0 20px;background:var(--bg4);border-bottom:1px solid var(--line)}
+.tb-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.tb-brand .mark{width:26px;height:26px;border-radius:5px;flex-shrink:0;background:linear-gradient(135deg,var(--amber),var(--amber-dim));display:grid;place-items:center;color:#000;font-family:var(--mono);font-weight:600;font-size:13px}
+.tb-brand .name{font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:-.01em;line-height:1;color:var(--t1)}
+.tb-brand .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-top:3px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.tb-clock{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.08em}
+.user{display:flex;align-items:center;gap:10px;padding-left:14px;border-left:1px solid var(--line2)}
+.user .av{width:30px;height:30px;border-radius:5px;background:transparent;border:1px solid var(--line2);display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--t1)}
+.user .who b{font-size:13px;font-weight:600;display:block;color:var(--t1);letter-spacing:-.005em}
+.user .who span{font-size:10px;color:var(--t4);font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase}
+.tb-signout{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);border:1px solid var(--line2);border-radius:4px;height:28px;padding:0 12px}
+.tb-signout:hover{color:var(--t1);background:var(--bg-hover);border-color:var(--line3)}
+
+.view{max-width:1280px;margin:0 auto;width:100%;padding:24px 20px 72px;display:flex;flex-direction:column;gap:24px}
+
+/* breadcrumb — sub-page only */
+.crumb{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--t4)}
+.crumb a{color:var(--t3)}.crumb a:hover{color:var(--amber)}
+.crumb .sep{color:var(--line3)}
+.crumb .cur{color:var(--t2)}
+
+/* page head */
+.phead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.phead .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3)}
+.phead h1{font-family:var(--serif);font-weight:600;font-size:27px;letter-spacing:-.02em;color:var(--display);margin-top:8px;line-height:1.1}
+.phead .desc{color:var(--t2);font-size:13px;max-width:420px;text-align:right;line-height:1.55}
+
+/* summary stat strip — 16/8/24 */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cell{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
+.cell .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+.cell .num{font-family:var(--sans);font-size:30px;font-weight:700;color:var(--display);letter-spacing:-.02em;line-height:1}
+.cell .cap{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em}
+.cell .num.ok{color:var(--deploy)}.cell .num.due{color:var(--watch)}.cell .num.alert{color:var(--dnd)}
+
+/* panel */
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r)}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.ph .bullet{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.ph h3{font-family:var(--sans);font-size:18px;font-weight:600;color:var(--display);letter-spacing:-.01em}
+.ph .meta{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--t4);letter-spacing:.04em}
+.pb{padding:16px}
+
+/* ── fleet table — 14px tabular floor, namespaced cells (fc-*) ── */
+.tblwrap{overflow-x:auto}
+table.fleet{width:100%;border-collapse:collapse}
+table.fleet thead th{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line2);white-space:nowrap}
+table.fleet tbody td{font-size:14px;padding:14px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.fleet tbody tr{cursor:pointer;transition:background .12s}
+table.fleet tbody tr:hover{background:var(--bg3)}
+table.fleet tbody tr:last-child td{border-bottom:none}
+.fc-reg{font-family:var(--mono);font-weight:600;color:var(--t1);letter-spacing:.04em}
+.fc-msn{font-family:var(--mono);font-size:13px;color:var(--t3);letter-spacing:.04em}
+.fc-type{color:var(--t1);font-weight:500}
+.fc-op{color:var(--t2)}
+.fc-date{font-family:var(--mono);font-size:13px;color:var(--t2);letter-spacing:.02em}
+.fc-date .ago{display:block;font-size:11px;color:var(--t4);margin-top:2px}
+.fc-go{text-align:right;color:var(--t4)}
+table.fleet tbody tr:hover .fc-go{color:var(--amber)}
+
+/* ── aircraft detail ── */
+.ad-hero{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.ad-id .reg{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-.02em;color:var(--display);line-height:1}
+.ad-id .sub{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.06em;margin-top:8px}
+.ad-hero-meta{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.ad-nextvisit{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.06em;text-transform:uppercase}
+.ad-nextvisit b{color:var(--t2);font-weight:600}
+
+.ad-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:24px;align-items:start}
+@media (max-width:900px){.ad-grid{grid-template-columns:1fr}}
+
+/* kv rows */
+.kv{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
+.kv:last-child{border-bottom:none}
+.kv .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.kv .v{font-family:var(--sans);font-size:14px;color:var(--t1);font-weight:500;text-align:right}
+.kv .v.mono{font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:var(--t2)}
+
+/* report viewer */
+.rv{display:flex;flex-direction:column;gap:16px}
+.rv-doc{position:relative;background:#f4f1ea;color:#1a1d24;border:1px solid var(--line2);border-radius:var(--r);padding:30px 30px 36px;overflow:hidden;min-height:280px;font-family:var(--serif)}
+.rv-doc .rv-wm{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.rv-doc .rv-wm span{transform:rotate(-24deg);font-family:var(--mono);font-size:14px;letter-spacing:.18em;color:rgba(40,44,54,0.10);text-transform:uppercase;white-space:nowrap;font-weight:600;text-align:center;line-height:2.2}
+.rv-doc .rv-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#9a7016;position:relative}
+.rv-doc h4{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.01em;margin-top:8px;position:relative}
+.rv-doc .rv-deck{font-size:13px;color:#454a55;margin-top:8px;position:relative;max-width:80%}
+.rv-doc .rv-rule{height:1px;background:rgba(40,44,54,0.14);margin:18px 0;position:relative}
+.rv-doc .rv-row{display:flex;justify-content:space-between;gap:16px;font-size:12.5px;padding:5px 0;position:relative}
+.rv-doc .rv-row span:first-child{color:#6a6f7a}
+.rv-doc .rv-row span:last-child{font-family:var(--mono);font-weight:600}
+.rv-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rv-meta .info{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em;line-height:1.6}
+
+/* list rows (anomalies / alerts / documents) — list-row typography canon */
+.lrow{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.lrow:last-child{border-bottom:none}
+.lrow:hover{background:var(--bg3)}
+.lrow .ico{width:32px;height:32px;border-radius:6px;flex-shrink:0;border:1px solid var(--line2);background:var(--bg3);display:grid;place-items:center;color:var(--t3)}
+.lrow .ico svg{width:16px;height:16px}
+.lrow .body{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
+.lrow .body .hd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lrow .body h4{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);line-height:1.35}
+.lrow .body p{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.lrow .body .metaln{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;display:flex;gap:14px;flex-wrap:wrap;margin-top:2px}
+.lrow .body .metaln b{color:var(--t2);font-weight:600}
+.lrow .side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 16px;border-radius:var(--r);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line2);background:var(--bg3);color:var(--t1);transition:background .15s,border-color .15s,color .15s}
+.btn:hover{background:var(--bg-hover);border-color:var(--line3)}
+.btn.primary{background:var(--amber);color:#000;border-color:var(--amber)}
+.btn.primary:hover{background:#fff}
+.btn.sm{height:28px;padding:0 12px;font-size:10px}
+.btn svg{width:14px;height:14px}
+.empty{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em;padding:24px 16px;text-align:center}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);z-index:200;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  background:var(--bg3);border:1px solid var(--line2);border-left:3px solid var(--amber);border-radius:var(--r);padding:13px 18px;max-width:min(540px,90vw);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast .tt{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--t1)}
+#toast .td{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em;margin-top:4px;word-break:break-all}
+
+.foot{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.08em;text-align:center;line-height:1.8;padding-top:8px}
+.foot span{color:var(--amber)}
+
+@media (max-width:640px){
+  .ls{grid-template-columns:1fr;max-width:420px;min-height:0}.ll{display:none}.lr{padding:30px 24px}
+  .summary{grid-template-columns:1fr 1fr}
+  .phead .desc{display:none}
+  .user .who{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════ LOGIN ══════════════════════════════ -->
+<div id="login">
+  <div class="ls">
+    <div class="ll">
+      <div class="bm"><img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" style="height:32px;width:auto;opacity:.95;flex-shrink:0"/></div>
+      <div>
+        <div class="lh">Your fleet,<br><em>under watch.</em></div>
+        <p class="lsub">The Andara FleetWatch client portal. Quarterly surveillance reports, open anomalies, AOG alerts and every deliverable Andara has shipped — per aircraft, in one place.</p>
+      </div>
+      <div class="lmeta">
+        <div class="lmr"><span>Surface</span><strong>Client Portal · FleetWatch</strong></div>
+        <div class="lmr"><span>PRD</span><strong>§3.2.3 — FleetWatch Dashboard</strong></div>
+        <div class="lmr"><span>Account</span><strong>Fidelity Bank · Aviation Finance</strong></div>
+        <div class="lmr"><span>Classification</span><strong>Restricted · Subscriber</strong></div>
+      </div>
+    </div>
+    <div class="lr">
+      <h2>Client sign-in</h2>
+      <p>FleetWatch surveillance portal. Authorised subscriber seats only.</p>
+      <div class="fld"><label>Institutional email</label><input id="em" type="email" placeholder="name@institution.com" autocomplete="username"/></div>
+      <div class="fld"><label>Access key</label>
+        <div class="pw-wrap">
+          <input id="pw" type="password" placeholder="•••••••••" autocomplete="current-password"/>
+          <button type="button" id="pwToggle" class="pw-eye" aria-label="Show access key" aria-pressed="false">
+            <svg class="pw-eye-on"  viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="pw-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M3 3l18 18"/><path d="M10.6 6.1A10.7 10.7 0 0 1 12 6c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.3 4.2"/><path d="M6.6 7.5C3.8 9.4 2 12 2 12s3.5 7 10 7c1.7 0 3.2-.3 4.5-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+          </button>
+        </div>
+      </div>
+      <button type="button" class="lbtn" id="lbtn" onclick="_login();return false;">Enter portal →</button>
+      <div id="lerr" class="lerr">Access key not recognised.</div>
+      <div class="lnote">
+        <div><b>Demo seat</b> — <span>ops@fidelitybank.com</span></div>
+        <div><b>Access key</b> — <span>andara2026</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Standalone login — isolated so it works regardless of any error elsewhere.
+function _logAuthEvent(action,email,status,note){
+  try{var key='andara.fw.portal.audit.auth.v1';var arr=JSON.parse(localStorage.getItem(key)||'[]');
+    var d=new Date(),p=function(n){return String(n).padStart(2,'0');};
+    var ts=d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes());
+    arr.unshift({ts:ts,user:email||'—',crit:action,src:'Auth',status:status,note:note||'',ip:'—'});
+    if(arr.length>200)arr.length=200;localStorage.setItem(key,JSON.stringify(arr));}catch(_){}
+}
+function _login(){
+  var em=(document.getElementById('em').value||'').trim();
+  var pw=(document.getElementById('pw').value||'').trim();
+  var err=document.getElementById('lerr');
+  if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';_logAuthEvent('Login attempt',em||'—','Rejected · missing fields','Email and access key required');return;}
+  var userOk=false;
+  try{var users=JSON.parse(localStorage.getItem('andara.fw.portal.users.v1')||'{}');var u=users[em.toLowerCase()];if(u&&u.password&&pw===u.password)userOk=true;}catch(_){}
+  if(pw!=='andara2026' && !userOk){err.textContent='Access key not recognised.';err.style.display='block';_logAuthEvent('Login attempt',em,'Rejected · bad key','Access key not recognised');return;}
+  try{localStorage.setItem('andara.fw.portal.auth',JSON.stringify({email:em,ts:Date.now()}));}catch(_){}
+  _logAuthEvent('Login',em,'Authenticated','Portal session opened');
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='flex';
+  if(typeof enterPortal==='function'){try{enterPortal(em);}catch(e){console.error('[login] enterPortal threw:',e);}}
+}
+document.getElementById('em').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('pw').focus();}});
+document.getElementById('pw').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();_login();}});
+</script>
+
+<!-- ══════════════════════════════ APP ══════════════════════════════ -->
+<div id="app">
+  <header class="tb">
+    <div class="tb-brand">
+      <div class="mark">A</div>
+      <div><div class="name">Andara</div><div class="sub">FleetWatch · Client Portal</div></div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-clock" id="clk">--:--</span>
+      <div class="user">
+        <div class="av" id="uAv">F</div>
+        <div class="who"><b id="uName">Client</b><span id="uOrg">Fidelity Bank</span></div>
+      </div>
+      <button class="tb-signout" type="button" id="signOut">Sign out</button>
+    </div>
+  </header>
+
+  <!-- FLEET LIST VIEW -->
+  <div class="view" id="vw-fleet">
+    <div class="phead">
+      <div>
+        <div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div>
+        <h1>Fleet under surveillance</h1>
+      </div>
+      <div class="desc">Aircraft Andara monitors under your FleetWatch contract. Select an aircraft for its report, anomalies, alerts and deliverables.</div>
+    </div>
+
+    <div class="summary" id="fleetSummary"></div>
+
+    <div class="panel">
+      <div class="ph"><span class="bullet"></span><h3>Fleet list</h3><span class="meta" id="fleetCount">—</span></div>
+      <div class="tblwrap">
+        <table class="fleet">
+          <colgroup>
+            <col style="width:13%"><col style="width:11%"><col style="width:17%"><col style="width:19%"><col style="width:15%"><col style="width:12%"><col style="width:9%"><col style="width:4%">
+          </colgroup>
+          <thead><tr>
+            <th>Registration</th><th>MSN</th><th>Type</th><th>Operator</th><th>Surveillance state</th><th>Last visit</th><th>Next visit</th><th></th>
+          </tr></thead>
+          <tbody id="fleetBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="foot">Andara FleetWatch · Client Portal · Restricted — Subscriber<br>PRD §3.2.3 — Fleet list · Aircraft detail · Quarterly report · Anomalies · Alerts · Documents</div>
+  </div>
+
+  <!-- AIRCRAFT DETAIL VIEW -->
+  <div class="view" id="vw-aircraft" style="display:none">
+    <div class="crumb"><a id="crumbBack">Fleet under surveillance</a><span class="sep">/</span><span class="cur" id="crumbReg">—</span></div>
+
+    <div class="ad-hero">
+      <div class="ad-id">
+        <div class="reg" id="adReg">—</div>
+        <div class="sub" id="adSub">—</div>
+      </div>
+      <div class="ad-hero-meta">
+        <span class="pill" id="adState"><span class="dot"></span><span></span></span>
+        <span class="ad-nextvisit">Next visit · <b id="adNext">—</b></span>
+      </div>
+    </div>
+
+    <div class="ad-grid">
+      <!-- LEFT column -->
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <!-- Latest quarterly report viewer -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Latest quarterly report</h3><span class="meta" id="rvPeriod">—</span></div>
+          <div class="pb"><div class="rv" id="reportViewer"></div></div>
+        </div>
+        <!-- Open anomalies -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Open anomalies</h3><span class="meta" id="anomCount">—</span></div>
+          <div id="anomList"></div>
+        </div>
+      </div>
+      <!-- RIGHT column -->
+      <div style="display:flex;flex-direction:column;gap:24px">
+        <!-- Surveillance contract -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Surveillance contract</h3></div>
+          <div class="pb" id="contractKv"></div>
+        </div>
+        <!-- Alert history -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Alert history</h3><span class="meta" id="alertCount">—</span></div>
+          <div id="alertList"></div>
+        </div>
+        <!-- Document index -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Document index</h3><span class="meta" id="docCount">—</span></div>
+          <div id="docList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"><div class="tt" id="toastTt"></div><div class="td" id="toastTd"></div></div>
+
+<script>
+/* ══════════════════════════════ MAIN APP ══════════════════════════════ */
+function el(id){return document.getElementById(id);}
+function _p(n){return String(n).padStart(2,'0');}
+function _initials(s){return (s||'A').split(/\s+/).filter(Boolean).slice(0,2).map(function(p){return p[0].toUpperCase();}).join('')||'A';}
+
+/* date helpers */
+function today(){return new Date('2026-06-22T00:00:00Z');}
+function parseYMD(s){var p=s.split('-');return new Date(Date.UTC(+p[0],+p[1]-1,+p[2]));}
+function daysBetween(a,b){return Math.round((b-a)/86400000);}
+function fmtDate(s){var d=parseYMD(s);var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return d.getUTCDate()+' '+m[d.getUTCMonth()]+' '+d.getUTCFullYear();}
+function relDays(s){var d=daysBetween(today(),parseYMD(s));
+  if(d===0)return 'today';
+  if(d<0)return Math.abs(d)+'d ago';
+  return 'in '+d+'d';}
+
+/* surveillance state from next-visit date */
+function svState(a){
+  var d=daysBetween(today(),parseYMD(a.nextVisit));
+  if(a.reportReady)return {cls:'sv-rep',lbl:'Report ready'};
+  if(d<0)return {cls:'sv-over',lbl:'Visit overdue'};
+  if(d<=30)return {cls:'sv-due',lbl:'Visit due'};
+  return {cls:'sv-ok',lbl:'On schedule'};
+}
+
+/* ── watermark + audit (PRD §3.2.6 — every download regenerated w/ user token, logged) ── */
+function _fnv1a(str){var h=0x811c9dc5;for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=(h*0x01000193)>>>0;}return ('00000000'+h.toString(16)).slice(-8);}
+function portalEmail(){try{return (JSON.parse(localStorage.getItem('andara.fw.portal.auth')||'{}')).email||'subscriber';}catch(_){return'subscriber';}}
+function nowTs(){var d=new Date();return d.getUTCFullYear()+'-'+_p(d.getUTCMonth()+1)+'-'+_p(d.getUTCDate())+' '+_p(d.getUTCHours())+':'+_p(d.getUTCMinutes());}
+var AUDIT=[];
+try{AUDIT=JSON.parse(localStorage.getItem('andara.fw.portal.audit.v1')||'[]');}catch(_){AUDIT=[];}
+function fwLogDeliverable(o){
+  var user=portalEmail();
+  var seed=user+'|'+o.deliverable+'|'+(o.aircraft||'')+'|'+Date.now()+'|'+Math.random();
+  var token='tok-'+_fnv1a(seed);
+  var deliverableId='AND-FW-'+(o.deliverable||'DOC').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,16)+'-'+_fnv1a(seed).slice(0,4).toUpperCase();
+  AUDIT.unshift({ts:nowTs(),user:user,aircraft:o.aircraft||'—',deliverable:o.deliverable,format:o.format||'PDF',status:'Delivered',ip:'—',deliverableId:deliverableId,token:token});
+  if(AUDIT.length>400)AUDIT.length=400;
+  try{localStorage.setItem('andara.fw.portal.audit.v1',JSON.stringify(AUDIT));}catch(_){}
+  return {user:user,token:token,deliverableId:deliverableId};
+}
+function downloadStub(filename,bodyText){
+  try{var blob=new Blob([bodyText],{type:'text/plain'});var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(url);a.remove();},400);}catch(_){}
+}
+function toast(title,detail){
+  el('toastTt').textContent=title;el('toastTd').textContent=detail||'';
+  var t=el('toast');t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove('show');},4200);
+}
+
+/* ── data: this client's fleet under FleetWatch surveillance ── */
+var FLEET=[
+  {id:'msn-39041',reg:'5N-BQM',msn:'39041',type:'Boeing 737-800',operator:'Air Peace',tier:'Tier 1 · Monthly',contractId:'FW-CT-1042',coverageStart:'2025-09-01',scope:'Records · Ramp · MRO',
+   lastVisit:'2026-05-18',nextVisit:'2026-06-18',reportReady:true,
+   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-15',pages:24,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   anomalies:[
+     {id:'a1',title:'No.2 engine borescope — early-stage HPC blade tip wear',sev:'sev-med',sevLbl:'Medium',captured:'2026-05-18',visit:'MRO observation · Lagos',status:'ast-open',statusLbl:'Open'},
+     {id:'a2',title:'Cabin door seal degradation (L2)',sev:'sev-low',sevLbl:'Low',captured:'2026-05-18',visit:'Ramp inspection · Lagos',status:'ast-mon',statusLbl:'Monitoring'}
+   ],
+   alerts:[{id:'al1',title:'AOG — hydraulic system B pressure loss',dispatched:'2026-04-03 08:14',ack:'2026-04-03 08:41'}],
+   docs:[
+     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-15'},
+     {id:'d2',name:'Visit pack — MRO observation (May)',kind:'Visit pack',date:'2026-05-18'},
+     {id:'d3',name:'Anomaly evidence — HPC blade borescope',kind:'Evidence',date:'2026-05-18'},
+     {id:'d4',name:'FleetWatch Quarterly — Q1 2026',kind:'Report',date:'2026-03-15'},
+     {id:'d5',name:'Surveillance contract — FW-CT-1042',kind:'Contract',date:'2025-09-01'}
+   ]},
+  {id:'msn-6512',reg:'5N-JEA',msn:'6512',type:'Airbus A320-200',operator:'Ibom Air',tier:'Tier 1 · Monthly',contractId:'FW-CT-1051',coverageStart:'2025-10-01',scope:'Records · Ramp',
+   lastVisit:'2026-05-02',nextVisit:'2026-06-02',reportReady:false,
+   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-10',pages:21,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   anomalies:[
+     {id:'a1',title:'Nose landing gear shimmy damper — minor weep',sev:'sev-low',sevLbl:'Low',captured:'2026-05-02',visit:'Ramp inspection · Uyo',status:'ast-mon',statusLbl:'Monitoring'}
+   ],
+   alerts:[],
+   docs:[
+     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-10'},
+     {id:'d2',name:'Visit pack — Ramp inspection (May)',kind:'Visit pack',date:'2026-05-02'},
+     {id:'d5',name:'Surveillance contract — FW-CT-1051',kind:'Contract',date:'2025-10-01'}
+   ]},
+  {id:'msn-17004',reg:'5N-GAA',msn:'17004',type:'Embraer E175',operator:'Green Africa',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1066',coverageStart:'2025-11-01',scope:'Records · Ramp · MRO',
+   lastVisit:'2026-03-20',nextVisit:'2026-06-20',reportReady:false,
+   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-12',pages:19,verdict:'Continue surveillance',condition:'Minor findings logged',visits:1}],
+   anomalies:[
+     {id:'a1',title:'APU oil consumption trending above baseline',sev:'sev-med',sevLbl:'Medium',captured:'2026-03-20',visit:'MRO observation · Lagos',status:'ast-open',statusLbl:'Open'},
+     {id:'a2',title:'Two cabin window crazing (rows 8–9)',sev:'sev-low',sevLbl:'Low',captured:'2026-03-20',visit:'Records review',status:'ast-res',statusLbl:'Resolved'}
+   ],
+   alerts:[],
+   docs:[
+     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-12'},
+     {id:'d2',name:'Visit pack — MRO observation (Mar)',kind:'Visit pack',date:'2026-03-20'},
+     {id:'d5',name:'Surveillance contract — FW-CT-1066',kind:'Contract',date:'2025-11-01'}
+   ]},
+  {id:'msn-2887',reg:'5N-UNA',msn:'2887',type:'Embraer ERJ-145',operator:'United Nigeria',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1071',coverageStart:'2025-12-01',scope:'Records · Ramp',
+   lastVisit:'2026-02-28',nextVisit:'2026-05-28',reportReady:false,
+   reports:[{id:'r1',title:'FleetWatch Quarterly — Q1 2026',period:'Q1 2026',issued:'2026-03-18',pages:18,verdict:'Heightened surveillance',condition:'Records gaps — see anomalies',visits:1}],
+   anomalies:[
+     {id:'a1',title:'Maintenance records gap — 2 line checks undocumented',sev:'sev-high',sevLbl:'High',captured:'2026-02-28',visit:'Records review · Enugu',status:'ast-open',statusLbl:'Open'},
+     {id:'a2',title:'Tyre wear beyond advisory on MLG #3',sev:'sev-med',sevLbl:'Medium',captured:'2026-02-28',visit:'Ramp inspection · Enugu',status:'ast-open',statusLbl:'Open'}
+   ],
+   alerts:[{id:'al1',title:'AOG — bird strike, No.1 engine inspection',dispatched:'2026-05-21 14:32',ack:null}],
+   docs:[
+     {id:'d1',name:'FleetWatch Quarterly — Q1 2026',kind:'Report',date:'2026-03-18'},
+     {id:'d2',name:'Visit pack — Records review (Feb)',kind:'Visit pack',date:'2026-02-28'},
+     {id:'d3',name:'Anomaly evidence — records gap memo',kind:'Evidence',date:'2026-02-28'},
+     {id:'d5',name:'Surveillance contract — FW-CT-1071',kind:'Contract',date:'2025-12-01'}
+   ]},
+  {id:'msn-30622',reg:'5N-MRT',msn:'30622',type:'Boeing 737-700',operator:'Max Air',tier:'Tier 1 · Monthly',contractId:'FW-CT-1080',coverageStart:'2026-01-15',scope:'Records · Ramp · MRO',
+   lastVisit:'2026-06-01',nextVisit:'2026-07-01',reportReady:false,
+   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-14',pages:22,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   anomalies:[],
+   alerts:[],
+   docs:[
+     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-14'},
+     {id:'d2',name:'Visit pack — MRO observation (Jun)',kind:'Visit pack',date:'2026-06-01'},
+     {id:'d5',name:'Surveillance contract — FW-CT-1080',kind:'Contract',date:'2026-01-15'}
+   ]}
+];
+function findAircraft(id){for(var i=0;i<FLEET.length;i++)if(FLEET[i].id===id)return FLEET[i];return null;}
+
+/* ── FLEET LIST render ── */
+function renderFleet(){
+  // summary strip
+  var total=FLEET.length, onSched=0, due=0, openAlerts=0;
+  FLEET.forEach(function(a){
+    var s=svState(a);
+    if(s.cls==='sv-ok'||s.cls==='sv-rep')onSched++;
+    if(s.cls==='sv-due'||s.cls==='sv-over')due++;
+    a.alerts.forEach(function(al){if(!al.ack)openAlerts++;});
+  });
+  el('fleetSummary').innerHTML=
+    cell('Aircraft monitored',total,'Under FleetWatch contract','')+
+    cell('On schedule',onSched,'Within surveillance cadence','ok')+
+    cell('Visits due / overdue',due,'Need scheduling attention','due')+
+    cell('Open AOG alerts',openAlerts,'Awaiting acknowledgement',openAlerts?'alert':'');
+
+  el('fleetCount').textContent=total+' aircraft';
+  var rows=FLEET.map(function(a){
+    var s=svState(a);
+    return '<tr onclick="showAircraft(\''+a.id+'\')">'
+      +'<td class="fc-reg">'+a.reg+'</td>'
+      +'<td class="fc-msn">'+a.msn+'</td>'
+      +'<td class="fc-type">'+a.type+'</td>'
+      +'<td class="fc-op">'+a.operator+'</td>'
+      +'<td><span class="pill '+s.cls+'"><span class="dot"></span>'+s.lbl+'</span></td>'
+      +'<td class="fc-date">'+fmtDate(a.lastVisit)+'<span class="ago">'+relDays(a.lastVisit)+'</span></td>'
+      +'<td class="fc-date">'+fmtDate(a.nextVisit)+'<span class="ago">'+relDays(a.nextVisit)+'</span></td>'
+      +'<td class="fc-go">&rsaquo;</td>'
+      +'</tr>';
+  }).join('');
+  el('fleetBody').innerHTML=rows;
+}
+function cell(lbl,num,cap,cls){
+  return '<div class="cell"><span class="lbl">'+lbl+'</span><span class="num'+(cls?' '+cls:'')+'">'+num+'</span><span class="cap">'+cap+'</span></div>';
+}
+
+/* ── AIRCRAFT DETAIL render ── */
+function showAircraft(id){
+  var a=findAircraft(id);if(!a)return;
+  el('vw-fleet').style.display='none';
+  el('vw-aircraft').style.display='flex';
+  window.scrollTo(0,0);
+
+  el('crumbReg').textContent=a.reg;
+  el('adReg').textContent=a.reg;
+  el('adSub').textContent=a.type+'  ·  MSN '+a.msn+'  ·  '+a.operator;
+  var s=svState(a);
+  var sp=el('adState');sp.className='pill '+s.cls;sp.innerHTML='<span class="dot"></span>'+s.lbl;
+  el('adNext').textContent=fmtDate(a.nextVisit)+' ('+relDays(a.nextVisit)+')';
+
+  // contract kv
+  el('contractKv').innerHTML=
+    kv('Contract ID',a.contractId,true)+
+    kv('Surveillance tier',a.tier,false)+
+    kv('Coverage start',fmtDate(a.coverageStart),false)+
+    kv('Visit scope',a.scope,false)+
+    kv('Last visit',fmtDate(a.lastVisit)+' · '+relDays(a.lastVisit),false)+
+    kv('Next visit',fmtDate(a.nextVisit)+' · '+relDays(a.nextVisit),false);
+
+  // latest quarterly report viewer
+  var rep=a.reports[0];
+  el('rvPeriod').textContent=rep?rep.period:'—';
+  if(rep){
+    var wmUser=portalEmail();
+    var wmLine=(wmUser+' · ANDARA FLEETWATCH · '+rep.period+' · ').repeat(8);
+    el('reportViewer').innerHTML=
+      '<div class="rv-doc">'
+        +'<div class="rv-wm"><span>'+wmLine+'</span></div>'
+        +'<div class="rv-eyebrow">Andara FleetWatch · Quarterly surveillance report</div>'
+        +'<h4>'+a.reg+' — '+rep.title+'</h4>'
+        +'<div class="rv-deck">'+a.type+' · MSN '+a.msn+' · operated by '+a.operator+'. Prepared for Fidelity Bank under contract '+a.contractId+'.</div>'
+        +'<div class="rv-rule"></div>'
+        +'<div class="rv-row"><span>Reporting period</span><span>'+rep.period+'</span></div>'
+        +'<div class="rv-row"><span>Visits this period</span><span>'+rep.visits+'</span></div>'
+        +'<div class="rv-row"><span>Open anomalies</span><span>'+a.anomalies.filter(function(x){return x.status!=='ast-res';}).length+'</span></div>'
+        +'<div class="rv-row"><span>Airframe condition</span><span>'+rep.condition+'</span></div>'
+        +'<div class="rv-row"><span>Surveillance recommendation</span><span>'+rep.verdict+'</span></div>'
+      +'</div>'
+      +'<div class="rv-meta">'
+        +'<div class="info">Issued '+fmtDate(rep.issued)+' · '+rep.pages+' pp · Watermarked PDF<br>Preview bears your seat watermark; download regenerates a fresh token.</div>'
+        +'<button class="btn primary" type="button" onclick="downloadReport(\''+a.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>Download PDF</button>'
+      +'</div>';
+  }else{
+    el('reportViewer').innerHTML='<div class="empty">No quarterly report issued yet for this aircraft.</div>';
+  }
+
+  // open anomalies — PRD §3.2.3: this is the OPEN list, so resolved are excluded
+  var openAnoms=a.anomalies.filter(function(x){return x.status!=='ast-res';});
+  el('anomCount').textContent=openAnoms.length+' open';
+  if(openAnoms.length){
+    el('anomList').innerHTML=openAnoms.map(function(an){
+      return '<div class="lrow">'
+        +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>'
+        +'<div class="body"><div class="hd"><h4>'+an.title+'</h4></div>'
+          +'<div class="metaln"><span>Captured <b>'+fmtDate(an.captured)+'</b></span><span>'+an.visit+'</span></div></div>'
+        +'<div class="side"><span class="pill '+an.sev+'">'+an.sevLbl+'</span><span class="pill '+an.status+'">'+an.statusLbl+'</span></div>'
+      +'</div>';
+    }).join('');
+  }else{
+    el('anomList').innerHTML='<div class="empty">No open anomalies on this aircraft.</div>';
+  }
+
+  // alert history
+  el('alertCount').textContent=a.alerts.length+(a.alerts.length===1?' alert':' alerts');
+  if(a.alerts.length){
+    el('alertList').innerHTML=a.alerts.map(function(al){
+      var acked=!!al.ack;
+      return '<div class="lrow">'
+        +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>'
+        +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip amber">AOG</span></div>'
+          +'<div class="metaln"><span>Dispatched <b>'+al.dispatched+' UTC</b></span>'+(acked?'<span>Acknowledged <b>'+al.ack+' UTC</b></span>':'')+'</div></div>'
+        +'<div class="side">'
+          +(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')
+        +'</div>'
+      +'</div>';
+    }).join('');
+  }else{
+    el('alertList').innerHTML='<div class="empty">No AOG-class alerts dispatched on this aircraft.</div>';
+  }
+
+  // document index
+  el('docCount').textContent=a.docs.length+' files';
+  el('docList').innerHTML=a.docs.map(function(dc){
+    return '<div class="lrow">'
+      +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>'
+      +'<div class="body"><div class="hd"><h4>'+dc.name+'</h4></div>'
+        +'<div class="metaln"><span><b>'+dc.kind+'</b></span><span>'+fmtDate(dc.date)+'</span></div></div>'
+      +'<div class="side"><button class="btn sm" type="button" onclick="downloadDoc(\''+a.id+'\',\''+dc.id+'\')">Download</button></div>'
+    +'</div>';
+  }).join('');
+}
+
+function kv(k,v,mono){return '<div class="kv"><span class="k">'+k+'</span><span class="v'+(mono?' mono':'')+'">'+v+'</span></div>';}
+
+function backToFleet(){
+  el('vw-aircraft').style.display='none';
+  el('vw-fleet').style.display='flex';
+  window.scrollTo(0,0);
+}
+
+/* ── actions ── */
+function downloadReport(id){
+  var a=findAircraft(id);if(!a||!a.reports[0])return;var rep=a.reports[0];
+  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Quarterly report '+rep.period,format:'PDF'});
+  downloadStub('FleetWatch_'+a.reg+'_'+rep.period.replace(/\s/g,'')+'.txt',
+    'ANDARA FLEETWATCH — '+rep.title+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: Fidelity Bank\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n  Issued: '+nowTs()+' UTC\n\n[Stub envelope — M2 renders the full watermarked PDF server-side.]');
+  toast('Report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
+}
+function downloadDoc(id,docId){
+  var a=findAircraft(id);if(!a)return;var dc=null;a.docs.forEach(function(x){if(x.id===docId)dc=x;});if(!dc)return;
+  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:dc.kind+' — '+dc.name,format:'PDF'});
+  downloadStub('FleetWatch_'+a.reg+'_'+dc.name.replace(/[^A-Za-z0-9]+/g,'_')+'.txt',
+    'ANDARA FLEETWATCH DELIVERABLE\n'+dc.name+'\nType: '+dc.kind+'\nAircraft '+a.reg+'\nDate '+fmtDate(dc.date)+'\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n\n[Stub envelope — M2 renders the watermarked file server-side.]');
+  toast('Deliverable downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
+}
+function ackAlert(id,alId){
+  var a=findAircraft(id);if(!a)return;
+  a.alerts.forEach(function(al){if(al.id===alId)al.ack=nowTs();});
+  AUDIT.unshift({ts:nowTs(),user:portalEmail(),aircraft:a.reg,deliverable:'AOG alert acknowledged',format:'—',status:'Acknowledged',ip:'—',deliverableId:'—',token:'—'});
+  try{localStorage.setItem('andara.fw.portal.audit.v1',JSON.stringify(AUDIT));}catch(_){}
+  showAircraft(id);renderFleet();
+  toast('AOG alert acknowledged','Acknowledgement logged · '+nowTs()+' UTC');
+}
+
+/* ── shell boot ── */
+var _clk=null;
+function startClock(){function t(){var d=new Date();var c=el('clk');if(c)c.textContent=_p(d.getUTCHours())+':'+_p(d.getUTCMinutes())+' UTC';}t();if(_clk)clearInterval(_clk);_clk=setInterval(t,20000);}
+function enterPortal(email){
+  var local=(email||'').split('@')[0]||'client';
+  var name=local.split(/[._-]/).map(function(p){return p?p[0].toUpperCase()+p.slice(1):p;}).join(' ');
+  el('uName').textContent=name||'Client';
+  el('uAv').textContent=_initials(name);
+  renderFleet();
+  backToFleet();
+  startClock();
+}
+
+el('crumbBack').addEventListener('click',backToFleet);
+el('signOut').addEventListener('click',function(){
+  var email=portalEmail();
+  try{localStorage.removeItem('andara.fw.portal.auth');}catch(_){}
+  if(typeof _logAuthEvent==='function')_logAuthEvent('Sign out',email,'Signed out','Portal session ended');
+  el('app').style.display='none';el('login').style.display='flex';el('pw').value='';
+});
+
+/* eye-toggle via delegation (never wire an inline onclick on #pwToggle — double-fires) */
+document.addEventListener('click',function(e){
+  var btn=e.target.closest&&e.target.closest('#pwToggle');if(!btn)return;
+  var pw=el('pw');if(!pw)return;var showing=pw.type==='text';
+  pw.type=showing?'password':'text';
+  btn.setAttribute('aria-pressed',String(!showing));
+  btn.setAttribute('aria-label',showing?'Show access key':'Hide access key');
+  var on=btn.querySelector('.pw-eye-on'),off=btn.querySelector('.pw-eye-off');
+  if(on)on.style.display=showing?'':'none';if(off)off.style.display=showing?'none':'';
+});
+
+/* restore session */
+(function tryRestoreSession(){
+  try{var raw=localStorage.getItem('andara.fw.portal.auth');if(!raw)return;var a=JSON.parse(raw);if(!a||!a.email)return;
+    if(typeof _logAuthEvent==='function')_logAuthEvent('Session restore',a.email,'Authenticated','Restored from local session token');
+    el('login').style.display='none';el('app').style.display='flex';enterPortal(a.email);}catch(_){}
+})();
+</script>
+</body>
+</html>

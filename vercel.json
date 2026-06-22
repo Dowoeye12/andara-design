@@ -8,6 +8,10 @@
     { "source": "/intelligence/(.*)", "destination": "/intelligence/$1" },
     { "source": "/credit-intelligence/africa", "destination": "/credit-intelligence/africa/index.html" },
     { "source": "/credit-intelligence/africa/(.*)", "destination": "/credit-intelligence/africa/$1" },
+    { "source": "/fleetwatch/capture", "destination": "/fleetwatch/capture/index.html" },
+    { "source": "/fleetwatch/capture/(.*)", "destination": "/fleetwatch/capture/$1" },
+    { "source": "/fleetwatch/portal", "destination": "/fleetwatch/portal/index.html" },
+    { "source": "/fleetwatch/portal/(.*)", "destination": "/fleetwatch/portal/$1" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }

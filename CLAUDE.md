@@ -672,9 +672,65 @@ Phases 2–6 (issue archive redesign, auth + tokenised watermark, seat managemen
 
 ---
 
+## FleetWatch surfaces — build log (PRD-aligned, feature-by-feature)
+
+We are building the **FleetWatch product line** out of the PRD, one feature at a time, each
+reusing the Credit Intelligence terminal design system verbatim (pure-black canvas, desaturated
+amber, ink tiers + `--display`, Hanken Grotesk + IBM Plex Mono, 10/12/14 font floors, fixed-height
+inline-flex pills with `margin:0`, 16/8/24 rhythm, list-row typography canon, info/actionable/status
+chip-colour rule, namespaced table cells + `<colgroup>`, breadcrumb-on-subpage, isolated `_login()`
++ delegated `#pwToggle` with no inline onclick, session restore, watermark+audit on every download).
+
+Each surface is a **self-contained static HTML app** under `public/fleetwatch/`, served via the
+dev middleware + `vercel.json` rewrites (both already wired). They are **separate surfaces for
+separate audiences** — do not cross-link them in nav.
+
+### `/fleetwatch/portal` — Client Portal · FleetWatch Dashboard (PRD §3.2.3) — COMPLETE
+
+What institutional clients (banks/lessors/DFIs) see. File: `public/fleetwatch/portal/index.html`.
+Demo: `ops@fidelitybank.com` / `andara2026`. Session key `andara.fw.portal.auth`.
+
+All six §3.2.3 features built: **Fleet list** (MSN/type/operator/surveillance-state/last+next visit +
+summary stat strip), **Aircraft detail page** (breadcrumb subpage `Fleet / <reg>`), **Latest quarterly
+report viewer** (inline cream-PDF preview bearing a diagonal seat-watermark + watermarked Download),
+**Open anomalies list** (severity/capture-date/source-visit/status — **filtered to non-resolved**, the
+panel is the *open* list per the PRD title), **Alert history** (all AOG alerts, dispatch + ack time,
+client Acknowledge button writes audit), **Document index** (all deliverables, type chip + watermarked
+download). Watermark/audit via `fwLogDeliverable()` → `AUDIT` + `andara.fw.portal.audit.v1` (M2 moves
+token generation server-side per §3.2.6). Data is a static `FLEET[]` seed (Nigerian AOCs, M1 scope).
+
+### `/fleetwatch/capture` — Field Agent App · FleetWatch Capture (PRD §3.4.3) — IN PROGRESS
+
+What Andara field agents use on-site. File: `public/fleetwatch/capture/index.html`. Demo:
+`field.agent@andara.com` / `andara2026`. Session key `andara.fw.agent.auth`.
+
+- **#1 Agent login (offline-first, cached credentials)** — DONE. Online enrolment validates the key
+  then caches `{email, keyHash (FNV-1a, never cleartext), agent, enrolledTs, lastOnlineAuthTs}` to
+  `andara.fw.agent.cred.v1`; offline sign-in validates the entered key against the cache. Live
+  online/offline pill (`navigator.onLine` + events). Auth events → `andara.fw.audit.auth.v1`.
+- **#2 Visit list** — DONE. Static `VISITS[]` keyed by agent id (M2 syncs from FleetWatch Operations
+  §3.4.5 "Assign visit"). Rows show aircraft (reg+type+MSN+operator), location, due date + a
+  due-urgency chip (`due-over/now/soon/ok` reusing the validity ramp), sorted overdue-first. Panel is
+  **collapsible** (header toggle, persisted to `andara.fw.capture.visitsCollapsed`) — a builder
+  convenience so the rest of the page is reviewable; same pattern as the CI sidebar groups.
+- **#3 Visit capture flow** — NEXT (per-visit-type structured form: record review / ramp / MRO).
+- #4 Photo capture · #5 Document scan · #6 Offline persistence · #7 Sync on reconnection ·
+  #8 Visit history — PLANNED. The post-login "Capture workflow" panel scaffolds all 8 with Live/Next/
+  Planned tags; flip the tag when each ships.
+
+### Backend boundary (when wiring real data)
+
+Everything currently runs front-end-only (static seeds + localStorage). In production the Client
+Portal features are server-backed reads; the Field Agent App is offline-first (device is the working
+surface, backend only **assigns in** via a FleetWatch Operations "assign visit" API and **syncs out**
+via a capture-intake endpoint). Offline persistence (#6) is intentionally local-only.
+
+---
+
 ## Reference Documents
 
 - `Andara_Master_Build_PRD_v1_5.md` — Master Build PRD covering Client Portal, Super Admin Console, and Andara Internal Workspace across three milestones. **INTERNAL — RESTRICTED.** All product work should reference the relevant PRD section.
+- `andara_prd_export.md` — Fresh Markdown export of the same Master Build PRD (imported from Google Docs); identical content to `Andara_Master_Build_PRD_v1_5.md`, kept alongside it.
 
 ---
 
@@ -701,6 +757,8 @@ The dev middleware **auto-discovers** any folder under `public/` that contains a
 | `src/lib/content.ts` | `NAV_ITEMS` + global content constants (CTA text, etc.) |
 | `src/App.tsx` | React Router routes |
 | `public/credit-intelligence/africa/index.html` | Africa terminal page (patched output) |
+| `public/fleetwatch/portal/index.html` | FleetWatch **Client Portal Dashboard** (PRD §3.2.3 — complete) |
+| `public/fleetwatch/capture/index.html` | FleetWatch **Field Agent App** (PRD §3.4.3 — Agent login + Visit list shipped) |
 | `scripts/patch-africa-page.py` | Patch automation script |
 | `andara_export/` | Raw HTML exports from design tool (not served) |
 | `public/intelligence/air.css` | Shared AIR design system |
