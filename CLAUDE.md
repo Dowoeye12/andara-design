@@ -718,9 +718,51 @@ What Andara field agents use on-site. File: `public/fleetwatch/capture/index.htm
   Tapping a visit opens the form; drafts auto-save to `andara.fw.capture.drafts.v1` (offline-first,
   the base for #6); status selects are severity-tinted; a progress counter and "Complete capture"
   flip the visit row state Not started / In progress / Captured.
-- **#4 Photo capture** — NEXT. #5 Document scan · #6 Offline persistence · #7 Sync on reconnection ·
-  #8 Visit history — PLANNED. The post-login "Capture workflow" panel scaffolds all 8 with Live/Next/
-  Planned tags; flip the tag when each ships.
+- **#4 Photo capture** — DONE. A **Photos** panel inside the visit-capture flow (`renderCapture`):
+  `Take photo` (`<input type=file accept=image/* capture=environment>`, opens the device camera on
+  mobile) + `Add from library` (multi-select). `processPhoto()` runs each file through
+  `createImageBitmap(file,{imageOrientation:'from-image'})` then a canvas re-encode (max 1280px long
+  edge, JPEG q0.82) so EXIF orientation is baked in, EXIF stripped, and the data URL fits the offline
+  localStorage budget; falls back to an `<img>`/objectURL path on engines without `createImageBitmap`.
+  Photos persist into the same draft record (`rec.photos[] = {id,dataUrl,w,h,ts,caption}`) under
+  `andara.fw.capture.drafts.v1`, so they're already queued for #6/#7. Per-photo caption (auto-saves)
+  + remove. `capSaveAll()` now returns a boolean; the add path rolls back the push and surfaces a
+  "Storage full" message if the quota throws. 2-up grid on phones (`minmax(132px,1fr)`). Capture-
+  complete audit note now includes the photo count.
+- **#5 Document scan** — DONE. A **Documents** panel (parallel to Photos, reuses the photo-grid CSS
+  with a `.cap-docs` portrait/`object-fit:contain`/dark-mount override). `Scan document`
+  (`capture=environment`) + `Add from library`. `scanProcess()` → orientation-normalise
+  (`createImageBitmap` from-image) → `estimateSkew()` → `deskewAndEnhance()`, JPEG q0.82 at max 1400px.
+  **Auto-deskew** (`estimateSkew`) is a projection-profile-variance estimator: binarise a 360px
+  grayscale copy (ink = darker than 0.82× page mean), then for candidate angles -12°..12° (coarse 1°,
+  then ±1° refine at 0.25°) bin ink pixels by their projected row `y - x·tan θ` and pick the angle
+  whose row-histogram has the highest variance (text rows aligned → peaks/troughs → max variance).
+  The page is then rotated upright on a white mount (`deskewPage`) and stored as-is. **Auto-deskew
+  only, per the exact PRD wording** ("Document capture with auto-deskew"): the document's colour and
+  content are PRESERVED, no grayscale/contrast/gamma re-processing (an earlier `deskewAndEnhance`
+  step that grayscaled + level-stretched the page was removed as out-of-spec and a fidelity risk for
+  certificates/stamps; the grayscale binarisation in `estimateSkew` is analysis-only and never
+  touches the stored image). Verified: induced skew of +7°/-4°/+6°/0° detected exactly, residual
+  ≈0°, and colour preserved (red stamp + blue ink survive). Stored as `rec.documents[] =
+  {id,dataUrl,w,h,angle,ts,caption}` in the same `andara.fw.capture.drafts.v1` draft. Card meta shows
+  `Aligned` or `Deskewed X.X°`. Same caption/remove/quota-rollback pattern as photos. Capture-complete
+  audit note includes the document count.
+- **#6 Offline persistence** — DONE. Every capture already auto-persists to
+  `andara.fw.capture.drafts.v1` as it's edited; this feature seals a completed visit into a **bundle**
+  and surfaces the held-on-device queue. `completeCapture` now sets `sync:'queued'`, `queuedTs`,
+  `queuedOffline` (was `navigator.onLine===false` at capture time) and a `bundleId` (`BND-<base36>`),
+  on top of the existing `status:'captured'`. New **"Held on this device"** panel on the home view:
+  `.offgrid` 2-cell summary (Queued for sync count · Stored offline size via `capStoreBytes()` +
+  `fmtBytes()`), a connectivity-aware `#syncHint` (online: "upload on next sync"; offline: "held …
+  will upload when you reconnect"; refreshed from `_paintAppNet`), and `#syncList` of queued bundles
+  (`queuedVisits()` = records with `status==='captured' && sync!=='synced'`, newest first) showing
+  `capCounts()` contents (`N of M fields · X photos · Y scans`), queued time, bundle id, QUEUED chip,
+  click → reopen. Visit-row chip now uses `capDisplayState()` → Not started / In progress / **Queued**
+  / **Synced** (new `.ichip.queued` info + `.ichip.synced` deploy chips). Verified: completed visit
+  survives a full reload (offline persistence), chip flips to Queued, offline hint updates live.
+  Actual upload is #7. `synced` state is reserved for #7 to flip.
+- **#7 Sync on reconnection** — NEXT. #8 Visit history — PLANNED. The post-login "Capture workflow"
+  panel scaffolds all 8 with Live/Next/Planned tags; flip the tag when each ships.
 
 Note: the FleetWatch apps contain **no em dashes** (commas instead), per a standing user preference;
 keep new copy/comments in these files em-dash-free.
@@ -765,7 +807,7 @@ The dev middleware **auto-discovers** any folder under `public/` that contains a
 | `src/App.tsx` | React Router routes |
 | `public/credit-intelligence/africa/index.html` | Africa terminal page (patched output) |
 | `public/fleetwatch/portal/index.html` | FleetWatch **Client Portal Dashboard** (PRD §3.2.3 — complete) |
-| `public/fleetwatch/capture/index.html` | FleetWatch **Field Agent App** (PRD §3.4.3 — Agent login + Visit list shipped) |
+| `public/fleetwatch/capture/index.html` | FleetWatch **Field Agent App** (PRD §3.4.3 — Agent login + Visit list + Visit capture + Photo capture + Document scan + Offline persistence shipped) |
 | `scripts/patch-africa-page.py` | Patch automation script |
 | `andara_export/` | Raw HTML exports from design tool (not served) |
 | `public/intelligence/air.css` | Shared AIR design system |
