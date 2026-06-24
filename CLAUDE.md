@@ -713,10 +713,17 @@ What Andara field agents use on-site. File: `public/fleetwatch/capture/index.htm
   due-urgency chip (`due-over/now/soon/ok` reusing the validity ramp), sorted overdue-first. Panel is
   **collapsible** (header toggle, persisted to `andara.fw.capture.visitsCollapsed`) — a builder
   convenience so the rest of the page is reviewable; same pattern as the CI sidebar groups.
-- **#3 Visit capture flow** — NEXT (per-visit-type structured form: record review / ramp / MRO).
-- #4 Photo capture · #5 Document scan · #6 Offline persistence · #7 Sync on reconnection ·
+- **#3 Visit capture flow** — DONE. Schema-driven per-visit-type forms (`VISIT_FORMS` keyed by visit
+  type: Records review / Ramp inspection / MRO observation), each a checklist + structured fields.
+  Tapping a visit opens the form; drafts auto-save to `andara.fw.capture.drafts.v1` (offline-first,
+  the base for #6); status selects are severity-tinted; a progress counter and "Complete capture"
+  flip the visit row state Not started / In progress / Captured.
+- **#4 Photo capture** — NEXT. #5 Document scan · #6 Offline persistence · #7 Sync on reconnection ·
   #8 Visit history — PLANNED. The post-login "Capture workflow" panel scaffolds all 8 with Live/Next/
   Planned tags; flip the tag when each ships.
+
+Note: the FleetWatch apps contain **no em dashes** (commas instead), per a standing user preference;
+keep new copy/comments in these files em-dash-free.
 
 ### Backend boundary (when wiring real data)
 

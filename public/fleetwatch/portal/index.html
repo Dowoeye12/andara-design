@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Andara FleetWatch — Client Portal | Aircraft Surveillance</title>
-<meta name="description" content="Andara FleetWatch client portal — your fleet under surveillance. Quarterly reports, open anomalies, AOG alerts and the full deliverable index, per aircraft."/>
+<title>Andara FleetWatch, Client Portal | Aircraft Surveillance</title>
+<meta name="description" content="Andara FleetWatch client portal, your fleet under surveillance. Quarterly reports, open anomalies, AOG alerts and the full deliverable index, per aircraft."/>
 <meta name="theme-color" content="#000000"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════════════
-   ANDARA FLEETWATCH — CLIENT PORTAL DASHBOARD (PRD §3.2.3)
+   ANDARA FLEETWATCH, CLIENT PORTAL DASHBOARD (PRD §3.2.3)
    Features: Fleet list · Aircraft detail · Latest quarterly
    report viewer · Open anomalies · Alert history · Document
    index. Design system inherited from Andara Credit
@@ -45,7 +45,7 @@ a{color:inherit;text-decoration:none}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.14)}
 
-/* ── shared chips / pills — fixed height + inline-flex (canon) ── */
+/* ── shared chips / pills, fixed height + inline-flex (canon) ── */
 .pill{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:24px;padding:0 11px;line-height:1;margin:0;
   border:1px solid;border-radius:4px;box-sizing:border-box;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
 .pill .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
@@ -121,7 +121,7 @@ a{color:inherit;text-decoration:none}
 
 .view{max-width:1280px;margin:0 auto;width:100%;padding:24px 20px 72px;display:flex;flex-direction:column;gap:24px}
 
-/* breadcrumb — sub-page only */
+/* breadcrumb, sub-page only */
 .crumb{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--t4)}
 .crumb a{color:var(--t3)}.crumb a:hover{color:var(--amber)}
 .crumb .sep{color:var(--line3)}
@@ -133,7 +133,7 @@ a{color:inherit;text-decoration:none}
 .phead h1{font-family:var(--serif);font-weight:600;font-size:27px;letter-spacing:-.02em;color:var(--display);margin-top:8px;line-height:1.1}
 .phead .desc{color:var(--t2);font-size:13px;max-width:420px;text-align:right;line-height:1.55}
 
-/* summary stat strip — 16/8/24 */
+/* summary stat strip, 16/8/24 */
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .cell{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
 .cell .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
@@ -149,7 +149,7 @@ a{color:inherit;text-decoration:none}
 .ph .meta{margin-left:auto;font-family:var(--mono);font-size:14px;color:var(--t4);letter-spacing:.04em}
 .pb{padding:16px}
 
-/* ── fleet table — 14px tabular floor, namespaced cells (fc-*) ── */
+/* ── fleet table, 14px tabular floor, namespaced cells (fc-*) ── */
 .tblwrap{overflow-x:auto}
 table.fleet{width:100%;border-collapse:collapse}
 table.fleet thead th{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--t4);text-align:left;padding:12px 14px;border-bottom:1px solid var(--line2);white-space:nowrap}
@@ -199,7 +199,7 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .rv-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .rv-meta .info{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em;line-height:1.6}
 
-/* list rows (anomalies / alerts / documents) — list-row typography canon */
+/* list rows (anomalies / alerts / documents), list-row typography canon */
 .lrow{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line)}
 .lrow:last-child{border-bottom:none}
 .lrow:hover{background:var(--bg3)}
@@ -249,11 +249,11 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
       <div class="bm"><img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" style="height:32px;width:auto;opacity:.95;flex-shrink:0"/></div>
       <div>
         <div class="lh">Your fleet,<br><em>under watch.</em></div>
-        <p class="lsub">The Andara FleetWatch client portal. Quarterly surveillance reports, open anomalies, AOG alerts and every deliverable Andara has shipped — per aircraft, in one place.</p>
+        <p class="lsub">The Andara FleetWatch client portal. Quarterly surveillance reports, open anomalies, AOG alerts and every deliverable Andara has shipped, per aircraft, in one place.</p>
       </div>
       <div class="lmeta">
         <div class="lmr"><span>Surface</span><strong>Client Portal · FleetWatch</strong></div>
-        <div class="lmr"><span>PRD</span><strong>§3.2.3 — FleetWatch Dashboard</strong></div>
+        <div class="lmr"><span>PRD</span><strong>§3.2.3, FleetWatch Dashboard</strong></div>
         <div class="lmr"><span>Account</span><strong>Fidelity Bank · Aviation Finance</strong></div>
         <div class="lmr"><span>Classification</span><strong>Restricted · Subscriber</strong></div>
       </div>
@@ -274,27 +274,27 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
       <button type="button" class="lbtn" id="lbtn" onclick="_login();return false;">Enter portal →</button>
       <div id="lerr" class="lerr">Access key not recognised.</div>
       <div class="lnote">
-        <div><b>Demo seat</b> — <span>ops@fidelitybank.com</span></div>
-        <div><b>Access key</b> — <span>andara2026</span></div>
+        <div><b>Demo seat</b>, <span>ops@fidelitybank.com</span></div>
+        <div><b>Access key</b>, <span>andara2026</span></div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-// Standalone login — isolated so it works regardless of any error elsewhere.
+// Standalone login, isolated so it works regardless of any error elsewhere.
 function _logAuthEvent(action,email,status,note){
   try{var key='andara.fw.portal.audit.auth.v1';var arr=JSON.parse(localStorage.getItem(key)||'[]');
     var d=new Date(),p=function(n){return String(n).padStart(2,'0');};
     var ts=d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes());
-    arr.unshift({ts:ts,user:email||'—',crit:action,src:'Auth',status:status,note:note||'',ip:'—'});
+    arr.unshift({ts:ts,user:email||'',crit:action,src:'Auth',status:status,note:note||'',ip:''});
     if(arr.length>200)arr.length=200;localStorage.setItem(key,JSON.stringify(arr));}catch(_){}
 }
 function _login(){
   var em=(document.getElementById('em').value||'').trim();
   var pw=(document.getElementById('pw').value||'').trim();
   var err=document.getElementById('lerr');
-  if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';_logAuthEvent('Login attempt',em||'—','Rejected · missing fields','Email and access key required');return;}
+  if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';_logAuthEvent('Login attempt',em||'','Rejected · missing fields','Email and access key required');return;}
   var userOk=false;
   try{var users=JSON.parse(localStorage.getItem('andara.fw.portal.users.v1')||'{}');var u=users[em.toLowerCase()];if(u&&u.password&&pw===u.password)userOk=true;}catch(_){}
   if(pw!=='andara2026' && !userOk){err.textContent='Access key not recognised.';err.style.display='block';_logAuthEvent('Login attempt',em,'Rejected · bad key','Access key not recognised');return;}
@@ -338,7 +338,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <div class="summary" id="fleetSummary"></div>
 
     <div class="panel">
-      <div class="ph"><span class="bullet"></span><h3>Fleet list</h3><span class="meta" id="fleetCount">—</span></div>
+      <div class="ph"><span class="bullet"></span><h3>Fleet list</h3><span class="meta" id="fleetCount"></span></div>
       <div class="tblwrap">
         <table class="fleet">
           <colgroup>
@@ -352,21 +352,21 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       </div>
     </div>
 
-    <div class="foot">Andara FleetWatch · Client Portal · Restricted — Subscriber<br>PRD §3.2.3 — Fleet list · Aircraft detail · Quarterly report · Anomalies · Alerts · Documents</div>
+    <div class="foot">Andara FleetWatch · Client Portal · Restricted, Subscriber<br>PRD §3.2.3, Fleet list · Aircraft detail · Quarterly report · Anomalies · Alerts · Documents</div>
   </div>
 
   <!-- AIRCRAFT DETAIL VIEW -->
   <div class="view" id="vw-aircraft" style="display:none">
-    <div class="crumb"><a id="crumbBack">Fleet under surveillance</a><span class="sep">/</span><span class="cur" id="crumbReg">—</span></div>
+    <div class="crumb"><a id="crumbBack">Fleet under surveillance</a><span class="sep">/</span><span class="cur" id="crumbReg"></span></div>
 
     <div class="ad-hero">
       <div class="ad-id">
-        <div class="reg" id="adReg">—</div>
-        <div class="sub" id="adSub">—</div>
+        <div class="reg" id="adReg"></div>
+        <div class="sub" id="adSub"></div>
       </div>
       <div class="ad-hero-meta">
         <span class="pill" id="adState"><span class="dot"></span><span></span></span>
-        <span class="ad-nextvisit">Next visit · <b id="adNext">—</b></span>
+        <span class="ad-nextvisit">Next visit · <b id="adNext"></b></span>
       </div>
     </div>
 
@@ -375,12 +375,12 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <div style="display:flex;flex-direction:column;gap:24px">
         <!-- Latest quarterly report viewer -->
         <div class="panel">
-          <div class="ph"><span class="bullet"></span><h3>Latest quarterly report</h3><span class="meta" id="rvPeriod">—</span></div>
+          <div class="ph"><span class="bullet"></span><h3>Latest quarterly report</h3><span class="meta" id="rvPeriod"></span></div>
           <div class="pb"><div class="rv" id="reportViewer"></div></div>
         </div>
         <!-- Open anomalies -->
         <div class="panel">
-          <div class="ph"><span class="bullet"></span><h3>Open anomalies</h3><span class="meta" id="anomCount">—</span></div>
+          <div class="ph"><span class="bullet"></span><h3>Open anomalies</h3><span class="meta" id="anomCount"></span></div>
           <div id="anomList"></div>
         </div>
       </div>
@@ -393,12 +393,12 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         </div>
         <!-- Alert history -->
         <div class="panel">
-          <div class="ph"><span class="bullet"></span><h3>Alert history</h3><span class="meta" id="alertCount">—</span></div>
+          <div class="ph"><span class="bullet"></span><h3>Alert history</h3><span class="meta" id="alertCount"></span></div>
           <div id="alertList"></div>
         </div>
         <!-- Document index -->
         <div class="panel">
-          <div class="ph"><span class="bullet"></span><h3>Document index</h3><span class="meta" id="docCount">—</span></div>
+          <div class="ph"><span class="bullet"></span><h3>Document index</h3><span class="meta" id="docCount"></span></div>
           <div id="docList"></div>
         </div>
       </div>
@@ -433,7 +433,7 @@ function svState(a){
   return {cls:'sv-ok',lbl:'On schedule'};
 }
 
-/* ── watermark + audit (PRD §3.2.6 — every download regenerated w/ user token, logged) ── */
+/* ── watermark + audit (PRD §3.2.6, every download regenerated w/ user token, logged) ── */
 function _fnv1a(str){var h=0x811c9dc5;for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=(h*0x01000193)>>>0;}return ('00000000'+h.toString(16)).slice(-8);}
 function portalEmail(){try{return (JSON.parse(localStorage.getItem('andara.fw.portal.auth')||'{}')).email||'subscriber';}catch(_){return'subscriber';}}
 function nowTs(){var d=new Date();return d.getUTCFullYear()+'-'+_p(d.getUTCMonth()+1)+'-'+_p(d.getUTCDate())+' '+_p(d.getUTCHours())+':'+_p(d.getUTCMinutes());}
@@ -444,7 +444,7 @@ function fwLogDeliverable(o){
   var seed=user+'|'+o.deliverable+'|'+(o.aircraft||'')+'|'+Date.now()+'|'+Math.random();
   var token='tok-'+_fnv1a(seed);
   var deliverableId='AND-FW-'+(o.deliverable||'DOC').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,16)+'-'+_fnv1a(seed).slice(0,4).toUpperCase();
-  AUDIT.unshift({ts:nowTs(),user:user,aircraft:o.aircraft||'—',deliverable:o.deliverable,format:o.format||'PDF',status:'Delivered',ip:'—',deliverableId:deliverableId,token:token});
+  AUDIT.unshift({ts:nowTs(),user:user,aircraft:o.aircraft||'',deliverable:o.deliverable,format:o.format||'PDF',status:'Delivered',ip:'',deliverableId:deliverableId,token:token});
   if(AUDIT.length>400)AUDIT.length=400;
   try{localStorage.setItem('andara.fw.portal.audit.v1',JSON.stringify(AUDIT));}catch(_){}
   return {user:user,token:token,deliverableId:deliverableId};
@@ -463,67 +463,67 @@ function toast(title,detail){
 var FLEET=[
   {id:'msn-39041',reg:'5N-BQM',msn:'39041',type:'Boeing 737-800',operator:'Air Peace',tier:'Tier 1 · Monthly',contractId:'FW-CT-1042',coverageStart:'2025-09-01',scope:'Records · Ramp · MRO',
    lastVisit:'2026-05-18',nextVisit:'2026-06-18',reportReady:true,
-   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-15',pages:24,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-15',pages:24,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[
-     {id:'a1',title:'No.2 engine borescope — early-stage HPC blade tip wear',sev:'sev-med',sevLbl:'Medium',captured:'2026-05-18',visit:'MRO observation · Lagos',status:'ast-open',statusLbl:'Open'},
+     {id:'a1',title:'No.2 engine borescope, early-stage HPC blade tip wear',sev:'sev-med',sevLbl:'Medium',captured:'2026-05-18',visit:'MRO observation · Lagos',status:'ast-open',statusLbl:'Open'},
      {id:'a2',title:'Cabin door seal degradation (L2)',sev:'sev-low',sevLbl:'Low',captured:'2026-05-18',visit:'Ramp inspection · Lagos',status:'ast-mon',statusLbl:'Monitoring'}
    ],
-   alerts:[{id:'al1',title:'AOG — hydraulic system B pressure loss',dispatched:'2026-04-03 08:14',ack:'2026-04-03 08:41'}],
+   alerts:[{id:'al1',title:'AOG, hydraulic system B pressure loss',dispatched:'2026-04-03 08:14',ack:'2026-04-03 08:41'}],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-15'},
-     {id:'d2',name:'Visit pack — MRO observation (May)',kind:'Visit pack',date:'2026-05-18'},
-     {id:'d3',name:'Anomaly evidence — HPC blade borescope',kind:'Evidence',date:'2026-05-18'},
-     {id:'d4',name:'FleetWatch Quarterly — Q1 2026',kind:'Report',date:'2026-03-15'},
-     {id:'d5',name:'Surveillance contract — FW-CT-1042',kind:'Contract',date:'2025-09-01'}
+     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-15'},
+     {id:'d2',name:'Visit pack, MRO observation (May)',kind:'Visit pack',date:'2026-05-18'},
+     {id:'d3',name:'Anomaly evidence, HPC blade borescope',kind:'Evidence',date:'2026-05-18'},
+     {id:'d4',name:'FleetWatch Quarterly, Q1 2026',kind:'Report',date:'2026-03-15'},
+     {id:'d5',name:'Surveillance contract, FW-CT-1042',kind:'Contract',date:'2025-09-01'}
    ]},
   {id:'msn-6512',reg:'5N-JEA',msn:'6512',type:'Airbus A320-200',operator:'Ibom Air',tier:'Tier 1 · Monthly',contractId:'FW-CT-1051',coverageStart:'2025-10-01',scope:'Records · Ramp',
    lastVisit:'2026-05-02',nextVisit:'2026-06-02',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-10',pages:21,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-10',pages:21,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[
-     {id:'a1',title:'Nose landing gear shimmy damper — minor weep',sev:'sev-low',sevLbl:'Low',captured:'2026-05-02',visit:'Ramp inspection · Uyo',status:'ast-mon',statusLbl:'Monitoring'}
+     {id:'a1',title:'Nose landing gear shimmy damper, minor weep',sev:'sev-low',sevLbl:'Low',captured:'2026-05-02',visit:'Ramp inspection · Uyo',status:'ast-mon',statusLbl:'Monitoring'}
    ],
    alerts:[],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-10'},
-     {id:'d2',name:'Visit pack — Ramp inspection (May)',kind:'Visit pack',date:'2026-05-02'},
-     {id:'d5',name:'Surveillance contract — FW-CT-1051',kind:'Contract',date:'2025-10-01'}
+     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-10'},
+     {id:'d2',name:'Visit pack, Ramp inspection (May)',kind:'Visit pack',date:'2026-05-02'},
+     {id:'d5',name:'Surveillance contract, FW-CT-1051',kind:'Contract',date:'2025-10-01'}
    ]},
   {id:'msn-17004',reg:'5N-GAA',msn:'17004',type:'Embraer E175',operator:'Green Africa',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1066',coverageStart:'2025-11-01',scope:'Records · Ramp · MRO',
    lastVisit:'2026-03-20',nextVisit:'2026-06-20',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-12',pages:19,verdict:'Continue surveillance',condition:'Minor findings logged',visits:1}],
+   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-12',pages:19,verdict:'Continue surveillance',condition:'Minor findings logged',visits:1}],
    anomalies:[
      {id:'a1',title:'APU oil consumption trending above baseline',sev:'sev-med',sevLbl:'Medium',captured:'2026-03-20',visit:'MRO observation · Lagos',status:'ast-open',statusLbl:'Open'},
      {id:'a2',title:'Two cabin window crazing (rows 8–9)',sev:'sev-low',sevLbl:'Low',captured:'2026-03-20',visit:'Records review',status:'ast-res',statusLbl:'Resolved'}
    ],
    alerts:[],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-12'},
-     {id:'d2',name:'Visit pack — MRO observation (Mar)',kind:'Visit pack',date:'2026-03-20'},
-     {id:'d5',name:'Surveillance contract — FW-CT-1066',kind:'Contract',date:'2025-11-01'}
+     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-12'},
+     {id:'d2',name:'Visit pack, MRO observation (Mar)',kind:'Visit pack',date:'2026-03-20'},
+     {id:'d5',name:'Surveillance contract, FW-CT-1066',kind:'Contract',date:'2025-11-01'}
    ]},
   {id:'msn-2887',reg:'5N-UNA',msn:'2887',type:'Embraer ERJ-145',operator:'United Nigeria',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1071',coverageStart:'2025-12-01',scope:'Records · Ramp',
    lastVisit:'2026-02-28',nextVisit:'2026-05-28',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly — Q1 2026',period:'Q1 2026',issued:'2026-03-18',pages:18,verdict:'Heightened surveillance',condition:'Records gaps — see anomalies',visits:1}],
+   reports:[{id:'r1',title:'FleetWatch Quarterly, Q1 2026',period:'Q1 2026',issued:'2026-03-18',pages:18,verdict:'Heightened surveillance',condition:'Records gaps, see anomalies',visits:1}],
    anomalies:[
-     {id:'a1',title:'Maintenance records gap — 2 line checks undocumented',sev:'sev-high',sevLbl:'High',captured:'2026-02-28',visit:'Records review · Enugu',status:'ast-open',statusLbl:'Open'},
+     {id:'a1',title:'Maintenance records gap, 2 line checks undocumented',sev:'sev-high',sevLbl:'High',captured:'2026-02-28',visit:'Records review · Enugu',status:'ast-open',statusLbl:'Open'},
      {id:'a2',title:'Tyre wear beyond advisory on MLG #3',sev:'sev-med',sevLbl:'Medium',captured:'2026-02-28',visit:'Ramp inspection · Enugu',status:'ast-open',statusLbl:'Open'}
    ],
-   alerts:[{id:'al1',title:'AOG — bird strike, No.1 engine inspection',dispatched:'2026-05-21 14:32',ack:null}],
+   alerts:[{id:'al1',title:'AOG, bird strike, No.1 engine inspection',dispatched:'2026-05-21 14:32',ack:null}],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly — Q1 2026',kind:'Report',date:'2026-03-18'},
-     {id:'d2',name:'Visit pack — Records review (Feb)',kind:'Visit pack',date:'2026-02-28'},
-     {id:'d3',name:'Anomaly evidence — records gap memo',kind:'Evidence',date:'2026-02-28'},
-     {id:'d5',name:'Surveillance contract — FW-CT-1071',kind:'Contract',date:'2025-12-01'}
+     {id:'d1',name:'FleetWatch Quarterly, Q1 2026',kind:'Report',date:'2026-03-18'},
+     {id:'d2',name:'Visit pack, Records review (Feb)',kind:'Visit pack',date:'2026-02-28'},
+     {id:'d3',name:'Anomaly evidence, records gap memo',kind:'Evidence',date:'2026-02-28'},
+     {id:'d5',name:'Surveillance contract, FW-CT-1071',kind:'Contract',date:'2025-12-01'}
    ]},
   {id:'msn-30622',reg:'5N-MRT',msn:'30622',type:'Boeing 737-700',operator:'Max Air',tier:'Tier 1 · Monthly',contractId:'FW-CT-1080',coverageStart:'2026-01-15',scope:'Records · Ramp · MRO',
    lastVisit:'2026-06-01',nextVisit:'2026-07-01',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly — Q2 2026',period:'Q2 2026',issued:'2026-06-14',pages:22,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-14',pages:22,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[],
    alerts:[],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly — Q2 2026',kind:'Report',date:'2026-06-14'},
-     {id:'d2',name:'Visit pack — MRO observation (Jun)',kind:'Visit pack',date:'2026-06-01'},
-     {id:'d5',name:'Surveillance contract — FW-CT-1080',kind:'Contract',date:'2026-01-15'}
+     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-14'},
+     {id:'d2',name:'Visit pack, MRO observation (Jun)',kind:'Visit pack',date:'2026-06-01'},
+     {id:'d5',name:'Surveillance contract, FW-CT-1080',kind:'Contract',date:'2026-01-15'}
    ]}
 ];
 function findAircraft(id){for(var i=0;i<FLEET.length;i++)if(FLEET[i].id===id)return FLEET[i];return null;}
@@ -589,7 +589,7 @@ function showAircraft(id){
 
   // latest quarterly report viewer
   var rep=a.reports[0];
-  el('rvPeriod').textContent=rep?rep.period:'—';
+  el('rvPeriod').textContent=rep?rep.period:'';
   if(rep){
     var wmUser=portalEmail();
     var wmLine=(wmUser+' · ANDARA FLEETWATCH · '+rep.period+' · ').repeat(8);
@@ -597,7 +597,7 @@ function showAircraft(id){
       '<div class="rv-doc">'
         +'<div class="rv-wm"><span>'+wmLine+'</span></div>'
         +'<div class="rv-eyebrow">Andara FleetWatch · Quarterly surveillance report</div>'
-        +'<h4>'+a.reg+' — '+rep.title+'</h4>'
+        +'<h4>'+a.reg+', '+rep.title+'</h4>'
         +'<div class="rv-deck">'+a.type+' · MSN '+a.msn+' · operated by '+a.operator+'. Prepared for Fidelity Bank under contract '+a.contractId+'.</div>'
         +'<div class="rv-rule"></div>'
         +'<div class="rv-row"><span>Reporting period</span><span>'+rep.period+'</span></div>'
@@ -614,7 +614,7 @@ function showAircraft(id){
     el('reportViewer').innerHTML='<div class="empty">No quarterly report issued yet for this aircraft.</div>';
   }
 
-  // open anomalies — PRD §3.2.3: this is the OPEN list, so resolved are excluded
+  // open anomalies, PRD §3.2.3: this is the OPEN list, so resolved are excluded
   var openAnoms=a.anomalies.filter(function(x){return x.status!=='ast-res';});
   el('anomCount').textContent=openAnoms.length+' open';
   if(openAnoms.length){
@@ -673,20 +673,20 @@ function downloadReport(id){
   var a=findAircraft(id);if(!a||!a.reports[0])return;var rep=a.reports[0];
   var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Quarterly report '+rep.period,format:'PDF'});
   downloadStub('FleetWatch_'+a.reg+'_'+rep.period.replace(/\s/g,'')+'.txt',
-    'ANDARA FLEETWATCH — '+rep.title+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: Fidelity Bank\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n  Issued: '+nowTs()+' UTC\n\n[Stub envelope — M2 renders the full watermarked PDF server-side.]');
+    'ANDARA FLEETWATCH, '+rep.title+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: Fidelity Bank\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n  Issued: '+nowTs()+' UTC\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
   toast('Report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 function downloadDoc(id,docId){
   var a=findAircraft(id);if(!a)return;var dc=null;a.docs.forEach(function(x){if(x.id===docId)dc=x;});if(!dc)return;
-  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:dc.kind+' — '+dc.name,format:'PDF'});
+  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:dc.kind+', '+dc.name,format:'PDF'});
   downloadStub('FleetWatch_'+a.reg+'_'+dc.name.replace(/[^A-Za-z0-9]+/g,'_')+'.txt',
-    'ANDARA FLEETWATCH DELIVERABLE\n'+dc.name+'\nType: '+dc.kind+'\nAircraft '+a.reg+'\nDate '+fmtDate(dc.date)+'\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n\n[Stub envelope — M2 renders the watermarked file server-side.]');
+    'ANDARA FLEETWATCH DELIVERABLE\n'+dc.name+'\nType: '+dc.kind+'\nAircraft '+a.reg+'\nDate '+fmtDate(dc.date)+'\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n\n[Stub envelope, M2 renders the watermarked file server-side.]');
   toast('Deliverable downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 function ackAlert(id,alId){
   var a=findAircraft(id);if(!a)return;
   a.alerts.forEach(function(al){if(al.id===alId)al.ack=nowTs();});
-  AUDIT.unshift({ts:nowTs(),user:portalEmail(),aircraft:a.reg,deliverable:'AOG alert acknowledged',format:'—',status:'Acknowledged',ip:'—',deliverableId:'—',token:'—'});
+  AUDIT.unshift({ts:nowTs(),user:portalEmail(),aircraft:a.reg,deliverable:'AOG alert acknowledged',format:'',status:'Acknowledged',ip:'',deliverableId:'',token:''});
   try{localStorage.setItem('andara.fw.portal.audit.v1',JSON.stringify(AUDIT));}catch(_){}
   showAircraft(id);renderFleet();
   toast('AOG alert acknowledged','Acknowledgement logged · '+nowTs()+' UTC');
@@ -713,7 +713,7 @@ el('signOut').addEventListener('click',function(){
   el('app').style.display='none';el('login').style.display='flex';el('pw').value='';
 });
 
-/* eye-toggle via delegation (never wire an inline onclick on #pwToggle — double-fires) */
+/* eye-toggle via delegation (never wire an inline onclick on #pwToggle, double-fires) */
 document.addEventListener('click',function(e){
   var btn=e.target.closest&&e.target.closest('#pwToggle');if(!btn)return;
   var pw=el('pw');if(!pw)return;var showing=pw.type==='text';

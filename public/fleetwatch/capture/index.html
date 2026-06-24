@@ -3,42 +3,42 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<title>Andara FleetWatch Capture — Field Agent App | Aviation Surveillance</title>
-<meta name="description" content="Andara FleetWatch Capture — offline-first field agent app for aircraft surveillance. Visit capture, photo + document scan, queued sync to FleetWatch intake."/>
+<title>Andara FleetWatch Capture, Field Agent App | Aviation Surveillance</title>
+<meta name="description" content="Andara FleetWatch Capture, offline-first field agent app for aircraft surveillance. Visit capture, photo + document scan, queued sync to FleetWatch intake."/>
 <meta name="theme-color" content="#000000"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════════════
-   ANDARA FLEETWATCH CAPTURE — FIELD AGENT APP (PRD §3.4.3)
-   Feature shipped here: Agent login — offline-first
+   ANDARA FLEETWATCH CAPTURE, FIELD AGENT APP (PRD §3.4.3)
+   Feature shipped here: Agent login, offline-first
    authentication via cached credentials.
    Design system inherited verbatim from Andara Credit
-   Intelligence terminal — pure-black canvas, layered
+   Intelligence terminal, pure-black canvas, layered
    near-black surfaces, desaturated amber, Hanken Grotesk
    (body + display) + IBM Plex Mono (labels, codes, data).
 ══════════════════════════════════════════════════════ */
 :root{
-  /* layered surfaces — pure black canvas with near-black panels for depth */
-  --bg:#000;          /* deepest / app frame — pure black */
+  /* layered surfaces, pure black canvas with near-black panels for depth */
+  --bg:#000;          /* deepest / app frame, pure black */
   --bg4:#070809;      /* sidebar / rail */
   --bg2:#0b0d10;      /* panels */
   --bg3:#13161c;      /* raised / rows */
   --bg-hover:#191d24;
   /* borders */
   --line:#1e232b;--line2:#2a313c;--line3:#343c49;
-  /* ink — WCAG AA on pure black */
+  /* ink, WCAG AA on pure black */
   --t1:#f2f5fa;        /* body white (~19:1) */
   --t2:#c2cad8;        /* mid slate (~11:1) */
-  --t3:#a4adba;        /* light slate (~8.4:1) — eyebrows, sub-labels */
-  --t4:#8a93a3;        /* slate (~5.6:1) — faded meta */
+  --t3:#a4adba;        /* light slate (~8.4:1), eyebrows, sub-labels */
+  --t4:#8a93a3;        /* slate (~5.6:1), faded meta */
   --display:rgba(255,255,255,0.92);
-  /* amber — desaturated signature */
+  /* amber, desaturated signature */
   --amber:#e8a23a;--amber2:#f1b85a;--amber-dim:#b8801f;
   --amber-soft:rgba(232,162,58,0.11);
   --amber-line:rgba(232,162,58,0.30);
-  /* verdict / status — shared chroma, varied hue, reduced saturation */
+  /* verdict / status, shared chroma, varied hue, reduced saturation */
   --deploy:#6bb38a;--deploy-soft:rgba(107,179,138,0.11);--deploy-line:rgba(107,179,138,0.28);
   --watch:#d6a85a; --watch-soft:rgba(214,168,90,0.11); --watch-line:rgba(214,168,90,0.28);
   --dnd:#c97474;   --dnd-soft:rgba(201,116,116,0.11);  --dnd-line:rgba(201,116,116,0.28);
@@ -63,7 +63,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.14)}
 
 /* ══════════════════════════════════════════
-   STATUS PILL — fixed height + inline-flex centring
+   STATUS PILL, fixed height + inline-flex centring
    (chip pattern canon: height + horizontal padding only)
 ══════════════════════════════════════════ */
 .netpill{
@@ -79,7 +79,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 .netpill.offline{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
 .netpill.offline .dot{background:var(--watch)}
 
-/* informational chip — info palette per chip-colour rule */
+/* informational chip, info palette per chip-colour rule */
 .ichip{
   display:inline-flex;align-items:center;justify-content:center;gap:6px;
   height:22px;padding:0 10px;line-height:1;margin:0;
@@ -92,7 +92,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 .ichip.muted{color:var(--t4);background:var(--bg3);border-color:var(--line)}
 
 /* ══════════════════════════════════════════
-   LOGIN — offline-first agent sign-in
+   LOGIN, offline-first agent sign-in
 ══════════════════════════════════════════ */
 #login{
   position:fixed;inset:0;z-index:100;
@@ -174,7 +174,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 .lnote span{color:var(--amber)}
 
 /* ══════════════════════════════════════════
-   APP SHELL — mobile-first field surface
+   APP SHELL, mobile-first field surface
 ══════════════════════════════════════════ */
 #app{display:none;flex-direction:column;min-height:100vh;background:var(--bg)}
 .tb{
@@ -199,7 +199,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 .welcome h1{font-family:var(--serif);font-weight:600;font-size:26px;letter-spacing:-.02em;color:var(--display);margin-top:8px;line-height:1.1}
 .welcome .sub{color:var(--t2);font-size:13px;margin-top:8px;max-width:440px;line-height:1.55}
 
-/* panel — 16px inner padding, 8px internal gap (system rhythm 16/8/24) */
+/* panel, 16px inner padding, 8px internal gap (system rhythm 16/8/24) */
 .panel{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r)}
 .ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
 .ph .bullet{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0}
@@ -272,6 +272,41 @@ input,select,textarea{font-family:inherit;color:inherit}
 .vl-empty{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em;padding:24px 16px;text-align:center;line-height:1.7}
 @media (max-width:640px){.vl-row{flex-wrap:wrap}.vl-side{align-items:flex-start;text-align:left;width:100%;flex-direction:row;gap:10px;flex-wrap:wrap}}
 
+/* ── visit capture flow (§3.4.3 #3) ── */
+.vl-row.vl-click{cursor:pointer}
+.cap-back{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);cursor:pointer;width:max-content}
+.cap-back:hover{color:var(--amber)}
+.cap-back svg{width:14px;height:14px}
+.cap-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.cap-head .reg{font-family:var(--serif);font-weight:600;font-size:26px;letter-spacing:-.02em;color:var(--display);line-height:1}
+.cap-head .sub{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;margin-top:8px}
+.cap-head .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.cap-head-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.cap-prog{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.06em;text-transform:uppercase}
+.cap-prog b{color:var(--t2)}
+.cf-blurb{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.55;padding:0 16px 14px}
+.cf-item{display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.cf-item:last-child{border-bottom:none}
+.cf-item .cf-lbl{flex:1;min-width:150px;font-family:var(--sans);font-size:14px;color:var(--t1);line-height:1.4}
+.cf-item .cf-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cf-field{padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--line)}
+.cf-field:last-child{border-bottom:none}
+.cf-field label{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--t3)}
+.fw-input,.fw-select,.fw-textarea{width:100%;background:var(--bg);border:1px solid var(--line2);color:var(--t1);font-family:var(--sans);font-size:14px;padding:10px 12px;border-radius:var(--r);outline:none;transition:border-color .15s,color .15s}
+.fw-input:focus,.fw-select:focus,.fw-textarea:focus{border-color:var(--amber)}
+.fw-textarea{min-height:84px;resize:vertical;line-height:1.5}
+.fw-select{-webkit-appearance:none;-moz-appearance:none;appearance:none;cursor:pointer;background-color:var(--bg);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a4adba' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+.cf-item .fw-select{width:auto;min-width:148px;font-size:13px;padding:8px 32px 8px 12px}
+.fw-select.st-ok{border-color:var(--deploy-line);color:var(--deploy)}
+.fw-select.st-warn{border-color:var(--watch-line);color:var(--watch)}
+.fw-select.st-bad{border-color:var(--dnd-line);color:var(--dnd)}
+.cf-note-input{flex:1;min-width:150px;background:var(--bg);border:1px solid var(--line);color:var(--t2);font-family:var(--sans);font-size:13px;padding:8px 12px;border-radius:var(--r);outline:none}
+.cf-note-input:focus{border-color:var(--line3)}
+.cf-note-input::placeholder{color:var(--t4)}
+.cap-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-top:8px}
+.cap-saved{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em;opacity:0;transition:opacity .15s}
+.cap-saved.show{opacity:1;color:var(--deploy)}
+
 /* buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 16px;
   border-radius:var(--r);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
@@ -300,7 +335,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 <body>
 
 <!-- ══════════════════════════════════════════
-     LOGIN — offline-first agent authentication
+     LOGIN, offline-first agent authentication
 ══════════════════════════════════════════ -->
 <div id="login">
   <div class="ls">
@@ -310,11 +345,11 @@ input,select,textarea{font-family:inherit;color:inherit}
       </div>
       <div>
         <div class="lh">Surveillance that<br><em>travels with you.</em></div>
-        <p class="lsub">FleetWatch Capture — the Andara field agent app. Capture aircraft visits anywhere, online or off; bundles queue and sync to FleetWatch intake the moment you reconnect.</p>
+        <p class="lsub">FleetWatch Capture, the Andara field agent app. Capture aircraft visits anywhere, online or off; bundles queue and sync to FleetWatch intake the moment you reconnect.</p>
       </div>
       <div class="lmeta">
         <div class="lmr"><span>Surface</span><strong>Internal · Field Agent App</strong></div>
-        <div class="lmr"><span>PRD</span><strong>§3.4.3 — FleetWatch Capture</strong></div>
+        <div class="lmr"><span>PRD</span><strong>§3.4.3, FleetWatch Capture</strong></div>
         <div class="lmr"><span>Mode</span><strong>Offline-first · cached credentials</strong></div>
         <div class="lmr"><span>Classification</span><strong>Internal · Restricted</strong></div>
       </div>
@@ -340,16 +375,16 @@ input,select,textarea{font-family:inherit;color:inherit}
       <button type="button" class="lbtn" id="lbtn" onclick="_login();return false;">Sign in →</button>
       <div id="lerr" class="lerr">Access key not recognised.</div>
       <div class="lnote">
-        <div><b>Demo agent</b> — <span>field.agent@andara.com</span></div>
-        <div><b>Access key</b> — <span>andara2026</span></div>
+        <div><b>Demo agent</b>, <span>field.agent@andara.com</span></div>
+        <div><b>Access key</b>, <span>andara2026</span></div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* ── Standalone login — isolated so it works regardless of any error
-   elsewhere in the app. Implements PRD §3.4.3 "Agent login — offline-first
+/* ── Standalone login, isolated so it works regardless of any error
+   elsewhere in the app. Implements PRD §3.4.3 "Agent login, offline-first
    authentication via cached credentials." ── */
 
 /* small FNV-1a hash so cached credentials are never stored in cleartext */
@@ -382,7 +417,7 @@ function _agentProfile(email){
   return {name:name||'Field Agent',id:'FW-AG-'+_fnv1a(em).slice(0,4).toUpperCase(),region:'Unassigned',role:'Field Agent'};
 }
 
-/* auth audit — mirrors the Credit Intelligence _logAuthEvent shape,
+/* auth audit, mirrors the Credit Intelligence _logAuthEvent shape,
    namespaced to the FleetWatch field app (PRD §3.3.7 auth events) */
 function _logAuthEvent(action,email,status,note){
   try{
@@ -390,7 +425,7 @@ function _logAuthEvent(action,email,status,note){
     var arr=JSON.parse(localStorage.getItem(key)||'[]');
     var d=new Date(),p=function(n){return String(n).padStart(2,'0');};
     var ts=d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes());
-    arr.unshift({ts:ts,user:email||'—',crit:action,src:'Auth',status:status,note:note||'',ip:'—'});
+    arr.unshift({ts:ts,user:email||'',crit:action,src:'Auth',status:status,note:note||'',ip:''});
     if(arr.length>200)arr.length=200;
     localStorage.setItem(key,JSON.stringify(arr));
   }catch(_){}
@@ -403,7 +438,7 @@ function _login(){
   var pw=(document.getElementById('pw').value||'').trim();
   var err=document.getElementById('lerr');
   var show=function(m){err.textContent=m;err.style.display='block';};
-  if(!em||!pw){show('Both fields required.');_logAuthEvent('Login attempt',em||'—','Rejected · missing fields','Email and access key required');return;}
+  if(!em||!pw){show('Both fields required.');_logAuthEvent('Login attempt',em||'','Rejected · missing fields','Email and access key required');return;}
 
   var emKey=em.toLowerCase();
   var cred=null;
@@ -433,8 +468,8 @@ function _login(){
 function _openSession(email,mode,kind){
   try{localStorage.setItem('andara.fw.agent.auth',JSON.stringify({email:email,ts:Date.now(),mode:mode}));}catch(_){}
   var note = mode==='online'
-    ? (kind==='enrol'?'Online session — device enrolled for offline use':'Online session — credentials refreshed')
-    : 'Offline session — authenticated from cached credentials';
+    ? (kind==='enrol'?'Online session, device enrolled for offline use':'Online session, credentials refreshed')
+    : 'Offline session, authenticated from cached credentials';
   _logAuthEvent(mode==='offline'?'Offline login':'Login',email,'Authenticated',note);
   document.getElementById('login').style.display='none';
   document.getElementById('app').style.display='flex';
@@ -451,7 +486,7 @@ function _paintLoginNet(){
   var cred=null;try{cred=JSON.parse(localStorage.getItem('andara.fw.agent.cred.v1')||'null');}catch(_){}
   if(lede){
     if(online){lede.textContent='Andara field agents only. First sign-in must be online to enrol this device for offline use.';}
-    else if(cred){lede.textContent='Offline. Sign in with your cached credentials — captures will queue and sync when you reconnect.';}
+    else if(cred){lede.textContent='Offline. Sign in with your cached credentials, captures will queue and sync when you reconnect.';}
     else{lede.textContent='Offline and this device is not yet enrolled. Connect once to cache your credentials.';}
   }
 }
@@ -464,7 +499,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 </script>
 
 <!-- ══════════════════════════════════════════
-     APP — authenticated field surface
+     APP, authenticated field surface
 ══════════════════════════════════════════ -->
 <div id="app">
   <header class="tb">
@@ -481,19 +516,19 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     </div>
   </header>
 
-  <div class="view">
+  <div class="view" id="vw-home">
     <div class="welcome">
       <div>
         <div class="eyebrow">Field Agent App · §3.4.3</div>
         <h1 id="welcomeName">Welcome back</h1>
-        <div class="sub">Your scheduled visits are below. Visit capture, photo &amp; document scan and queued sync arrive next — sign-in and your visit list already work offline.</div>
+        <div class="sub">Your scheduled visits are below. Visit capture, photo &amp; document scan and queued sync arrive next, sign-in and your visit list already work offline.</div>
       </div>
     </div>
 
-    <!-- visit list (§3.4.3 #2) — scheduled visits for this agent -->
+    <!-- visit list (§3.4.3 #2), scheduled visits for this agent -->
     <div class="panel" id="visitPanel">
       <div class="ph ph-toggle" id="visitToggle" role="button" tabindex="0" aria-expanded="true" aria-controls="visitList">
-        <span class="bullet"></span><h3>Scheduled visits</h3><span class="meta" id="visitMeta">—</span>
+        <span class="bullet"></span><h3>Scheduled visits</h3><span class="meta" id="visitMeta"></span>
         <span class="ph-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></span>
       </div>
       <div id="visitList" class="collapse-body"></div>
@@ -536,11 +571,11 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
           </div>
           <div class="offcell">
             <span class="lbl">Device enrolled</span>
-            <span class="val" id="ofEnrol">—</span>
+            <span class="val" id="ofEnrol"></span>
             <span class="cap" id="ofEnrolCap">First online sign-in that cached this agent.</span>
           </div>
         </div>
-        <div class="kv"><span class="k">Last online auth</span><span class="v mono" id="ofLastOnline">—</span></div>
+        <div class="kv"><span class="k">Last online auth</span><span class="v mono" id="ofLastOnline"></span></div>
         <div class="kv"><span class="k">Credential store</span><span class="v mono">andara.fw.agent.cred.v1</span></div>
         <div class="kv"><span class="k">Key storage</span><span class="v mono">FNV-1a hash · never cleartext</span></div>
       </div>
@@ -557,18 +592,18 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         </div>
         <div class="feat live">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></div>
-          <div class="body"><b>Visit list</b><span>Scheduled visits for this agent — aircraft, location, due date.</span></div>
+          <div class="body"><b>Visit list</b><span>Scheduled visits for this agent, aircraft, location, due date.</span></div>
           <span class="tag ichip deploy">Live</span>
         </div>
-        <div class="feat">
+        <div class="feat live">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg></div>
-          <div class="body"><b>Visit capture flow</b><span>Per visit type — record review, ramp inspection, MRO observation.</span></div>
-          <span class="tag ichip muted">Next</span>
+          <div class="body"><b>Visit capture flow</b><span>Per visit type, record review, ramp inspection, MRO observation.</span></div>
+          <span class="tag ichip deploy">Live</span>
         </div>
         <div class="feat">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
           <div class="body"><b>Photo capture</b><span>In-app photo capture with auto-orientation.</span></div>
-          <span class="tag ichip muted">Planned</span>
+          <span class="tag ichip muted">Next</span>
         </div>
         <div class="feat">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M3 12h18"/></svg></div>
@@ -594,10 +629,13 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     </div>
 
     <div class="foot">
-      Andara FleetWatch Capture · Internal — Restricted<br>
-      Features shipped: <span>Agent login (offline-first)</span> · <span>Visit list</span> · PRD §3.4.3
+      Andara FleetWatch Capture · Internal, Restricted<br>
+      Features shipped: <span>Agent login (offline-first)</span> · <span>Visit list</span> · <span>Visit capture flow</span> · PRD §3.4.3
     </div>
   </div>
+
+  <!-- VISIT CAPTURE FLOW (§3.4.3 #3), rendered by renderCapture() -->
+  <div class="view" id="vw-capture" style="display:none"></div>
 </div>
 
 <script>
@@ -606,22 +644,22 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 ══════════════════════════════════════════ */
 function el(id){return document.getElementById(id);}
 function _initials(name){return (name||'A').split(/\s+/).filter(Boolean).slice(0,2).map(function(p){return p[0].toUpperCase();}).join('')||'A';}
-function _fmtTs(ms){if(!ms)return '—';var d=new Date(ms),p=function(n){return String(n).padStart(2,'0');};
+function _fmtTs(ms){if(!ms)return '';var d=new Date(ms),p=function(n){return String(n).padStart(2,'0');};
   return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes())+' UTC';}
 
 /* ══════════════════════════════════════════
    VISIT LIST (PRD §3.4.3 #2)
-   "Scheduled visits for this agent — aircraft, location, due date."
+   "Scheduled visits for this agent, aircraft, location, due date."
    M1: static seed keyed by agent id. M2: synced from FleetWatch
    Operations "Assign visit" (§3.4.5) on reconnection.
 ══════════════════════════════════════════ */
 var VISITS={
   'FW-AG-014':[
-    {reg:'5N-BQM',ac:'Boeing 737-800',msn:'39041',op:'Air Peace',vtype:'MRO observation',loc:'Murtala Muhammed (LOS) · Lagos',due:'2026-06-18'},
-    {reg:'5N-GAA',ac:'Embraer E175',msn:'17004',op:'Green Africa',vtype:'Records review',loc:'Murtala Muhammed (LOS) · Lagos',due:'2026-06-22'},
-    {reg:'5N-JEA',ac:'Airbus A320-200',msn:'6512',op:'Ibom Air',vtype:'Ramp inspection',loc:'Akwa Ibom (QUO) · Uyo',due:'2026-06-24'},
-    {reg:'5N-MRT',ac:'Boeing 737-700',msn:'30622',op:'Max Air',vtype:'MRO observation',loc:'Mallam Aminu Kano (KAN) · Kano',due:'2026-06-29'},
-    {reg:'5N-UNA',ac:'Embraer ERJ-145',msn:'2887',op:'United Nigeria',vtype:'Ramp inspection',loc:'Akanu Ibiam (ENU) · Enugu',due:'2026-07-06'}
+    {vid:'v-bqm',reg:'5N-BQM',ac:'Boeing 737-800',msn:'39041',op:'Air Peace',vtype:'MRO observation',loc:'Murtala Muhammed (LOS) · Lagos',due:'2026-06-18'},
+    {vid:'v-gaa',reg:'5N-GAA',ac:'Embraer E175',msn:'17004',op:'Green Africa',vtype:'Records review',loc:'Murtala Muhammed (LOS) · Lagos',due:'2026-06-22'},
+    {vid:'v-jea',reg:'5N-JEA',ac:'Airbus A320-200',msn:'6512',op:'Ibom Air',vtype:'Ramp inspection',loc:'Akwa Ibom (QUO) · Uyo',due:'2026-06-24'},
+    {vid:'v-mrt',reg:'5N-MRT',ac:'Boeing 737-700',msn:'30622',op:'Max Air',vtype:'MRO observation',loc:'Mallam Aminu Kano (KAN) · Kano',due:'2026-06-29'},
+    {vid:'v-una',reg:'5N-UNA',ac:'Embraer ERJ-145',msn:'2887',op:'United Nigeria',vtype:'Ramp inspection',loc:'Akanu Ibiam (ENU) · Enugu',due:'2026-07-06'}
   ]
 };
 function vToday(){return new Date('2026-06-22T00:00:00Z');}
@@ -659,7 +697,11 @@ function renderVisits(prof){
   }
   el('visitList').innerHTML=list.map(function(v){
     var d=vDue(v.due);
-    return '<div class="vl-row">'
+    var st=capState(v.vid);
+    var stChip = st==='captured' ? '<span class="ichip deploy">Captured</span>'
+               : st==='draft'    ? '<span class="ichip amber">In progress</span>'
+               :                    '<span class="ichip muted">Not started</span>';
+    return '<div class="vl-row vl-click" onclick="openCapture(\''+v.vid+'\')" title="Open visit capture">'
       +'<div class="vl-ico">'+_acSvg+'</div>'
       +'<div class="vl-main">'
         +'<div class="vl-hd"><b>'+v.reg+'</b><span class="ichip">'+v.vtype+'</span></div>'
@@ -669,9 +711,160 @@ function renderVisits(prof){
       +'<div class="vl-side">'
         +'<span class="vl-due-date">Due '+vFmt(v.due)+'</span>'
         +'<span class="ichip '+d.cls+'">'+d.lbl+'</span>'
+        +stChip
       +'</div>'
     +'</div>';
   }).join('');
+}
+
+/* ══════════════════════════════════════════
+   VISIT CAPTURE FLOW (PRD §3.4.3 #3)
+   "Per visit type structured form, record review,
+    ramp inspection, MRO observation."
+   Schema-driven forms; drafts auto-save locally (offline-first).
+   Full offline persistence (#6) + sync (#7) build on this store.
+══════════════════════════════════════════ */
+var VISIT_FORMS={
+  'Records review':{
+    blurb:'Verify the aircraft’s mandatory records and continuing-airworthiness documents.',
+    sections:[
+      {title:'Records sighted',kind:'checklist',opts:['Sighted','Not available','Discrepancy'],items:[
+        'Certificate of Airworthiness','Certificate of Registration','Aircraft technical log',
+        'Engine / APU logs','AD / SB compliance status','Weight & balance report',
+        'Approved maintenance programme','Insurance certificate']},
+      {title:'Assessment',kind:'fields',fields:[
+        {id:'gaps',label:'Records gaps / outstanding items',type:'textarea',ph:'Describe any missing, expired or inconsistent records…'},
+        {id:'overall',label:'Overall records condition',type:'select',opts:['Complete & consistent','Minor gaps','Material gaps']}]}
+    ]
+  },
+  'Ramp inspection':{
+    blurb:'Structured walk-around of the aircraft on the ramp; record the condition of each zone.',
+    sections:[
+      {title:'Walk-around items',kind:'checklist',opts:['Satisfactory','Advisory','Defect'],items:[
+        'Fuselage & skin','Landing gear & tyres','Engines & nacelles (visual)','Flight control surfaces',
+        'Lights, antennas & probes','Fluid leaks / corrosion','Cabin condition','Cockpit & placards']},
+      {title:'Assessment',kind:'fields',fields:[
+        {id:'defects',label:'Defects logged',type:'textarea',ph:'Describe any defects or advisory items raised…'},
+        {id:'overall',label:'Overall ramp condition',type:'select',opts:['Satisfactory','Advisory items','Defects present']}]}
+    ]
+  },
+  'MRO observation':{
+    blurb:'Observe maintenance work in progress at the MRO; assess process compliance and workmanship.',
+    sections:[
+      {title:'Observation',kind:'fields',fields:[
+        {id:'mro',label:'MRO / organisation',type:'input',ph:'e.g. Aero Contractors MRO, Lagos'},
+        {id:'work',label:'Work package observed',type:'input',ph:'e.g. A-check / line task card 31-xx'},
+        {id:'process',label:'Process compliance',type:'select',opts:['Compliant','Minor deviations','Material deviations']},
+        {id:'tooling',label:'Tooling & calibration',type:'select',opts:['In date & controlled','Advisory','Out of control']}]},
+      {title:'Workmanship checks',kind:'checklist',opts:['Satisfactory','Advisory','Defect'],items:[
+        'Task cards & sign-offs','Parts traceability','Tooling control','Housekeeping & FOD control']},
+      {title:'Findings',kind:'fields',fields:[
+        {id:'findings',label:'Findings / anomalies',type:'textarea',ph:'Describe anomalies observed during the visit…'}]}
+    ]
+  }
+};
+var CAP_KEY='andara.fw.capture.drafts.v1';
+function capLoad(){try{return JSON.parse(localStorage.getItem(CAP_KEY)||'{}');}catch(_){return{};}}
+function capSaveAll(all){try{localStorage.setItem(CAP_KEY,JSON.stringify(all));}catch(_){}}
+function capGet(vid){return capLoad()[vid]||null;}
+function capState(vid){var r=capGet(vid);return r?r.status:'none';}
+function findVisit(vid){for(var k in VISITS){var a=VISITS[k];for(var i=0;i<a.length;i++)if(a[i].vid===vid)return a[i];}return null;}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sevOf(opts,val){var i=opts.indexOf(val);if(i<=0)return 'ok';if(i===opts.length-1)return 'bad';return 'warn';}
+function selSev(sel){var o=[].map.call(sel.options,function(x){return x.value;}).filter(function(x){return x;});return sevOf(o,sel.value);}
+
+var _capVid=null,_savedT=null;
+function openCapture(vid){
+  var v=findVisit(vid);if(!v)return;_capVid=vid;
+  el('vw-home').style.display='none';el('vw-capture').style.display='flex';
+  window.scrollTo(0,0);renderCapture(v);
+}
+function backToHome(){
+  el('vw-capture').style.display='none';el('vw-home').style.display='flex';_capVid=null;
+  if(_prof)renderVisits(_prof);window.scrollTo(0,0);
+}
+function renderCapture(v){
+  var schema=VISIT_FORMS[v.vtype]||{sections:[],blurb:''};
+  var all=capLoad();
+  if(!all[v.vid]){all[v.vid]={status:'draft',vid:v.vid,startedTs:Date.now(),checklist:{},fields:{}};capSaveAll(all);}
+  var rec=all[v.vid];
+  var d=vDue(v.due);
+  var stChip=rec.status==='captured'?'<span class="ichip deploy">Captured</span>':'<span class="ichip amber">In progress</span>';
+  var h='';
+  h+='<div class="cap-back" id="capBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Back to visits</div>';
+  h+='<div class="cap-head"><div>'
+    +'<div class="reg">'+v.reg+'</div>'
+    +'<div class="sub">'+v.ac+' · MSN '+v.msn+' · '+v.op+'</div>'
+    +'<div class="chips"><span class="ichip amber">'+v.vtype+'</span><span class="ichip '+d.cls+'">'+d.lbl+'</span>'+stChip+'</div>'
+    +'</div><div class="cap-head-side"><span class="cap-prog" id="capProg"></span></div></div>';
+  h+='<div class="panel"><div class="pb" style="padding:14px 16px"><div class="vl-loc">'+_pinSvg+'<span>'+v.loc+'</span></div></div></div>';
+  schema.sections.forEach(function(sec,si){
+    h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>'+sec.title+'</h3></div>';
+    if(si===0&&schema.blurb)h+='<div class="cf-blurb">'+schema.blurb+'</div>';
+    if(sec.kind==='checklist'){
+      h+='<div>';
+      sec.items.forEach(function(item,ii){
+        var key='s'+si+'_i'+ii,saved=rec.checklist[key]||{};
+        var sevCls=saved.status?(' st-'+sevOf(sec.opts,saved.status)):'';
+        h+='<div class="cf-item"><div class="cf-lbl">'+item+'</div><div class="cf-controls">'
+          +'<select class="fw-select cap-input'+sevCls+'" data-kind="checklist" data-key="'+key+'">'
+          +'<option value="">Select</option>'
+          +sec.opts.map(function(o){return '<option'+(saved.status===o?' selected':'')+'>'+o+'</option>';}).join('')
+          +'</select>'
+          +'<input class="cf-note-input cap-input" data-kind="cknote" data-key="'+key+'" placeholder="Note (optional)" value="'+esc(saved.note)+'"/>'
+          +'</div></div>';
+      });
+      h+='</div>';
+    }else{
+      sec.fields.forEach(function(f){
+        var val=rec.fields[f.id]||'';
+        h+='<div class="cf-field"><label>'+f.label+'</label>';
+        if(f.type==='textarea')h+='<textarea class="fw-textarea cap-input" data-kind="field" data-key="'+f.id+'" placeholder="'+esc(f.ph)+'">'+esc(val)+'</textarea>';
+        else if(f.type==='select'){var sc=val?(' st-'+sevOf(f.opts,val)):'';h+='<select class="fw-select cap-input'+sc+'" data-kind="field" data-key="'+f.id+'"><option value="">Select</option>'+f.opts.map(function(o){return '<option'+(val===o?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';}
+        else h+='<input class="fw-input cap-input" data-kind="field" data-key="'+f.id+'" placeholder="'+esc(f.ph)+'" value="'+esc(val)+'"/>';
+        h+='</div>';
+      });
+    }
+    h+='</div>';
+  });
+  h+='<div class="cap-actions"><button class="btn primary" id="capComplete" type="button">'
+    +(rec.status==='captured'?'Update capture':'Complete capture')+'</button>'
+    +'<span class="cap-saved" id="capSaved">Draft auto-saved locally</span></div>';
+  el('vw-capture').innerHTML=h;
+  el('capBack').addEventListener('click',backToHome);
+  el('capComplete').addEventListener('click',function(){completeCapture(v);});
+  [].forEach.call(el('vw-capture').querySelectorAll('.cap-input'),function(inp){
+    inp.addEventListener(inp.tagName==='SELECT'?'change':'input',function(){onCapInput(v,inp);});
+  });
+  updateCapProgress(v,schema);
+}
+function onCapInput(v,inp){
+  var all=capLoad();
+  var rec=all[v.vid]||{status:'draft',vid:v.vid,startedTs:Date.now(),checklist:{},fields:{}};
+  var kind=inp.getAttribute('data-kind'),key=inp.getAttribute('data-key');
+  if(kind==='field')rec.fields[key]=inp.value;
+  else if(kind==='checklist'){rec.checklist[key]=rec.checklist[key]||{};rec.checklist[key].status=inp.value;}
+  else if(kind==='cknote'){rec.checklist[key]=rec.checklist[key]||{};rec.checklist[key].note=inp.value;}
+  all[v.vid]=rec;capSaveAll(all);
+  if(inp.tagName==='SELECT'){inp.classList.remove('st-ok','st-warn','st-bad');if(inp.value)inp.classList.add('st-'+selSev(inp));}
+  flashSaved();updateCapProgress(v,VISIT_FORMS[v.vtype]||{sections:[]});
+}
+function updateCapProgress(v,schema){
+  var rec=capGet(v.vid)||{checklist:{},fields:{}},total=0,done=0;
+  (schema.sections||[]).forEach(function(sec,si){
+    if(sec.kind==='checklist')sec.items.forEach(function(it,ii){total++;var k='s'+si+'_i'+ii;if(rec.checklist[k]&&rec.checklist[k].status)done++;});
+    else sec.fields.forEach(function(f){total++;if(rec.fields[f.id]&&String(rec.fields[f.id]).trim())done++;});
+  });
+  var pe=el('capProg');if(pe)pe.innerHTML='<b>'+done+'</b> / '+total+' fields complete';
+}
+function flashSaved(){var s=el('capSaved');if(!s)return;s.textContent='Draft auto-saved locally';s.classList.add('show');clearTimeout(_savedT);_savedT=setTimeout(function(){s.classList.remove('show');},1300);}
+function completeCapture(v){
+  var all=capLoad();var rec=all[v.vid]||{vid:v.vid,checklist:{},fields:{}};
+  rec.status='captured';rec.completedTs=Date.now();rec.agent=_prof?_prof.id:'';
+  all[v.vid]=rec;capSaveAll(all);
+  if(typeof _logAuthEvent==='function')_logAuthEvent('Visit captured',_prof?_prof.id:'','Captured',v.reg+' · '+v.vtype+', queued for sync on reconnection');
+  var s=el('capSaved');if(s){s.textContent='Capture completed · queued for sync';s.classList.add('show');}
+  setTimeout(backToHome,700);
 }
 
 function _paintAppNet(){
@@ -684,9 +877,11 @@ function _paintAppNet(){
 window.addEventListener('online',_paintAppNet);
 window.addEventListener('offline',_paintAppNet);
 
+var _prof=null;
 function enterApp(email,mode){
   var cred=null;try{cred=JSON.parse(localStorage.getItem('andara.fw.agent.cred.v1')||'null');}catch(_){}
   var prof=(cred&&cred.agent)?cred.agent:_agentProfile(email);
+  _prof=prof;
 
   el('welcomeName').textContent='Welcome back, '+(prof.name.split(' ')[0]||'Agent');
   el('agAv').textContent=_initials(prof.name);
@@ -702,8 +897,8 @@ function enterApp(email,mode){
   var hasCred=!!cred;
   el('ofCred').textContent=hasCred?'Enabled':'Not cached';
   el('ofCredCap').textContent=hasCred?'Offline sign-in is available on this device.':'Sign in once online to enable offline use.';
-  el('ofEnrol').textContent=cred?_fmtTs(cred.enrolledTs):'—';
-  el('ofLastOnline').textContent=cred?_fmtTs(cred.lastOnlineAuthTs):'—';
+  el('ofEnrol').textContent=cred?_fmtTs(cred.enrolledTs):'';
+  el('ofLastOnline').textContent=cred?_fmtTs(cred.lastOnlineAuthTs):'';
 
   renderVisits(prof);
   applyVisitCollapse();
@@ -718,19 +913,19 @@ function _startClock(){
   tick();if(_clkTimer)clearInterval(_clkTimer);_clkTimer=setInterval(tick,1000*20);
 }
 
-/* sign out — clears the session token (cached credentials remain so the
+/* sign out, clears the session token (cached credentials remain so the
    agent can sign back in offline; that's the offline-first contract) */
 el('signOut').addEventListener('click',function(){
   var email='';try{email=(JSON.parse(localStorage.getItem('andara.fw.agent.auth')||'{}')).email||'';}catch(_){}
   try{localStorage.removeItem('andara.fw.agent.auth');}catch(_){}
-  if(typeof _logAuthEvent==='function')_logAuthEvent('Sign out',email||'—','Signed out','Session token cleared; cached credentials retained');
+  if(typeof _logAuthEvent==='function')_logAuthEvent('Sign out',email||'','Signed out','Session token cleared; cached credentials retained');
   el('app').style.display='none';
   el('login').style.display='flex';
   el('pw').value='';
   if(typeof _paintLoginNet==='function')_paintLoginNet();
 });
 
-/* collapsible Scheduled-visits panel — fold it away while building other
+/* collapsible Scheduled-visits panel, fold it away while building other
    features; state persists in localStorage */
 (function(){
   var t=el('visitToggle');if(!t)return;
@@ -740,7 +935,7 @@ el('signOut').addEventListener('click',function(){
 })();
 
 /* eye-toggle via delegation (survives any earlier script error; never wire
-   an inline onclick on #pwToggle — it double-fires with this handler) */
+   an inline onclick on #pwToggle, it double-fires with this handler) */
 document.addEventListener('click',function(e){
   var btn=e.target.closest&&e.target.closest('#pwToggle');
   if(!btn)return;
