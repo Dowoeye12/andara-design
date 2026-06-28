@@ -760,9 +760,33 @@ What Andara field agents use on-site. File: `public/fleetwatch/capture/index.htm
   click → reopen. Visit-row chip now uses `capDisplayState()` → Not started / In progress / **Queued**
   / **Synced** (new `.ichip.queued` info + `.ichip.synced` deploy chips). Verified: completed visit
   survives a full reload (offline persistence), chip flips to Queued, offline hint updates live.
-  Actual upload is #7. `synced` state is reserved for #7 to flip.
-- **#7 Sync on reconnection** — NEXT. #8 Visit history — PLANNED. The post-login "Capture workflow"
-  panel scaffolds all 8 with Live/Next/Planned tags; flip the tag when each ships.
+- **#7 Sync on reconnection** — DONE. `fwSyncQueue(trigger)` drains the held queue to the FleetWatch
+  capture-intake endpoint. Triggers: the window `online` event, app open if already online
+  (`enterApp` schedules `fwSyncQueue('app-open')` so a visit captured offline in a prior session
+  uploads on reopen), and a manual **"Sync now"** button on the "Held on this device" panel. Each
+  bundle steps `queued → uploading → synced`: `fwSubmitBundle(rec)` is a front-end **STUB** (resolves
+  a receipt `INTK-<base36>` after a simulated delay; M2 POSTs the bundle and uses the server receipt +
+  IP), then the record gets `sync:'synced'`, `syncedTs`, `receiptId`, and an `_logAuthEvent('Visit
+  synced', …)` audit row with the reg/vtype/bundleId/**photo+doc counts** (explicitly reflecting PRD
+  line 110 "syncs documents and photos")/receipt. `_syncing` guard prevents concurrent
+  passes; offline short-circuits (button disabled "Offline", bundles stay queued). Synced records stay
+  in `andara.fw.capture.drafts.v1` (they feed #8 Visit history) but drop out of the queue. Sync meta
+  (`lastSyncTs`) persists to `andara.fw.capture.sync.v1`; panel shows "Last sync … · N submitted to
+  intake". New chips `.ichip.uploading` (amber, pulse) + `.ichip.failed` (dnd); `capDisplayState`
+  extended to Uploading / Sync failed. Verified: manual + reconnect-event sync both drive
+  queued→synced with receipts, queue empties, visit chip flips to Synced, offline guard holds bundles,
+  audit rows written, no console errors.
+- **#8 Visit history** — DONE (last §3.4.3 feature; **all 8 now shipped**). `capturedVisits(prof)`
+  reads `andara.fw.capture.drafts.v1` for `status==='captured'` records belonging to the signed-in
+  agent (`r.agent===prof.id` or membership in `VISITS[prof.id]`), newest first. `renderHistory` paints
+  the **"Visit history"** home panel: per-row aircraft/operator, visit type, location, "Captured
+  <ts>" + contents (`capCounts`), `capDisplayState` chip (Queued/Uploading/Synced/Failed), and the
+  receipt id (synced) or bundle id, click → reopen. Scoped strictly to "this agent" per PRD wording.
+  Synced records are retained in the drafts store specifically so history persists (they leave the
+  sync queue but stay in history). `renderHistory` is called from `enterApp`, `backToHome`, and every
+  `fwSyncQueue` step so state stays live (a visit flips Queued→Synced in history as it uploads).
+  Verified: this-agent scoping (foreign-agent records excluded), newest-first order, live state flip
+  on sync, receipt shown, empty state, no console errors.
 
 Note: the FleetWatch apps contain **no em dashes** (commas instead), per a standing user preference;
 keep new copy/comments in these files em-dash-free.
@@ -807,7 +831,7 @@ The dev middleware **auto-discovers** any folder under `public/` that contains a
 | `src/App.tsx` | React Router routes |
 | `public/credit-intelligence/africa/index.html` | Africa terminal page (patched output) |
 | `public/fleetwatch/portal/index.html` | FleetWatch **Client Portal Dashboard** (PRD §3.2.3 — complete) |
-| `public/fleetwatch/capture/index.html` | FleetWatch **Field Agent App** (PRD §3.4.3 — Agent login + Visit list + Visit capture + Photo capture + Document scan + Offline persistence shipped) |
+| `public/fleetwatch/capture/index.html` | FleetWatch **Field Agent App** (PRD §3.4.3 — all 8 features shipped: Agent login + Visit list + Visit capture + Photo capture + Document scan + Offline persistence + Sync on reconnection + Visit history) |
 | `scripts/patch-africa-page.py` | Patch automation script |
 | `andara_export/` | Raw HTML exports from design tool (not served) |
 | `public/intelligence/air.css` | Shared AIR design system |

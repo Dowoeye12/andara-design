@@ -245,6 +245,8 @@ input,select,textarea{font-family:inherit;color:inherit}
 /* ── offline persistence / sync queue (§3.4.3 #6) ── */
 .sync-hint{font-family:var(--mono);font-size:11px;letter-spacing:.02em;line-height:1.6;color:var(--t4)}
 .sync-hint.armed{color:var(--info)}
+.sync-actions{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sync-last{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--t4)}
 #syncList:not(:empty){border-top:1px solid var(--line)}
 
 /* ── collapsible panel header (builder convenience) ── */
@@ -276,6 +278,9 @@ input,select,textarea{font-family:inherit;color:inherit}
 .ichip.due-ok{color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
 .ichip.queued{color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
 .ichip.synced{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.ichip.uploading{color:var(--amber);background:var(--amber-soft);border-color:var(--amber-line);animation:syncpulse 1s ease-in-out infinite}
+.ichip.failed{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+@keyframes syncpulse{0%,100%{opacity:.55}50%{opacity:1}}
 .vl-empty{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em;padding:24px 16px;text-align:center;line-height:1.7}
 @media (max-width:640px){.vl-row{flex-wrap:wrap}.vl-side{align-items:flex-start;text-align:left;width:100%;flex-direction:row;gap:10px;flex-wrap:wrap}}
 
@@ -553,7 +558,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <div>
         <div class="eyebrow">Field Agent App · §3.4.3</div>
         <h1 id="welcomeName">Welcome back</h1>
-        <div class="sub">Your scheduled visits are below. Capture each visit with structured forms, on-site photos and deskewed document scans, all offline, completed visits are held on this device and queued for sync.</div>
+        <div class="sub">Your scheduled visits are below. Capture each visit with structured forms, on-site photos and deskewed document scans, all offline. Completed visits are held on this device, submitted to FleetWatch intake automatically when you reconnect, and kept in your visit history.</div>
       </div>
     </div>
 
@@ -583,8 +588,18 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
           </div>
         </div>
         <div class="sync-hint" id="syncHint"></div>
+        <div class="sync-actions">
+          <button class="btn primary sm" id="syncNowBtn" type="button" style="display:none">Sync now</button>
+          <span class="sync-last" id="syncLast"></span>
+        </div>
       </div>
       <div id="syncList"></div>
+    </div>
+
+    <!-- visit history (§3.4.3 #8), past visits this agent has captured -->
+    <div class="panel" id="historyPanel">
+      <div class="ph"><span class="bullet"></span><h3>Visit history</h3><span class="meta" id="historyMeta">None yet</span></div>
+      <div id="historyList"></div>
     </div>
 
     <!-- agent identity -->
@@ -668,22 +683,22 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
           <div class="body"><b>Offline persistence</b><span>Full visit captured offline; sealed into a bundle and queued for sync.</span></div>
           <span class="tag ichip deploy">Live</span>
         </div>
-        <div class="feat">
+        <div class="feat live">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9c-2.5 0-4.8-1-6.4-2.6L3 16"/><path d="M3 12a9 9 0 0 1 9-9c2.5 0 4.8 1 6.4 2.6L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg></div>
           <div class="body"><b>Sync on reconnection</b><span>Bundle submitted to FleetWatch intake when device reconnects.</span></div>
-          <span class="tag ichip muted">Next</span>
+          <span class="tag ichip deploy">Live</span>
         </div>
-        <div class="feat">
+        <div class="feat live">
           <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div>
           <div class="body"><b>Visit history</b><span>Past visits this agent has captured.</span></div>
-          <span class="tag ichip muted">Planned</span>
+          <span class="tag ichip deploy">Live</span>
         </div>
       </div>
     </div>
 
     <div class="foot">
       Andara FleetWatch Capture · Internal, Restricted<br>
-      Features shipped: <span>Agent login (offline-first)</span> · <span>Visit list</span> · <span>Visit capture flow</span> · <span>Photo capture</span> · <span>Document scan</span> · <span>Offline persistence</span> · PRD §3.4.3
+      All 8 features shipped: <span>Agent login (offline-first)</span> · <span>Visit list</span> · <span>Visit capture flow</span> · <span>Photo capture</span> · <span>Document scan</span> · <span>Offline persistence</span> · <span>Sync on reconnection</span> · <span>Visit history</span> · PRD §3.4.3
     </div>
   </div>
 
@@ -729,6 +744,7 @@ var _acSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wi
 var _pinSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
 var _cloudSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 13V3"/><path d="m8 7 4-4 4 4"/><path d="M20 17.6A4 4 0 0 0 18 10h-1.3A7 7 0 1 0 5 16"/></svg>';
 var _clockSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+var _histSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 15 2 2 4-4"/></svg>';
 
 var VISITS_COLLAPSE_KEY='andara.fw.capture.visitsCollapsed';
 function setVisitCollapsed(c){
@@ -826,7 +842,12 @@ function capDisplayState(vid){
   var r=capGet(vid);
   if(!r||!r.status||r.status==='none')return{lbl:'Not started',cls:'muted'};
   if(r.status==='draft')return{lbl:'In progress',cls:'amber'};
-  if(r.status==='captured')return r.sync==='synced'?{lbl:'Synced',cls:'synced'}:{lbl:'Queued',cls:'queued'};
+  if(r.status==='captured'){
+    if(r.sync==='synced')return{lbl:'Synced',cls:'synced'};
+    if(r.sync==='uploading')return{lbl:'Uploading',cls:'uploading'};
+    if(r.sync==='failed')return{lbl:'Sync failed',cls:'failed'};
+    return{lbl:'Queued',cls:'queued'};
+  }
   return{lbl:'Not started',cls:'muted'};
 }
 function findVisit(vid){for(var k in VISITS){var a=VISITS[k];for(var i=0;i<a.length;i++)if(a[i].vid===vid)return a[i];}return null;}
@@ -842,7 +863,7 @@ function openCapture(vid){
 }
 function backToHome(){
   el('vw-capture').style.display='none';el('vw-home').style.display='flex';_capVid=null;
-  if(_prof)renderVisits(_prof);renderSyncQueue();window.scrollTo(0,0);
+  if(_prof)renderVisits(_prof);renderSyncQueue();renderHistory();window.scrollTo(0,0);
 }
 function renderCapture(v){
   var schema=VISIT_FORMS[v.vtype]||{sections:[],blurb:''};
@@ -1196,17 +1217,34 @@ function queuedVisits(){
 }
 function renderSyncQueue(){
   var listEl=el('syncList');if(!listEl)return;
-  var q=queuedVisits(),online=navigator.onLine!==false;
-  if(el('syncCount'))el('syncCount').textContent=q.length+' visit'+(q.length===1?'':'s');
+  var q=queuedVisits(),online=navigator.onLine!==false,pending=q.length;
+  if(el('syncCount'))el('syncCount').textContent=pending+' visit'+(pending===1?'':'s');
   if(el('syncSize'))el('syncSize').textContent=fmtBytes(capStoreBytes());
-  if(el('syncMeta'))el('syncMeta').textContent=q.length?(q.length+' queued'):'Nothing queued';
+  if(el('syncMeta'))el('syncMeta').textContent=_syncing?'Syncing…':(pending?(pending+' queued'):'All synced');
+
   var hint=el('syncHint');
   if(hint){
-    if(!q.length){hint.className='sync-hint';hint.textContent='Captures are saved as you type and survive closing the app or losing signal.';}
-    else if(online){hint.className='sync-hint armed';hint.textContent='Held safely on this device. Bundles upload to FleetWatch intake on the next sync.';}
-    else{hint.className='sync-hint armed';hint.textContent='Offline. '+q.length+' bundle'+(q.length===1?'':'s')+' held on this device and will upload automatically when you reconnect.';}
+    if(_syncing){hint.className='sync-hint armed';hint.textContent='Submitting bundles to FleetWatch intake…';}
+    else if(!pending){hint.className='sync-hint';hint.textContent='All caught up. Captures are saved as you type and survive closing the app or losing signal.';}
+    else if(online){hint.className='sync-hint armed';hint.textContent='Held safely on this device. Tap Sync now, or bundles upload automatically when the device reconnects.';}
+    else{hint.className='sync-hint armed';hint.textContent='Offline. '+pending+' bundle'+(pending===1?'':'s')+' held on this device and will upload automatically when you reconnect.';}
   }
-  if(!q.length){
+
+  /* Sync now button: visible only when there is something to send */
+  var btn=el('syncNowBtn');
+  if(btn){
+    if(!pending){btn.style.display='none';}
+    else if(_syncing){btn.style.display='';btn.disabled=true;btn.textContent='Syncing…';}
+    else if(!online){btn.style.display='';btn.disabled=true;btn.textContent='Offline';}
+    else{btn.style.display='';btn.disabled=false;btn.textContent='Sync now';}
+  }
+  var last=el('syncLast');
+  if(last){
+    var m=fwSyncMeta(),done=syncedCount();
+    last.textContent=m.lastSyncTs?('Last sync '+_fmtTs(m.lastSyncTs)+(done?(' · '+done+' submitted to intake'):'')):'';
+  }
+
+  if(!pending){
     listEl.innerHTML='<div class="vl-empty">No completed visits waiting.<br>Finish a visit capture and the full bundle is held here, ready to sync.</div>';
     return;
   }
@@ -1214,6 +1252,9 @@ function renderSyncQueue(){
     var v=o.v,r=o.r,c=capCounts(v);
     var qt=r.queuedTs||r.completedTs;
     var parts=[c.done+' of '+c.total+' fields',c.photos+' photo'+(c.photos===1?'':'s'),c.docs+' scan'+(c.docs===1?'':'s')];
+    var chip = r.sync==='uploading' ? '<span class="ichip uploading">Uploading…</span>'
+             : r.sync==='failed'    ? '<span class="ichip failed">Failed · will retry</span>'
+             :                        '<span class="ichip queued">Queued</span>';
     return '<div class="vl-row vl-click" onclick="openCapture(\''+v.vid+'\')" title="Open visit">'
       +'<div class="vl-ico">'+_cloudSvg+'</div>'
       +'<div class="vl-main">'
@@ -1223,7 +1264,114 @@ function renderSyncQueue(){
       +'</div>'
       +'<div class="vl-side">'
         +'<span class="vl-due-date">'+(r.bundleId||'')+'</span>'
-        +'<span class="ichip queued">Queued</span>'
+        +chip
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════════
+   SYNC ON RECONNECTION (PRD §3.4.3 #7)
+   "Bundle submitted to FleetWatch intake when device reconnects."
+   Drains the held queue to the intake endpoint: on the `online` event,
+   on app open if already online (reopened after being offline), and on a
+   manual "Sync now". Each bundle goes queued → uploading → synced, with the
+   intake receipt id recorded and an audit row written. The intake call is a
+   front-end STUB at M1 (no backend); M2 POSTs the bundle (forms + photos +
+   scans) to the FleetWatch capture-intake API and uses its real receipt.
+══════════════════════════════════════════ */
+var _syncing=false;
+var FW_SYNC_KEY='andara.fw.capture.sync.v1';
+function fwSyncMeta(){try{return JSON.parse(localStorage.getItem(FW_SYNC_KEY)||'{}')||{};}catch(_){return {};}}
+function fwSaveSyncMeta(m){try{localStorage.setItem(FW_SYNC_KEY,JSON.stringify(m));}catch(_){}}
+function syncedCount(){var all=capLoad(),n=0;for(var k in all){if(all[k]&&all[k].sync==='synced')n++;}return n;}
+
+function fwSubmitBundle(rec){
+  /* M1 STUB: simulate the FleetWatch capture-intake submission. M2 swaps this
+     for a real POST of the bundle and uses the server receipt + IP. */
+  return new Promise(function(resolve){
+    setTimeout(function(){
+      resolve({receiptId:'INTK-'+Date.now().toString(36).toUpperCase()+Math.floor(Math.random()*1296).toString(36).toUpperCase(),acceptedTs:Date.now()});
+    },650+Math.random()*450);
+  });
+}
+
+function fwSyncQueue(trigger){
+  if(_syncing)return;
+  if(navigator.onLine===false){renderSyncQueue();return;}
+  var q=queuedVisits();
+  if(!q.length){renderSyncQueue();return;}
+  _syncing=true;renderSyncQueue();
+  var i=0;
+  (function next(){
+    if(i>=q.length){
+      _syncing=false;
+      var m=fwSyncMeta();m.lastSyncTs=Date.now();m.lastTrigger=trigger||'';fwSaveSyncMeta(m);
+      renderSyncQueue();if(_prof)renderVisits(_prof);renderHistory();
+      return;
+    }
+    var vid=q[i++].v.vid,all=capLoad(),rec=all[vid];
+    if(!rec||rec.sync==='synced'){next();return;}
+    rec.sync='uploading';capSaveAll(all);renderSyncQueue();if(_prof)renderVisits(_prof);renderHistory();
+    var v=findVisit(vid);
+    fwSubmitBundle(rec).then(function(receipt){
+      var a2=capLoad(),r2=a2[vid];
+      if(r2){r2.sync='synced';r2.syncedTs=Date.now();r2.receiptId=receipt.receiptId;capSaveAll(a2);
+        var np=(r2.photos||[]).length,nd=(r2.documents||[]).length;
+        if(typeof _logAuthEvent==='function')_logAuthEvent('Visit synced',_prof?_prof.id:'','Synced',(v?v.reg+' · '+v.vtype+' · ':'')+'bundle '+(r2.bundleId||'')+' ('+np+' photo'+(np===1?'':'s')+' · '+nd+' doc'+(nd===1?'':'s')+') accepted by FleetWatch intake · '+receipt.receiptId);}
+      renderSyncQueue();renderHistory();setTimeout(next,200);
+    }).catch(function(){
+      var a3=capLoad(),r3=a3[vid];if(r3){r3.sync='failed';capSaveAll(a3);}
+      renderSyncQueue();if(_prof)renderVisits(_prof);renderHistory();setTimeout(next,200);
+    });
+  })();
+}
+
+/* ══════════════════════════════════════════
+   VISIT HISTORY (PRD §3.4.3 #8)
+   "Past visits this agent has captured."
+   Lists the completed (status 'captured') visits belonging to the signed-in
+   agent, newest first, with capture date, contents, sync state + receipt.
+   Synced records are retained in andara.fw.capture.drafts.v1 for exactly this.
+══════════════════════════════════════════ */
+function capturedVisits(prof){
+  prof=prof||_prof;if(!prof)return [];
+  var all=capLoad(),mine={},out=[];
+  (VISITS[prof.id]||[]).forEach(function(v){mine[v.vid]=1;});
+  for(var vid in all){
+    var r=all[vid];
+    if(r&&r.status==='captured'&&(r.agent===prof.id||mine[vid])){
+      var v=findVisit(vid);if(v)out.push({v:v,r:r});
+    }
+  }
+  out.sort(function(a,b){return (b.r.completedTs||b.r.queuedTs||0)-(a.r.completedTs||a.r.queuedTs||0);});
+  return out;
+}
+function renderHistory(prof){
+  prof=prof||_prof;
+  var listEl=el('historyList');if(!listEl)return;
+  var h=capturedVisits(prof);
+  if(el('historyMeta'))el('historyMeta').textContent=h.length?(h.length+' captured'):'None yet';
+  if(!h.length){
+    listEl.innerHTML='<div class="vl-empty">No visits captured yet.<br>Completed visit captures appear here as your record of work.</div>';
+    return;
+  }
+  listEl.innerHTML=h.map(function(o){
+    var v=o.v,r=o.r,c=capCounts(v),ds=capDisplayState(v.vid);
+    var when=r.completedTs||r.queuedTs;
+    var parts=[c.done+' of '+c.total+' fields',c.photos+' photo'+(c.photos===1?'':'s'),c.docs+' scan'+(c.docs===1?'':'s')];
+    var ref = (r.sync==='synced'&&r.receiptId) ? r.receiptId : (r.bundleId||'');
+    return '<div class="vl-row vl-click" onclick="openCapture(\''+v.vid+'\')" title="Open visit">'
+      +'<div class="vl-ico">'+_histSvg+'</div>'
+      +'<div class="vl-main">'
+        +'<div class="vl-hd"><b>'+v.reg+'</b><span class="ichip">'+v.vtype+'</span></div>'
+        +'<div class="vl-sub">'+v.ac+' · '+v.op+'</div>'
+        +'<div class="vl-loc">'+_pinSvg+'<span>'+v.loc+'</span></div>'
+        +'<div class="vl-loc">'+_clockSvg+'<span>Captured '+_fmtTs(when)+' · '+parts.join(' · ')+'</span></div>'
+      +'</div>'
+      +'<div class="vl-side">'
+        +(ref?'<span class="vl-due-date">'+ref+'</span>':'')
+        +'<span class="ichip '+ds.cls+'">'+ds.lbl+'</span>'
       +'</div>'
     +'</div>';
   }).join('');
@@ -1272,6 +1420,8 @@ function _paintAppNet(){
 }
 window.addEventListener('online',_paintAppNet);
 window.addEventListener('offline',_paintAppNet);
+/* §3.4.3 #7: when the device reconnects, submit held bundles to FleetWatch intake */
+window.addEventListener('online',function(){if(typeof fwSyncQueue==='function')fwSyncQueue('reconnect');});
 
 var _prof=null;
 function enterApp(email,mode){
@@ -1298,9 +1448,13 @@ function enterApp(email,mode){
 
   renderVisits(prof);
   renderSyncQueue();
+  renderHistory(prof);
   applyVisitCollapse();
   _paintAppNet();
   _startClock();
+  /* §3.4.3 #7: reopening the app while online counts as a reconnection,
+     drain anything captured offline in a prior session to intake */
+  if(navigator.onLine!==false)setTimeout(function(){fwSyncQueue('app-open');},900);
 }
 
 var _clkTimer=null;
@@ -1321,6 +1475,9 @@ el('signOut').addEventListener('click',function(){
   el('pw').value='';
   if(typeof _paintLoginNet==='function')_paintLoginNet();
 });
+
+/* §3.4.3 #7: manual sync trigger (online-but-no-event, or retry a failure) */
+(function(){var b=el('syncNowBtn');if(b)b.addEventListener('click',function(){fwSyncQueue('manual');});})();
 
 /* collapsible Scheduled-visits panel, fold it away while building other
    features; state persists in localStorage */
