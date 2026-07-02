@@ -272,9 +272,12 @@ input,select,textarea{font-family:inherit;color:inherit}
 .slbl{display:none}
 .sdiv{display:none}
 
-/* Carriers section — region groups + airline rows */
-.sgrp-carriers{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;margin-top:10px}
-#carrierSidebar{overflow-y:auto;flex:1;margin:0 -10px;padding:0 4px 4px}
+/* Carriers section — region groups + airline rows.
+   Natural height (no cramped inner scrollbox): the carrier list flows at full
+   height and the WHOLE sidebar (.sb, overflow-y:auto) scrolls as one unit, so
+   expanding a region scrolls the entire side nav rather than a tiny sub-panel. */
+.sgrp-carriers{flex:0 0 auto;display:flex;flex-direction:column;margin-top:10px}
+#carrierSidebar{flex:0 0 auto;margin:0 -10px;padding:0 4px 4px}
 
 .reg-hdr{
   display:flex;align-items:center;gap:8px;padding:10px 8px 5px;
@@ -1386,11 +1389,14 @@ select{
 .dd.open .dd-trigger .dd-caret{transform:rotate(180deg);color:var(--amber)}
 
 .dd-menu{
-  position:absolute;top:calc(100% + 6px);left:0;right:0;
+  /* position:fixed + JS placement so a long menu (e.g. the ~86-carrier lists)
+     escapes any ancestor overflow:hidden (form panels) and its internal
+     scroll always works. left/top/width/max-height are set in positionMenu(). */
+  position:fixed;
   background:var(--bg2);border:1px solid var(--line2);border-radius:6px;
   box-shadow:0 12px 32px rgba(0,0,0,.55),0 4px 8px rgba(0,0,0,.35);
-  max-height:280px;overflow-y:auto;
-  z-index:1000;padding:6px;display:none;min-width:200px;
+  max-height:280px;overflow-y:auto;overscroll-behavior:contain;
+  z-index:5000;padding:6px;display:none;min-width:200px;
 }
 .dd.open .dd-menu{display:block;animation:ddIn .15s ease-out}
 @keyframes ddIn{from{opacity:0;transform:translateY(-4px) scale(.985)}to{opacity:1;transform:none}}
@@ -5284,7 +5290,7 @@ function buildSidebar(){
     {key:'ng', title:'NIGERIA',         dot:'var(--amber)', list:ng, render:ngRow, cnt:`<span class="cnt">${ng.length}</span>`},
     {key:'wa', title:'WEST AFRICA',     dot:'#7DABE3',      list:wa, render:waRow, cnt:`<span class="cnt">${wa.length}</span>`},
     {key:'ea', title:'EAST AFRICA',     dot:'#4ECDC4',      list:ea, render:eaRow, cnt:`<span class="cnt">${ea.length}</span>`},
-    {key:'sa', title:'SOUTHERN AFRICA', dot:'#F5B947',      list:sa, render:saRow, cnt:`<span class="cnt">${sa.length}<small style="font-size:10px;opacity:.6"> /58</small></span>`},
+    {key:'sa', title:'SOUTHERN AFRICA', dot:'#F5B947',      list:sa, render:saRow, cnt:`<span class="cnt">${sa.length}</span>`},
     {key:'ca', title:'CENTRAL AFRICA',  dot:'#A78BFA',      list:ca, render:caRow, cnt:`<span class="cnt">${ca.length}</span>`},
   ];
 
@@ -7523,12 +7529,29 @@ function ddEnhance(sel){
     const isPlaceholder=!cur||!cur.value||lbl.trim().startsWith('—');
     trig.classList.toggle('placeholder',isPlaceholder);
   }
+  function positionMenu(){
+    const r=trig.getBoundingClientRect();
+    const w=Math.max(r.width,180);
+    menu.style.width=w+'px';
+    let left=Math.min(r.left, window.innerWidth-w-8);
+    if(left<8)left=8;
+    menu.style.left=left+'px';
+    const spaceBelow=window.innerHeight-r.bottom-8;
+    const spaceAbove=r.top-8;
+    const dropUp=spaceBelow<220 && spaceAbove>spaceBelow;
+    const maxH=Math.max(120,Math.min(280, dropUp?spaceAbove:spaceBelow));
+    menu.style.maxHeight=maxH+'px';
+    if(dropUp){ menu.style.top=(r.top-6-Math.min(menu.scrollHeight,maxH))+'px'; }
+    else { menu.style.top=(r.bottom+6)+'px'; }
+  }
   function openDd(){
     document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
     rebuild();
     wrap.classList.add('open');
     trig.setAttribute('aria-expanded','true');
+    positionMenu();
   }
+  wrap._ddReposition=positionMenu;
   function closeDd(){
     wrap.classList.remove('open');
     trig.setAttribute('aria-expanded','false');
@@ -7549,6 +7572,11 @@ document.addEventListener('click',e=>{
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));
 });
+// The menu is position:fixed, so on scroll/resize re-anchor it to its trigger
+// (keeps the open carrier list glued to its control while the page scrolls).
+function ddRepositionOpen(){document.querySelectorAll('.dd.open').forEach(d=>{if(typeof d._ddReposition==='function')d._ddReposition();});}
+window.addEventListener('scroll',ddRepositionOpen,true);
+window.addEventListener('resize',ddRepositionOpen);
 
 // Watch Note dispatcher — appends to FEED so it lights up the Market Overview
 // Watch Notes panel; watermarks via moLogDeliverable; unshifts onto AUDIT.
