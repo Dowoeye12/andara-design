@@ -699,7 +699,7 @@ client Acknowledge button writes audit), **Document index** (all deliverables, t
 download). Watermark/audit via `fwLogDeliverable()` → `AUDIT` + `andara.fw.portal.audit.v1` (M2 moves
 token generation server-side per §3.2.6). Data is a static `FLEET[]` seed (Nigerian AOCs, M1 scope).
 
-### `/fleetwatch/capture` — Field Agent App · FleetWatch Capture (PRD §3.4.3) — IN PROGRESS
+### `/fleetwatch/capture` — Field Agent App · FleetWatch Capture (PRD §3.4.3) — COMPLETE (all 8 features)
 
 What Andara field agents use on-site. File: `public/fleetwatch/capture/index.html`. Demo:
 `field.agent@andara.com` / `andara2026`. Session key `andara.fw.agent.auth`.
@@ -791,6 +791,47 @@ What Andara field agents use on-site. File: `public/fleetwatch/capture/index.htm
 Note: the FleetWatch apps contain **no em dashes** (commas instead), per a standing user preference;
 keep new copy/comments in these files em-dash-free.
 
+### `/fleetwatch/review` — Supervisor Review (PRD §3.4.4) — IN PROGRESS
+
+What a senior analyst uses to review the visits field agents captured and synced (§3.4.3), before a
+visit is accepted and a quarterly report can be built. File: `public/fleetwatch/review/index.html`.
+Demo: `supervisor@andara.com` / `andara2026`. Session key `andara.fw.review.auth`. Route wired in
+`vercel.json` (+ dev middleware auto-discovers). Seed data is `REVIEW_VISITS[]` (3 submitted visits,
+one per visit type, each carrying the structured form, photos, scans, ingestion-extracted fields and
+draft/auto-flagged anomalies). In production these arrive from the FleetWatch capture-intake endpoint
+(the bundles §3.4.3 syncs out); the M1 seed is the stand-in.
+
+- **#1 Pending visits queue** — DONE. `pendingVisits()` (status `pending`, sorted oldest-first =
+  longest-waiting first). Home view: 4-cell stat strip (Pending review · Draft anomalies · Visit types
+  · Oldest waiting) + queue rows (reg + vtype chip + draft-anomaly count chip, aircraft/MSN/operator,
+  location + agent, submitted timestamp + `waitLabel()` urgency chip reusing the wait-long/mid/ok
+  ramp). Click row → review surface.
+- **#2 Visit review surface** — DONE. `openReview(id)` → `renderReview(v)`: breadcrumb `Queue / <reg>`,
+  header (reg + chips), provenance strip (submitted-by / submitted / location / intake receipt), then
+  five read panels: **Structured form** (per-section rows, status values severity-tinted via
+  `sevClass()` covering all three visit-type vocabularies, records `Sighted/Not available/Discrepancy`,
+  ramp/MRO `Satisfactory/Advisory/Defect`, and the select scales; free-text findings render as italic
+  notes), **Photos** (placeholder tiles + captions; real thumbnails come from the bundle in M2),
+  **Document scans** (placeholder tiles + `Aligned`/`Deskewed X°` label), **Extracted fields** (k/v +
+  `from <source>` provenance line), **Draft anomalies** (severity chip + source chip + `Draft` chip).
+  Decision footer shows disabled Accept/Amend/Return buttons flagged as §3.4.4 #3.
+- **#3 Accept / amend / return** — DONE. Decision footer is live when `v.status==='pending'`, otherwise a
+  read-only decision card. **Accept & close** (optional note) → `status:'accepted'`; **Return to agent**
+  (note required, ≥15 chars, enforced) → `status:'returned'`; **Amend fields** opens a modal of the
+  extracted fields as editable inputs, saving records `{from,to,ts}` per changed key, applies to
+  `v.extracted[i].v`, and stamps `e.amended={from}` so the field shows an `Amended` chip + `was: <orig>`
+  (original preserved across repeat amends). Decisions + amendments persist to `andara.fw.review.state.v1`
+  and replay via `rvRestore()` on boot. Queue gains `.fb` filter chips (Pending / Accepted / Returned /
+  All, with live counts via `countBy()`); `visitsFor(filter)` sorts pending oldest-first and decided
+  newest-first; decided rows show an Accepted/Returned chip + `View →`. Shared reusable modal (`#rvModal`,
+  `rvmOpen(cfg)`/`rvmClose`) + `toast()`. Verified: amend (orig preserved + persisted), accept, return
+  (short-note guard blocks), filter counts, reload persistence, decision card, no console errors.
+- **#4 Anomaly classification** — NEXT. Promote a draft anomaly to a formal anomaly with severity.
+
+Photos/scans are represented as placeholder tiles (tone/label), not embedded base64, to keep the file
+light; production renders the real synced media. This surface is read-only at #1+#2; the mutating
+actions (#3, #4) are the next build.
+
 ### Backend boundary (when wiring real data)
 
 Everything currently runs front-end-only (static seeds + localStorage). In production the Client
@@ -832,6 +873,7 @@ The dev middleware **auto-discovers** any folder under `public/` that contains a
 | `public/credit-intelligence/africa/index.html` | Africa terminal page (patched output) |
 | `public/fleetwatch/portal/index.html` | FleetWatch **Client Portal Dashboard** (PRD §3.2.3 — complete) |
 | `public/fleetwatch/capture/index.html` | FleetWatch **Field Agent App** (PRD §3.4.3 — all 8 features shipped: Agent login + Visit list + Visit capture + Photo capture + Document scan + Offline persistence + Sync on reconnection + Visit history) |
+| `public/fleetwatch/review/index.html` | FleetWatch **Supervisor Review** (PRD §3.4.4 — in progress: #1 Pending visits queue + #2 Visit review surface + #3 Accept/amend/return shipped; #4 Anomaly classification next) |
 | `scripts/patch-africa-page.py` | Patch automation script |
 | `andara_export/` | Raw HTML exports from design tool (not served) |
 | `public/intelligence/air.css` | Shared AIR design system |

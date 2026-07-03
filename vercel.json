@@ -12,6 +12,8 @@
     { "source": "/fleetwatch/capture/(.*)", "destination": "/fleetwatch/capture/$1" },
     { "source": "/fleetwatch/portal", "destination": "/fleetwatch/portal/index.html" },
     { "source": "/fleetwatch/portal/(.*)", "destination": "/fleetwatch/portal/$1" },
+    { "source": "/fleetwatch/review", "destination": "/fleetwatch/review/index.html" },
+    { "source": "/fleetwatch/review/(.*)", "destination": "/fleetwatch/review/$1" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }

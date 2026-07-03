@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Andara FleetWatch, Supervisor Review | Aviation Surveillance</title>
+<meta name="description" content="Andara FleetWatch Supervisor Review, senior analyst review of submitted field visits, structured forms, photos, scans, extracted fields and draft anomalies before a visit is accepted."/>
+<meta name="theme-color" content="#000000"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════
+   ANDARA FLEETWATCH, SUPERVISOR REVIEW (PRD §3.4.4)
+   Senior analyst reviews the visits field agents captured
+   and synced (§3.4.3), before they are accepted and closed.
+   Design system inherited verbatim from the Andara Credit
+   Intelligence terminal + FleetWatch Capture app.
+══════════════════════════════════════════════════════ */
+:root{
+  --bg:#000;--bg4:#070809;--bg2:#0b0d10;--bg3:#13161c;--bg-hover:#191d24;
+  --line:#1e232b;--line2:#2a313c;--line3:#343c49;
+  --t1:#f2f5fa;--t2:#c2cad8;--t3:#a4adba;--t4:#8a93a3;
+  --display:rgba(255,255,255,0.92);
+  --amber:#e8a23a;--amber2:#f1b85a;--amber-dim:#b8801f;
+  --amber-soft:rgba(232,162,58,0.11);--amber-line:rgba(232,162,58,0.30);
+  --deploy:#6bb38a;--deploy-soft:rgba(107,179,138,0.11);--deploy-line:rgba(107,179,138,0.28);
+  --watch:#d6a85a;--watch-soft:rgba(214,168,90,0.11);--watch-line:rgba(214,168,90,0.28);
+  --dnd:#c97474;--dnd-soft:rgba(201,116,116,0.11);--dnd-line:rgba(201,116,116,0.28);
+  --info:#7c9fc7;--info-soft:rgba(124,159,199,0.11);--info-line:rgba(124,159,199,0.28);
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --sans:"Hanken Grotesk",ui-sans-serif,system-ui,sans-serif;
+  --r:6px;--r-lg:9px;--tb-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,select,textarea{font-family:inherit;color:inherit}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.14)}
+
+/* ── status + chip pills (fixed height, inline-flex centring) ── */
+.netpill{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:26px;padding:0 12px;line-height:1;margin:0;border:1px solid;border-radius:4px;box-sizing:border-box;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.netpill .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.netpill.online{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.netpill.online .dot{background:var(--deploy);box-shadow:0 0 0 3px rgba(107,179,138,0.18)}
+.ichip{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:22px;padding:0 10px;line-height:1;margin:0;border:1px solid var(--info-line);background:var(--info-soft);color:var(--info);border-radius:4px;box-sizing:border-box;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.ichip.amber{color:var(--amber);background:var(--amber-soft);border-color:var(--amber-line)}
+.ichip.deploy{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.ichip.watch{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.ichip.dnd{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.ichip.muted{color:var(--t4);background:var(--bg3);border-color:var(--line)}
+
+/* ── login ── */
+#login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);overflow:auto}
+#login::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse 80% 70% at 30% 30%,#000 20%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse 80% 70% at 30% 30%,#000 20%,transparent 80%)}
+#login::after{content:"";position:absolute;top:-15%;left:-5%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(255,177,46,.10),transparent 60%);pointer-events:none}
+.ls{display:grid;grid-template-columns:1.1fr 1fr;width:100%;max-width:880px;min-height:505px;border:1px solid var(--line);background:var(--bg2);position:relative;overflow:hidden;z-index:2}
+.ls::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--amber) 50%,transparent)}
+.ll{padding:36px;display:flex;flex-direction:column;justify-content:space-between;border-right:1px solid var(--line);gap:20px}
+.bm{display:flex;align-items:center;gap:12px}
+.lh{font-family:var(--sans);font-weight:600;font-size:31px;line-height:1.06;letter-spacing:-.03em;color:var(--display)}
+.lh em{font-style:normal;color:var(--amber)}
+.lsub{color:var(--t2);font-size:12.5px;margin-top:14px;line-height:1.62;max-width:360px}
+.lmeta{font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.12em;text-transform:uppercase}
+.lmr{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line);padding-top:8px;margin-top:8px}
+.lmr strong{color:var(--t2);text-align:right}
+.lr{padding:36px;display:flex;flex-direction:column;justify-content:center;background:var(--bg3)}
+.lr-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px}
+.lr h2{font-family:var(--sans);font-weight:600;font-size:22px;letter-spacing:-.02em;color:var(--display)}
+.lr p{color:var(--t2);font-size:12.5px;margin-bottom:24px}
+.fld{margin-bottom:16px}
+.fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
+.fld input{width:100%;background:var(--bg);border:1px solid var(--line2);padding:12px 14px;font-family:var(--mono);font-size:13px;letter-spacing:.04em;color:var(--t1);outline:none;transition:border-color .18s,background .18s}
+.fld input:focus{border-color:var(--amber);background:var(--bg)}
+.fld input::placeholder{color:var(--t3)}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-right:46px}
+.pw-eye{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:30px;height:30px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;color:var(--t3);cursor:pointer;transition:color .15s,background .15s,border-color .15s}
+.pw-eye:hover{color:var(--t1);background:var(--bg-hover);border-color:var(--line2)}
+.pw-eye svg{display:block}
+.lbtn{margin-top:10px;width:100%;background:var(--amber);color:#000;padding:14px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;border:none;cursor:pointer;transition:background .2s,color .2s}
+.lbtn:hover{background:#fff;color:#000}
+.lerr{margin-top:10px;color:var(--dnd);font-family:var(--mono);font-size:10px;letter-spacing:.06em;display:none}
+.lnote{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em;line-height:1.85}
+.lnote b{color:var(--t2);font-weight:600}
+.lnote span{color:var(--amber)}
+
+/* ── app shell ── */
+#app{display:none;flex-direction:column;min-height:100vh;background:var(--bg)}
+.tb{position:sticky;top:0;z-index:30;height:var(--tb-h);display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--bg4);border-bottom:1px solid var(--line)}
+.tb-brand{display:flex;align-items:center;gap:10px;min-width:0}
+.tb-brand .mark{width:26px;height:26px;border-radius:5px;flex-shrink:0;background:linear-gradient(135deg,var(--amber),var(--amber-dim));display:grid;place-items:center;color:#000;font-family:var(--mono);font-weight:600;font-size:13px}
+.tb-brand .name{font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:-.01em;line-height:1;color:var(--t1)}
+.tb-brand .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-top:3px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.tb-clock{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.08em}
+.tb-user{display:flex;align-items:center;gap:9px;padding-left:14px;border-left:1px solid var(--line);height:34px}
+.tb-user .av{width:28px;height:28px;border-radius:6px;background:var(--bg3);border:1px solid var(--line2);display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--amber)}
+.tb-user .nm{font-size:12.5px;font-weight:600;color:var(--t1);line-height:1.1}
+.tb-user .rl{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.06em}
+.btn-out{margin-left:4px}
+
+.view{max-width:960px;margin:0 auto;width:100%;padding:24px 16px 64px;display:flex;flex-direction:column;gap:24px}
+
+.welcome .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--t3)}
+.welcome h1{font-family:var(--sans);font-weight:600;font-size:26px;letter-spacing:-.02em;color:var(--display);margin-top:8px;line-height:1.1}
+.welcome .sub{color:var(--t2);font-size:13px;margin-top:8px;max-width:560px;line-height:1.55}
+
+/* ── stat strip ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:6px}
+.stat .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+.stat .num{font-family:var(--sans);font-size:26px;font-weight:600;color:var(--display);letter-spacing:-.02em;line-height:1}
+.stat .cap{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em}
+.stat.alert .num{color:var(--watch)}
+
+/* ── panels ── */
+.panel{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r)}
+.ph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.ph .bullet{width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0}
+.ph h3{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--t1);letter-spacing:-.01em}
+.ph .meta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.06em;text-transform:uppercase}
+.pb{padding:16px;display:flex;flex-direction:column;gap:8px}
+
+/* ── queue rows (§3.4.4 #1) ── */
+.q-row{display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .12s}
+.q-row:last-child{border-bottom:none}
+.q-row:hover{background:var(--bg3)}
+.q-ico{width:34px;height:34px;border-radius:6px;flex-shrink:0;border:1px solid var(--line2);background:var(--bg3);display:grid;place-items:center;color:var(--t3)}
+.q-ico svg{width:18px;height:18px}
+.q-main{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
+.q-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.q-hd b{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--t1);letter-spacing:.04em}
+.q-sub{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.q-meta{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.02em;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.q-meta svg{width:13px;height:13px;flex-shrink:0;opacity:.8}
+.q-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;text-align:right}
+.q-wait{font-family:var(--mono);font-size:12px;color:var(--t2);letter-spacing:.04em;font-weight:600}
+.ichip.wait-long{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.ichip.wait-mid{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.ichip.wait-ok{color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
+.q-empty{font-family:var(--mono);font-size:12px;color:var(--t4);letter-spacing:.04em;padding:28px 16px;text-align:center;line-height:1.8}
+@media(max-width:640px){.q-row{flex-wrap:wrap}.q-side{align-items:flex-start;text-align:left;width:100%;flex-direction:row;gap:10px;flex-wrap:wrap}}
+
+/* ── review surface (§3.4.4 #2) ── */
+.crumb{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);cursor:pointer;width:max-content}
+.crumb:hover{color:var(--amber)}
+.crumb svg{width:14px;height:14px}
+.crumb .sep{color:var(--t4)}
+.crumb .cur{color:var(--t1)}
+.rv-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.rv-head .reg{font-family:var(--sans);font-weight:600;font-size:26px;letter-spacing:-.02em;color:var(--display);line-height:1}
+.rv-head .sub{font-family:var(--mono);font-size:12px;color:var(--t3);letter-spacing:.04em;margin-top:8px}
+.rv-head .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.rv-head-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;text-align:right}
+.rv-head-side .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4)}
+.rv-head-side .v{font-family:var(--mono);font-size:12px;color:var(--t2)}
+
+/* provenance kv strip */
+.rv-prov{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0}
+.rv-prov .cell{padding:12px 16px;border-right:1px solid var(--line)}
+.rv-prov .cell:last-child{border-right:none}
+.rv-prov .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4);margin-bottom:5px}
+.rv-prov .v{font-family:var(--sans);font-size:13.5px;color:var(--t1);font-weight:500}
+.rv-prov .v.mono{font-family:var(--mono);font-size:12.5px;color:var(--t2)}
+
+/* structured form display */
+.rv-sec + .rv-sec{border-top:1px solid var(--line)}
+.rv-sec-hd{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3);padding:14px 16px 8px}
+.rv-frow{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;padding:10px 16px;border-top:1px solid var(--line)}
+.rv-frow .fl{font-family:var(--sans);font-size:14px;color:var(--t1);line-height:1.4}
+.rv-frow .fv{font-family:var(--sans);font-size:13.5px;color:var(--t2);text-align:right}
+.rv-frow .fv.note{color:var(--t3);font-size:13px;font-style:italic}
+.rv-stat{display:inline-flex;align-items:center;justify-content:center;height:24px;padding:0 12px;border-radius:4px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;border:1px solid;box-sizing:border-box}
+.rv-stat.ok{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.rv-stat.warn{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.rv-stat.bad{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+
+/* media grids (photos + scans) */
+.rv-media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.rv-media{background:var(--bg3);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.rv-media-thumb{aspect-ratio:4/3;display:grid;place-items:center;position:relative}
+.rv-media-thumb svg{width:26px;height:26px;color:rgba(255,255,255,.55)}
+.rv-media.doc .rv-media-thumb{aspect-ratio:3/4;background:#0a0c0f}
+.rv-media.doc .rv-media-thumb svg{color:rgba(255,255,255,.4)}
+.rv-media-cap{padding:9px 10px 3px;font-family:var(--sans);font-size:13px;color:var(--t1);line-height:1.35}
+.rv-media-meta{padding:2px 10px 9px;font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.04em;display:flex;align-items:center;gap:5px}
+.rv-media-meta .gd{width:5px;height:5px;border-radius:50%;background:var(--deploy);flex-shrink:0}
+
+/* extracted fields */
+.rv-xf{display:flex;flex-direction:column}
+.rv-xrow{display:grid;grid-template-columns:1fr 1.5fr;gap:16px;padding:11px 16px;border-top:1px solid var(--line);align-items:baseline}
+.rv-xrow:first-child{border-top:none}
+.rv-xrow .k{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3)}
+.rv-xrow .v{font-family:var(--sans);font-size:14px;color:var(--t1);font-weight:500}
+.rv-xrow .src{display:block;font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.04em;margin-top:3px;font-weight:400}
+
+/* draft anomalies */
+.rv-anom{padding:14px 16px;border-top:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.rv-anom:first-child{border-top:none}
+.rv-anom-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.rv-anom-body h4{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);line-height:1.35;margin:0}
+.rv-anom-body p{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5;margin:0}
+.rv-anom-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.rv-anom-side{flex-shrink:0}
+.rv-hint{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.02em;line-height:1.6;padding:2px 0}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 16px;border-radius:var(--r);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line2);background:var(--bg3);color:var(--t1);transition:background .15s,border-color .15s,color .15s}
+.btn:hover{background:var(--bg-hover);border-color:var(--line3)}
+.btn.primary{background:var(--amber);color:#000;border-color:var(--amber)}
+.btn.primary:hover{background:#fff}
+.btn.ghost{background:transparent}
+.btn.sm{height:28px;padding:0 12px;font-size:10px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+
+/* scaffold feature list */
+.feat{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.feat:last-child{border-bottom:none}
+.feat .ico{width:30px;height:30px;border-radius:6px;flex-shrink:0;border:1px solid var(--line2);background:var(--bg3);display:grid;place-items:center;color:var(--t3)}
+.feat .ico svg{width:16px;height:16px}
+.feat .body b{display:block;font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);line-height:1.35}
+.feat .body span{display:block;font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5;margin-top:2px}
+.feat .tag{margin-left:auto;flex-shrink:0}
+.feat.live .ico{color:var(--deploy);border-color:var(--deploy-line);background:var(--deploy-soft)}
+
+.foot{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.08em;text-align:center;line-height:1.8;padding-top:8px}
+.foot span{color:var(--amber)}
+
+/* ── queue filter chips (§3.4.4 #3) ── */
+.fb{display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--line)}
+.fp{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px;border-radius:5px;border:1px solid var(--line2);background:var(--bg3);color:var(--t2);font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:background .12s,border-color .12s,color .12s}
+.fp:hover{border-color:var(--line3);color:var(--t1)}
+.fp.active{background:var(--amber-soft);border-color:var(--amber-line);color:var(--amber)}
+.fp .c{font-size:10px;opacity:.85}
+
+/* ── decision card ── */
+.rv-decision{padding:16px;display:flex;gap:14px;align-items:flex-start}
+.rv-decision .di{width:36px;height:36px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;border:1px solid}
+.rv-decision.accepted .di{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.rv-decision.returned .di{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.rv-decision .di svg{width:19px;height:19px}
+.rv-decision .db{flex:1;min-width:0}
+.rv-decision .db h4{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--display);margin:0 0 4px}
+.rv-decision .db .meta{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em}
+.rv-decision .db p{font-family:var(--sans);font-size:13px;color:var(--t2);margin:10px 0 0;line-height:1.5}
+
+/* amended extracted field */
+.rv-xrow .was{display:block;font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.02em;margin-top:4px}
+.rv-amend-chip{display:inline-flex;align-items:center;height:17px;padding:0 7px;border-radius:4px;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line);margin-left:8px;vertical-align:middle}
+
+/* ── modal ── */
+.rv-mback{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.62)}
+.rv-mback.open{display:flex}
+.rv-mbox{background:var(--bg2);border:1px solid var(--line2);border-radius:8px;width:min(560px,94vw);max-height:88vh;overflow-y:auto;display:flex;flex-direction:column}
+.rv-mhd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.rv-mhd h3{font-family:var(--sans);font-size:16px;font-weight:600;color:var(--display)}
+.rv-mx{width:28px;height:28px;border-radius:6px;color:var(--t3);display:grid;place-items:center;font-size:15px;flex-shrink:0}
+.rv-mx:hover{background:var(--bg3);color:var(--t1)}
+.rv-mbody{padding:18px;display:flex;flex-direction:column;gap:16px}
+.rv-msum{background:var(--bg3);border:1px solid var(--line);border-radius:6px;padding:12px 14px;font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.rv-msum b{color:var(--t1)}
+.rv-mfield{display:flex;flex-direction:column;gap:8px}
+.rv-mfield label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t3)}
+.rv-mfield input,.rv-mfield textarea{width:100%;background:var(--bg);border:1px solid var(--line2);color:var(--t1);font-family:var(--sans);font-size:14px;padding:10px 12px;border-radius:6px;outline:none;transition:border-color .15s}
+.rv-mfield input:focus,.rv-mfield textarea:focus{border-color:var(--amber)}
+.rv-mfield textarea{min-height:90px;resize:vertical;line-height:1.5}
+.rv-mfield .help{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.02em}
+.rv-amend-list{display:flex;flex-direction:column;gap:14px}
+.rv-amend-item label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.rv-amend-item input{width:100%;background:var(--bg);border:1px solid var(--line2);color:var(--t1);font-family:var(--sans);font-size:14px;padding:9px 12px;border-radius:6px;outline:none}
+.rv-amend-item input:focus{border-color:var(--amber)}
+.rv-mfoot{display:flex;justify-content:flex-end;gap:10px;padding:14px 18px;border-top:1px solid var(--line)}
+.rv-mbtn{height:38px;padding:0 18px;border-radius:6px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line2);background:var(--bg3);color:var(--t1);cursor:pointer}
+.rv-mbtn:hover{background:var(--bg-hover)}
+.rv-mbtn.primary{background:var(--amber);color:#000;border-color:var(--amber)}
+.rv-mbtn.primary:hover{background:#fff}
+.rv-mbtn.warnbtn{background:var(--watch);color:#000;border-color:var(--watch)}
+.rv-mbtn.warnbtn:hover{background:var(--amber2)}
+
+/* toast */
+.rv-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);z-index:300;background:var(--bg2);border:1px solid var(--line2);border-left:3px solid var(--deploy);border-radius:6px;padding:12px 16px;font-family:var(--sans);font-size:13px;color:var(--t1);box-shadow:0 12px 32px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:90vw}
+.rv-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.rv-toast.warn{border-left-color:var(--watch)}
+
+@media(max-width:640px){
+  .ls{grid-template-columns:1fr;max-width:420px;min-height:0}
+  .ll{display:none}
+  .lr{padding:30px 24px}
+  .stats{grid-template-columns:1fr 1fr}
+  .welcome h1{font-size:22px}
+  .tb-clock,.tb-user .rl{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="login">
+  <div class="ls">
+    <div class="ll">
+      <div class="bm"><img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" style="height:32px;width:auto;opacity:.95;flex-shrink:0"/></div>
+      <div>
+        <div class="lh">Every visit,<br><em>checked before it counts.</em></div>
+        <p class="lsub">FleetWatch Supervisor Review. Senior analysts review the visits field agents capture, structured forms, photos, scans, extracted fields and draft anomalies, before a visit is accepted and a report can be built.</p>
+      </div>
+      <div class="lmeta">
+        <div class="lmr"><span>Surface</span><strong>Internal · Supervisor Review</strong></div>
+        <div class="lmr"><span>PRD</span><strong>§3.4.4</strong></div>
+        <div class="lmr"><span>Role</span><strong>Senior Aviation Analyst</strong></div>
+        <div class="lmr"><span>Classification</span><strong>Internal · Restricted</strong></div>
+      </div>
+    </div>
+    <div class="lr">
+      <div class="lr-head"><div><h2>Supervisor sign-in</h2></div>
+        <span class="netpill online"><span class="dot"></span>Internal</span></div>
+      <p>Andara senior analysts only.</p>
+      <div class="fld"><label>Analyst email</label><input id="em" type="email" placeholder="supervisor@andara.com" autocomplete="username"/></div>
+      <div class="fld"><label>Access key</label>
+        <div class="pw-wrap">
+          <input id="pw" type="password" placeholder="•••••••••" autocomplete="current-password"/>
+          <button type="button" id="pwToggle" class="pw-eye" aria-label="Show access key" aria-pressed="false">
+            <svg class="pw-eye-on" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="pw-eye-off" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M3 3l18 18"/><path d="M10.6 6.1A10.7 10.7 0 0 1 12 6c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.3 4.2"/><path d="M6.6 7.5C3.8 9.4 2 12 2 12s3.5 7 10 7c1.7 0 3.2-.3 4.5-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+          </button>
+        </div>
+      </div>
+      <button type="button" class="lbtn" id="lbtn" onclick="_login();return false;">Sign in →</button>
+      <div id="lerr" class="lerr">Access key not recognised.</div>
+      <div class="lnote">
+        <div><b>Demo analyst</b>, <span>supervisor@andara.com</span></div>
+        <div><b>Access key</b>, <span>andara2026</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* isolated login (works regardless of any error in the main script) */
+function _login(){
+  var em=(document.getElementById('em').value||'').trim();
+  var pw=(document.getElementById('pw').value||'').trim();
+  var err=document.getElementById('lerr');
+  if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';return;}
+  if(pw!=='andara2026'){err.textContent='Access key not recognised.';err.style.display='block';return;}
+  try{localStorage.setItem('andara.fw.review.auth',JSON.stringify({email:em.toLowerCase(),ts:Date.now()}));}catch(_){}
+  document.getElementById('login').style.display='none';
+  document.getElementById('app').style.display='flex';
+  if(typeof enterApp==='function'){try{enterApp(em.toLowerCase());}catch(e){console.error('[login] enterApp threw:',e);}}
+}
+document.getElementById('em').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('pw').focus();}});
+document.getElementById('pw').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();_login();}});
+/* eye toggle via delegation (never inline onclick on #pwToggle) */
+document.addEventListener('click',function(e){
+  var btn=e.target.closest&&e.target.closest('#pwToggle');if(!btn)return;
+  var pw=document.getElementById('pw');if(!pw)return;
+  var showing=pw.type==='text';pw.type=showing?'password':'text';
+  btn.setAttribute('aria-pressed',String(!showing));
+  var on=btn.querySelector('.pw-eye-on'),off=btn.querySelector('.pw-eye-off');
+  if(on)on.style.display=showing?'':'none';
+  if(off)off.style.display=showing?'none':'';
+});
+</script>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app">
+  <header class="tb">
+    <div class="tb-brand">
+      <div class="mark">A</div>
+      <div><div class="name">Andara</div><div class="sub">FleetWatch Review</div></div>
+    </div>
+    <div class="tb-right">
+      <span class="tb-clock" id="clk">--:--</span>
+      <div class="tb-user"><div class="av" id="avI">A</div><div><div class="nm" id="avN">Analyst</div><div class="rl">Senior Analyst</div></div></div>
+      <button class="btn ghost sm btn-out" type="button" id="signOut">Sign out</button>
+    </div>
+  </header>
+
+  <!-- QUEUE (§3.4.4 #1) -->
+  <div class="view" id="vw-queue">
+    <div class="welcome">
+      <div class="eyebrow">Supervisor Review · §3.4.4</div>
+      <h1 id="welcomeName">Pending review</h1>
+      <div class="sub">Visits submitted by field agents, waiting for senior review. Open one to check the structured form, photos, scans, extracted fields and draft anomalies before it is accepted.</div>
+    </div>
+
+    <div class="stats" id="statStrip"></div>
+
+    <div class="panel">
+      <div class="ph"><span class="bullet"></span><h3>Review queue</h3><span class="meta" id="queueMeta"></span></div>
+      <div class="fb" id="queueFilter">
+        <button class="fp active" data-f="pending" type="button">Pending <span class="c" id="fcPending">0</span></button>
+        <button class="fp" data-f="accepted" type="button">Accepted <span class="c" id="fcAccepted">0</span></button>
+        <button class="fp" data-f="returned" type="button">Returned <span class="c" id="fcReturned">0</span></button>
+        <button class="fp" data-f="all" type="button">All <span class="c" id="fcAll">0</span></button>
+      </div>
+      <div id="queueList"></div>
+    </div>
+
+    <div class="panel">
+      <div class="ph"><span class="bullet"></span><h3>Review workflow</h3><span class="meta">4 features</span></div>
+      <div>
+        <div class="feat live"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></div><div class="body"><b>Pending visits queue</b><span>Submitted visits awaiting senior analyst review.</span></div><span class="tag ichip deploy">Live</span></div>
+        <div class="feat live"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="body"><b>Visit review surface</b><span>Per visit drill-down, structured form, photos, scans, extracted fields, draft anomalies.</span></div><span class="tag ichip deploy">Live</span></div>
+        <div class="feat live"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><div class="body"><b>Accept / amend / return</b><span>Approve and close, amend extracted fields, or return to the agent with notes.</span></div><span class="tag ichip deploy">Live</span></div>
+        <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="body"><b>Anomaly classification</b><span>Promote a flagged observation to a formal anomaly with severity.</span></div><span class="tag ichip muted">Next</span></div>
+      </div>
+    </div>
+
+    <div class="foot">Andara FleetWatch Supervisor Review · Internal, Restricted<br>Features shipped: <span>Pending visits queue</span> · <span>Visit review surface</span> · <span>Accept / amend / return</span> · PRD §3.4.4</div>
+  </div>
+
+  <!-- REVIEW SURFACE (§3.4.4 #2), rendered by renderReview() -->
+  <div class="view" id="vw-review" style="display:none"></div>
+</div>
+
+<!-- decision modal (§3.4.4 #3), reused by Accept / Amend / Return -->
+<div class="rv-mback" id="rvModal">
+  <div class="rv-mbox">
+    <div class="rv-mhd"><h3 id="rvmTitle">Title</h3><button class="rv-mx" id="rvmClose" aria-label="Close">✕</button></div>
+    <div class="rv-mbody" id="rvmBody"></div>
+    <div class="rv-mfoot"><button class="rv-mbtn" id="rvmCancel">Cancel</button><button class="rv-mbtn primary" id="rvmConfirm">Confirm</button></div>
+  </div>
+</div>
+<div class="rv-toast" id="rvToast"></div>
+
+<script>
+/* ══════════════ MAIN SCRIPT ══════════════ */
+function el(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function _initials(n){return (n||'A').split(/\s+/).filter(Boolean).slice(0,2).map(function(p){return p[0].toUpperCase();}).join('')||'A';}
+
+/* today for this demo build (aligns with the capture app timeline) */
+function nowMs(){return Date.now();}
+function hoursAgo(h){return Date.now()-h*3600000;}
+function fmtWhen(ms){var d=new Date(ms),p=function(n){return String(n).padStart(2,'0');};
+  return d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate())+' '+p(d.getUTCHours())+':'+p(d.getUTCMinutes())+' UTC';}
+function waitLabel(ms){
+  var h=Math.round((Date.now()-ms)/3600000);
+  if(h>=48)return{cls:'wait-long',lbl:Math.round(h/24)+'d waiting'};
+  if(h>=24)return{cls:'wait-mid',lbl:'1d waiting'};
+  if(h>=1)return{cls:'wait-mid',lbl:h+'h waiting'};
+  return{cls:'wait-ok',lbl:'just in'};
+}
+
+/* severity display helpers */
+function sevClass(s){
+  s=(s||'').toLowerCase();
+  var bad=['high','defect','not available','material deviations','material gaps','defects present','out of control'];
+  var ok=['low','satisfactory','compliant','sighted','complete & consistent','in date & controlled'];
+  if(bad.indexOf(s)>=0)return 'bad';
+  if(ok.indexOf(s)>=0)return 'ok';
+  return 'warn'; /* advisory, minor gaps/deviations, discrepancy, medium, etc. */
+}
+function sevChipCls(s){s=(s||'').toLowerCase();return s==='high'?'dnd':(s==='low'?'info':'watch');}
+
+/* ══════════════════════════════════════════
+   SEEDED SUBMITTED VISITS (PRD §3.4.4 #1)
+   In production these arrive from the FleetWatch capture-intake
+   endpoint (the bundles §3.4.3 syncs). At M1 this surface seeds a
+   representative set; each carries the structured form, photos,
+   scans, ingestion-extracted fields and draft (auto-flagged) anomalies.
+══════════════════════════════════════════ */
+var REVIEW_VISITS=[
+  {
+    id:'RV-2026Q2-014-02', reg:'5N-BQM', ac:'Boeing 737-800', msn:'39041', op:'Air Peace',
+    vtype:'MRO observation', loc:'Murtala Muhammed (LOS) · Lagos',
+    agent:'Tunde Bakare (FW-AG-014)', submittedTs:hoursAgo(51), receiptId:'INTK-MQSKDQ6V8B',
+    form:[
+      {title:'Observation',rows:[
+        {l:'MRO / organisation',v:'Aero Contractors AMO, Lagos'},
+        {l:'Work package observed',v:'A-check, task card 31-42'},
+        {l:'Process compliance',v:'Minor deviations',stat:1},
+        {l:'Tooling & calibration',v:'Advisory',stat:1}]},
+      {title:'Workmanship checks',rows:[
+        {l:'Task cards & sign-offs',v:'Satisfactory',stat:1},
+        {l:'Parts traceability',v:'Satisfactory',stat:1},
+        {l:'Tooling control',v:'Defect',stat:1},
+        {l:'Housekeeping & FOD control',v:'Advisory',stat:1}]},
+      {title:'Findings',rows:[
+        {l:'Findings / anomalies',v:'Nose jack calibration tag expired; one task card signed off before torque check recorded.',note:1}]}
+    ],
+    photos:[{cap:'Nose landing gear, jack in place',tone:'#26415e'},{cap:'Task card 31-42, sign-off block',tone:'#3a3320'},{cap:'Tool store, calibration board',tone:'#243a34'}],
+    scans:[{label:'Work package task card 31-42',angle:2.4},{label:'Tooling calibration register',angle:0}],
+    extracted:[
+      {k:'MRO approval ref',v:'NCAA/AMO/037',src:'Approval certificate scan'},
+      {k:'Work package',v:'A-check A320 (sic) 737-31',src:'Task card header'},
+      {k:'Calibration tag expiry',v:'2026-05-30',src:'Tooling register scan'},
+      {k:'Engineer licence ref',v:'NCAA/AME/2214',src:'Sign-off block'}]
+    ,
+    anomalies:[
+      {id:'a1',title:'Tooling calibration tag expired',body:'Nose jack calibration tag expired 2026-05-30, tool still in service at time of visit.',source:'Workmanship: Tooling control (Defect)',sev:'High'},
+      {id:'a2',title:'Task card signed before torque check',body:'Task card 31-42 sign-off recorded before the torque verification step was logged.',source:'Workmanship: Task cards & sign-offs',sev:'Medium'}]
+  },
+  {
+    id:'RV-2026Q2-022-01', reg:'5N-JEA', ac:'Airbus A320-200', msn:'6512', op:'Ibom Air',
+    vtype:'Ramp inspection', loc:'Akwa Ibom (QUO) · Uyo',
+    agent:'Tunde Bakare (FW-AG-014)', submittedTs:hoursAgo(28), receiptId:'INTK-MQSL0UPUFB',
+    form:[
+      {title:'Walk-around items',rows:[
+        {l:'Fuselage & skin',v:'Satisfactory',stat:1},
+        {l:'Landing gear & tyres',v:'Advisory',stat:1},
+        {l:'Engines & nacelles (visual)',v:'Satisfactory',stat:1},
+        {l:'Flight control surfaces',v:'Satisfactory',stat:1},
+        {l:'Fluid leaks / corrosion',v:'Advisory',stat:1},
+        {l:'Cabin condition',v:'Satisfactory',stat:1}]},
+      {title:'Assessment',rows:[
+        {l:'Defects logged',v:'Left main tyre near wear limit; light hydraulic weep at LH gear.',note:1},
+        {l:'Overall ramp condition',v:'Advisory items',stat:1}]}
+    ],
+    photos:[{cap:'Left main gear, tyre wear',tone:'#3a2828'},{cap:'LH gear bay, hydraulic weep',tone:'#22303e'},{cap:'Forward fuselage, port side',tone:'#2a3f52'},{cap:'Cabin, forward galley',tone:'#2e2a3a'}],
+    scans:[{label:'Aircraft tech log, open page',angle:1.1}],
+    extracted:[
+      {k:'Registration',v:'5N-JEA',src:'Tech log header'},
+      {k:'Tech log page',v:'TL-2026-0442',src:'Tech log scan'},
+      {k:'Tyre part no (LH main)',v:'APS-1340-3',src:'Photo, tyre sidewall'},
+      {k:'Hydraulic system',v:'Green (LH gear)',src:'Analyst note'}],
+    anomalies:[
+      {id:'a1',title:'LH main tyre near wear limit',body:'Left main tyre tread near service limit, recommend replacement before next cycle.',source:'Walk-around: Landing gear & tyres (Advisory)',sev:'Medium'},
+      {id:'a2',title:'Hydraulic weep at LH gear',body:'Light hydraulic seepage observed at left main gear actuator.',source:'Walk-around: Fluid leaks / corrosion (Advisory)',sev:'Low'}]
+  },
+  {
+    id:'RV-2026Q2-014-01', reg:'5N-GAA', ac:'Embraer E175', msn:'17004', op:'Green Africa',
+    vtype:'Records review', loc:'Murtala Muhammed (LOS) · Lagos',
+    agent:'Tunde Bakare (FW-AG-014)', submittedTs:hoursAgo(9), receiptId:'INTK-MQRZ7T14QP',
+    form:[
+      {title:'Records sighted',rows:[
+        {l:'Certificate of Airworthiness',v:'Sighted',stat:1},
+        {l:'Certificate of Registration',v:'Sighted',stat:1},
+        {l:'Aircraft technical log',v:'Sighted',stat:1},
+        {l:'AD / SB compliance status',v:'Discrepancy',stat:1},
+        {l:'Weight & balance report',v:'Not available',stat:1},
+        {l:'Insurance certificate',v:'Sighted',stat:1}]},
+      {title:'Assessment',rows:[
+        {l:'Records gaps / outstanding items',v:'Current weight & balance report not produced; two ADs show no compliance evidence.',note:1},
+        {l:'Overall records condition',v:'Material gaps',stat:1}]}
+    ],
+    photos:[{cap:'C of A, framed',tone:'#243a34'},{cap:'Records room, binders',tone:'#2a2f3a'}],
+    scans:[{label:'Certificate of Airworthiness',angle:6.0},{label:'Certificate of Registration',angle:0},{label:'AD compliance summary',angle:3.2}],
+    extracted:[
+      {k:'C of A number',v:'NCAA/CofA/E175/041',src:'C of A scan'},
+      {k:'C of A expiry',v:'2026-08-14',src:'C of A scan'},
+      {k:'Registration',v:'5N-GAA',src:'C of R scan'},
+      {k:'Weight & balance',v:'Not on file',src:'Records checklist'}],
+    anomalies:[
+      {id:'a1',title:'Weight & balance report missing',body:'No current weight and balance report available during records review.',source:'Records: Weight & balance report (Not available)',sev:'High'},
+      {id:'a2',title:'AD compliance evidence gap',body:'Two airworthiness directives show no evidence of compliance in the records.',source:'Records: AD / SB compliance status (Discrepancy)',sev:'High'},
+      {id:'a3',title:'C of A expires within 60 days',body:'Certificate of Airworthiness expires 2026-08-14, within the next assessment window.',source:'Extracted: C of A expiry',sev:'Medium'}]
+  }
+];
+function findVisit(id){for(var i=0;i<REVIEW_VISITS.length;i++)if(REVIEW_VISITS[i].id===id)return REVIEW_VISITS[i];return null;}
+function pendingVisits(){return REVIEW_VISITS.filter(function(v){return (v.status||'pending')==='pending';}).slice().sort(function(a,b){return a.submittedTs-b.submittedTs;});}
+
+/* ── decision persistence (§3.4.4 #3) ──
+   Decisions + field amendments persist to localStorage so they survive reload,
+   and replay onto REVIEW_VISITS on boot. M2 moves this to the backend. */
+var RV_KEY='andara.fw.review.state.v1';
+var _reviewer='Analyst';
+function rvLoad(){try{return JSON.parse(localStorage.getItem(RV_KEY)||'{}')||{};}catch(_){return {};}}
+function rvSave(st){try{localStorage.setItem(RV_KEY,JSON.stringify(st));}catch(_){}}
+function rvRecord(v,patch){var st=rvLoad();var rec=st[v.id]=st[v.id]||{};for(var k in patch)rec[k]=patch[k];rvSave(st);}
+function rvRestore(){
+  var st=rvLoad();
+  REVIEW_VISITS.forEach(function(v){
+    var rec=st[v.id];if(!rec)return;
+    if(rec.status)v.status=rec.status;
+    if(rec.decision)v.decision=rec.decision;
+    if(rec.amendments)Object.keys(rec.amendments).forEach(function(k){
+      var e=(v.extracted||[]).find(function(x){return x.k===k;});
+      if(e){e.v=rec.amendments[k].to;e.amended={from:rec.amendments[k].from};}
+    });
+  });
+}
+function visitsFor(filter){
+  var list=REVIEW_VISITS.filter(function(v){var s=v.status||'pending';return filter==='all'?true:s===filter;});
+  return list.slice().sort(function(a,b){
+    if(filter==='pending')return a.submittedTs-b.submittedTs;
+    var ad=(a.decision&&a.decision.ts)||a.submittedTs,bd=(b.decision&&b.decision.ts)||b.submittedTs;return bd-ad;
+  });
+}
+function countBy(){var c={pending:0,accepted:0,returned:0,all:REVIEW_VISITS.length};REVIEW_VISITS.forEach(function(v){var s=v.status||'pending';if(c[s]!=null)c[s]++;});return c;}
+var rvFilter='pending';
+
+var _acSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>';
+var _pinSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
+var _camSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
+var _docSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+var _clockSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+
+/* ── stat strip + queue (§3.4.4 #1, filter-aware for #3) ── */
+function renderQueue(){
+  var pend=pendingVisits();
+  var anomCount=pend.reduce(function(a,v){return a+(v.anomalies||[]).length;},0);
+  var oldest=pend.length?waitLabel(pend[0].submittedTs).lbl:'—';
+  el('statStrip').innerHTML=''
+    +statCell('Pending review',pend.length,'visits awaiting sign-off')
+    +statCell('Draft anomalies',anomCount,'flagged across pending visits',anomCount>0)
+    +statCell('Visit types',pend.length?(new Set(pend.map(function(v){return v.vtype;})).size):0,'record / ramp / MRO')
+    +statCell('Oldest waiting',pend.length?oldest:'—','longest in the queue',pend.length&&/d waiting/.test(oldest));
+  var c=countBy();
+  el('fcPending').textContent=c.pending;el('fcAccepted').textContent=c.accepted;el('fcReturned').textContent=c.returned;el('fcAll').textContent=c.all;
+  [].forEach.call(document.querySelectorAll('#queueFilter .fp'),function(b){b.classList.toggle('active',b.getAttribute('data-f')===rvFilter);});
+  var list=visitsFor(rvFilter);
+  el('queueMeta').textContent=list.length?(list.length+' '+(rvFilter==='all'?'total':rvFilter)):'None';
+  if(!list.length){el('queueList').innerHTML='<div class="q-empty">'+(rvFilter==='pending'?'No visits waiting for review.<br>Submitted field visits arrive here from the FleetWatch capture intake.':'No '+rvFilter+' visits.')+'</div>';return;}
+  el('queueList').innerHTML=list.map(qRow).join('');
+}
+function qRow(v){
+  var s=v.status||'pending', na=(v.anomalies||[]).length, sideTop, sideChip;
+  if(s==='pending'){var w=waitLabel(v.submittedTs);sideTop=fmtWhen(v.submittedTs);sideChip='<span class="ichip '+w.cls+'">'+w.lbl+'</span>';}
+  else if(s==='accepted'){sideTop=v.decision?fmtWhen(v.decision.ts):'';sideChip='<span class="ichip deploy">Accepted</span>';}
+  else {sideTop=v.decision?fmtWhen(v.decision.ts):'';sideChip='<span class="ichip watch">Returned</span>';}
+  return '<div class="q-row" onclick="openReview(\''+v.id+'\')">'
+    +'<div class="q-ico">'+_acSvg+'</div>'
+    +'<div class="q-main">'
+      +'<div class="q-hd"><b>'+v.reg+'</b><span class="ichip">'+esc(v.vtype)+'</span>'+(na?'<span class="ichip watch">'+na+' draft anomal'+(na===1?'y':'ies')+'</span>':'')+'</div>'
+      +'<div class="q-sub">'+esc(v.ac)+' · MSN '+esc(v.msn)+' · '+esc(v.op)+'</div>'
+      +'<div class="q-meta">'+_pinSvg+'<span>'+esc(v.loc)+'</span><span style="opacity:.5">·</span><span>'+esc(v.agent)+'</span></div>'
+    +'</div>'
+    +'<div class="q-side">'
+      +'<span class="q-wait">'+sideTop+'</span>'
+      +sideChip
+      +'<span class="btn sm" style="pointer-events:none">'+(s==='pending'?'Review →':'View →')+'</span>'
+    +'</div>'
+  +'</div>';
+}
+function statCell(lbl,num,cap,alert){
+  return '<div class="stat'+(alert?' alert':'')+'"><span class="lbl">'+lbl+'</span><span class="num">'+num+'</span><span class="cap">'+cap+'</span></div>';
+}
+
+/* ── review surface (§3.4.4 #2) ── */
+function openReview(id){
+  var v=findVisit(id);if(!v)return;
+  el('vw-queue').style.display='none';el('vw-review').style.display='flex';
+  window.scrollTo(0,0);renderReview(v);
+}
+function backToQueue(){
+  el('vw-review').style.display='none';el('vw-queue').style.display='flex';
+  renderQueue();window.scrollTo(0,0);
+}
+function renderReview(v){
+  var w=waitLabel(v.submittedTs), na=(v.anomalies||[]).length;
+  var h='';
+  h+='<div class="crumb" id="crumbBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>Queue<span class="sep">/</span><span class="cur">'+esc(v.reg)+'</span></div>';
+
+  h+='<div class="rv-head"><div>'
+    +'<div class="reg">'+esc(v.reg)+'</div>'
+    +'<div class="sub">'+esc(v.ac)+' · MSN '+esc(v.msn)+' · '+esc(v.op)+'</div>'
+    +'<div class="chips"><span class="ichip amber">'+esc(v.vtype)+'</span><span class="ichip '+w.cls+'">'+w.lbl+'</span>'+(na?'<span class="ichip watch">'+na+' draft anomal'+(na===1?'y':'ies')+'</span>':'')+'</div>'
+    +'</div><div class="rv-head-side"><div><div class="k">Submission</div><div class="v">'+esc(v.id)+'</div></div></div></div>';
+
+  /* provenance strip */
+  h+='<div class="panel"><div class="rv-prov">'
+    +provCell('Submitted by',esc(v.agent))
+    +provCell('Submitted',fmtWhen(v.submittedTs),1)
+    +provCell('Location',esc(v.loc))
+    +provCell('Intake receipt',esc(v.receiptId),1)
+    +'</div></div>';
+
+  /* structured form */
+  h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Structured form</h3><span class="meta">'+esc(v.vtype)+'</span></div><div>';
+  (v.form||[]).forEach(function(sec){
+    h+='<div class="rv-sec"><div class="rv-sec-hd">'+esc(sec.title)+'</div>';
+    sec.rows.forEach(function(r){
+      var val = r.note ? '<div class="fv note">'+esc(r.v)+'</div>' : (r.stat ? '<div class="rv-stat '+sevClass(r.v)+'">'+esc(r.v)+'</div>' : '<div class="fv">'+esc(r.v)+'</div>');
+      h+='<div class="rv-frow"><div class="fl">'+esc(r.l)+'</div>'+val+'</div>';
+    });
+    h+='</div>';
+  });
+  h+='</div></div>';
+
+  /* photos */
+  h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Photos</h3><span class="meta">'+(v.photos||[]).length+' captured</span></div><div class="pb">';
+  if((v.photos||[]).length){
+    h+='<div class="rv-media-grid">'+v.photos.map(function(p){
+      return '<div class="rv-media"><div class="rv-media-thumb" style="background:'+(p.tone||'#1a1f26')+'">'+_camSvg+'</div><div class="rv-media-cap">'+esc(p.cap)+'</div></div>';
+    }).join('')+'</div>';
+  }else h+='<div class="rv-hint">No photos in this bundle.</div>';
+  h+='</div></div>';
+
+  /* scans */
+  h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Document scans</h3><span class="meta">'+(v.scans||[]).length+' scanned</span></div><div class="pb">';
+  if((v.scans||[]).length){
+    h+='<div class="rv-media-grid">'+v.scans.map(function(s){
+      var ang=Math.abs(s.angle||0), at=ang<0.5?'Aligned':('Deskewed '+ang.toFixed(1)+'°');
+      return '<div class="rv-media doc"><div class="rv-media-thumb">'+_docSvg+'</div><div class="rv-media-cap">'+esc(s.label)+'</div><div class="rv-media-meta"><span class="gd"></span>'+at+'</div></div>';
+    }).join('')+'</div>';
+  }else h+='<div class="rv-hint">No document scans in this bundle.</div>';
+  h+='</div></div>';
+
+  /* extracted fields */
+  h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Extracted fields</h3><span class="meta">Ingestion</span></div><div class="rv-xf">';
+  (v.extracted||[]).forEach(function(f){
+    var amended=f.amended?'<span class="rv-amend-chip">Amended</span>':'';
+    var was=f.amended?'<span class="was">was: '+esc(f.amended.from)+'</span>':'';
+    h+='<div class="rv-xrow"><div class="k">'+esc(f.k)+'</div><div class="v">'+esc(f.v)+amended+(f.src?'<span class="src">from '+esc(f.src)+'</span>':'')+was+'</div></div>';
+  });
+  h+='</div></div>';
+
+  /* draft anomalies */
+  h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Draft anomalies</h3><span class="meta">'+na+' flagged</span></div><div>';
+  if(na){
+    (v.anomalies||[]).forEach(function(a){
+      h+='<div class="rv-anom"><div class="rv-anom-body"><h4>'+esc(a.title)+'</h4><p>'+esc(a.body)+'</p>'
+        +'<div class="rv-anom-tags"><span class="ichip '+sevChipCls(a.sev)+'">'+esc(a.sev)+'</span><span class="ichip muted">'+esc(a.source)+'</span><span class="ichip">Draft</span></div></div></div>';
+    });
+  }else h+='<div class="pb"><div class="rv-hint">No anomalies flagged on this visit.</div></div>';
+  h+='</div></div>';
+
+  /* decision footer (§3.4.4 #3): actions when pending, decision card once decided */
+  var s=v.status||'pending';
+  if(s==='pending'){
+    h+='<div class="panel"><div class="pb" style="gap:12px">'
+      +'<div class="rv-hint">Review the submission above, then accept and close it, amend a mis-read field, or return it to the agent with notes. Formal anomaly classification is §3.4.4 #4 (next).</div>'
+      +'<div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn primary" id="rvAccept">Accept &amp; close</button><button class="btn" id="rvAmend">Amend fields</button><button class="btn" id="rvReturn">Return to agent</button></div>'
+      +'</div></div>';
+  }else{
+    var accepted=s==='accepted', d=v.decision||{};
+    var ic=accepted
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v2"/></svg>';
+    h+='<div class="panel"><div class="rv-decision '+(accepted?'accepted':'returned')+'"><div class="di">'+ic+'</div><div class="db">'
+      +'<h4>'+(accepted?'Accepted &amp; closed':'Returned to agent')+'</h4>'
+      +'<div class="meta">'+esc(d.by||'')+(d.ts?' · '+fmtWhen(d.ts):'')+'</div>'
+      +(d.notes?'<p>'+esc(d.notes)+'</p>':'')
+      +'</div></div></div>';
+  }
+
+  el('vw-review').innerHTML=h;
+  el('crumbBack').addEventListener('click',backToQueue);
+  var ba=el('rvAccept');if(ba)ba.addEventListener('click',function(){rvOpenAccept(v);});
+  var bm=el('rvAmend');if(bm)bm.addEventListener('click',function(){rvOpenAmend(v);});
+  var br=el('rvReturn');if(br)br.addEventListener('click',function(){rvOpenReturn(v);});
+}
+
+/* ── decision modal + toast (§3.4.4 #3) ── */
+function rvmOpen(cfg){
+  el('rvmTitle').textContent=cfg.title;
+  el('rvmBody').innerHTML=cfg.body;
+  var cb=el('rvmConfirm');cb.textContent=cfg.confirmLabel||'Confirm';cb.className='rv-mbtn '+(cfg.confirmClass||'primary');
+  cb.onclick=function(){cfg.onConfirm();};
+  el('rvModal').classList.add('open');
+  if(cfg.focus){var f=el(cfg.focus);if(f)setTimeout(function(){f.focus();},30);}
+}
+function rvmClose(){el('rvModal').classList.remove('open');}
+var _toastT=null;
+function toast(msg,kind){var t=el('rvToast');t.textContent=msg;t.className='rv-toast show'+(kind?' '+kind:'');clearTimeout(_toastT);_toastT=setTimeout(function(){t.className='rv-toast'+(kind?' '+kind:'');},2600);}
+
+function rvOpenAccept(v){
+  var na=(v.anomalies||[]).length;
+  rvmOpen({
+    title:'Accept & close visit',
+    body:'<div class="rv-msum">Approve <b>'+esc(v.reg)+'</b> ('+esc(v.vtype)+') and close it for reporting. '+(na?na+' draft anomal'+(na===1?'y':'ies')+' will carry forward.':'No anomalies flagged.')+'</div>'
+      +'<div class="rv-mfield"><label>Note (optional)</label><textarea id="rvAcceptNote" placeholder="Any note for the record…"></textarea></div>',
+    confirmLabel:'Accept & close', focus:'rvAcceptNote',
+    onConfirm:function(){
+      var note=(el('rvAcceptNote').value||'').trim();
+      v.status='accepted';v.decision={action:'accepted',by:_reviewer,ts:Date.now(),notes:note};
+      rvRecord(v,{status:'accepted',decision:v.decision});
+      rvmClose();toast('Visit '+v.reg+' accepted and closed.');backToQueue();
+    }
+  });
+}
+function rvOpenReturn(v){
+  rvmOpen({
+    title:'Return to agent',
+    body:'<div class="rv-msum">Send <b>'+esc(v.reg)+'</b> back to <b>'+esc(v.agent)+'</b>. The agent sees your notes and can re-capture or add what is missing.</div>'
+      +'<div class="rv-mfield"><label>Notes to agent (required)</label><textarea id="rvReturnNote" placeholder="Explain what needs correcting or adding…"></textarea><span class="help">At least 15 characters.</span></div>',
+    confirmLabel:'Return to agent', confirmClass:'warnbtn', focus:'rvReturnNote',
+    onConfirm:function(){
+      var note=(el('rvReturnNote').value||'').trim();
+      if(note.length<15){toast('Please add a note (at least 15 characters).','warn');return;}
+      v.status='returned';v.decision={action:'returned',by:_reviewer,ts:Date.now(),notes:note};
+      rvRecord(v,{status:'returned',decision:v.decision});
+      rvmClose();toast('Visit '+v.reg+' returned to agent.','warn');backToQueue();
+    }
+  });
+}
+function rvOpenAmend(v){
+  var rows=(v.extracted||[]).map(function(f){
+    return '<div class="rv-amend-item"><label>'+esc(f.k)+'</label><input data-k="'+esc(f.k)+'" value="'+esc(f.v)+'"></div>';
+  }).join('');
+  rvmOpen({
+    title:'Amend extracted fields',
+    body:'<div class="rv-msum">Correct any field the ingestion read wrong for <b>'+esc(v.reg)+'</b>. Changes are recorded with the original value kept.</div>'
+      +'<div class="rv-amend-list">'+rows+'</div>',
+    confirmLabel:'Save amendments',
+    onConfirm:function(){
+      var st=rvLoad();var rec=st[v.id]=st[v.id]||{};rec.amendments=rec.amendments||{};var n=0;
+      [].forEach.call(el('rvmBody').querySelectorAll('input[data-k]'),function(inp){
+        var k=inp.getAttribute('data-k'), nv=(inp.value||'').trim();
+        var e=(v.extracted||[]).find(function(x){return x.k===k;});if(!e||nv===e.v)return;
+        var orig=rec.amendments[k]?rec.amendments[k].from:(e.amended?e.amended.from:e.v);
+        rec.amendments[k]={from:orig,to:nv,ts:Date.now()};e.v=nv;e.amended={from:orig};n++;
+      });
+      rvSave(st);rvmClose();
+      if(n){toast(n+' field'+(n===1?'':'s')+' amended.');renderReview(v);}else toast('No changes made.');
+    }
+  });
+}
+function provCell(k,v,mono){return '<div class="cell"><div class="k">'+k+'</div><div class="v'+(mono?' mono':'')+'">'+v+'</div></div>';}
+
+/* ── session + chrome ── */
+function enterApp(email){
+  var name=(email.split('@')[0]||'analyst').split(/[._-]/).map(function(p){return p?p[0].toUpperCase()+p.slice(1):p;}).join(' ');
+  _reviewer=name;
+  el('avI').textContent=_initials(name);
+  el('avN').textContent=name;
+  el('welcomeName').textContent='Pending review';
+  rvRestore();
+  renderQueue();
+  _startClock();
+}
+var _clk=null;
+function _startClock(){function t(){var d=new Date(),p=function(n){return String(n).padStart(2,'0');};var c=el('clk');if(c)c.textContent=p(d.getUTCHours())+':'+p(d.getUTCMinutes())+' UTC';}t();if(_clk)clearInterval(_clk);_clk=setInterval(t,20000);}
+
+el('signOut').addEventListener('click',function(){
+  try{localStorage.removeItem('andara.fw.review.auth');}catch(_){}
+  el('app').style.display='none';el('login').style.display='flex';el('pw').value='';
+});
+
+/* queue filter chips (§3.4.4 #3) */
+[].forEach.call(document.querySelectorAll('#queueFilter .fp'),function(b){
+  b.addEventListener('click',function(){rvFilter=b.getAttribute('data-f');renderQueue();});
+});
+/* modal close bindings */
+el('rvmClose').addEventListener('click',rvmClose);
+el('rvmCancel').addEventListener('click',rvmClose);
+el('rvModal').addEventListener('click',function(e){if(e.target===el('rvModal'))rvmClose();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')rvmClose();});
+
+/* restore session on reload */
+(function(){
+  try{
+    var raw=localStorage.getItem('andara.fw.review.auth');if(!raw)return;
+    var a=JSON.parse(raw);if(!a||!a.email)return;
+    el('login').style.display='none';el('app').style.display='flex';enterApp(a.email);
+  }catch(_){}
+})();
+</script>
+</body>
+</html>
