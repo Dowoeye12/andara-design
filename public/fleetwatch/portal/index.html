@@ -23,8 +23,14 @@
   --line:#1e232b;--line2:#2a313c;--line3:#343c49;
   --t1:#f2f5fa;--t2:#c2cad8;--t3:#a4adba;--t4:#8a93a3;
   --display:rgba(255,255,255,0.92);
-  --amber:#e8a23a;--amber2:#f1b85a;--amber-dim:#b8801f;
-  --amber-soft:rgba(232,162,58,0.11);--amber-line:rgba(232,162,58,0.30);
+  /* Brand-forward palette (Direction B). Accent is the Andara brand blue,
+     a lighter derived tint of the #043f76 navy so it is legible on the black
+     canvas; navy itself is used as a brand surface. Amber is retired as the
+     accent (kept only as --highlight for the rare emphasis). */
+  --amber:#4d90d9;--amber2:#6ba3e0;--amber-dim:#2f6ba8;
+  --amber-soft:rgba(77,144,217,0.12);--amber-line:rgba(77,144,217,0.32);
+  --navy:#043f76;--navy-2:#0a4d8a;
+  --highlight:#e8a23a;--highlight-soft:rgba(232,162,58,0.11);--highlight-line:rgba(232,162,58,0.30);
   --deploy:#6bb38a;--deploy-soft:rgba(107,179,138,0.11);--deploy-line:rgba(107,179,138,0.28);
   --watch:#d6a85a; --watch-soft:rgba(214,168,90,0.11); --watch-line:rgba(214,168,90,0.28);
   --dnd:#c97474;   --dnd-soft:rgba(201,116,116,0.11);  --dnd-line:rgba(201,116,116,0.28);
@@ -67,7 +73,7 @@ a{color:inherit;text-decoration:none}
 .ack-ok{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
 .ichip{height:22px;padding:0 10px;font-size:10px;letter-spacing:.1em;color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
 .ichip.muted{color:var(--t4);background:var(--bg3);border-color:var(--line)}
-.ichip.amber{color:var(--amber);background:var(--amber-soft);border-color:var(--amber-line)}
+.ichip.amber{color:var(--highlight);background:var(--highlight-soft);border-color:var(--highlight-line)}
 
 /* ══════════════════════════════════════════ LOGIN ══════════════════════════════════════════ */
 #login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);overflow:auto}
@@ -104,10 +110,64 @@ a{color:inherit;text-decoration:none}
 .lnote b{color:var(--t2);font-weight:600}.lnote span{color:var(--amber)}
 
 /* ══════════════════════════════════════════ SHELL ══════════════════════════════════════════ */
-#app{display:none;flex-direction:column;min-height:100vh;background:var(--bg)}
-.tb{position:sticky;top:0;z-index:30;height:var(--tb-h);display:flex;align-items:center;gap:14px;padding:0 20px;background:var(--bg4);border-bottom:1px solid var(--line)}
+#app{display:none;grid-template-columns:236px 1fr;grid-template-rows:var(--tb-h) 1fr;grid-template-areas:"tb tb" "sb mn";height:100vh;background:var(--bg)}
+.tb{grid-area:tb;height:var(--tb-h);display:flex;align-items:center;gap:14px;padding:0 20px;background:var(--bg4);border-bottom:1px solid var(--line)}
+
+/* ── side nav ── */
+.sb{grid-area:sb;background:var(--bg4);border-right:1px solid var(--line);overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:6px}
+.sgroup{display:flex;flex-direction:column;gap:2px;margin-bottom:14px}
+.sglabel{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--t4);padding:4px 10px 6px}
+.snav{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:var(--r);color:var(--t2);font-size:13.5px;font-weight:500;cursor:pointer;position:relative;transition:background .12s,color .12s}
+.snav .ico{width:17px;height:17px;flex-shrink:0;color:var(--t3);display:grid;place-items:center}
+.snav .ico svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.6}
+.snav .lbl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.snav .cnt{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--t3);background:var(--bg-hover);border-radius:4px;height:18px;min-width:18px;padding:0 6px;display:inline-flex;align-items:center;justify-content:center}
+.snav .cnt.alert{color:var(--dnd);background:var(--dnd-soft)}
+.snav:hover{background:var(--bg-hover);color:var(--t1)}
+.snav:hover .ico{color:var(--t2)}
+.snav.active{background:var(--bg3);color:var(--t1);font-weight:600}
+.snav.active .ico{color:var(--amber)}
+.snav.active::before{content:"";position:absolute;left:-12px;top:7px;bottom:7px;width:3px;border-radius:0 3px 3px 0;background:var(--amber)}
+.sb-foot{margin-top:auto;padding:12px 10px 4px;font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.06em;line-height:1.7;border-top:1px solid var(--line)}
+.mn{grid-area:mn;overflow-y:auto;min-width:0}
+.lrow-click{cursor:pointer}
+.lrow-click:hover{background:var(--bg3)}
+.reg-tag{font-family:var(--mono);font-weight:600;color:var(--t2);letter-spacing:.04em}
+
+/* nav toggle (collapse) */
+.tb-toggle{width:32px;height:32px;border-radius:6px;color:var(--t3);display:grid;place-items:center;border:1px solid transparent;flex-shrink:0}
+.tb-toggle:hover{color:var(--t1);background:var(--bg-hover);border-color:var(--line2)}
+.tb-toggle svg{width:18px;height:18px}
+
+/* collapsed icon-rail (desktop) */
+#app.nav-collapsed{grid-template-columns:62px 1fr}
+#app.nav-collapsed .sb{padding:16px 8px}
+#app.nav-collapsed .sglabel{display:none}
+#app.nav-collapsed .snav{justify-content:center;padding:9px 0}
+#app.nav-collapsed .snav .lbl,#app.nav-collapsed .snav .cnt,#app.nav-collapsed .sb-foot{display:none}
+#app.nav-collapsed .snav.active::before{left:-8px}
+#app.nav-collapsed .snav .ico{position:relative}
+#app.nav-collapsed .snav.has-count .ico::after{content:"";position:absolute;top:-3px;right:-3px;width:7px;height:7px;border-radius:50%;background:var(--amber);border:1px solid var(--bg4)}
+#app.nav-collapsed .snav.has-count.alert-count .ico::after{background:var(--dnd)}
+
+/* mobile: sidebar becomes a slide-in drawer */
+.sb-backdrop{display:none}
+@media(max-width:860px){
+  #app,#app.nav-collapsed{grid-template-columns:1fr;grid-template-areas:"tb" "mn"}
+  .sb{position:fixed;top:var(--tb-h);bottom:0;left:-252px;width:236px;z-index:41;transition:left .2s ease;padding:16px 12px}
+  #app.nav-open .sb{left:0}
+  /* drawer always shows full labels, ignore desktop collapse */
+  #app.nav-collapsed .sb{padding:16px 12px}
+  #app.nav-collapsed .snav{justify-content:flex-start;padding:8px 10px}
+  #app.nav-collapsed .snav .lbl,#app.nav-collapsed .snav .cnt,#app.nav-collapsed .sglabel,#app.nav-collapsed .sb-foot{display:revert}
+  #app.nav-collapsed .snav.has-count .ico::after{display:none}
+  .sb-backdrop{position:fixed;inset:0;top:var(--tb-h);background:rgba(0,0,0,.55);z-index:40}
+  #app.nav-open .sb-backdrop{display:block}
+}
 .tb-brand{display:flex;align-items:center;gap:10px;min-width:0}
 .tb-brand .mark{width:26px;height:26px;border-radius:5px;flex-shrink:0;background:linear-gradient(135deg,var(--amber),var(--amber-dim));display:grid;place-items:center;color:#000;font-family:var(--mono);font-weight:600;font-size:13px}
+.tb-logo{height:22px;width:auto;flex:none;display:block}
+.tb-prod{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);padding-left:12px;border-left:1px solid var(--line2);line-height:1.4;white-space:nowrap}
 .tb-brand .name{font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:-.01em;line-height:1;color:var(--t1)}
 .tb-brand .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-top:3px}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:14px}
@@ -301,7 +361,7 @@ function _login(){
   try{localStorage.setItem('andara.fw.portal.auth',JSON.stringify({email:em,ts:Date.now()}));}catch(_){}
   _logAuthEvent('Login',em,'Authenticated','Portal session opened');
   document.getElementById('login').style.display='none';
-  document.getElementById('app').style.display='flex';
+  document.getElementById('app').style.display='grid';
   if(typeof enterPortal==='function'){try{enterPortal(em);}catch(e){console.error('[login] enterPortal threw:',e);}}
 }
 document.getElementById('em').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('pw').focus();}});
@@ -311,9 +371,10 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 <!-- ══════════════════════════════ APP ══════════════════════════════ -->
 <div id="app">
   <header class="tb">
+    <button class="tb-toggle" id="navToggle" type="button" aria-label="Toggle navigation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
     <div class="tb-brand">
-      <div class="mark">A</div>
-      <div><div class="name">Andara</div><div class="sub">FleetWatch · Client Portal</div></div>
+      <img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" class="tb-logo"/>
+      <span class="tb-prod">FleetWatch · Client Portal</span>
     </div>
     <div class="tb-right">
       <span class="tb-clock" id="clk">--:--</span>
@@ -324,6 +385,29 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <button class="tb-signout" type="button" id="signOut">Sign out</button>
     </div>
   </header>
+
+  <!-- SIDE NAV -->
+  <nav class="sb">
+    <div class="sgroup">
+      <div class="sglabel">Monitoring</div>
+      <a class="snav active" data-v="fleet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span><span class="lbl">Fleet Overview</span></a>
+      <a class="snav" data-v="anomalies"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span><span class="lbl">Anomalies</span><span class="cnt" id="navAnom"></span></a>
+      <a class="snav" data-v="alerts"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="lbl">Alerts</span><span class="cnt" id="navAlerts"></span></a>
+    </div>
+    <div class="sgroup">
+      <div class="sglabel">Deliverables</div>
+      <a class="snav" data-v="reports"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg></span><span class="lbl">Reports</span></a>
+      <a class="snav" data-v="documents"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span><span class="lbl">Documents</span></a>
+    </div>
+    <div class="sgroup">
+      <div class="sglabel">Account</div>
+      <a class="snav" data-v="account"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"/><circle cx="12" cy="7" r="4"/></svg></span><span class="lbl">Account &amp; contract</span></a>
+    </div>
+    <div class="sb-foot" id="sbFoot">Fidelity Bank<br>FleetWatch subscriber</div>
+  </nav>
+  <div class="sb-backdrop" id="sbBackdrop"></div>
+
+  <main class="mn" id="mn">
 
   <!-- FLEET LIST VIEW -->
   <div class="view" id="vw-fleet">
@@ -404,6 +488,44 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       </div>
     </div>
   </div>
+
+  <!-- ANOMALIES (fleet-wide) -->
+  <div class="view" id="vw-anomalies" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Open anomalies</h1></div><div class="desc">Every open anomaly Andara has flagged across your fleet, most severe first. Select one to open the aircraft.</div></div>
+    <div class="summary" id="anomSummary"></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Open anomalies, fleet-wide</h3><span class="meta" id="anomAllCount"></span></div><div id="anomAll"></div></div>
+  </div>
+
+  <!-- ALERTS (fleet-wide) -->
+  <div class="view" id="vw-alerts" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>AOG alerts</h1></div><div class="desc">AOG-class alerts dispatched to you between reports. Acknowledge to confirm receipt; acknowledgement is logged.</div></div>
+    <div class="summary" id="alertSummary"></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Alert history, fleet-wide</h3><span class="meta" id="alertAllCount"></span></div><div id="alertAll"></div></div>
+  </div>
+
+  <!-- REPORTS (fleet-wide) -->
+  <div class="view" id="vw-reports" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Quarterly reports</h1></div><div class="desc">The latest FleetWatch quarterly surveillance report for each aircraft. Every download is watermarked with your seat token.</div></div>
+    <div class="summary" id="reportSummary"></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Latest reports</h3><span class="meta" id="reportAllCount"></span></div><div id="reportAll"></div></div>
+  </div>
+
+  <!-- DOCUMENTS (fleet-wide) -->
+  <div class="view" id="vw-documents" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Deliverables</h1></div><div class="desc">Every FleetWatch deliverable issued to you, reports, visit packs, evidence and contracts, across the whole fleet.</div></div>
+    <div class="summary" id="docSummary"></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Document index, fleet-wide</h3><span class="meta" id="docAllCount"></span></div><div id="docAll"></div></div>
+  </div>
+
+  <!-- ACCOUNT -->
+  <div class="view" id="vw-account" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Account &amp; contract</h1></div><div class="desc">Your FleetWatch surveillance contracts and how to reach your Andara customer success team.</div></div>
+    <div class="summary" id="acctSummary"></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Surveillance contracts</h3><span class="meta" id="acctCount"></span></div><div id="acctContracts"></div></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Contact Andara</h3></div><div class="pb" id="acctContact"></div></div>
+  </div>
+
+  </main>
 </div>
 
 <div id="toast"><div class="tt" id="toastTt"></div><div class="td" id="toastTd"></div></div>
@@ -528,6 +650,122 @@ var FLEET=[
 ];
 function findAircraft(id){for(var i=0;i<FLEET.length;i++)if(FLEET[i].id===id)return FLEET[i];return null;}
 
+/* ══════════════ VIEW SWITCHING (side nav) ══════════════ */
+var ICO_ANOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>';
+var ICO_ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
+var ICO_DOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+var ICO_REPORT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg>';
+var ALL_VIEWS=['fleet','anomalies','alerts','reports','documents','account','aircraft'];
+var VIEW_RENDER={fleet:renderFleet,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
+var VIEW_TITLE={fleet:'Fleet under surveillance',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Quarterly reports',documents:'Deliverables',account:'Account & contract'};
+var _curView='fleet',_originView='fleet';
+function hideAllViews(){ALL_VIEWS.forEach(function(id){var e=el('vw-'+id);if(e)e.style.display='none';});}
+function setActiveNav(v){[].forEach.call(document.querySelectorAll('.sb .snav'),function(n){n.classList.toggle('active',n.getAttribute('data-v')===v);});}
+function showView(v){
+  hideAllViews();
+  var t=el('vw-'+v);if(t)t.style.display='flex';
+  _curView=v;setActiveNav(v);
+  if(VIEW_RENDER[v])VIEW_RENDER[v]();
+  var mn=el('mn');if(mn)mn.scrollTop=0;
+}
+function updateNavCounts(){
+  var openAnom=0,pendAlert=0;
+  FLEET.forEach(function(a){
+    openAnom+=a.anomalies.filter(function(x){return x.status!=='ast-res';}).length;
+    a.alerts.forEach(function(al){if(!al.ack)pendAlert++;});
+  });
+  var na=el('navAnom');if(na){na.textContent=openAnom||'';na.style.display=openAnom?'':'none';}
+  var nl=el('navAlerts');if(nl){nl.textContent=pendAlert||'';nl.className='cnt'+(pendAlert?' alert':'');nl.style.display=pendAlert?'':'none';}
+  /* collapsed icon-rail dot indicators */
+  var anomNav=document.querySelector('.snav[data-v="anomalies"]');if(anomNav)anomNav.classList.toggle('has-count',openAnom>0);
+  var alertNav=document.querySelector('.snav[data-v="alerts"]');if(alertNav){alertNav.classList.toggle('has-count',pendAlert>0);alertNav.classList.toggle('alert-count',pendAlert>0);}
+}
+
+/* ── ANOMALIES (fleet-wide) ── */
+function renderAnomalies(){
+  var rows=[];FLEET.forEach(function(a){a.anomalies.filter(function(x){return x.status!=='ast-res';}).forEach(function(an){rows.push({a:a,an:an});});});
+  var rank={'sev-high':0,'sev-med':1,'sev-low':2};
+  rows.sort(function(x,y){return rank[x.an.sev]-rank[y.an.sev]||parseYMD(y.an.captured)-parseYMD(x.an.captured);});
+  var hi=rows.filter(function(r){return r.an.sev==='sev-high';}).length;
+  var md=rows.filter(function(r){return r.an.sev==='sev-med';}).length;
+  var lo=rows.filter(function(r){return r.an.sev==='sev-low';}).length;
+  el('anomSummary').innerHTML=cell('Open anomalies',rows.length,'Across your fleet','')+cell('High severity',hi,'Priority attention',hi?'alert':'')+cell('Medium',md,'Monitoring','')+cell('Low',lo,'Advisory','');
+  el('anomAllCount').textContent=rows.length+' open';
+  el('anomAll').innerHTML=rows.length?rows.map(function(r){var a=r.a,an=r.an;
+    return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
+      +'<div class="ico">'+ICO_ANOM+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+an.title+'</h4></div>'
+        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.type+' · '+a.operator+'</span><span>Captured <b>'+fmtDate(an.captured)+'</b></span><span>'+an.visit+'</span></div></div>'
+      +'<div class="side"><span class="pill '+an.sev+'">'+an.sevLbl+'</span><span class="pill '+an.status+'">'+an.statusLbl+'</span></div>'
+    +'</div>';
+  }).join(''):'<div class="empty">No open anomalies across your fleet.</div>';
+}
+
+/* ── ALERTS (fleet-wide) ── */
+function renderAlerts(){
+  var rows=[];FLEET.forEach(function(a){a.alerts.forEach(function(al){rows.push({a:a,al:al});});});
+  rows.sort(function(x,y){return (x.al.ack?1:0)-(y.al.ack?1:0);});
+  var pend=rows.filter(function(r){return !r.al.ack;}).length;
+  el('alertSummary').innerHTML=cell('AOG alerts',rows.length,'Dispatched to you','')+cell('Pending acknowledgement',pend,'Require your action',pend?'alert':'')+cell('Acknowledged',rows.length-pend,'Confirmed received','ok')+cell('Aircraft affected',new Set(rows.map(function(r){return r.a.id;})).size,'With alert history','');
+  el('alertAllCount').textContent=rows.length+(rows.length===1?' alert':' alerts');
+  el('alertAll').innerHTML=rows.length?rows.map(function(r){var a=r.a,al=r.al,acked=!!al.ack;
+    return '<div class="lrow">'
+      +'<div class="ico">'+ICO_ALERT+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip amber">AOG</span></div>'
+        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>Dispatched <b>'+al.dispatched+' UTC</b></span>'+(acked?'<span>Ack <b>'+al.ack+' UTC</b></span>':'')+'</div></div>'
+      +'<div class="side">'+(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')+'</div>'
+    +'</div>';
+  }).join(''):'<div class="empty">No AOG-class alerts dispatched to your fleet.</div>';
+}
+
+/* ── REPORTS (fleet-wide) ── */
+function renderReports(){
+  var rows=FLEET.filter(function(a){return a.reports&&a.reports[0];}).map(function(a){return {a:a,rep:a.reports[0]};});
+  var heightened=rows.filter(function(r){return /Heightened/i.test(r.rep.verdict);}).length;
+  el('reportSummary').innerHTML=cell('Reports available',rows.length,'Latest per aircraft','')+cell('This quarter',rows.filter(function(r){return /Q2 2026/.test(r.rep.period);}).length,'Q2 2026 issued','')+cell('Heightened surveillance',heightened,'Elevated recommendation',heightened?'alert':'')+cell('Aircraft covered',rows.length,'With a report','');
+  el('reportAllCount').textContent=rows.length+' reports';
+  el('reportAll').innerHTML=rows.map(function(r){var a=r.a,rep=r.rep;
+    return '<div class="lrow">'
+      +'<div class="ico">'+ICO_REPORT+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+a.reg+', '+rep.title+'</h4></div>'
+        +'<div class="metaln"><span class="reg-tag">'+rep.period+'</span><span>'+a.type+' · '+a.operator+'</span><span>Issued <b>'+fmtDate(rep.issued)+'</b></span><span>'+rep.verdict+'</span></div></div>'
+      +'<div class="side"><button class="btn sm" type="button" onclick="showAircraft(\''+a.id+'\')">View</button><button class="btn primary sm" type="button" onclick="downloadReport(\''+a.id+'\')">Download</button></div>'
+    +'</div>';
+  }).join('');
+}
+
+/* ── DOCUMENTS (fleet-wide) ── */
+function renderDocuments(){
+  var rows=[];FLEET.forEach(function(a){a.docs.forEach(function(dc){rows.push({a:a,dc:dc});});});
+  rows.sort(function(x,y){return parseYMD(y.dc.date)-parseYMD(x.dc.date);});
+  var kinds={};rows.forEach(function(r){kinds[r.dc.kind]=(kinds[r.dc.kind]||0)+1;});
+  el('docSummary').innerHTML=cell('Deliverables',rows.length,'All watermarked files','')+cell('Reports',kinds['Report']||0,'Quarterly PDFs','')+cell('Visit packs',kinds['Visit pack']||0,'Per-visit evidence','')+cell('Contracts',kinds['Contract']||0,'Surveillance agreements','');
+  el('docAllCount').textContent=rows.length+' files';
+  el('docAll').innerHTML=rows.map(function(r){var a=r.a,dc=r.dc;
+    return '<div class="lrow">'
+      +'<div class="ico">'+ICO_DOC+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+dc.name+'</h4></div>'
+        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span><b>'+dc.kind+'</b></span><span>'+fmtDate(dc.date)+'</span></div></div>'
+      +'<div class="side"><button class="btn sm" type="button" onclick="downloadDoc(\''+a.id+'\',\''+dc.id+'\')">Download</button></div>'
+    +'</div>';
+  }).join('');
+}
+
+/* ── ACCOUNT ── */
+function renderAccount(){
+  el('acctSummary').innerHTML=cell('Contracts',FLEET.length,'Active surveillance','')+cell('Tier 1 · Monthly',FLEET.filter(function(a){return /Tier 1/.test(a.tier);}).length,'Monthly cadence','')+cell('Tier 2 · Quarterly',FLEET.filter(function(a){return /Tier 2/.test(a.tier);}).length,'Quarterly cadence','')+cell('Subscriber','Fidelity','Institutional client','');
+  el('acctCount').textContent=FLEET.length+' contracts';
+  el('acctContracts').innerHTML=FLEET.map(function(a){
+    return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
+      +'<div class="ico">'+ICO_DOC+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+a.reg+' · '+a.contractId+'</h4></div>'
+        +'<div class="metaln"><span>'+a.type+'</span><span>'+a.tier+'</span><span>Since <b>'+fmtDate(a.coverageStart)+'</b></span><span>'+a.scope+'</span></div></div>'
+      +'<div class="side"><button class="btn sm" type="button" onclick="event.stopPropagation();showAircraft(\''+a.id+'\')">Open</button></div>'
+    +'</div>';
+  }).join('');
+  el('acctContact').innerHTML=kv('Customer success lead','Amara Okoro',false)+kv('FleetWatch desk','fleetwatch@andarasystems.com',false)+kv('AOG escalation (24/7)','+234 700 ANDARA',false)+kv('Reporting cadence','Quarterly, with off-cycle AOG alerts',false);
+}
+
 /* ── FLEET LIST render ── */
 function renderFleet(){
   // summary strip
@@ -567,10 +805,13 @@ function cell(lbl,num,cap,cls){
 /* ── AIRCRAFT DETAIL render ── */
 function showAircraft(id){
   var a=findAircraft(id);if(!a)return;
-  el('vw-fleet').style.display='none';
+  if(_curView!=='aircraft')_originView=_curView;
+  hideAllViews();
   el('vw-aircraft').style.display='flex';
-  window.scrollTo(0,0);
+  _curView='aircraft';setActiveNav(_originView||'fleet');
+  var mn=el('mn');if(mn)mn.scrollTop=0;
 
+  el('crumbBack').textContent=VIEW_TITLE[_originView]||'Fleet under surveillance';
   el('crumbReg').textContent=a.reg;
   el('adReg').textContent=a.reg;
   el('adSub').textContent=a.type+'  ·  MSN '+a.msn+'  ·  '+a.operator;
@@ -662,11 +903,7 @@ function showAircraft(id){
 
 function kv(k,v,mono){return '<div class="kv"><span class="k">'+k+'</span><span class="v'+(mono?' mono':'')+'">'+v+'</span></div>';}
 
-function backToFleet(){
-  el('vw-aircraft').style.display='none';
-  el('vw-fleet').style.display='flex';
-  window.scrollTo(0,0);
-}
+function backToFleet(){ showView(_originView||'fleet'); }
 
 /* ── actions ── */
 function downloadReport(id){
@@ -688,7 +925,8 @@ function ackAlert(id,alId){
   a.alerts.forEach(function(al){if(al.id===alId)al.ack=nowTs();});
   AUDIT.unshift({ts:nowTs(),user:portalEmail(),aircraft:a.reg,deliverable:'AOG alert acknowledged',format:'',status:'Acknowledged',ip:'',deliverableId:'',token:''});
   try{localStorage.setItem('andara.fw.portal.audit.v1',JSON.stringify(AUDIT));}catch(_){}
-  showAircraft(id);renderFleet();
+  updateNavCounts();
+  if(_curView==='aircraft')showAircraft(id);else showView(_curView);
   toast('AOG alert acknowledged','Acknowledgement logged · '+nowTs()+' UTC');
 }
 
@@ -700,12 +938,39 @@ function enterPortal(email){
   var name=local.split(/[._-]/).map(function(p){return p?p[0].toUpperCase()+p.slice(1):p;}).join(' ');
   el('uName').textContent=name||'Client';
   el('uAv').textContent=_initials(name);
-  renderFleet();
-  backToFleet();
+  _curView='fleet';_originView='fleet';
+  applyNavCollapsed();
+  updateNavCounts();
+  showView('fleet');
   startClock();
 }
 
 el('crumbBack').addEventListener('click',backToFleet);
+
+/* ── side-nav: switching + collapse (desktop icon-rail) / drawer (mobile) ── */
+function navIsMobile(){return window.matchMedia('(max-width:860px)').matches;}
+function applyNavCollapsed(){
+  var c=false;try{c=localStorage.getItem('andara.fw.portal.navCollapsed')==='1';}catch(_){}
+  el('app').classList.toggle('nav-collapsed',c);
+}
+[].forEach.call(document.querySelectorAll('.sb .snav'),function(n){
+  n.addEventListener('click',function(){
+    showView(n.getAttribute('data-v'));
+    if(navIsMobile())el('app').classList.remove('nav-open'); /* close drawer after choosing */
+  });
+});
+el('navToggle').addEventListener('click',function(){
+  if(navIsMobile()){
+    el('app').classList.toggle('nav-open');
+  }else{
+    var c=!el('app').classList.contains('nav-collapsed');
+    el('app').classList.toggle('nav-collapsed',c);
+    try{localStorage.setItem('andara.fw.portal.navCollapsed',c?'1':'0');}catch(_){}
+  }
+});
+el('sbBackdrop').addEventListener('click',function(){el('app').classList.remove('nav-open');});
+window.addEventListener('keydown',function(e){if(e.key==='Escape')el('app').classList.remove('nav-open');});
+
 el('signOut').addEventListener('click',function(){
   var email=portalEmail();
   try{localStorage.removeItem('andara.fw.portal.auth');}catch(_){}
@@ -728,7 +993,7 @@ document.addEventListener('click',function(e){
 (function tryRestoreSession(){
   try{var raw=localStorage.getItem('andara.fw.portal.auth');if(!raw)return;var a=JSON.parse(raw);if(!a||!a.email)return;
     if(typeof _logAuthEvent==='function')_logAuthEvent('Session restore',a.email,'Authenticated','Restored from local session token');
-    el('login').style.display='none';el('app').style.display='flex';enterPortal(a.email);}catch(_){}
+    el('login').style.display='none';el('app').style.display='grid';enterPortal(a.email);}catch(_){}
 })();
 </script>
 </body>

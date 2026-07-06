@@ -335,8 +335,8 @@ const FleetWatch = () => {
                 letterSpacing: ".18em",
                 color: "var(--fw-amber)",
                 padding: "6px 11px",
-                border: "1px solid rgba(255,154,31,.4)",
-                background: "rgba(255,154,31,.08)",
+                border: "1px solid rgba(77,144,217,.4)",
+                background: "rgba(77,144,217,.1)",
               }}
             >
               SUBSCRIBER CONFIDENTIAL
@@ -411,8 +411,8 @@ const FleetWatch = () => {
                     letterSpacing: ".2em",
                     color: "var(--fw-amber)",
                     padding: "5px 10px",
-                    background: "rgba(255,154,31,.1)",
-                    border: "1px solid rgba(255,154,31,.35)",
+                    background: "rgba(77,144,217,.12)",
+                    border: "1px solid rgba(77,144,217,.35)",
                     display: "inline-block",
                     marginBottom: 12,
                     textTransform: "uppercase",

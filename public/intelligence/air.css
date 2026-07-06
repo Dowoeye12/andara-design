@@ -77,12 +77,13 @@ table { border-collapse: collapse; width: 100%; }
   --line-chrome:   rgba(255, 255, 255, 0.10);
   --line-chrome-strong: rgba(255, 255, 255, 0.20);
 
-  /* Accent */
-  --gold:        #C8A84B;
-  --gold-bright: #E2C46B;
-  --gold-deep:   #8A7320;
-  --gold-soft:   rgba(200, 168, 75, 0.10);
-  --gold-line:   rgba(200, 168, 75, 0.35);
+  /* Accent (brand-forward, Direction B): Andara blue on the navy chrome,
+     deeper navy for accents on the light editorial paper. */
+  --gold:        #4d90d9;
+  --gold-bright: #6ba3e0;
+  --gold-deep:   #0a4d8a;
+  --gold-soft:   rgba(77, 144, 217, 0.10);
+  --gold-line:   rgba(77, 144, 217, 0.35);
 
   /* Semantic / signal */
   --signal-positive: #2DC07A;
@@ -136,7 +137,7 @@ body {
 }
 .air-header-brand {
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 10px;
   font-family: var(--sans);
   font-size: var(--t-meta);
@@ -153,6 +154,7 @@ body {
   text-transform: none;
   color: #fff;
 }
+.air-header-brand .air-brand-logo { height: 17px; width: auto; display: block; }
 .air-header-crumb {
   display: inline-flex;
   align-items: center;
@@ -302,7 +304,7 @@ body {
   color: var(--ink-2);
 }
 .on-dark .aav-block {
-  background: rgba(200, 168, 75, 0.08);
+  background: rgba(77, 144, 217, 0.08);
   border-left-color: var(--gold);
 }
 .on-dark .aav-block-label { color: var(--gold); }

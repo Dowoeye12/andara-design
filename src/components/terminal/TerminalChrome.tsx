@@ -15,8 +15,8 @@ export const TERMINAL_CSS = `
   --fw-panel-2:#15191E;
   --fw-border:#23282F;
   --fw-border-bright:#2E353E;
-  --fw-amber:#FF9A1F;
-  --fw-amber-dim:#C9791A;
+  --fw-amber:#4d90d9;
+  --fw-amber-dim:#2f6ba8;
   --fw-text:#E9EAEC;
   --fw-text-2:#9AA1AB;
   --fw-text-3:#636A74;
@@ -59,6 +59,8 @@ export const TERMINAL_CSS = `
 .fw-nav-inner{max-width:var(--fw-maxw);margin:0 auto;padding:18px var(--fw-gutter);display:flex;align-items:center;justify-content:space-between;gap:24px}
 .fw-brand{display:flex;align-items:center;gap:12px}
 .fw-brand .glyph{width:26px;height:26px;flex:none}
+.fw-brand-logo{height:26px;width:auto;display:block;flex:none}
+.fw-footer .fw-brand-logo{height:30px}
 .fw-brand .name{font-family:var(--fw-fd);font-weight:700;font-size:17px;letter-spacing:.06em;line-height:1;color:var(--fw-text)}
 .fw-brand .name .sub{font-family:var(--fw-fm);font-weight:400;font-size:9.5px;letter-spacing:.2em;color:var(--fw-text-3);display:block;margin-top:3px}
 .fw-nav-links{display:flex;align-items:center;gap:8px}
@@ -73,7 +75,7 @@ export const TERMINAL_CSS = `
 /* hero */
 .fw-hero{position:relative;background:var(--fw-bg);padding-top:170px;padding-bottom:90px;overflow:hidden;border-bottom:1px solid var(--fw-border)}
 .fw-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:48px 48px;-webkit-mask-image:radial-gradient(ellipse 80% 70% at 30% 20%,#000 20%,transparent 80%);mask-image:radial-gradient(ellipse 80% 70% at 30% 20%,#000 20%,transparent 80%)}
-.fw-glow{position:absolute;top:-15%;left:-5%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(255,154,31,.10),transparent 60%);pointer-events:none}
+.fw-glow{position:absolute;top:-15%;left:-5%;width:50vw;height:50vw;background:radial-gradient(circle,rgba(77,144,217,.12),transparent 60%);pointer-events:none}
 .fw-hero-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:60px;align-items:center}
 .fw-hero-stack{position:relative;z-index:2}
 .fw-cmd{font-family:var(--fw-fm);font-size:12.5px;color:var(--fw-amber);letter-spacing:.06em;margin-bottom:26px;display:flex;align-items:center;gap:10px}
@@ -224,7 +226,7 @@ export const TERMINAL_CSS = `
 .fw-verdict-card{border:1px solid var(--fw-border);background:var(--fw-panel);padding:24px}
 .fw-verdict-card .tag{font-family:var(--fw-fm);font-size:10.5px;letter-spacing:.2em;padding:6px 11px;display:inline-block;margin-bottom:14px;text-transform:uppercase;border:1px solid;background:rgba(255,255,255,.02)}
 .fw-verdict-card.deploy .tag{color:var(--fw-up);border-color:rgba(61,214,140,.35);background:rgba(61,214,140,.08)}
-.fw-verdict-card.watch .tag{color:var(--fw-amber);border-color:rgba(255,154,31,.4);background:rgba(255,154,31,.08)}
+.fw-verdict-card.watch .tag{color:#FF9A1F;border-color:rgba(255,154,31,.4);background:rgba(255,154,31,.08)}
 .fw-verdict-card.deny .tag{color:var(--fw-down);border-color:rgba(255,92,92,.35);background:rgba(255,92,92,.08)}
 .fw-verdict-card p{color:var(--fw-text-2);font-size:14.5px;line-height:1.6}
 
@@ -310,14 +312,7 @@ export const Nav = ({ ctaHref = "#briefing" }: { ctaHref?: string }) => {
     <header className={`fw-nav${scrolled ? " scrolled" : ""}`}>
       <div className="fw-nav-inner">
         <Link to="/" className="fw-brand">
-          <svg className="glyph" viewBox="0 0 32 32" fill="none" aria-hidden>
-            <path d="M16 2 L29 28 L16 22 L3 28 Z" fill="#FF9A1F" />
-            <path d="M16 2 L16 22 L3 28 Z" fill="#FFB85C" />
-          </svg>
-          <span className="name">
-            ANDARA
-            <span className="sub">AVIATION INTELLIGENCE</span>
-          </span>
+          <img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" className="fw-brand-logo" />
         </Link>
         <nav className="fw-nav-links">
           {NAV_ITEMS.map((item) => (
@@ -444,14 +439,7 @@ export const TerminalFooter = () => (
       <div className="fw-foot-top">
         <div className="fw-foot-brand">
           <Link to="/" className="fw-brand">
-            <svg className="glyph" viewBox="0 0 32 32" fill="none" aria-hidden>
-              <path d="M16 2 L29 28 L16 22 L3 28 Z" fill="#FF9A1F" />
-              <path d="M16 2 L16 22 L3 28 Z" fill="#FFB85C" />
-            </svg>
-            <span className="name">
-              ANDARA
-              <span className="sub">AVIATION INTELLIGENCE</span>
-            </span>
+            <img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" className="fw-brand-logo" />
           </Link>
           <p>
             Independent aviation intelligence and advisory. Making aviation

@@ -699,6 +699,19 @@ client Acknowledge button writes audit), **Document index** (all deliverables, t
 download). Watermark/audit via `fwLogDeliverable()` → `AUDIT` + `andara.fw.portal.audit.v1` (M2 moves
 token generation server-side per §3.2.6). Data is a static `FLEET[]` seed (Nigerian AOCs, M1 scope).
 
+**Side-nav restructure (post-launch).** The portal was originally a two-screen flex flow (fleet list →
+aircraft detail, with report/anomalies/alerts/docs nested inside the detail only). To match (and improve
+on) the production `portal.andarasystems.com` sidebar, the shell is now a **CSS grid** (`grid-template-areas:"tb tb" "sb mn"`, topbar + left `.sb` + scrollable `.mn`; `#app` display flips to **`grid`** on login/restore, not `flex`). Left nav `.sb` is grouped: **Monitoring** (Fleet Overview · Anomalies · Alerts) ·
+**Deliverables** (Reports · Documents) · **Account** (Account & contract). Each PRD §3.2.3 feature is now a
+first-class **fleet-wide view** (`renderAnomalies/renderAlerts/renderReports/renderDocuments/renderAccount`,
+each a `.phead` + `.summary` stat strip + `.lrow` list aggregating across all `FLEET[]` aircraft), on top
+of the existing per-aircraft detail. `showView(v)` swaps views + sets `.snav.active`; `.snav` counts
+(`navAnom`/`navAlerts` via `updateNavCounts()`) show open-anomaly + pending-ack totals. Drill-down is
+**origin-aware**: `showAircraft()` records `_originView`, sets the sidebar highlight + breadcrumb label to
+the originating view, and Back (`backToFleet`) returns there. `ackAlert()` re-renders the current view +
+refreshes counts. Sidebar hides < 860px (`.sb{display:none}`, grid collapses to single column). Reuses the
+existing `.pill/.lrow/.summary/.cell/.kv` styles; only new CSS is the grid shell + `.sb`/`.snav`/`.reg-tag`.
+
 ### `/fleetwatch/capture` — Field Agent App · FleetWatch Capture (PRD §3.4.3) — COMPLETE (all 8 features)
 
 What Andara field agents use on-site. File: `public/fleetwatch/capture/index.html`. Demo:

@@ -35,9 +35,10 @@
   --t4:#8a93a3;        /* slate (~5.6:1), faded meta */
   --display:rgba(255,255,255,0.92);
   /* amber, desaturated signature */
-  --amber:#e8a23a;--amber2:#f1b85a;--amber-dim:#b8801f;
-  --amber-soft:rgba(232,162,58,0.11);
-  --amber-line:rgba(232,162,58,0.30);
+  --amber:#4d90d9;--amber2:#6ba3e0;--amber-dim:#2f6ba8;
+  --navy:#043f76;--navy-2:#0a4d8a;--highlight:#e8a23a;--highlight-soft:rgba(232,162,58,0.11);--highlight-line:rgba(232,162,58,0.30);
+  --amber-soft:rgba(77,144,217,0.11);
+  --amber-line:rgba(77,144,217,0.30);
   /* verdict / status, shared chroma, varied hue, reduced saturation */
   --deploy:#6bb38a;--deploy-soft:rgba(107,179,138,0.11);--deploy-line:rgba(107,179,138,0.28);
   --watch:#d6a85a; --watch-soft:rgba(214,168,90,0.11); --watch-line:rgba(214,168,90,0.28);
@@ -110,7 +111,7 @@ input,select,textarea{font-family:inherit;color:inherit}
 }
 #login::after{
   content:"";position:absolute;top:-15%;left:-5%;width:50vw;height:50vw;
-  background:radial-gradient(circle,rgba(255,177,46,.10),transparent 60%);
+  background:radial-gradient(circle,rgba(77,144,217,.10),transparent 60%);
   pointer-events:none;
 }
 .ls{
@@ -186,6 +187,8 @@ input,select,textarea{font-family:inherit;color:inherit}
 .tb-brand .mark{width:26px;height:26px;border-radius:5px;flex-shrink:0;
   background:linear-gradient(135deg,var(--amber),var(--amber-dim));
   display:grid;place-items:center;color:#000;font-family:var(--mono);font-weight:600;font-size:13px}
+.tb-logo{height:22px;width:auto;flex:none;display:block}
+.tb-prod{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);padding-left:12px;border-left:1px solid var(--line2);line-height:1.4;white-space:nowrap}
 .tb-brand .name{font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:-.01em;line-height:1;color:var(--t1)}
 .tb-brand .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-top:3px}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:12px}
@@ -541,11 +544,8 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 <div id="app">
   <header class="tb">
     <div class="tb-brand">
-      <div class="mark">A</div>
-      <div>
-        <div class="name">Andara</div>
-        <div class="sub">FleetWatch Capture</div>
-      </div>
+      <img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" class="tb-logo"/>
+      <span class="tb-prod">FleetWatch Capture</span>
     </div>
     <div class="tb-right">
       <span class="tb-clock" id="clk">--:--</span>
