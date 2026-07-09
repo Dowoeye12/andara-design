@@ -133,6 +133,24 @@ a{color:inherit;text-decoration:none}
 .lrow-click{cursor:pointer}
 .lrow-click:hover{background:var(--bg3)}
 .reg-tag{font-family:var(--mono);font-weight:600;color:var(--t2);letter-spacing:.04em}
+/* default-flag chips (§3.2.3 Default flagging) */
+.df-tag{display:inline-flex;align-items:center;height:18px;padding:0 8px;margin-left:8px;border-radius:4px;font-family:var(--mono);font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid;vertical-align:middle;white-space:nowrap}
+.df-risk{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.df-watch{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.df-ok{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+/* default flagging panel (aircraft detail) */
+.df-desc{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.55}
+.df-bars{display:flex;flex-direction:column;gap:10px;padding:6px 0 2px}
+.df-brow{display:flex;align-items:center;gap:12px}
+.df-bl{font-family:var(--mono);font-size:11px;color:var(--t3);width:52px;flex:none;letter-spacing:.04em;text-transform:uppercase}
+.df-track{flex:1;height:10px;background:var(--bg3);border:1px solid var(--line);border-radius:5px;overflow:hidden}
+.df-fill{height:100%}
+.df-fill.df-plan{background:var(--line3)}
+.df-fill.df-risk{background:var(--dnd)}
+.df-fill.df-watch{background:var(--watch)}
+.df-fill.df-ok{background:var(--deploy)}
+.df-brow b{font-family:var(--mono);font-size:12px;color:var(--t1);width:60px;text-align:right;flex:none}
+.df-note{font-family:var(--mono);font-size:10.5px;color:var(--t4);letter-spacing:.02em;line-height:1.55;padding-top:10px;border-top:1px solid var(--line);margin-top:4px}
 
 /* nav toggle (collapse) */
 .tb-toggle{width:32px;height:32px;border-radius:6px;color:var(--t3);display:grid;place-items:center;border:1px solid transparent;flex-shrink:0}
@@ -168,6 +186,13 @@ a{color:inherit;text-decoration:none}
 .tb-brand .mark{width:26px;height:26px;border-radius:5px;flex-shrink:0;background:linear-gradient(135deg,var(--amber),var(--amber-dim));display:grid;place-items:center;color:#000;font-family:var(--mono);font-weight:600;font-size:13px}
 .tb-logo{height:22px;width:auto;flex:none;display:block}
 .tb-prod{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);padding-left:12px;border-left:1px solid var(--line2);line-height:1.4;white-space:nowrap}
+/* top-nav region selector (§3.2.3) */
+.tb-region{display:flex;align-items:center;gap:9px;margin-left:18px;padding-left:18px;border-left:1px solid var(--line2)}
+.tb-region label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--t4)}
+.tb-region select{-webkit-appearance:none;-moz-appearance:none;appearance:none;height:30px;padding:0 30px 0 12px;background-color:var(--bg3);border:1px solid var(--line2);border-radius:var(--r);color:var(--t1);font-family:var(--sans);font-size:12.5px;font-weight:500;cursor:pointer;outline:none;line-height:1;transition:border-color .15s,background .15s;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a4adba' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 10px center}
+.tb-region select:hover{border-color:var(--line3);background-color:var(--bg-hover)}
+.tb-region select:focus{border-color:var(--amber)}
+@media(max-width:640px){.tb-region{margin-left:10px;padding-left:10px}.tb-region label{display:none}}
 .tb-brand .name{font-family:var(--sans);font-weight:700;font-size:15px;letter-spacing:-.01em;line-height:1;color:var(--t1)}
 .tb-brand .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-top:3px}
 .tb-right{margin-left:auto;display:flex;align-items:center;gap:14px}
@@ -376,6 +401,10 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" class="tb-logo"/>
       <span class="tb-prod">FleetWatch · Client Portal</span>
     </div>
+    <div class="tb-region">
+      <label for="regionSelect">Region</label>
+      <select id="regionSelect" aria-label="Select region"></select>
+    </div>
     <div class="tb-right">
       <span class="tb-clock" id="clk">--:--</span>
       <div class="user">
@@ -393,6 +422,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <a class="snav active" data-v="fleet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span><span class="lbl">Fleet Overview</span></a>
       <a class="snav" data-v="anomalies"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span><span class="lbl">Anomalies</span><span class="cnt" id="navAnom"></span></a>
       <a class="snav" data-v="alerts"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="lbl">Alerts</span><span class="cnt" id="navAlerts"></span></a>
+      <a class="snav" data-v="defaultrisk"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><span class="lbl">Default risk</span><span class="cnt" id="navDefault"></span></a>
     </div>
     <div class="sgroup">
       <div class="sglabel">Deliverables</div>
@@ -475,6 +505,11 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
           <div class="ph"><span class="bullet"></span><h3>Surveillance contract</h3></div>
           <div class="pb" id="contractKv"></div>
         </div>
+        <!-- Default flagging (§3.2.3) -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Default flagging</h3><span class="meta" id="dfHdr"></span></div>
+          <div class="pb" id="dfPanel"></div>
+        </div>
         <!-- Alert history -->
         <div class="panel">
           <div class="ph"><span class="bullet"></span><h3>Alert history</h3><span class="meta" id="alertCount"></span></div>
@@ -487,6 +522,13 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- DEFAULT RISK (fleet-wide, §3.2.3 Default flagging) -->
+  <div class="view" id="vw-defaultrisk" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Default risk</h1></div><div class="desc">Early default-risk signals: each operator's monthly sales measured against their documented business plan. Sustained shortfall flags credit risk before it hits your exposure.</div></div>
+    <div class="summary" id="dfSummary"></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Sales vs business plan, by carrier</h3><span class="meta" id="dfAllCount"></span></div><div id="dfAll"></div></div>
   </div>
 
   <!-- ANOMALIES (fleet-wide) -->
@@ -583,7 +625,8 @@ function toast(title,detail){
 
 /* ── data: this client's fleet under FleetWatch surveillance ── */
 var FLEET=[
-  {id:'msn-39041',reg:'5N-BQM',msn:'39041',type:'Boeing 737-800',operator:'Air Peace',tier:'Tier 1 · Monthly',contractId:'FW-CT-1042',coverageStart:'2025-09-01',scope:'Records · Ramp · MRO',
+  {id:'msn-39041',reg:'5N-BQM',msn:'39041',type:'Boeing 737-800',operator:'Air Peace',region:'Nigeria',tier:'Tier 1 · Monthly',contractId:'FW-CT-1042',coverageStart:'2025-09-01',scope:'Records · Ramp · MRO',
+   defaultRisk:{planM:4.20,actualM:4.05,month:'May 2026'},
    lastVisit:'2026-05-18',nextVisit:'2026-06-18',reportReady:true,
    reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-15',pages:24,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[
@@ -598,7 +641,8 @@ var FLEET=[
      {id:'d4',name:'FleetWatch Quarterly, Q1 2026',kind:'Report',date:'2026-03-15'},
      {id:'d5',name:'Surveillance contract, FW-CT-1042',kind:'Contract',date:'2025-09-01'}
    ]},
-  {id:'msn-6512',reg:'5N-JEA',msn:'6512',type:'Airbus A320-200',operator:'Ibom Air',tier:'Tier 1 · Monthly',contractId:'FW-CT-1051',coverageStart:'2025-10-01',scope:'Records · Ramp',
+  {id:'msn-6512',reg:'5N-JEA',msn:'6512',type:'Airbus A320-200',operator:'Ibom Air',region:'Nigeria',tier:'Tier 1 · Monthly',contractId:'FW-CT-1051',coverageStart:'2025-10-01',scope:'Records · Ramp',
+   defaultRisk:{planM:2.80,actualM:2.48,month:'May 2026'},
    lastVisit:'2026-05-02',nextVisit:'2026-06-02',reportReady:false,
    reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-10',pages:21,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[
@@ -610,7 +654,8 @@ var FLEET=[
      {id:'d2',name:'Visit pack, Ramp inspection (May)',kind:'Visit pack',date:'2026-05-02'},
      {id:'d5',name:'Surveillance contract, FW-CT-1051',kind:'Contract',date:'2025-10-01'}
    ]},
-  {id:'msn-17004',reg:'5N-GAA',msn:'17004',type:'Embraer E175',operator:'Green Africa',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1066',coverageStart:'2025-11-01',scope:'Records · Ramp · MRO',
+  {id:'msn-17004',reg:'5N-GAA',msn:'17004',type:'Embraer E175',operator:'Green Africa',region:'Nigeria',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1066',coverageStart:'2025-11-01',scope:'Records · Ramp · MRO',
+   defaultRisk:{planM:3.10,actualM:2.76,month:'May 2026'},
    lastVisit:'2026-03-20',nextVisit:'2026-06-20',reportReady:false,
    reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-12',pages:19,verdict:'Continue surveillance',condition:'Minor findings logged',visits:1}],
    anomalies:[
@@ -623,7 +668,8 @@ var FLEET=[
      {id:'d2',name:'Visit pack, MRO observation (Mar)',kind:'Visit pack',date:'2026-03-20'},
      {id:'d5',name:'Surveillance contract, FW-CT-1066',kind:'Contract',date:'2025-11-01'}
    ]},
-  {id:'msn-2887',reg:'5N-UNA',msn:'2887',type:'Embraer ERJ-145',operator:'United Nigeria',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1071',coverageStart:'2025-12-01',scope:'Records · Ramp',
+  {id:'msn-2887',reg:'5N-UNA',msn:'2887',type:'Embraer ERJ-145',operator:'United Nigeria',region:'Nigeria',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1071',coverageStart:'2025-12-01',scope:'Records · Ramp',
+   defaultRisk:{planM:2.60,actualM:1.85,month:'May 2026'},
    lastVisit:'2026-02-28',nextVisit:'2026-05-28',reportReady:false,
    reports:[{id:'r1',title:'FleetWatch Quarterly, Q1 2026',period:'Q1 2026',issued:'2026-03-18',pages:18,verdict:'Heightened surveillance',condition:'Records gaps, see anomalies',visits:1}],
    anomalies:[
@@ -637,7 +683,8 @@ var FLEET=[
      {id:'d3',name:'Anomaly evidence, records gap memo',kind:'Evidence',date:'2026-02-28'},
      {id:'d5',name:'Surveillance contract, FW-CT-1071',kind:'Contract',date:'2025-12-01'}
    ]},
-  {id:'msn-30622',reg:'5N-MRT',msn:'30622',type:'Boeing 737-700',operator:'Max Air',tier:'Tier 1 · Monthly',contractId:'FW-CT-1080',coverageStart:'2026-01-15',scope:'Records · Ramp · MRO',
+  {id:'msn-30622',reg:'5N-MRT',msn:'30622',type:'Boeing 737-700',operator:'Max Air',region:'Nigeria',tier:'Tier 1 · Monthly',contractId:'FW-CT-1080',coverageStart:'2026-01-15',scope:'Records · Ramp · MRO',
+   defaultRisk:{planM:3.80,actualM:3.72,month:'May 2026'},
    lastVisit:'2026-06-01',nextVisit:'2026-07-01',reportReady:false,
    reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-14',pages:22,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[],
@@ -646,8 +693,48 @@ var FLEET=[
      {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-14'},
      {id:'d2',name:'Visit pack, MRO observation (Jun)',kind:'Visit pack',date:'2026-06-01'},
      {id:'d5',name:'Surveillance contract, FW-CT-1080',kind:'Contract',date:'2026-01-15'}
+   ]},
+  {id:'msn-30890',reg:'5V-TAK',msn:'30890',type:'Boeing 737-700',operator:'ASKY Airlines',region:'West Africa',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1090',coverageStart:'2026-02-01',scope:'Records · Ramp',
+   defaultRisk:{planM:3.40,actualM:3.31,month:'May 2026'},
+   lastVisit:'2026-05-09',nextVisit:'2026-08-09',reportReady:false,
+   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-16',pages:20,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:2}],
+   anomalies:[
+     {id:'a1',title:'Thrust reverser actuator, slow deploy on No.1',sev:'sev-low',sevLbl:'Low',captured:'2026-05-09',visit:'Ramp inspection · Lomé',status:'ast-mon',statusLbl:'Monitoring'}
+   ],
+   alerts:[],
+   docs:[
+     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-16'},
+     {id:'d2',name:'Visit pack, Ramp inspection (May)',kind:'Visit pack',date:'2026-05-09'},
+     {id:'d5',name:'Surveillance contract, FW-CT-1090',kind:'Contract',date:'2026-02-01'}
+   ]},
+  {id:'msn-6201',reg:'TU-TSB',msn:'6201',type:'Airbus A319-100',operator:'Air Côte d’Ivoire',region:'West Africa',tier:'Tier 1 · Monthly',contractId:'FW-CT-1095',coverageStart:'2026-02-15',scope:'Records · Ramp · MRO',
+   defaultRisk:{planM:2.90,actualM:2.30,month:'May 2026'},
+   lastVisit:'2026-05-24',nextVisit:'2026-06-24',reportReady:false,
+   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-17',pages:21,verdict:'Heightened surveillance',condition:'Revenue shortfall, see default flag',visits:2}],
+   anomalies:[
+     {id:'a1',title:'Cabin pressurisation outflow valve, intermittent fault',sev:'sev-med',sevLbl:'Medium',captured:'2026-05-24',visit:'MRO observation · Abidjan',status:'ast-open',statusLbl:'Open'}
+   ],
+   alerts:[{id:'al1',title:'AOG, nose gear steering fault',dispatched:'2026-05-30 11:20',ack:null}],
+   docs:[
+     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-17'},
+     {id:'d2',name:'Visit pack, MRO observation (May)',kind:'Visit pack',date:'2026-05-24'},
+     {id:'d5',name:'Surveillance contract, FW-CT-1095',kind:'Contract',date:'2026-02-15'}
    ]}
 ];
+var PURCHASED_REGIONS=['Nigeria','West Africa'];
+var _region='all';
+try{var _rs=localStorage.getItem('andara.fw.portal.region');if(_rs)_region=_rs;}catch(_){}
+function regionCounts(){var c={};FLEET.forEach(function(a){c[a.region]=(c[a.region]||0)+1;});return c;}
+function fleetInScope(){return _region==='all'?FLEET.slice():FLEET.filter(function(a){return a.region===_region;});}
+function setRegion(r){_region=r;try{localStorage.setItem('andara.fw.portal.region',r);}catch(_){}renderRegionSelector();updateNavCounts();showView(_curView==='aircraft'?'fleet':_curView);}
+/* default flagging (§3.2.3): monthly sales vs the operator's business plan */
+function defaultFlag(a){
+  var d=a.defaultRisk;if(!d)return{level:'ok',lbl:'On plan',variance:0,planM:0,actualM:0};
+  var variance=Math.round(((d.actualM-d.planM)/d.planM)*1000)/10;
+  var level = variance<=-20?'risk' : variance<=-8?'watch' : 'ok';
+  var lbl = level==='risk'?'Default risk' : level==='watch'?'Watch' : 'On plan';
+  return{level:level,lbl:lbl,variance:variance,planM:d.planM,actualM:d.actualM,month:d.month};
+}
 function findAircraft(id){for(var i=0;i<FLEET.length;i++)if(FLEET[i].id===id)return FLEET[i];return null;}
 
 /* ══════════════ VIEW SWITCHING (side nav) ══════════════ */
@@ -655,12 +742,21 @@ var ICO_ANOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 var ICO_ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
 var ICO_DOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
 var ICO_REPORT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg>';
-var ALL_VIEWS=['fleet','anomalies','alerts','reports','documents','account','aircraft'];
-var VIEW_RENDER={fleet:renderFleet,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
-var VIEW_TITLE={fleet:'Fleet under surveillance',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Quarterly reports',documents:'Deliverables',account:'Account & contract'};
+var ALL_VIEWS=['fleet','defaultrisk','anomalies','alerts','reports','documents','account','aircraft'];
+var VIEW_RENDER={fleet:renderFleet,defaultrisk:renderDefaultRisk,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
+var VIEW_TITLE={fleet:'Fleet under surveillance',defaultrisk:'Default risk',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Quarterly reports',documents:'Deliverables',account:'Account & contract'};
 var _curView='fleet',_originView='fleet';
 function hideAllViews(){ALL_VIEWS.forEach(function(id){var e=el('vw-'+id);if(e)e.style.display='none';});}
-function setActiveNav(v){[].forEach.call(document.querySelectorAll('.sb .snav'),function(n){n.classList.toggle('active',n.getAttribute('data-v')===v);});}
+function setActiveNav(v){[].forEach.call(document.querySelectorAll('.sb .snav[data-v]'),function(n){n.classList.toggle('active',n.getAttribute('data-v')===v);});}
+/* region selector (§3.2.3): top-nav dropdown, scopes the portal to the client's purchased regions */
+function renderRegionSelector(){
+  var sel=el('regionSelect');if(!sel)return;
+  var counts=regionCounts();
+  var opts=[{k:'all',lbl:'All regions',n:FLEET.length}];
+  PURCHASED_REGIONS.forEach(function(r){opts.push({k:r,lbl:r,n:counts[r]||0});});
+  sel.innerHTML=opts.map(function(o){return '<option value="'+o.k+'"'+(_region===o.k?' selected':'')+'>'+o.lbl+' ('+o.n+')</option>';}).join('');
+  sel.value=_region;
+}
 function showView(v){
   hideAllViews();
   var t=el('vw-'+v);if(t)t.style.display='flex';
@@ -669,21 +765,24 @@ function showView(v){
   var mn=el('mn');if(mn)mn.scrollTop=0;
 }
 function updateNavCounts(){
-  var openAnom=0,pendAlert=0;
-  FLEET.forEach(function(a){
+  var openAnom=0,pendAlert=0,dfFlagged=0,dfRisk=0;
+  fleetInScope().forEach(function(a){
     openAnom+=a.anomalies.filter(function(x){return x.status!=='ast-res';}).length;
     a.alerts.forEach(function(al){if(!al.ack)pendAlert++;});
+    var lv=defaultFlag(a).level;if(lv!=='ok')dfFlagged++;if(lv==='risk')dfRisk++;
   });
   var na=el('navAnom');if(na){na.textContent=openAnom||'';na.style.display=openAnom?'':'none';}
   var nl=el('navAlerts');if(nl){nl.textContent=pendAlert||'';nl.className='cnt'+(pendAlert?' alert':'');nl.style.display=pendAlert?'':'none';}
+  var ndf=el('navDefault');if(ndf){ndf.textContent=dfFlagged||'';ndf.className='cnt'+(dfRisk?' alert':'');ndf.style.display=dfFlagged?'':'none';}
   /* collapsed icon-rail dot indicators */
   var anomNav=document.querySelector('.snav[data-v="anomalies"]');if(anomNav)anomNav.classList.toggle('has-count',openAnom>0);
   var alertNav=document.querySelector('.snav[data-v="alerts"]');if(alertNav){alertNav.classList.toggle('has-count',pendAlert>0);alertNav.classList.toggle('alert-count',pendAlert>0);}
+  var dfNav=document.querySelector('.snav[data-v="defaultrisk"]');if(dfNav){dfNav.classList.toggle('has-count',dfFlagged>0);dfNav.classList.toggle('alert-count',dfRisk>0);}
 }
 
 /* ── ANOMALIES (fleet-wide) ── */
 function renderAnomalies(){
-  var rows=[];FLEET.forEach(function(a){a.anomalies.filter(function(x){return x.status!=='ast-res';}).forEach(function(an){rows.push({a:a,an:an});});});
+  var rows=[];fleetInScope().forEach(function(a){a.anomalies.filter(function(x){return x.status!=='ast-res';}).forEach(function(an){rows.push({a:a,an:an});});});
   var rank={'sev-high':0,'sev-med':1,'sev-low':2};
   rows.sort(function(x,y){return rank[x.an.sev]-rank[y.an.sev]||parseYMD(y.an.captured)-parseYMD(x.an.captured);});
   var hi=rows.filter(function(r){return r.an.sev==='sev-high';}).length;
@@ -703,7 +802,7 @@ function renderAnomalies(){
 
 /* ── ALERTS (fleet-wide) ── */
 function renderAlerts(){
-  var rows=[];FLEET.forEach(function(a){a.alerts.forEach(function(al){rows.push({a:a,al:al});});});
+  var rows=[];fleetInScope().forEach(function(a){a.alerts.forEach(function(al){rows.push({a:a,al:al});});});
   rows.sort(function(x,y){return (x.al.ack?1:0)-(y.al.ack?1:0);});
   var pend=rows.filter(function(r){return !r.al.ack;}).length;
   el('alertSummary').innerHTML=cell('AOG alerts',rows.length,'Dispatched to you','')+cell('Pending acknowledgement',pend,'Require your action',pend?'alert':'')+cell('Acknowledged',rows.length-pend,'Confirmed received','ok')+cell('Aircraft affected',new Set(rows.map(function(r){return r.a.id;})).size,'With alert history','');
@@ -718,9 +817,34 @@ function renderAlerts(){
   }).join(''):'<div class="empty">No AOG-class alerts dispatched to your fleet.</div>';
 }
 
+/* ── DEFAULT RISK (fleet-wide, §3.2.3 Default flagging) ── */
+function renderDefaultRisk(){
+  var fl=fleetInScope();
+  var rows=fl.map(function(a){return {a:a,df:defaultFlag(a)};});
+  var rank={risk:0,watch:1,ok:2};
+  rows.sort(function(x,y){return rank[x.df.level]-rank[y.df.level]||x.df.variance-y.df.variance;});
+  var risk=rows.filter(function(r){return r.df.level==='risk';}).length;
+  var watch=rows.filter(function(r){return r.df.level==='watch';}).length;
+  var onplan=rows.filter(function(r){return r.df.level==='ok';}).length;
+  el('dfSummary').innerHTML=cell('Carriers monitored',rows.length,'In this scope','')
+    +cell('Default risk',risk,'Material shortfall vs plan',risk?'alert':'')
+    +cell('Watch',watch,'Early shortfall signal','')
+    +cell('On plan',onplan,'Meeting business plan','ok');
+  el('dfAllCount').textContent=(risk+watch)+' flagged';
+  el('dfAll').innerHTML=rows.map(function(r){var a=r.a,df=r.df;
+    var pct=Math.max(4,Math.min(100,Math.round((df.actualM/df.planM)*100)));
+    return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
+      +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>'
+      +'<div class="body"><div class="hd"><h4>'+a.operator+'</h4><span class="pill df-'+df.level+'">'+df.lbl+'</span></div>'
+        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.region+'</span><span>Plan <b>$'+df.planM.toFixed(2)+'M</b></span><span>Actual <b>$'+df.actualM.toFixed(2)+'M</b></span><span>'+(df.variance>0?'+':'')+df.variance+'% vs plan</span></div>'
+        +'<div class="df-track" style="margin-top:8px"><div class="df-fill df-'+df.level+'" style="width:'+pct+'%"></div></div></div>'
+    +'</div>';
+  }).join('');
+}
+
 /* ── REPORTS (fleet-wide) ── */
 function renderReports(){
-  var rows=FLEET.filter(function(a){return a.reports&&a.reports[0];}).map(function(a){return {a:a,rep:a.reports[0]};});
+  var rows=fleetInScope().filter(function(a){return a.reports&&a.reports[0];}).map(function(a){return {a:a,rep:a.reports[0]};});
   var heightened=rows.filter(function(r){return /Heightened/i.test(r.rep.verdict);}).length;
   el('reportSummary').innerHTML=cell('Reports available',rows.length,'Latest per aircraft','')+cell('This quarter',rows.filter(function(r){return /Q2 2026/.test(r.rep.period);}).length,'Q2 2026 issued','')+cell('Heightened surveillance',heightened,'Elevated recommendation',heightened?'alert':'')+cell('Aircraft covered',rows.length,'With a report','');
   el('reportAllCount').textContent=rows.length+' reports';
@@ -736,7 +860,7 @@ function renderReports(){
 
 /* ── DOCUMENTS (fleet-wide) ── */
 function renderDocuments(){
-  var rows=[];FLEET.forEach(function(a){a.docs.forEach(function(dc){rows.push({a:a,dc:dc});});});
+  var rows=[];fleetInScope().forEach(function(a){a.docs.forEach(function(dc){rows.push({a:a,dc:dc});});});
   rows.sort(function(x,y){return parseYMD(y.dc.date)-parseYMD(x.dc.date);});
   var kinds={};rows.forEach(function(r){kinds[r.dc.kind]=(kinds[r.dc.kind]||0)+1;});
   el('docSummary').innerHTML=cell('Deliverables',rows.length,'All watermarked files','')+cell('Reports',kinds['Report']||0,'Quarterly PDFs','')+cell('Visit packs',kinds['Visit pack']||0,'Per-visit evidence','')+cell('Contracts',kinds['Contract']||0,'Surveillance agreements','');
@@ -753,9 +877,10 @@ function renderDocuments(){
 
 /* ── ACCOUNT ── */
 function renderAccount(){
-  el('acctSummary').innerHTML=cell('Contracts',FLEET.length,'Active surveillance','')+cell('Tier 1 · Monthly',FLEET.filter(function(a){return /Tier 1/.test(a.tier);}).length,'Monthly cadence','')+cell('Tier 2 · Quarterly',FLEET.filter(function(a){return /Tier 2/.test(a.tier);}).length,'Quarterly cadence','')+cell('Subscriber','Fidelity','Institutional client','');
-  el('acctCount').textContent=FLEET.length+' contracts';
-  el('acctContracts').innerHTML=FLEET.map(function(a){
+  var fl=fleetInScope();
+  el('acctSummary').innerHTML=cell('Contracts',fl.length,'Active surveillance','')+cell('Tier 1 · Monthly',fl.filter(function(a){return /Tier 1/.test(a.tier);}).length,'Monthly cadence','')+cell('Tier 2 · Quarterly',fl.filter(function(a){return /Tier 2/.test(a.tier);}).length,'Quarterly cadence','')+cell('Subscriber','Fidelity','Institutional client','');
+  el('acctCount').textContent=fl.length+' contracts';
+  el('acctContracts').innerHTML=fl.map(function(a){
     return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
       +'<div class="ico">'+ICO_DOC+'</div>'
       +'<div class="body"><div class="hd"><h4>'+a.reg+' · '+a.contractId+'</h4></div>'
@@ -768,13 +893,15 @@ function renderAccount(){
 
 /* ── FLEET LIST render ── */
 function renderFleet(){
-  // summary strip
-  var total=FLEET.length, onSched=0, due=0, openAlerts=0;
-  FLEET.forEach(function(a){
+  // summary strip (scoped to the selected region, §3.2.3 region selector)
+  var fl=fleetInScope();
+  var total=fl.length, onSched=0, due=0, openAlerts=0, atRisk=0;
+  fl.forEach(function(a){
     var s=svState(a);
     if(s.cls==='sv-ok'||s.cls==='sv-rep')onSched++;
     if(s.cls==='sv-due'||s.cls==='sv-over')due++;
     a.alerts.forEach(function(al){if(!al.ack)openAlerts++;});
+    if(defaultFlag(a).level!=='ok')atRisk++;
   });
   el('fleetSummary').innerHTML=
     cell('Aircraft monitored',total,'Under FleetWatch contract','')+
@@ -782,14 +909,15 @@ function renderFleet(){
     cell('Visits due / overdue',due,'Need scheduling attention','due')+
     cell('Open AOG alerts',openAlerts,'Awaiting acknowledgement',openAlerts?'alert':'');
 
-  el('fleetCount').textContent=total+' aircraft';
-  var rows=FLEET.map(function(a){
-    var s=svState(a);
+  el('fleetCount').textContent=total+' aircraft'+(_region!=='all'?' · '+_region:'');
+  var rows=fl.map(function(a){
+    var s=svState(a);var df=defaultFlag(a);
+    var dfTag=df.level!=='ok'?'<span class="df-tag df-'+df.level+'" title="Monthly sales '+df.variance+'% vs business plan">'+df.lbl+'</span>':'';
     return '<tr onclick="showAircraft(\''+a.id+'\')">'
       +'<td class="fc-reg">'+a.reg+'</td>'
       +'<td class="fc-msn">'+a.msn+'</td>'
       +'<td class="fc-type">'+a.type+'</td>'
-      +'<td class="fc-op">'+a.operator+'</td>'
+      +'<td class="fc-op">'+a.operator+dfTag+'</td>'
       +'<td><span class="pill '+s.cls+'"><span class="dot"></span>'+s.lbl+'</span></td>'
       +'<td class="fc-date">'+fmtDate(a.lastVisit)+'<span class="ago">'+relDays(a.lastVisit)+'</span></td>'
       +'<td class="fc-date">'+fmtDate(a.nextVisit)+'<span class="ago">'+relDays(a.nextVisit)+'</span></td>'
@@ -827,6 +955,20 @@ function showAircraft(id){
     kv('Visit scope',a.scope,false)+
     kv('Last visit',fmtDate(a.lastVisit)+' · '+relDays(a.lastVisit),false)+
     kv('Next visit',fmtDate(a.nextVisit)+' · '+relDays(a.nextVisit),false);
+
+  // default flagging (§3.2.3): monthly sales vs documented business plan
+  var df=defaultFlag(a);
+  el('dfHdr').innerHTML='<span class="pill df-'+df.level+'">'+df.lbl+'</span>';
+  var pct=Math.max(4,Math.min(100,Math.round((df.actualM/df.planM)*100)));
+  el('dfPanel').innerHTML=
+    '<div class="df-desc">Monthly sales measured against the operator\'s documented business plan. A sustained shortfall is an early default-risk signal.</div>'
+    +'<div class="df-bars">'
+      +'<div class="df-brow"><span class="df-bl">Plan</span><div class="df-track"><div class="df-fill df-plan" style="width:100%"></div></div><b>$'+df.planM.toFixed(2)+'M</b></div>'
+      +'<div class="df-brow"><span class="df-bl">Actual</span><div class="df-track"><div class="df-fill df-'+df.level+'" style="width:'+pct+'%"></div></div><b>$'+df.actualM.toFixed(2)+'M</b></div>'
+    +'</div>'
+    +kv('Variance vs plan',(df.variance>0?'+':'')+df.variance+'%',false)
+    +kv('Reading month',df.month,false)
+    +'<div class="df-note">Flight-behaviour signals are added once flight-tracking (ADS-B) integration lands (PRD §7.4).</div>';
 
   // latest quarterly report viewer
   var rep=a.reports[0];
@@ -940,6 +1082,7 @@ function enterPortal(email){
   el('uAv').textContent=_initials(name);
   _curView='fleet';_originView='fleet';
   applyNavCollapsed();
+  renderRegionSelector();
   updateNavCounts();
   showView('fleet');
   startClock();
@@ -953,12 +1096,14 @@ function applyNavCollapsed(){
   var c=false;try{c=localStorage.getItem('andara.fw.portal.navCollapsed')==='1';}catch(_){}
   el('app').classList.toggle('nav-collapsed',c);
 }
-[].forEach.call(document.querySelectorAll('.sb .snav'),function(n){
+[].forEach.call(document.querySelectorAll('.sb .snav[data-v]'),function(n){
   n.addEventListener('click',function(){
     showView(n.getAttribute('data-v'));
     if(navIsMobile())el('app').classList.remove('nav-open'); /* close drawer after choosing */
   });
 });
+/* top-nav region dropdown (§3.2.3) */
+(function(){var s=el('regionSelect');if(s)s.addEventListener('change',function(){setRegion(this.value);});})();
 el('navToggle').addEventListener('click',function(){
   if(navIsMobile()){
     el('app').classList.toggle('nav-open');

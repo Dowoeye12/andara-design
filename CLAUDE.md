@@ -712,6 +712,10 @@ the originating view, and Back (`backToFleet`) returns there. `ackAlert()` re-re
 refreshes counts. Sidebar hides < 860px (`.sb{display:none}`, grid collapses to single column). Reuses the
 existing `.pill/.lrow/.summary/.cell/.kv` styles; only new CSS is the grid shell + `.sb`/`.snav`/`.reg-tag`.
 
+**Region selector + Default flagging (PRD v1.6 §3.2.3 additions).** The updated PRD (`Andara_Master_Build_PRD_v1_6.md`) expands scope to all 85 carriers / all regions from M1 and adds these two portal features:
+- **Region selector** — a **top-nav dropdown** (`#regionSelect` in the `.tb-region` header block, NOT the sidebar — placed there per user preference), populated by `renderRegionSelector()` with `All regions` + each of `PURCHASED_REGIONS` (`['Nigeria','West Africa']`) and live counts. Its `change` handler calls `setRegion(r)`, which persists to `andara.fw.portal.region`; **`fleetInScope()`** (region-filtered FLEET) is what every view render reads instead of `FLEET` directly, so the fleet list, all fleet-wide views, and the sidebar counts scope to the selected region. FLEET seed gained a `region` field + 2 West Africa carriers (ASKY, Air Côte d'Ivoire). (`setActiveNav` targets `.snav[data-v]` to stay robust.)
+- **Default flagging** — each carrier carries `defaultRisk:{planM,actualM,month}` (monthly sales vs documented business plan). `defaultFlag(a)` → `{level,lbl,variance}` (variance ≤ -20% = `risk`, ≤ -8% = `watch`, else `ok`). Surfaced three ways: `.df-tag` chips on fleet-list rows, a **"Default flagging"** panel on the aircraft-detail page (`#dfPanel`: plan-vs-actual `.df-track` bars + variance + a §7.4 flight-tracking-pending note), and a dedicated **Default risk** sidebar view (`vw-defaultrisk` / `renderDefaultRisk()`) that lists carriers worst-first with a `.summary` strip and per-carrier bars, plus a `#navDefault` badge. Flight-behaviour (ADS-B) signals are held per PRD §7.4.
+
 ### `/fleetwatch/capture` — Field Agent App · FleetWatch Capture (PRD §3.4.3) — COMPLETE (all 8 features)
 
 What Andara field agents use on-site. File: `public/fleetwatch/capture/index.html`. Demo:
