@@ -151,6 +151,7 @@ a{color:inherit;text-decoration:none}
 .df-fill.df-ok{background:var(--deploy)}
 .df-brow b{font-family:var(--mono);font-size:12px;color:var(--t1);width:60px;text-align:right;flex:none}
 .df-note{font-family:var(--mono);font-size:10.5px;color:var(--t4);letter-spacing:.02em;line-height:1.55;padding-top:10px;border-top:1px solid var(--line);margin-top:4px}
+.pi-var{font-family:var(--mono);font-size:15px;color:var(--dnd);font-weight:600}
 
 /* nav toggle (collapse) */
 .tb-toggle{width:32px;height:32px;border-radius:6px;color:var(--t3);display:grid;place-items:center;border:1px solid transparent;flex-shrink:0}
@@ -418,6 +419,11 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
   <!-- SIDE NAV -->
   <nav class="sb">
     <div class="sgroup">
+      <div class="sglabel">Fleet Health</div>
+      <a class="snav" data-v="portfolio"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="12" y="6" width="3" height="11"/><rect x="17" y="13" width="3" height="4"/></svg></span><span class="lbl">Portfolio Overview</span></a>
+      <a class="snav" data-v="predictive"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7h-5m5 0v5"/></svg></span><span class="lbl">Predictive Intelligence</span><span class="cnt" id="navPredict"></span></a>
+    </div>
+    <div class="sgroup">
       <div class="sglabel">Monitoring</div>
       <a class="snav active" data-v="fleet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span><span class="lbl">Fleet Overview</span></a>
       <a class="snav" data-v="anomalies"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span><span class="lbl">Anomalies</span><span class="cnt" id="navAnom"></span></a>
@@ -522,6 +528,32 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- PORTFOLIO OVERVIEW (Fleet Health) -->
+  <div class="view" id="vw-portfolio" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · Fleet Health</div><h1>Portfolio overview</h1></div><div class="desc" id="poDesc">Fleet-wide health and value status across the aircraft Andara monitors for you. Field scans current through the latest surveillance cycle.</div></div>
+    <div class="summary" id="poSummary"></div>
+    <div class="panel">
+      <div class="ph"><span class="bullet"></span><h3>Aircraft health &amp; value status</h3><span class="meta" id="poCount"></span></div>
+      <div class="tblwrap">
+        <table class="fleet">
+          <colgroup><col style="width:13%"><col style="width:30%"><col style="width:17%"><col style="width:20%"><col style="width:16%"><col style="width:4%"></colgroup>
+          <thead><tr><th>Registration</th><th>Type / Operator</th><th>Health score</th><th>Value trend</th><th>Watch items</th><th></th></tr></thead>
+          <tbody id="poBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREDICTIVE INTELLIGENCE -->
+  <div class="view" id="vw-predictive" style="display:none">
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · Fleet Health</div><h1>Predictive intelligence</h1></div><div class="desc">Forward-looking risk from field-scan trends: what needs action now, what to plan for, and what to be aware of, with the estimated value at risk to your exposure.</div></div>
+    <div class="summary" id="piSummary"></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Act now · 0&ndash;30 days</h3><span class="meta" id="pi-act-cnt"></span></div><div id="pi-act"></div></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Plan now · 1&ndash;6 months</h3><span class="meta" id="pi-plan-cnt"></span></div><div id="pi-plan"></div></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Aware · 6&ndash;12 months</h3><span class="meta" id="pi-aware-cnt"></span></div><div id="pi-aware"></div></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Asset value at risk</h3><span class="meta" id="piVarCount"></span></div><div id="piVar"></div></div>
   </div>
 
   <!-- DEFAULT RISK (fleet-wide, §3.2.3 Default flagging) -->
@@ -737,14 +769,55 @@ function defaultFlag(a){
 }
 function findAircraft(id){for(var i=0;i<FLEET.length;i++)if(FLEET[i].id===id)return FLEET[i];return null;}
 
+/* ── fleet-health model (Portfolio Overview + enriched Aircraft Detail) ──
+   Seeded per-aircraft health, component scores and engineering KPIs, modelled
+   on the production portal. At M1 these are seeded values; M2 wires the real
+   scoring engine (health score, value trajectory, component analysis). */
+var HEALTH={
+  'msn-39041':{score:76,trend:'stable',valueEstM:41.5,hoursTSN:18204,cycles:12441,openDefects:4,adCompliance:100,lastCCheck:'8Mo · Lagos MRO',components:{Structural:80,Powerplant:70,Systems:78,Compliance:90,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'No.2 engine HPC blade-tip wear caught early on borescope; monitor rate of change over next two cycles.'},{cat:'Structural',trend:'stable',note:'Airframe within tolerance, no new skin findings this quarter.'}]},
+  'msn-6512':{score:82,trend:'stable',valueEstM:34.0,hoursTSN:22100,cycles:14880,openDefects:2,adCompliance:100,lastCCheck:'5Mo · Uyo line',components:{Structural:84,Powerplant:82,Systems:80,Compliance:88,Maintenance:78},obs:[{cat:'Maintenance',trend:'stable',note:'Nose gear shimmy damper weep under watch, no operational impact.'}]},
+  'msn-17004':{score:71,trend:'down',valueEstM:27.8,hoursTSN:16540,cycles:12030,openDefects:3,adCompliance:96,lastCCheck:'11Mo · Lagos',components:{Structural:74,Powerplant:64,Systems:74,Compliance:78,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'APU oil consumption trending above baseline; project overhaul window inside 6 months.'},{cat:'Compliance',trend:'down',note:'Two ADs pending compliance evidence, closing gap needed before next report.'}]},
+  'msn-2887':{score:58,trend:'down',valueEstM:12.6,hoursTSN:28900,cycles:21400,openDefects:6,adCompliance:88,lastCCheck:'16Mo · Enugu',components:{Structural:62,Powerplant:60,Systems:58,Compliance:54,Maintenance:52},obs:[{cat:'Compliance',trend:'down',note:'Maintenance records gap, two line checks undocumented. Material risk to asset value if unresolved.'},{cat:'Maintenance',trend:'down',note:'Tyre wear beyond advisory on MLG #3; C-check overdue at 16 months.'}]},
+  'msn-30622':{score:88,trend:'stable',valueEstM:22.4,hoursTSN:14200,cycles:9880,openDefects:1,adCompliance:100,lastCCheck:'4Mo · Kano',components:{Structural:90,Powerplant:86,Systems:88,Compliance:92,Maintenance:84},obs:[{cat:'Structural',trend:'stable',note:'Strongest asset in the fleet, all component lines in the green.'}]},
+  'msn-30890':{score:80,trend:'stable',valueEstM:23.1,hoursTSN:15600,cycles:10500,openDefects:2,adCompliance:100,lastCCheck:'6Mo · Lomé',components:{Structural:82,Powerplant:80,Systems:80,Compliance:84,Maintenance:76},obs:[{cat:'Systems',trend:'stable',note:'Thrust reverser actuator slow-deploy under monitoring, within limits.'}]},
+  'msn-6201':{score:62,trend:'down',valueEstM:19.2,hoursTSN:20100,cycles:13900,openDefects:4,adCompliance:92,lastCCheck:'14Mo · Abidjan',components:{Structural:66,Powerplant:64,Systems:60,Compliance:70,Maintenance:58},obs:[{cat:'Systems',trend:'down',note:'Cabin pressurisation outflow valve intermittent fault; dispatch reliability slipping.'},{cat:'Maintenance',trend:'down',note:'Revenue shortfall vs plan compounding deferred-maintenance backlog.'}]}
+};
+function health(a){return HEALTH[a.id]||{score:0,trend:'stable',components:{},obs:[]};}
+function hsColor(s){return s>=75?'sv-ok':s>=60?'sv-due':'sv-over';}
+function watchItems(a){return a.anomalies.filter(function(x){return x.status!=='ast-res';}).length + a.alerts.filter(function(al){return !al.ack;}).length;}
+function needsAttention(a){var h=health(a);return (h.score||0)<60 || defaultFlag(a).level==='risk' || a.alerts.some(function(al){return !al.ack;});}
+
+/* ── predictive intelligence (forward-looking risk) ──
+   Seeded predicted events by horizon (act 0-30d / plan 1-6mo / aware 6-12mo),
+   with per-event value-at-risk. M2 wires the ML trajectory model. */
+var PREDICT=[
+  {ac:'msn-2887',hz:'act',cat:'Compliance',title:'AD compliance evidence overdue, 2 line checks undocumented',impact:'high',varM:3.2},
+  {ac:'msn-2887',hz:'act',cat:'Maintenance',title:'C-check overdue at 16 months, dispatch limit approaching',impact:'high',varM:0},
+  {ac:'msn-2887',hz:'plan',cat:'Maintenance',title:'Tyre replacement, MLG #3 beyond advisory',impact:'medium',varM:0},
+  {ac:'msn-6201',hz:'act',cat:'Systems',title:'Nose gear steering fault, dispatch-critical',impact:'high',varM:0},
+  {ac:'msn-6201',hz:'plan',cat:'Systems',title:'Cabin pressurisation outflow valve, projected failure',impact:'medium',varM:1.1},
+  {ac:'msn-6201',hz:'plan',cat:'Financial',title:'Revenue shortfall compounding deferred-maintenance backlog',impact:'medium',varM:0},
+  {ac:'msn-17004',hz:'plan',cat:'Powerplant',title:'APU overhaul window, oil consumption above baseline',impact:'medium',varM:0.8},
+  {ac:'msn-17004',hz:'plan',cat:'Compliance',title:'Two ADs pending compliance evidence',impact:'medium',varM:0},
+  {ac:'msn-17004',hz:'aware',cat:'Maintenance',title:'E175 C-check due Q4 2026',impact:'low',varM:0},
+  {ac:'msn-39041',hz:'plan',cat:'Powerplant',title:'No.2 engine HPC blade re-inspection, monitor wear rate',impact:'medium',varM:0},
+  {ac:'msn-39041',hz:'aware',cat:'Systems',title:'Cabin door seal L2 replacement due',impact:'low',varM:0},
+  {ac:'msn-6512',hz:'aware',cat:'Maintenance',title:'Nose gear shimmy damper overhaul',impact:'low',varM:0},
+  {ac:'msn-30622',hz:'aware',cat:'Maintenance',title:'Scheduled A-check, Q3 2026',impact:'low',varM:0},
+  {ac:'msn-30890',hz:'plan',cat:'Systems',title:'Thrust reverser actuator inspection',impact:'low',varM:0},
+  {ac:'msn-30890',hz:'aware',cat:'Records',title:'Records review cycle, Q3 2026',impact:'low',varM:0}
+];
+function impRank(i){return i==='high'?0:i==='medium'?1:2;}
+function impPill(i){return i==='high'?'sev-high':i==='medium'?'sev-med':'sev-low';}
+
 /* ══════════════ VIEW SWITCHING (side nav) ══════════════ */
 var ICO_ANOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>';
 var ICO_ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
 var ICO_DOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
 var ICO_REPORT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg>';
-var ALL_VIEWS=['fleet','defaultrisk','anomalies','alerts','reports','documents','account','aircraft'];
-var VIEW_RENDER={fleet:renderFleet,defaultrisk:renderDefaultRisk,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
-var VIEW_TITLE={fleet:'Fleet under surveillance',defaultrisk:'Default risk',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Quarterly reports',documents:'Deliverables',account:'Account & contract'};
+var ALL_VIEWS=['portfolio','predictive','fleet','defaultrisk','anomalies','alerts','reports','documents','account','aircraft'];
+var VIEW_RENDER={portfolio:renderPortfolio,predictive:renderPredictive,fleet:renderFleet,defaultrisk:renderDefaultRisk,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
+var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',defaultrisk:'Default risk',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Quarterly reports',documents:'Deliverables',account:'Account & contract'};
 var _curView='fleet',_originView='fleet';
 function hideAllViews(){ALL_VIEWS.forEach(function(id){var e=el('vw-'+id);if(e)e.style.display='none';});}
 function setActiveNav(v){[].forEach.call(document.querySelectorAll('.sb .snav[data-v]'),function(n){n.classList.toggle('active',n.getAttribute('data-v')===v);});}
@@ -774,6 +847,8 @@ function updateNavCounts(){
   var na=el('navAnom');if(na){na.textContent=openAnom||'';na.style.display=openAnom?'':'none';}
   var nl=el('navAlerts');if(nl){nl.textContent=pendAlert||'';nl.className='cnt'+(pendAlert?' alert':'');nl.style.display=pendAlert?'':'none';}
   var ndf=el('navDefault');if(ndf){ndf.textContent=dfFlagged||'';ndf.className='cnt'+(dfRisk?' alert':'');ndf.style.display=dfFlagged?'':'none';}
+  var actNow=PREDICT.filter(function(e){return e.hz==='act' && fleetInScope().some(function(a){return a.id===e.ac;});}).length;
+  var npr=el('navPredict');if(npr){npr.textContent=actNow||'';npr.className='cnt'+(actNow?' alert':'');npr.style.display=actNow?'':'none';}
   /* collapsed icon-rail dot indicators */
   var anomNav=document.querySelector('.snav[data-v="anomalies"]');if(anomNav)anomNav.classList.toggle('has-count',openAnom>0);
   var alertNav=document.querySelector('.snav[data-v="alerts"]');if(alertNav){alertNav.classList.toggle('has-count',pendAlert>0);alertNav.classList.toggle('alert-count',pendAlert>0);}
@@ -815,6 +890,74 @@ function renderAlerts(){
       +'<div class="side">'+(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')+'</div>'
     +'</div>';
   }).join(''):'<div class="empty">No AOG-class alerts dispatched to your fleet.</div>';
+}
+
+/* ── PREDICTIVE INTELLIGENCE ── */
+function renderPredictive(){
+  var fl=fleetInScope();
+  var ids={};fl.forEach(function(a){ids[a.id]=a;});
+  var evs=PREDICT.filter(function(e){return ids[e.ac];});
+  var actN=evs.filter(function(e){return e.hz==='act';}).length;
+  var planN=evs.filter(function(e){return e.hz==='plan';}).length;
+  var varByAc={};evs.forEach(function(e){if(e.varM>0)varByAc[e.ac]=(varByAc[e.ac]||0)+e.varM;});
+  var totalVar=Object.keys(varByAc).reduce(function(s,k){return s+varByAc[k];},0);
+  var flagged=Object.keys(varByAc).length;
+  el('piSummary').innerHTML=
+    cell('Act now',actN,'Predicted, 0–30 days',actN?'alert':'')
+    +cell('Plan ahead',planN,'Predicted, 1–6 months','')
+    +cell('Value at risk','$'+totalVar.toFixed(1)+'M','Estimated exposure',totalVar>0?'due':'')
+    +cell('Aircraft flagged',flagged,'With value at risk','');
+  ['act','plan','aware'].forEach(function(hz){
+    var list=evs.filter(function(e){return e.hz===hz;}).sort(function(a,b){return impRank(a.impact)-impRank(b.impact);});
+    el('pi-'+hz+'-cnt').textContent=list.length+(list.length===1?' event':' events');
+    el('pi-'+hz).innerHTML=list.length?list.map(function(e){var a=ids[e.ac];
+      return '<div class="lrow lrow-click" onclick="showAircraft(\''+e.ac+'\')">'
+        +'<div class="ico">'+ICO_ANOM+'</div>'
+        +'<div class="body"><div class="hd"><h4>'+e.title+'</h4></div>'
+          +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>'+e.cat+'</span>'+(e.varM>0?'<span>~$'+e.varM.toFixed(1)+'M at risk</span>':'')+'</div></div>'
+        +'<div class="side"><span class="pill '+impPill(e.impact)+'">'+e.impact+'</span></div>'
+      +'</div>';
+    }).join(''):'<div class="empty">No predicted events in this window.</div>';
+  });
+  var varRows=Object.keys(varByAc).map(function(k){return {a:ids[k],m:varByAc[k]};}).sort(function(x,y){return y.m-x.m;});
+  el('piVarCount').textContent=varRows.length+' flagged';
+  el('piVar').innerHTML=varRows.length?varRows.map(function(r){var a=r.a,sev=r.m>=2?'high':r.m>=1?'medium':'low';
+    return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
+      +'<div class="ico">'+ICO_ANOM+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+a.operator+'</h4><span class="pill '+impPill(sev)+'">'+sev+'</span></div>'
+        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.type+'</span><span>'+a.region+'</span></div></div>'
+      +'<div class="side"><b class="pi-var">$'+r.m.toFixed(1)+'M</b></div>'
+    +'</div>';
+  }).join(''):'<div class="empty">No aircraft with value at risk in this scope.</div>';
+}
+
+/* ── PORTFOLIO OVERVIEW (Fleet Health) ── */
+function renderPortfolio(){
+  var fl=fleetInScope();
+  var scores=fl.map(function(a){return health(a).score||0;});
+  var avg=scores.length?Math.round(scores.reduce(function(s,x){return s+x;},0)/scores.length):0;
+  var intact=fl.filter(function(a){return health(a).trend!=='down';}).length;
+  var atRisk=fl.filter(function(a){return health(a).trend==='down';}).length;
+  var attention=fl.filter(needsAttention).length;
+  el('poSummary').innerHTML=
+    cell('Fleet health score',avg+' / 100','Portfolio average','')
+    +cell('Value intact',intact+' of '+fl.length,'Condition holding','ok')
+    +cell('Value at risk',atRisk,'Condition trending down',atRisk?'due':'')
+    +cell('Immediate attention',attention,'Action required',attention?'alert':'');
+  el('poCount').textContent=fl.length+' aircraft';
+  var sorted=fl.slice().sort(function(a,b){return (health(a).score||0)-(health(b).score||0);});
+  el('poBody').innerHTML=sorted.map(function(a){
+    var h=health(a),wi=watchItems(a);
+    var trend=h.trend==='down'?'<span class="pill sv-over"><span class="dot"></span>Trending down</span>':'<span class="pill sv-ok"><span class="dot"></span>Stable</span>';
+    return '<tr onclick="showAircraft(\''+a.id+'\')">'
+      +'<td class="fc-reg">'+a.reg+'</td>'
+      +'<td class="fc-op">'+a.type+' · '+a.operator+'</td>'
+      +'<td><span class="pill '+hsColor(h.score)+'">'+h.score+' / 100</span></td>'
+      +'<td>'+trend+'</td>'
+      +'<td class="fc-op">'+(wi?wi+(wi===1?' item':' items'):'None')+(needsAttention(a)?'<span class="df-tag df-risk">Attention</span>':'')+'</td>'
+      +'<td class="fc-go">&rsaquo;</td>'
+    +'</tr>';
+  }).join('');
 }
 
 /* ── DEFAULT RISK (fleet-wide, §3.2.3 Default flagging) ── */
