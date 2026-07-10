@@ -74,6 +74,7 @@ a{color:inherit;text-decoration:none}
 .ichip{height:22px;padding:0 10px;font-size:10px;letter-spacing:.1em;color:var(--info);background:var(--info-soft);border-color:var(--info-line)}
 .ichip.muted{color:var(--t4);background:var(--bg3);border-color:var(--line)}
 .ichip.amber{color:var(--highlight);background:var(--highlight-soft);border-color:var(--highlight-line)}
+.ichip.red{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
 
 /* ══════════════════════════════════════════ LOGIN ══════════════════════════════════════════ */
 #login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);overflow:auto}
@@ -443,20 +444,20 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
   <nav class="sb">
     <div class="sgroup">
       <div class="sglabel">Fleet Health</div>
-      <a class="snav" data-v="portfolio"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="12" y="6" width="3" height="11"/><rect x="17" y="13" width="3" height="4"/></svg></span><span class="lbl">Portfolio Overview</span></a>
+      <a class="snav active" data-v="portfolio"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="12" y="6" width="3" height="11"/><rect x="17" y="13" width="3" height="4"/></svg></span><span class="lbl">Portfolio Overview</span></a>
       <a class="snav" data-v="predictive"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7h-5m5 0v5"/></svg></span><span class="lbl">Predictive Intelligence</span><span class="cnt" id="navPredict"></span></a>
       <a class="snav" data-v="aircraft"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a1.5 1.5 0 0 0-2-2L14 9 5.8 7.2a.5.5 0 0 0-.5.8l3.4 3.4-1.9 3.1-2.3-.3a.5.5 0 0 0-.5.7l1.5 2.5 2.5 1.5a.5.5 0 0 0 .7-.5l-.3-2.3 3.1-1.9 3.4 3.4a.5.5 0 0 0 .8-.5Z"/></svg></span><span class="lbl">Aircraft Detail</span></a>
     </div>
     <div class="sgroup">
       <div class="sglabel">Monitoring</div>
-      <a class="snav active" data-v="fleet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span><span class="lbl">Fleet Overview</span></a>
+      <a class="snav" data-v="fleet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span><span class="lbl">Fleet Overview</span></a>
       <a class="snav" data-v="anomalies"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span><span class="lbl">Anomalies</span><span class="cnt" id="navAnom"></span></a>
       <a class="snav" data-v="alerts"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="lbl">Alerts</span><span class="cnt" id="navAlerts"></span></a>
       <a class="snav" data-v="defaultrisk"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><span class="lbl">Default risk</span><span class="cnt" id="navDefault"></span></a>
     </div>
     <div class="sgroup">
       <div class="sglabel">Deliverables</div>
-      <a class="snav" data-v="reports"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg></span><span class="lbl">Reports</span></a>
+      <a class="snav" data-v="reports"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg></span><span class="lbl">Intelligence Reports</span></a>
       <a class="snav" data-v="documents"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg></span><span class="lbl">Documents</span></a>
     </div>
     <div class="sgroup">
@@ -614,9 +615,9 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 
   <!-- REPORTS (fleet-wide) -->
   <div class="view" id="vw-reports" style="display:none">
-    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Quarterly reports</h1></div><div class="desc">The latest FleetWatch quarterly surveillance report for each aircraft. Every download is watermarked with your seat token.</div></div>
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · Fleet Health</div><h1>Intelligence reports</h1></div><div class="desc">Your FleetWatch report library: quarterly Fleet Health &amp; Value reports, weekly intelligence summaries and special defect alerts. Every download is watermarked with your seat token.</div></div>
     <div class="summary" id="reportSummary"></div>
-    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Latest reports</h3><span class="meta" id="reportAllCount"></span></div><div id="reportAll"></div></div>
+    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Report library</h3><span class="meta" id="reportAllCount"></span></div><div id="reportAll"></div></div>
   </div>
 
   <!-- DOCUMENTS (fleet-wide) -->
@@ -846,6 +847,29 @@ var PREDICT=[
 function impRank(i){return i==='high'?0:i==='medium'?1:2;}
 function impPill(i){return i==='high'?'sev-high':i==='medium'?'sev-med':'sev-low';}
 
+/* ── intelligence reports library (portfolio-level deliverables) ──
+   Mixed report types modelled on the production portal: quarterly Fleet Health
+   & Value Intelligence Reports, Weekly Intelligence Summaries, and per-aircraft
+   Special Alerts. Quarterly + weekly are portfolio-wide (scope counts derive
+   from the in-scope fleet at render); Special Alerts are seeded per aircraft.
+   M2 wires the real report-generation pipeline. */
+var INTEL_REPORTS=[
+  {id:'ir-q2-2026',kind:'quarterly',title:'Q2 2026 Fleet Health & Value Intelligence Report',date:'2026-06-28',weeks:13,focus:'Full condition and value analysis',isNew:true},
+  {id:'ir-w13',kind:'weekly',week:13,title:'W13 Weekly Intelligence Summary',date:'2026-06-27',scanned:6,watch:3,isNew:true},
+  {id:'ir-w12',kind:'weekly',week:12,title:'W12 Weekly Intelligence Summary',date:'2026-06-20',scanned:7,watch:2},
+  {id:'ir-alert-2887',kind:'alert',ac:'msn-2887',title:'Special Alert, Defect Escalation',focus:'Maintenance records gap, value impact notice',date:'2026-05-21'},
+  {id:'ir-w11',kind:'weekly',week:11,title:'W11 Weekly Intelligence Summary',date:'2026-06-13',scanned:6,watch:1},
+  {id:'ir-q1-2026',kind:'quarterly',title:'Q1 2026 Fleet Health & Value Intelligence Report',date:'2026-03-28',weeks:13,focus:'Full condition and value analysis'}
+];
+function intelReportKindLabel(k){return k==='quarterly'?'Quarterly':k==='weekly'?'Weekly Summary':'Special Alert';}
+function intelReportKindChip(k){return k==='quarterly'?'ichip':k==='weekly'?'ichip muted':'ichip red';}
+/* in-scope reports: portfolio reports always apply; alerts only when their aircraft is in the current region scope */
+function intelReportsInScope(){
+  var ids={};fleetInScope().forEach(function(a){ids[a.id]=a;});
+  return INTEL_REPORTS.filter(function(r){return r.kind!=='alert'||ids[r.ac];})
+    .slice().sort(function(x,y){return parseYMD(y.date)-parseYMD(x.date);});
+}
+
 /* ══════════════ VIEW SWITCHING (side nav) ══════════════ */
 var ICO_ANOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>';
 var ICO_ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
@@ -853,7 +877,7 @@ var ICO_DOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 var ICO_REPORT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg>';
 var ALL_VIEWS=['portfolio','predictive','fleet','defaultrisk','anomalies','alerts','reports','documents','account','aircraft'];
 var VIEW_RENDER={portfolio:renderPortfolio,predictive:renderPredictive,fleet:renderFleet,defaultrisk:renderDefaultRisk,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
-var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',defaultrisk:'Default risk',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Quarterly reports',documents:'Deliverables',account:'Account & contract'};
+var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',defaultrisk:'Default risk',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Intelligence reports',documents:'Deliverables',account:'Account & contract'};
 var _curView='fleet',_originView='fleet',_lastAircraftId=null;
 function hideAllViews(){ALL_VIEWS.forEach(function(id){var e=el('vw-'+id);if(e)e.style.display='none';});}
 /* Sidebar "Aircraft Detail" entry: a per-aircraft page needs a target, so open the
@@ -1031,20 +1055,42 @@ function renderDefaultRisk(){
   }).join('');
 }
 
-/* ── REPORTS (fleet-wide) ── */
+/* ── INTELLIGENCE REPORTS (portfolio-level report library) ── */
 function renderReports(){
-  var rows=fleetInScope().filter(function(a){return a.reports&&a.reports[0];}).map(function(a){return {a:a,rep:a.reports[0]};});
-  var heightened=rows.filter(function(r){return /Heightened/i.test(r.rep.verdict);}).length;
-  el('reportSummary').innerHTML=cell('Reports available',rows.length,'Latest per aircraft','')+cell('This quarter',rows.filter(function(r){return /Q2 2026/.test(r.rep.period);}).length,'Q2 2026 issued','')+cell('Heightened surveillance',heightened,'Elevated recommendation',heightened?'alert':'')+cell('Aircraft covered',rows.length,'With a report','');
-  el('reportAllCount').textContent=rows.length+' reports';
-  el('reportAll').innerHTML=rows.map(function(r){var a=r.a,rep=r.rep;
+  var reps=intelReportsInScope();
+  var N=fleetInScope().length;
+  var ids={};fleetInScope().forEach(function(a){ids[a.id]=a;});
+  var qc=reps.filter(function(r){return r.kind==='quarterly';}).length;
+  var wc=reps.filter(function(r){return r.kind==='weekly';}).length;
+  var ac=reps.filter(function(r){return r.kind==='alert';}).length;
+  el('reportSummary').innerHTML=
+    cell('Reports available',reps.length,'In your library','')
+    +cell('Quarterly',qc,'Fleet health & value','')
+    +cell('Weekly summaries',wc,'Rolling field scans','')
+    +cell('Special alerts',ac,'Defect escalations',ac?'alert':'');
+  el('reportAllCount').textContent=reps.length+' reports';
+  el('reportAll').innerHTML=reps.map(function(r){
+    var scope='',ico=ICO_REPORT;
+    if(r.kind==='quarterly'){scope=N+(N===1?' aircraft':' aircraft')+' · '+r.weeks+' weeks of field data · '+r.focus;}
+    else if(r.kind==='weekly'){scope=r.scanned+' of '+N+' aircraft scanned · '+r.watch+(r.watch===1?' watch item raised':' watch items raised');}
+    else{var a=ids[r.ac];scope=(a?a.reg+' · ':'')+(r.focus||'Single aircraft');ico=ICO_ALERT;}
     return '<div class="lrow">'
-      +'<div class="ico">'+ICO_REPORT+'</div>'
-      +'<div class="body"><div class="hd"><h4>'+a.reg+', '+rep.title+'</h4></div>'
-        +'<div class="metaln"><span class="reg-tag">'+rep.period+'</span><span>'+a.type+' · '+a.operator+'</span><span>Issued <b>'+fmtDate(rep.issued)+'</b></span><span>'+rep.verdict+'</span></div></div>'
-      +'<div class="side"><button class="btn sm" type="button" onclick="showAircraft(\''+a.id+'\')">View</button><button class="btn primary sm" type="button" onclick="downloadReport(\''+a.id+'\')">Download</button></div>'
+      +'<div class="ico">'+ico+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+r.title+'</h4>'
+        +'<span class="pill '+intelReportKindChip(r.kind)+'">'+intelReportKindLabel(r.kind)+'</span>'
+        +(r.isNew?'<span class="pill ichip amber">New</span>':'')+'</div>'
+        +'<div class="metaln"><span>'+scope+'</span><span>Issued <b>'+fmtDate(r.date)+'</b></span></div></div>'
+      +'<div class="side"><button class="btn primary sm" type="button" onclick="downloadIntelReport(\''+r.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>Download PDF</button></div>'
     +'</div>';
   }).join('');
+}
+function downloadIntelReport(id){
+  var r=null;INTEL_REPORTS.forEach(function(x){if(x.id===id)r=x;});if(!r)return;
+  var scopeLbl=r.kind==='alert'?((findAircraft(r.ac)||{}).reg||'Aircraft'):'Fleet portfolio';
+  var wm=fwLogDeliverable({aircraft:scopeLbl,deliverable:r.title,format:'PDF'});
+  downloadStub('FleetWatch_'+r.id+'.txt',
+    'ANDARA FLEETWATCH INTELLIGENCE REPORT\n'+r.title+'\nType: '+intelReportKindLabel(r.kind)+'\nScope: '+scopeLbl+'\nIssued: '+fmtDate(r.date)+'\nPrepared for: Fidelity Bank\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n  Downloaded: '+nowTs()+' UTC\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
+  toast('Report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 
 /* ── DOCUMENTS (fleet-wide) ── */
@@ -1324,11 +1370,11 @@ function enterPortal(email){
   var name=local.split(/[._-]/).map(function(p){return p?p[0].toUpperCase()+p.slice(1):p;}).join(' ');
   el('uName').textContent=name||'Client';
   el('uAv').textContent=_initials(name);
-  _curView='fleet';_originView='fleet';
+  _curView='portfolio';_originView='portfolio';
   applyNavCollapsed();
   renderRegionSelector();
   updateNavCounts();
-  showView('fleet');
+  showView('portfolio');
   startClock();
 }
 
