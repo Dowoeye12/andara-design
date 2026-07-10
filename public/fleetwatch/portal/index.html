@@ -263,6 +263,23 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .ad-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:24px;align-items:start}
 @media (max-width:900px){.ad-grid{grid-template-columns:1fr}}
 
+/* aircraft health (Fleet Health build-out) */
+.ad-hs{display:flex;align-items:center;gap:16px;padding-bottom:16px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.ad-hs-num{font-family:var(--serif);font-weight:600;font-size:40px;line-height:1;letter-spacing:-.02em}
+.ad-hs-num.sv-ok{color:var(--deploy)}.ad-hs-num.sv-due{color:var(--watch)}.ad-hs-num.sv-over{color:var(--dnd)}
+.ad-hs-den{font-family:var(--mono);font-size:13px;color:var(--t4)}
+.ad-hs-meta{display:flex;flex-direction:column;gap:8px}
+.ad-hs-lbl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
+.ad-cmp{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.ad-cmp-row{display:flex;align-items:center;gap:12px}
+.ad-cmp-lbl{font-family:var(--sans);font-size:13px;color:var(--t2);width:104px;flex:none}
+.ad-cmp-row b{font-family:var(--mono);font-size:12px;color:var(--t1);width:30px;text-align:right;flex:none}
+.ad-kpis{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding-top:4px;border-top:1px solid var(--line)}
+.ad-obs{display:flex;flex-direction:column}
+.ad-hero-hs{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.06em;text-transform:uppercase}
+.ad-hero-hs b{font-weight:600}
+.ad-hero-hs b.sv-ok{color:var(--deploy)}.ad-hero-hs b.sv-due{color:var(--watch)}.ad-hero-hs b.sv-over{color:var(--dnd)}
+
 /* kv rows */
 .kv{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
 .kv:last-child{border-bottom:none}
@@ -486,6 +503,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       </div>
       <div class="ad-hero-meta">
         <span class="pill" id="adState"><span class="dot"></span><span></span></span>
+        <span class="ad-hero-hs" id="adHeroHs"></span>
         <span class="ad-nextvisit">Next visit · <b id="adNext"></b></span>
       </div>
     </div>
@@ -493,6 +511,16 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <div class="ad-grid">
       <!-- LEFT column -->
       <div style="display:flex;flex-direction:column;gap:24px">
+        <!-- Fleet health (asset condition + engineering) -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Fleet health</h3><span class="meta" id="fhTrend"></span></div>
+          <div class="pb" id="fhPanel"></div>
+        </div>
+        <!-- Field observations -->
+        <div class="panel">
+          <div class="ph"><span class="bullet"></span><h3>Field observations</h3><span class="meta" id="obsCount"></span></div>
+          <div id="obsList"></div>
+        </div>
         <!-- Latest quarterly report viewer -->
         <div class="panel">
           <div class="ph"><span class="bullet"></span><h3>Latest quarterly report</h3><span class="meta" id="rvPeriod"></span></div>
@@ -1089,6 +1117,52 @@ function showAircraft(id){
   var s=svState(a);
   var sp=el('adState');sp.className='pill '+s.cls;sp.innerHTML='<span class="dot"></span>'+s.lbl;
   el('adNext').textContent=fmtDate(a.nextVisit)+' ('+relDays(a.nextVisit)+')';
+
+  // fleet health (asset condition + engineering + observations)
+  var h=health(a);
+  var hc=hsColor(h.score);
+  el('adHeroHs').innerHTML='Health · <b class="'+hc+'">'+(h.score||'—')+'</b> / 100';
+  var trendDn=h.trend==='down';
+  el('fhTrend').innerHTML=trendDn
+    ?'<span class="pill sv-over"><span class="dot"></span>Trending down</span>'
+    :'<span class="pill sv-ok"><span class="dot"></span>Stable</span>';
+  var compOrder=['Structural','Powerplant','Systems','Compliance','Maintenance'];
+  var compBars=compOrder.filter(function(k){return h.components&&(k in h.components);}).map(function(k){
+    var v=h.components[k];var col=v>=75?'var(--deploy)':v>=60?'var(--watch)':'var(--dnd)';
+    return '<div class="ad-cmp-row"><span class="ad-cmp-lbl">'+k+'</span>'
+      +'<div class="df-track"><div class="df-fill" style="width:'+v+'%;background:'+col+'"></div></div>'
+      +'<b>'+v+'</b></div>';
+  }).join('');
+  el('fhPanel').innerHTML=
+    '<div class="ad-hs"><div class="ad-hs-num '+hc+'">'+(h.score||'—')+'</div>'
+      +'<div class="ad-hs-meta"><div class="ad-hs-lbl">Asset health score</div>'
+      +'<div class="ad-hs-den">out of 100 · condition '+(trendDn?'trending down':'holding')+'</div></div></div>'
+    +'<div class="ad-cmp">'+compBars+'</div>'
+    +'<div class="ad-kpis">'
+      +kv('Est. market value','$'+(h.valueEstM!=null?h.valueEstM.toFixed(1):'—')+'M',false)
+      +kv('Open defects',(h.openDefects!=null?h.openDefects:'—'),false)
+      +kv('Hours TSN',(h.hoursTSN!=null?h.hoursTSN.toLocaleString():'—'),false)
+      +kv('AD compliance',(h.adCompliance!=null?h.adCompliance+'%':'—'),false)
+      +kv('Cycles',(h.cycles!=null?h.cycles.toLocaleString():'—'),false)
+      +kv('Last C-check',(h.lastCCheck||'—'),false)
+    +'</div>';
+
+  // field observations (per-component analyst notes from the latest visit)
+  var obs=h.obs||[];
+  el('obsCount').textContent=obs.length+(obs.length===1?' note':' notes');
+  if(obs.length){
+    el('obsList').innerHTML=obs.map(function(o){
+      var dn=o.trend==='down';
+      return '<div class="lrow">'
+        +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>'
+        +'<div class="body"><div class="hd"><h4>'+o.cat+'</h4>'
+          +(dn?'<span class="pill sv-over"><span class="dot"></span>Watch</span>':'<span class="pill sv-ok"><span class="dot"></span>Stable</span>')+'</div>'
+          +'<p>'+o.note+'</p></div>'
+      +'</div>';
+    }).join('');
+  }else{
+    el('obsList').innerHTML='<div class="empty">No field observations recorded this cycle.</div>';
+  }
 
   // contract kv
   el('contractKv').innerHTML=
