@@ -274,7 +274,13 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .ad-cmp-row{display:flex;align-items:center;gap:12px}
 .ad-cmp-lbl{font-family:var(--sans);font-size:13px;color:var(--t2);width:104px;flex:none}
 .ad-cmp-row b{font-family:var(--mono);font-size:12px;color:var(--t1);width:30px;text-align:right;flex:none}
-.ad-kpis{display:grid;grid-template-columns:1fr 1fr;gap:0 24px;padding-top:4px;border-top:1px solid var(--line)}
+.ad-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.ad-stat{background:var(--bg2);padding:13px 14px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.ad-stat .sl{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad-stat .sv{font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.05;color:var(--display)}
+.ad-stat .ss{font-family:var(--mono);font-size:11px;letter-spacing:.02em;color:var(--t4);line-height:1.4}
+.ad-stat .ss.ok{color:var(--deploy)}.ad-stat .ss.warn{color:var(--watch)}.ad-stat .ss.bad{color:var(--dnd)}
+@media (max-width:560px){.ad-stats{grid-template-columns:repeat(2,1fr)}}
 .ad-obs{display:flex;flex-direction:column}
 .ad-hero-hs{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.06em;text-transform:uppercase}
 .ad-hero-hs b{font-weight:600}
@@ -519,7 +525,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         </div>
         <!-- Field observations -->
         <div class="panel">
-          <div class="ph"><span class="bullet"></span><h3>Field observations</h3><span class="meta" id="obsCount"></span></div>
+          <div class="ph"><span class="bullet"></span><h3>Field Intelligence Observations</h3><span class="meta" id="obsCount"></span></div>
           <div id="obsList"></div>
         </div>
         <!-- Latest quarterly report viewer -->
@@ -803,15 +809,16 @@ function findAircraft(id){for(var i=0;i<FLEET.length;i++)if(FLEET[i].id===id)ret
    on the production portal. At M1 these are seeded values; M2 wires the real
    scoring engine (health score, value trajectory, component analysis). */
 var HEALTH={
-  'msn-39041':{score:76,trend:'stable',valueEstM:41.5,hoursTSN:18204,cycles:12441,openDefects:4,adCompliance:100,lastCCheck:'8Mo · Lagos MRO',components:{Structural:80,Powerplant:70,Systems:78,Compliance:90,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'No.2 engine HPC blade-tip wear caught early on borescope; monitor rate of change over next two cycles.'},{cat:'Structural',trend:'stable',note:'Airframe within tolerance, no new skin findings this quarter.'}]},
-  'msn-6512':{score:82,trend:'stable',valueEstM:34.0,hoursTSN:22100,cycles:14880,openDefects:2,adCompliance:100,lastCCheck:'5Mo · Uyo line',components:{Structural:84,Powerplant:82,Systems:80,Compliance:88,Maintenance:78},obs:[{cat:'Maintenance',trend:'stable',note:'Nose gear shimmy damper weep under watch, no operational impact.'}]},
-  'msn-17004':{score:71,trend:'down',valueEstM:27.8,hoursTSN:16540,cycles:12030,openDefects:3,adCompliance:96,lastCCheck:'11Mo · Lagos',components:{Structural:74,Powerplant:64,Systems:74,Compliance:78,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'APU oil consumption trending above baseline; project overhaul window inside 6 months.'},{cat:'Compliance',trend:'down',note:'Two ADs pending compliance evidence, closing gap needed before next report.'}]},
-  'msn-2887':{score:58,trend:'down',valueEstM:12.6,hoursTSN:28900,cycles:21400,openDefects:6,adCompliance:88,lastCCheck:'16Mo · Enugu',components:{Structural:62,Powerplant:60,Systems:58,Compliance:54,Maintenance:52},obs:[{cat:'Compliance',trend:'down',note:'Maintenance records gap, two line checks undocumented. Material risk to asset value if unresolved.'},{cat:'Maintenance',trend:'down',note:'Tyre wear beyond advisory on MLG #3; C-check overdue at 16 months.'}]},
-  'msn-30622':{score:88,trend:'stable',valueEstM:22.4,hoursTSN:14200,cycles:9880,openDefects:1,adCompliance:100,lastCCheck:'4Mo · Kano',components:{Structural:90,Powerplant:86,Systems:88,Compliance:92,Maintenance:84},obs:[{cat:'Structural',trend:'stable',note:'Strongest asset in the fleet, all component lines in the green.'}]},
-  'msn-30890':{score:80,trend:'stable',valueEstM:23.1,hoursTSN:15600,cycles:10500,openDefects:2,adCompliance:100,lastCCheck:'6Mo · Lomé',components:{Structural:82,Powerplant:80,Systems:80,Compliance:84,Maintenance:76},obs:[{cat:'Systems',trend:'stable',note:'Thrust reverser actuator slow-deploy under monitoring, within limits.'}]},
-  'msn-6201':{score:62,trend:'down',valueEstM:19.2,hoursTSN:20100,cycles:13900,openDefects:4,adCompliance:92,lastCCheck:'14Mo · Abidjan',components:{Structural:66,Powerplant:64,Systems:60,Compliance:70,Maintenance:58},obs:[{cat:'Systems',trend:'down',note:'Cabin pressurisation outflow valve intermittent fault; dispatch reliability slipping.'},{cat:'Maintenance',trend:'down',note:'Revenue shortfall vs plan compounding deferred-maintenance backlog.'}]}
+  'msn-39041':{score:76,trend:'stable',valueEstM:41.5,valueMarket:'Market stable',valueTrendNote:'Holding, monitor engine trend',hoursTSN:18204,cycles:12441,cyclesWk:28,deferred:2,inWork:2,adCompliance:100,adNote:'All directives current',ccMonths:8,ccLoc:'Lagos MRO',base:'Murtala Muhammed Intl, Lagos',weeksData:13,docsIngested:847,components:{Structural:80,Powerplant:70,Systems:78,Compliance:90,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'No.2 engine HPC blade-tip wear caught early on borescope, monitor rate of change over next two cycles.'},{cat:'Structural',trend:'stable',note:'Airframe within tolerance, no new skin findings this quarter.'}]},
+  'msn-6512':{score:82,trend:'stable',valueEstM:34.0,valueMarket:'Market stable',valueTrendNote:'Holding',hoursTSN:22100,cycles:14880,cyclesWk:24,deferred:1,inWork:1,adCompliance:100,adNote:'All directives current',ccMonths:5,ccLoc:'Uyo line',base:'Victor Attah Intl, Uyo',weeksData:13,docsIngested:612,components:{Structural:84,Powerplant:82,Systems:80,Compliance:88,Maintenance:78},obs:[{cat:'Maintenance',trend:'stable',note:'Nose gear shimmy damper weep under watch, no operational impact.'}]},
+  'msn-17004':{score:71,trend:'down',valueEstM:27.8,valueMarket:'Softening',valueTrendNote:'Watching APU oil trend',hoursTSN:16540,cycles:12030,cyclesWk:22,deferred:1,inWork:2,adCompliance:96,adNote:'2 directives pending evidence',ccMonths:11,ccLoc:'Lagos',base:'Murtala Muhammed Intl, Lagos',weeksData:13,docsIngested:534,components:{Structural:74,Powerplant:64,Systems:74,Compliance:78,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'APU oil consumption trending above baseline, project overhaul window inside 6 months.'},{cat:'Compliance',trend:'down',note:'Two ADs pending compliance evidence, closing gap needed before next report.'}]},
+  'msn-2887':{score:58,trend:'down',valueEstM:12.6,valueMarket:'At risk',valueTrendNote:'Declining, records gap plus backlog',hoursTSN:28900,cycles:21400,cyclesWk:31,deferred:2,inWork:4,adCompliance:88,adNote:'3 directives overdue',ccMonths:16,ccLoc:'Enugu',base:'Akanu Ibiam Intl, Enugu',weeksData:13,docsIngested:498,components:{Structural:62,Powerplant:60,Systems:58,Compliance:54,Maintenance:52},obs:[{cat:'Compliance',trend:'down',note:'Maintenance records gap, two line checks undocumented. Material risk to asset value if unresolved.'},{cat:'Maintenance',trend:'down',note:'Tyre wear beyond advisory on MLG #3, C-check overdue at 16 months.'}]},
+  'msn-30622':{score:88,trend:'stable',valueEstM:22.4,valueMarket:'Market firm',valueTrendNote:'Strongest asset, all lines green',hoursTSN:14200,cycles:9880,cyclesWk:19,deferred:0,inWork:1,adCompliance:100,adNote:'All directives current',ccMonths:4,ccLoc:'Kano',base:'Mallam Aminu Kano Intl, Kano',weeksData:13,docsIngested:721,components:{Structural:90,Powerplant:86,Systems:88,Compliance:92,Maintenance:84},obs:[{cat:'Structural',trend:'stable',note:'Strongest asset in the fleet, all component lines in the green.'}]},
+  'msn-30890':{score:80,trend:'stable',valueEstM:23.1,valueMarket:'Market stable',valueTrendNote:'Holding',hoursTSN:15600,cycles:10500,cyclesWk:21,deferred:1,inWork:1,adCompliance:100,adNote:'All directives current',ccMonths:6,ccLoc:'Lome',base:'Gnassingbe Eyadema Intl, Lome',weeksData:13,docsIngested:456,components:{Structural:82,Powerplant:80,Systems:80,Compliance:84,Maintenance:76},obs:[{cat:'Systems',trend:'stable',note:'Thrust reverser actuator slow-deploy under monitoring, within limits.'}]},
+  'msn-6201':{score:62,trend:'down',valueEstM:19.2,valueMarket:'Softening',valueTrendNote:'Declining, dispatch reliability slipping',hoursTSN:20100,cycles:13900,cyclesWk:26,deferred:1,inWork:3,adCompliance:92,adNote:'1 directive pending',ccMonths:14,ccLoc:'Abidjan',base:'Felix Houphouet Boigny Intl, Abidjan',weeksData:13,docsIngested:501,components:{Structural:66,Powerplant:64,Systems:60,Compliance:70,Maintenance:58},obs:[{cat:'Systems',trend:'down',note:'Cabin pressurisation outflow valve intermittent fault, dispatch reliability slipping.'},{cat:'Maintenance',trend:'down',note:'Revenue shortfall vs plan compounding deferred-maintenance backlog.'}]}
 };
 function health(a){return HEALTH[a.id]||{score:0,trend:'stable',components:{},obs:[]};}
+function healthDefects(h){return (h.openDefects!=null?h.openDefects:((h.deferred||0)+(h.inWork||0)));}
 function hsColor(s){return s>=75?'sv-ok':s>=60?'sv-due':'sv-over';}
 function watchItems(a){return a.anomalies.filter(function(x){return x.status!=='ast-res';}).length + a.alerts.filter(function(al){return !al.ack;}).length;}
 function needsAttention(a){var h=health(a);return (h.score||0)<60 || defaultFlag(a).level==='risk' || a.alerts.some(function(al){return !al.ack;});}
@@ -950,7 +957,7 @@ function renderPredictive(){
     var list=evs.filter(function(e){return e.hz===hz;}).sort(function(a,b){return impRank(a.impact)-impRank(b.impact);});
     el('pi-'+hz+'-cnt').textContent=list.length+(list.length===1?' event':' events');
     el('pi-'+hz).innerHTML=list.length?list.map(function(e){var a=ids[e.ac];
-      return '<div class="lrow lrow-click" onclick="showAircraft(\''+e.ac+'\')">'
+      return '<div class="lrow">'
         +'<div class="ico">'+ICO_ANOM+'</div>'
         +'<div class="body"><div class="hd"><h4>'+e.title+'</h4></div>'
           +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>'+e.cat+'</span>'+(e.varM>0?'<span>~$'+e.varM.toFixed(1)+'M at risk</span>':'')+'</div></div>'
@@ -961,7 +968,7 @@ function renderPredictive(){
   var varRows=Object.keys(varByAc).map(function(k){return {a:ids[k],m:varByAc[k]};}).sort(function(x,y){return y.m-x.m;});
   el('piVarCount').textContent=varRows.length+' flagged';
   el('piVar').innerHTML=varRows.length?varRows.map(function(r){var a=r.a,sev=r.m>=2?'high':r.m>=1?'medium':'low';
-    return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
+    return '<div class="lrow">'
       +'<div class="ico">'+ICO_ANOM+'</div>'
       +'<div class="body"><div class="hd"><h4>'+a.operator+'</h4><span class="pill '+impPill(sev)+'">'+sev+'</span></div>'
         +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.type+'</span><span>'+a.region+'</span></div></div>'
@@ -1127,7 +1134,7 @@ function showAircraft(id,opts){
   el('crumbBack').textContent=VIEW_TITLE[_originView]||'Fleet under surveillance';
   el('crumbReg').textContent=a.reg;
   el('adReg').textContent=a.reg;
-  el('adSub').textContent=a.type+'  ·  MSN '+a.msn+'  ·  '+a.operator;
+  el('adSub').textContent=a.type+'  ·  MSN '+a.msn+'  ·  '+a.operator+((health(a).base)?'  ·  '+health(a).base:'');
   var s=svState(a);
   var sp=el('adState');sp.className='pill '+s.cls;sp.innerHTML='<span class="dot"></span>'+s.lbl;
   el('adNext').textContent=fmtDate(a.nextVisit)+' ('+relDays(a.nextVisit)+')';
@@ -1147,23 +1154,29 @@ function showAircraft(id,opts){
       +'<div class="df-track"><div class="df-fill" style="width:'+v+'%;background:'+col+'"></div></div>'
       +'<b>'+v+'</b></div>';
   }).join('');
+  var defs=healthDefects(h);
+  var stat=function(l,v,s,cls){return '<div class="ad-stat"><span class="sl">'+l+'</span><span class="sv">'+v+'</span><span class="ss'+(cls?' '+cls:'')+'">'+s+'</span></div>';};
+  var num=function(n){return n!=null?n.toLocaleString():'—';};
   el('fhPanel').innerHTML=
     '<div class="ad-hs"><div class="ad-hs-num '+hc+'">'+(h.score||'—')+'</div>'
       +'<div class="ad-hs-meta"><div class="ad-hs-lbl">Asset health score</div>'
       +'<div class="ad-hs-den">out of 100 · condition '+(trendDn?'trending down':'holding')+'</div></div></div>'
     +'<div class="ad-cmp">'+compBars+'</div>'
-    +'<div class="ad-kpis">'
-      +kv('Est. market value','$'+(h.valueEstM!=null?h.valueEstM.toFixed(1):'—')+'M',false)
-      +kv('Open defects',(h.openDefects!=null?h.openDefects:'—'),false)
-      +kv('Hours TSN',(h.hoursTSN!=null?h.hoursTSN.toLocaleString():'—'),false)
-      +kv('AD compliance',(h.adCompliance!=null?h.adCompliance+'%':'—'),false)
-      +kv('Cycles',(h.cycles!=null?h.cycles.toLocaleString():'—'),false)
-      +kv('Last C-check',(h.lastCCheck||'—'),false)
+    +'<div class="ad-stats">'
+      +stat('Total Hours',num(h.hoursTSN),'Since new')
+      +stat('Cycles',num(h.cycles),h.cyclesWk!=null?'Avg '+h.cyclesWk+'/week':'Total cycles')
+      +stat('Open Defects',(defs),(h.deferred!=null?h.deferred+' deferred · '+(h.inWork||0)+' in work':'On file'),defs>0?'warn':'ok')
+      +stat('Last C-Check',(h.ccMonths!=null?h.ccMonths+' mo':'—'),(h.ccMonths!=null?'ago · '+(h.ccLoc||''):(h.ccLoc||'')),(h.ccMonths!=null&&h.ccMonths>=12)?'warn':'')
+      +stat('Value Estimate','$'+(h.valueEstM!=null?h.valueEstM.toFixed(1):'—')+'M',(h.valueMarket||'Market value'))
+      +stat('Value Trend',(trendDn?'⚠ Watching':'● Stable'),(h.valueTrendNote||''),trendDn?'bad':'ok')
+      +stat('AD Compliance',(h.adCompliance!=null?h.adCompliance+'%':'—'),(h.adNote||''),(h.adCompliance===100?'ok':'warn'))
+      +stat('Weeks of Data',(h.weeksData!=null?h.weeksData:'—'),'Field scans')
+      +stat('Docs Ingested',num(h.docsIngested),'Records parsed')
     +'</div>';
 
-  // field observations (per-component analyst notes from the latest visit)
+  // field intelligence observations (per-component analyst notes from field scans)
   var obs=h.obs||[];
-  el('obsCount').textContent=obs.length+(obs.length===1?' note':' notes');
+  el('obsCount').textContent=(h.weeksData!=null?'W'+h.weeksData+' · ':'')+obs.length+(obs.length===1?' note':' notes');
   if(obs.length){
     el('obsList').innerHTML=obs.map(function(o){
       var dn=o.trend==='down';
