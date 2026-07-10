@@ -439,6 +439,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <div class="sglabel">Fleet Health</div>
       <a class="snav" data-v="portfolio"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="7"/><rect x="12" y="6" width="3" height="11"/><rect x="17" y="13" width="3" height="4"/></svg></span><span class="lbl">Portfolio Overview</span></a>
       <a class="snav" data-v="predictive"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7h-5m5 0v5"/></svg></span><span class="lbl">Predictive Intelligence</span><span class="cnt" id="navPredict"></span></a>
+      <a class="snav" data-v="aircraft"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a1.5 1.5 0 0 0-2-2L14 9 5.8 7.2a.5.5 0 0 0-.5.8l3.4 3.4-1.9 3.1-2.3-.3a.5.5 0 0 0-.5.7l1.5 2.5 2.5 1.5a.5.5 0 0 0 .7-.5l-.3-2.3 3.1-1.9 3.4 3.4a.5.5 0 0 0 .8-.5Z"/></svg></span><span class="lbl">Aircraft Detail</span></a>
     </div>
     <div class="sgroup">
       <div class="sglabel">Monitoring</div>
@@ -846,8 +847,18 @@ var ICO_REPORT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 var ALL_VIEWS=['portfolio','predictive','fleet','defaultrisk','anomalies','alerts','reports','documents','account','aircraft'];
 var VIEW_RENDER={portfolio:renderPortfolio,predictive:renderPredictive,fleet:renderFleet,defaultrisk:renderDefaultRisk,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
 var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',defaultrisk:'Default risk',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Quarterly reports',documents:'Deliverables',account:'Account & contract'};
-var _curView='fleet',_originView='fleet';
+var _curView='fleet',_originView='fleet',_lastAircraftId=null;
 function hideAllViews(){ALL_VIEWS.forEach(function(id){var e=el('vw-'+id);if(e)e.style.display='none';});}
+/* Sidebar "Aircraft Detail" entry: a per-aircraft page needs a target, so open the
+   last-viewed aircraft (falls back to the first in the current region scope). Breadcrumb
+   points back to Fleet Overview; the Aircraft Detail nav item stays highlighted. */
+function openAircraftFromNav(){
+  var scope=fleetInScope();if(!scope.length)return;
+  var id=_lastAircraftId;
+  if(!id){try{id=localStorage.getItem('andara.fw.portal.lastAircraft');}catch(_){}}
+  if(!id||!scope.some(function(a){return a.id===id;}))id=scope[0].id;
+  showAircraft(id,{origin:'fleet',navActive:'aircraft'});
+}
 function setActiveNav(v){[].forEach.call(document.querySelectorAll('.sb .snav[data-v]'),function(n){n.classList.toggle('active',n.getAttribute('data-v')===v);});}
 /* region selector (§3.2.3): top-nav dropdown, scopes the portal to the client's purchased regions */
 function renderRegionSelector(){
@@ -1102,12 +1113,15 @@ function cell(lbl,num,cap,cls){
 }
 
 /* ── AIRCRAFT DETAIL render ── */
-function showAircraft(id){
+function showAircraft(id,opts){
+  opts=opts||{};
   var a=findAircraft(id);if(!a)return;
-  if(_curView!=='aircraft')_originView=_curView;
+  if(_curView!=='aircraft')_originView=opts.origin||_curView;
+  else if(opts.origin)_originView=opts.origin;
+  _lastAircraftId=id;try{localStorage.setItem('andara.fw.portal.lastAircraft',id);}catch(_){}
   hideAllViews();
   el('vw-aircraft').style.display='flex';
-  _curView='aircraft';setActiveNav(_originView||'fleet');
+  _curView='aircraft';setActiveNav(opts.navActive||_originView||'fleet');
   var mn=el('mn');if(mn)mn.scrollTop=0;
 
   el('crumbBack').textContent=VIEW_TITLE[_originView]||'Fleet under surveillance';
@@ -1315,7 +1329,8 @@ function applyNavCollapsed(){
 }
 [].forEach.call(document.querySelectorAll('.sb .snav[data-v]'),function(n){
   n.addEventListener('click',function(){
-    showView(n.getAttribute('data-v'));
+    var v=n.getAttribute('data-v');
+    if(v==='aircraft')openAircraftFromNav();else showView(v);
     if(navIsMobile())el('app').classList.remove('nav-open'); /* close drawer after choosing */
   });
 });
