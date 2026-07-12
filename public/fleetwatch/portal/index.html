@@ -278,7 +278,9 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .ad-hs-lbl{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3)}
 .ad-cmp{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
 .ad-cmp-row{display:flex;align-items:center;gap:12px}
-.ad-cmp-lbl{font-family:var(--sans);font-size:13px;color:var(--t2);width:104px;flex:none}
+.ad-cmp-lbl{width:176px;flex:none;display:flex;flex-direction:column;gap:1px}
+.ad-cmp-nm{font-family:var(--sans);font-size:12.5px;color:var(--t2);line-height:1.2}
+.ad-cmp-w{font-family:var(--mono);font-size:9.5px;color:var(--t4);letter-spacing:.05em}
 .ad-cmp-row b{font-family:var(--mono);font-size:12px;color:var(--t1);width:30px;text-align:right;flex:none}
 .ad-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .ad-stat{background:var(--bg2);padding:13px 14px;display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -334,6 +336,8 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .wr-act-meta{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.03em;margin-top:2px}
 .wr-act-meta b{color:var(--t2);font-weight:600}
 .wr-empty{font-family:var(--sans);font-size:13px;color:var(--t3);font-style:italic}
+.wr-floor{font-family:var(--sans);font-size:13px;line-height:1.5;color:var(--dnd);background:var(--dnd-soft);border:1px solid var(--dnd-line);border-radius:8px;padding:12px 14px}
+.wr-floor b{font-weight:600}
 .wr-chart{display:flex;flex-direction:column;gap:10px}
 .wr-chart-box{border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:12px 12px 6px}
 .wr-chart-svg{width:100%;height:auto;display:block}
@@ -722,6 +726,7 @@ function portalEmail(){try{return (JSON.parse(localStorage.getItem('andara.fw.po
 function nowTs(){var d=new Date();return d.getUTCFullYear()+'-'+_p(d.getUTCMonth()+1)+'-'+_p(d.getUTCDate())+' '+_p(d.getUTCHours())+':'+_p(d.getUTCMinutes());}
 var AUDIT=[];
 try{AUDIT=JSON.parse(localStorage.getItem('andara.fw.portal.audit.v1')||'[]');}catch(_){AUDIT=[];}
+function portalClient(){return 'Fidelity Bank';}
 function fwLogDeliverable(o){
   var user=portalEmail();
   var seed=user+'|'+o.deliverable+'|'+(o.aircraft||'')+'|'+Date.now()+'|'+Math.random();
@@ -730,7 +735,11 @@ function fwLogDeliverable(o){
   AUDIT.unshift({ts:nowTs(),user:user,aircraft:o.aircraft||'',deliverable:o.deliverable,format:o.format||'PDF',status:'Delivered',ip:'',deliverableId:deliverableId,token:token});
   if(AUDIT.length>400)AUDIT.length=400;
   try{localStorage.setItem('andara.fw.portal.audit.v1',JSON.stringify(AUDIT));}catch(_){}
-  return {user:user,token:token,deliverableId:deliverableId};
+  return {user:user,token:token,deliverableId:deliverableId,client:portalClient(),exportDate:nowTs()};
+}
+/* FR-AD-005: every export watermarked with client name, export date, and the confidential mark */
+function fwWatermark(wm){
+  return 'WATERMARK\n  Andara Intelligence · Confidential\n  Client: '+wm.client+'\n  Seat: '+wm.user+'\n  Export date: '+wm.exportDate+' UTC\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token;
 }
 function downloadStub(filename,bodyText){
   try{var blob=new Blob([bodyText],{type:'text/plain'});var url=URL.createObjectURL(blob);
@@ -856,7 +865,7 @@ var HEALTH={
   'msn-39041':{score:76,trend:'stable',valueEstM:41.5,valueMarket:'Market stable',valueTrendNote:'Holding, monitor engine trend',hoursTSN:18204,cycles:12441,cyclesWk:28,deferred:2,inWork:2,adCompliance:100,adNote:'All directives current',ccMonths:8,ccLoc:'Lagos MRO',base:'Murtala Muhammed Intl, Lagos',weeksData:13,docsIngested:847,components:{Structural:80,Powerplant:70,Systems:78,Compliance:90,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'No.2 engine HPC blade-tip wear caught early on borescope, monitor rate of change over next two cycles.'},{cat:'Structural',trend:'stable',note:'Airframe within tolerance, no new skin findings this quarter.'}]},
   'msn-6512':{score:82,trend:'stable',valueEstM:34.0,valueMarket:'Market stable',valueTrendNote:'Holding',hoursTSN:22100,cycles:14880,cyclesWk:24,deferred:1,inWork:1,adCompliance:100,adNote:'All directives current',ccMonths:5,ccLoc:'Uyo line',base:'Victor Attah Intl, Uyo',weeksData:13,docsIngested:612,components:{Structural:84,Powerplant:82,Systems:80,Compliance:88,Maintenance:78},obs:[{cat:'Maintenance',trend:'stable',note:'Nose gear shimmy damper weep under watch, no operational impact.'}]},
   'msn-17004':{score:71,trend:'down',valueEstM:27.8,valueMarket:'Softening',valueTrendNote:'Watching APU oil trend',hoursTSN:16540,cycles:12030,cyclesWk:22,deferred:1,inWork:2,adCompliance:96,adNote:'2 directives pending evidence',ccMonths:11,ccLoc:'Lagos',base:'Murtala Muhammed Intl, Lagos',weeksData:13,docsIngested:534,components:{Structural:74,Powerplant:64,Systems:74,Compliance:78,Maintenance:66},obs:[{cat:'Powerplant',trend:'down',note:'APU oil consumption trending above baseline, project overhaul window inside 6 months.'},{cat:'Compliance',trend:'down',note:'Two ADs pending compliance evidence, closing gap needed before next report.'}]},
-  'msn-2887':{score:58,trend:'down',valueEstM:12.6,valueMarket:'At risk',valueTrendNote:'Declining, records gap plus backlog',hoursTSN:28900,cycles:21400,cyclesWk:31,deferred:2,inWork:4,adCompliance:88,adNote:'3 directives overdue',ccMonths:16,ccLoc:'Enugu',base:'Akanu Ibiam Intl, Enugu',weeksData:13,docsIngested:498,components:{Structural:62,Powerplant:60,Systems:58,Compliance:54,Maintenance:52},obs:[{cat:'Compliance',trend:'down',note:'Maintenance records gap, two line checks undocumented. Material risk to asset value if unresolved.'},{cat:'Maintenance',trend:'down',note:'Tyre wear beyond advisory on MLG #3, C-check overdue at 16 months.'}]},
+  'msn-2887':{score:58,trend:'down',valueEstM:12.6,valueMarket:'At risk',valueTrendNote:'Declining, records gap plus backlog',hoursTSN:28900,cycles:21400,cyclesWk:31,deferred:2,inWork:4,adCompliance:88,adNote:'3 directives overdue',ccMonths:16,ccLoc:'Enugu',base:'Akanu Ibiam Intl, Enugu',weeksData:13,docsIngested:498,components:{Structural:62,Powerplant:60,Systems:58,Compliance:36,Maintenance:34},obs:[{cat:'Compliance',trend:'down',note:'Maintenance records gap, two line checks undocumented. Material risk to asset value if unresolved.'},{cat:'Maintenance',trend:'down',note:'Tyre wear beyond advisory on MLG #3, C-check overdue at 16 months.'}]},
   'msn-30622':{score:88,trend:'stable',valueEstM:22.4,valueMarket:'Market firm',valueTrendNote:'Strongest asset, all lines green',hoursTSN:14200,cycles:9880,cyclesWk:19,deferred:0,inWork:1,adCompliance:100,adNote:'All directives current',ccMonths:4,ccLoc:'Kano',base:'Mallam Aminu Kano Intl, Kano',weeksData:13,docsIngested:721,components:{Structural:90,Powerplant:86,Systems:88,Compliance:92,Maintenance:84},obs:[{cat:'Structural',trend:'stable',note:'Strongest asset in the fleet, all component lines in the green.'}]},
   'msn-30890':{score:80,trend:'stable',valueEstM:23.1,valueMarket:'Market stable',valueTrendNote:'Holding',hoursTSN:15600,cycles:10500,cyclesWk:21,deferred:1,inWork:1,adCompliance:100,adNote:'All directives current',ccMonths:6,ccLoc:'Lome',base:'Gnassingbe Eyadema Intl, Lome',weeksData:13,docsIngested:456,components:{Structural:82,Powerplant:80,Systems:80,Compliance:84,Maintenance:76},obs:[{cat:'Systems',trend:'stable',note:'Thrust reverser actuator slow-deploy under monitoring, within limits.'}]},
   'msn-6201':{score:62,trend:'down',valueEstM:19.2,valueMarket:'Softening',valueTrendNote:'Declining, dispatch reliability slipping',hoursTSN:20100,cycles:13900,cyclesWk:26,deferred:1,inWork:3,adCompliance:92,adNote:'1 directive pending',ccMonths:14,ccLoc:'Abidjan',base:'Felix Houphouet Boigny Intl, Abidjan',weeksData:13,docsIngested:501,components:{Structural:66,Powerplant:64,Systems:60,Compliance:70,Maintenance:58},obs:[{cat:'Systems',trend:'down',note:'Cabin pressurisation outflow valve intermittent fault, dispatch reliability slipping.'},{cat:'Maintenance',trend:'down',note:'Revenue shortfall vs plan compounding deferred-maintenance backlog.'}]}
@@ -896,6 +905,21 @@ var PREDICT=[
 function impRank(i){return i==='high'?0:i==='medium'?1:2;}
 function impPill(i){return i==='high'?'sev-high':i==='medium'?'sev-med':'sev-low';}
 
+/* PRD v1.0 §4.3.1 / FR-SC-001: the five weighted health dimensions.
+   Data keys are the legacy component names; these are the canonical display
+   labels, codes and weights the client sees. */
+var DIM_DISPLAY={
+  Structural:{name:'Structural Health',code:'SVS',w:20},
+  Powerplant:{name:'Powerplant Health',code:'PPS',w:25},
+  Systems:{name:'Aircraft Physical State',code:'APS',w:20},
+  Compliance:{name:'Regulatory & Compliance',code:'RCS',w:20},
+  Maintenance:{name:'Risk & Airworthiness',code:'RAS',w:15}
+};
+/* FR-SC-002 hard floor: composite capped at 65 if RCS < 40 or RAS < 40.
+   RCS = Regulatory & Compliance (Compliance), RAS = Risk & Airworthiness (Maintenance). */
+function hardFloorTrip(h){var c=(h&&h.components)||{};return (c.Compliance!=null&&c.Compliance<40)||(c.Maintenance!=null&&c.Maintenance<40);}
+function effectiveScore(h){var s=h.score||0;return hardFloorTrip(h)?Math.min(s,65):s;}
+
 /* ── intelligence reports library (portfolio-level deliverables) ──
    Mixed report types modelled on the production portal: quarterly Fleet Health
    & Value Intelligence Reports, Weekly Intelligence Summaries, and per-aircraft
@@ -906,17 +930,36 @@ var INTEL_REPORTS=[
   {id:'ir-q2-2026',kind:'quarterly',title:'Q2 2026 Fleet Health & Value Intelligence Report',date:'2026-06-28',weeks:13,focus:'Full condition and value analysis',isNew:true},
   {id:'ir-w13',kind:'weekly',week:13,title:'W13 Weekly Intelligence Summary',date:'2026-06-27',scanned:6,watch:3,isNew:true},
   {id:'ir-w12',kind:'weekly',week:12,title:'W12 Weekly Intelligence Summary',date:'2026-06-20',scanned:7,watch:2},
-  {id:'ir-alert-2887',kind:'alert',ac:'msn-2887',title:'Special Alert, Defect Escalation',focus:'Maintenance records gap, value impact notice',date:'2026-05-21'},
   {id:'ir-w11',kind:'weekly',week:11,title:'W11 Weekly Intelligence Summary',date:'2026-06-13',scanned:6,watch:1},
   {id:'ir-q1-2026',kind:'quarterly',title:'Q1 2026 Fleet Health & Value Intelligence Report',date:'2026-03-28',weeks:13,focus:'Full condition and value analysis'}
 ];
 function intelReportKindLabel(k){return k==='quarterly'?'Quarterly':k==='weekly'?'Weekly Summary':'Special Alert';}
 function intelReportKindChip(k){return k==='quarterly'?'ichip':k==='weekly'?'ichip muted':'ichip red';}
-/* in-scope reports: portfolio reports always apply; alerts only when their aircraft is in the current region scope */
+/* FR-CP-014: Special Alert reports are triggered by score drop >= 5 pts, a
+   Critical finding, MEL item expiry within 14 days, or any regulatory
+   compliance gap. Derived live from the in-scope fleet, one per aircraft with
+   its trigger(s) listed. (MEL expiry has no data source at M1.) */
+function derivedSpecialAlerts(){
+  var out=[];
+  fleetInScope().forEach(function(a){
+    var h=health(a),trig=[];
+    var mv=SCORE_MOVES.filter(function(m){return m.ac===a.id&&m.delta<=-5;}).sort(function(x,y){return parseYMD(y.date)-parseYMD(x.date);})[0];
+    if(mv)trig.push({t:'Score drop '+Math.abs(mv.delta)+' pts',date:mv.date});
+    var hi=a.anomalies.filter(function(x){return x.sev==='sev-high'&&x.status!=='ast-res';}).sort(function(x,y){return parseYMD(y.captured)-parseYMD(x.captured);})[0];
+    if(hi)trig.push({t:'Critical finding',date:hi.captured});
+    if((h.adCompliance!=null&&h.adCompliance<100)||hardFloorTrip(h))trig.push({t:'Regulatory compliance gap',date:a.lastVisit||''});
+    if(trig.length){
+      trig.sort(function(x,y){return parseYMD(y.date)-parseYMD(x.date);});
+      out.push({id:'ir-alert-'+a.id,kind:'alert',ac:a.id,title:'Special Alert, '+a.reg,focus:'Triggered by: '+trig.map(function(t){return t.t;}).join(', '),date:trig[0].date});
+    }
+  });
+  return out;
+}
+/* in-scope reports: portfolio reports always apply; special alerts are derived live per FR-CP-014 */
 function intelReportsInScope(){
-  var ids={};fleetInScope().forEach(function(a){ids[a.id]=a;});
-  return INTEL_REPORTS.filter(function(r){return r.kind!=='alert'||ids[r.ac];})
-    .slice().sort(function(x,y){return parseYMD(y.date)-parseYMD(x.date);});
+  return INTEL_REPORTS.filter(function(r){return r.kind!=='alert';})
+    .concat(derivedSpecialAlerts())
+    .sort(function(x,y){return parseYMD(y.date)-parseYMD(x.date);});
 }
 
 /* ── portfolio activity feed (PRD v1.0 FR-CP-004) ──
@@ -1067,6 +1110,7 @@ function renderWeeklyReport(a,h){
   var html='<div class="wr-verdict"><span class="wr-band '+band+'">'+lbl+'</span>'
     +'<h2 class="wr-headline">'+wrHeadline(h)+'</h2>'
     +'<div class="wr-sub">Weekly intelligence report'+(rep.period?' · '+rep.period:'')+(rep.issued?' · issued '+fmtDate(rep.issued):'')+'</div></div>';
+  if(hardFloorTrip(h))html+='<div class="wr-floor"><b>Hard floor active.</b> Regulatory &amp; Compliance and Risk &amp; Airworthiness are below 40, so this composite is held at a maximum of 65 regardless of the other dimensions (FR-SC-002).</div>';
   html+='<div><div class="wr-sec-h">What this means</div><div class="wr-means" style="margin-top:10px">'
     +'<div class="wr-mean"><span class="wr-mean-l">For the banker</span><p>'+means.banker+'</p></div>'
     +'<div class="wr-mean"><span class="wr-mean-l">For the risk team</span><p>'+means.risk+'</p></div>'
@@ -1291,7 +1335,7 @@ function downloadIntelReport(id){
   var scopeLbl=r.kind==='alert'?((findAircraft(r.ac)||{}).reg||'Aircraft'):'Fleet portfolio';
   var wm=fwLogDeliverable({aircraft:scopeLbl,deliverable:r.title,format:'PDF'});
   downloadStub('FleetWatch_'+r.id+'.txt',
-    'ANDARA FLEETWATCH INTELLIGENCE REPORT\n'+r.title+'\nType: '+intelReportKindLabel(r.kind)+'\nScope: '+scopeLbl+'\nIssued: '+fmtDate(r.date)+'\nPrepared for: Fidelity Bank\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n  Downloaded: '+nowTs()+' UTC\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
+    'ANDARA FLEETWATCH INTELLIGENCE REPORT\n'+r.title+'\nType: '+intelReportKindLabel(r.kind)+'\nScope: '+scopeLbl+'\nIssued: '+fmtDate(r.date)+'\nPrepared for: '+wm.client+'\n\n'+fwWatermark(wm)+'\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
   toast('Report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 
@@ -1394,8 +1438,8 @@ function showAircraft(id,opts){
   el('fhTrend').innerHTML='<span class="pill '+hc+'"><span class="dot"></span>'+hsLabel(h.score)+'</span>';
   var compOrder=['Structural','Powerplant','Systems','Compliance','Maintenance'];
   var compBars=compOrder.filter(function(k){return h.components&&(k in h.components);}).map(function(k){
-    var v=h.components[k];var col=v>=75?'var(--deploy)':v>=60?'var(--watch)':'var(--dnd)';
-    return '<div class="ad-cmp-row"><span class="ad-cmp-lbl">'+k+'</span>'
+    var v=h.components[k],d=DIM_DISPLAY[k]||{name:k,code:'',w:''};var col=v>=75?'var(--deploy)':v>=60?'var(--watch)':'var(--dnd)';
+    return '<div class="ad-cmp-row"><span class="ad-cmp-lbl"><span class="ad-cmp-nm">'+d.name+'</span><span class="ad-cmp-w">'+d.code+' · '+d.w+'% weight</span></span>'
       +'<div class="df-track"><div class="df-fill" style="width:'+v+'%;background:'+col+'"></div></div>'
       +'<b>'+v+'</b></div>';
   }).join('');
@@ -1527,14 +1571,14 @@ function downloadReport(id){
   var a=findAircraft(id);if(!a||!a.reports[0])return;var rep=a.reports[0];
   var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Weekly report '+rep.period,format:'PDF'});
   downloadStub('FleetWatch_'+a.reg+'_'+rep.period.replace(/\s/g,'')+'.txt',
-    'ANDARA FLEETWATCH, '+rep.title+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: Fidelity Bank\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n  Issued: '+nowTs()+' UTC\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
+    'ANDARA FLEETWATCH, '+rep.title+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: '+wm.client+'\n\n'+fwWatermark(wm)+'\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
   toast('Report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 function downloadDoc(id,docId){
   var a=findAircraft(id);if(!a)return;var dc=null;a.docs.forEach(function(x){if(x.id===docId)dc=x;});if(!dc)return;
   var wm=fwLogDeliverable({aircraft:a.reg,deliverable:dc.kind+', '+dc.name,format:'PDF'});
   downloadStub('FleetWatch_'+a.reg+'_'+dc.name.replace(/[^A-Za-z0-9]+/g,'_')+'.txt',
-    'ANDARA FLEETWATCH DELIVERABLE\n'+dc.name+'\nType: '+dc.kind+'\nAircraft '+a.reg+'\nDate '+fmtDate(dc.date)+'\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n\n[Stub envelope, M2 renders the watermarked file server-side.]');
+    'ANDARA FLEETWATCH DELIVERABLE\n'+dc.name+'\nType: '+dc.kind+'\nAircraft '+a.reg+'\nDate '+fmtDate(dc.date)+'\n\n'+fwWatermark(wm)+'\n\n[Stub envelope, M2 renders the watermarked file server-side.]');
   toast('Deliverable downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 function ackAlert(id,alId){
