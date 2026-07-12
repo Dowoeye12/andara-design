@@ -227,6 +227,12 @@ a{color:inherit;text-decoration:none}
 /* summary stat strip, 16/8/24 */
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .summary.s5{grid-template-columns:repeat(5,1fr)}
+.cdelta{font-family:var(--mono);font-size:10.5px;letter-spacing:.03em;color:var(--t4);margin-top:3px}
+.cdelta.up{color:var(--deploy)}.cdelta.down{color:var(--dnd)}.cdelta.flat{color:var(--t4)}
+.doc-toolbar{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.doc-search{flex:1;min-width:220px;background:var(--bg2);border:1px solid var(--line2);border-radius:6px;padding:9px 12px;font-family:var(--mono);font-size:12px;letter-spacing:.03em;color:var(--t1);outline:none}
+.doc-search:focus{border-color:var(--amber)}
+.doc-toolbar select{min-width:150px}
 .cell{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
 .cell .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
 .cell .num{font-family:var(--sans);font-size:30px;font-weight:700;color:var(--display);letter-spacing:-.02em;line-height:1}
@@ -572,6 +578,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         <span class="pill" id="adState"><span class="dot"></span><span></span></span>
         <span class="ad-hero-hs" id="adHeroHs"></span>
         <span class="ad-nextvisit">Next visit · <b id="adNext"></b></span>
+        <button class="btn sm" type="button" id="adDossierBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:5px"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>Export dossier (PDF)</button>
       </div>
     </div>
 
@@ -637,6 +644,11 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         </table>
       </div>
     </div>
+    <!-- This week's watch items -->
+    <div class="panel">
+      <div class="ph"><span class="bullet"></span><h3>This week's watch items</h3><span class="meta" id="wiCount"></span></div>
+      <div id="wiList"></div>
+    </div>
     <!-- Portfolio activity feed (FR-CP-004) -->
     <div class="panel">
       <div class="ph"><span class="bullet"></span><h3>Portfolio activity</h3><span class="meta" id="actCount"></span></div>
@@ -663,7 +675,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 
   <!-- ALERTS (fleet-wide) -->
   <div class="view" id="vw-alerts" style="display:none">
-    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>AOG alerts</h1></div><div class="desc">AOG-class alerts dispatched to you between reports. Acknowledge to confirm receipt; acknowledgement is logged.</div></div>
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · Fleet Health</div><h1>Alerts</h1></div><div class="desc">AOG-class alerts dispatched between reports, plus automatic score-drop alerts when an aircraft loses 5 or more health points in a week. Acknowledge AOG alerts to confirm receipt.</div></div>
     <div class="summary" id="alertSummary"></div>
     <div class="panel"><div class="ph"><span class="bullet"></span><h3>Alert history, fleet-wide</h3><span class="meta" id="alertAllCount"></span></div><div id="alertAll"></div></div>
   </div>
@@ -679,6 +691,10 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
   <div class="view" id="vw-documents" style="display:none">
     <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Deliverables</h1></div><div class="desc">Every FleetWatch deliverable issued to you, reports, visit packs, evidence and contracts, across the whole fleet.</div></div>
     <div class="summary" id="docSummary"></div>
+    <div class="doc-toolbar">
+      <input id="docSearch" class="doc-search" type="text" placeholder="Search by name or registration" oninput="_docQuery=this.value;renderDocuments()"/>
+      <select id="docType" onchange="_docType=this.value;renderDocuments()"><option value="all">All types</option><option value="Report">Reports</option><option value="Visit pack">Visit packs</option><option value="Evidence">Evidence</option><option value="Contract">Contracts</option></select>
+    </div>
     <div class="panel"><div class="ph"><span class="bullet"></span><h3>Document index, fleet-wide</h3><span class="meta" id="docAllCount"></span></div><div id="docAll"></div></div>
   </div>
 
@@ -1158,7 +1174,7 @@ var ICO_DOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 var ICO_REPORT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg>';
 var ALL_VIEWS=['portfolio','predictive','fleet','anomalies','alerts','reports','documents','account','aircraft'];
 var VIEW_RENDER={portfolio:renderPortfolio,predictive:renderPredictive,fleet:renderFleet,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
-var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Intelligence reports',documents:'Deliverables',account:'Account & contract'};
+var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',anomalies:'Open anomalies',alerts:'Alerts',reports:'Intelligence reports',documents:'Deliverables',account:'Account & contract'};
 var _curView='fleet',_originView='fleet',_lastAircraftId=null;
 function hideAllViews(){ALL_VIEWS.forEach(function(id){var e=el('vw-'+id);if(e)e.style.display='none';});}
 /* Sidebar "Aircraft Detail" entry: a per-aircraft page needs a target, so open the
@@ -1228,16 +1244,28 @@ function renderAlerts(){
   var rows=[];fleetInScope().forEach(function(a){a.alerts.forEach(function(al){rows.push({a:a,al:al});});});
   rows.sort(function(x,y){return (x.al.ack?1:0)-(y.al.ack?1:0);});
   var pend=rows.filter(function(r){return !r.al.ack;}).length;
-  el('alertSummary').innerHTML=cell('AOG alerts',rows.length,'Dispatched to you','')+cell('Pending acknowledgement',pend,'Require your action',pend?'alert':'')+cell('Acknowledged',rows.length-pend,'Confirmed received','ok')+cell('Aircraft affected',new Set(rows.map(function(r){return r.a.id;})).size,'With alert history','');
-  el('alertAllCount').textContent=rows.length+(rows.length===1?' alert':' alerts');
-  el('alertAll').innerHTML=rows.length?rows.map(function(r){var a=r.a,al=r.al,acked=!!al.ack;
+  // FR-SC-005: score change of >=5 pts week-over-week raises an automatic alert
+  var ids={};fleetInScope().forEach(function(a){ids[a.id]=a;});
+  var drops=SCORE_MOVES.filter(function(m){return m.delta<=-5&&ids[m.ac];}).sort(function(x,y){return parseYMD(y.date)-parseYMD(x.date);});
+  var total=rows.length+drops.length;
+  el('alertSummary').innerHTML=cell('AOG alerts',rows.length,'Dispatched to you','')+cell('Score-drop alerts',drops.length,'Health dropped 5+ pts',drops.length?'alert':'')+cell('Pending acknowledgement',pend,'Require your action',pend?'alert':'')+cell('Aircraft affected',new Set(rows.map(function(r){return r.a.id;}).concat(drops.map(function(d){return d.ac;}))).size,'With an alert','');
+  el('alertAllCount').textContent=total+(total===1?' alert':' alerts');
+  var html=rows.map(function(r){var a=r.a,al=r.al,acked=!!al.ack;
     return '<div class="lrow">'
       +'<div class="ico">'+ICO_ALERT+'</div>'
       +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip amber">AOG</span></div>'
         +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>Dispatched <b>'+al.dispatched+' UTC</b></span>'+(acked?'<span>Ack <b>'+al.ack+' UTC</b></span>':'')+'</div></div>'
       +'<div class="side">'+(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')+'</div>'
     +'</div>';
-  }).join(''):'<div class="empty">No AOG-class alerts dispatched to your fleet.</div>';
+  }).join('');
+  html+=drops.map(function(m){var a=ids[m.ac];
+    return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
+      +'<div class="ico" style="color:var(--dnd)">'+ICO_TRDN+'</div>'
+      +'<div class="body"><div class="hd"><h4>Health score dropped '+Math.abs(m.delta)+' points this week</h4><span class="pill sev-med">SCORE</span></div>'
+        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>'+m.note+'</span><span>'+fmtDate(m.date)+'</span></div></div>'
+    +'</div>';
+  }).join('');
+  el('alertAll').innerHTML=total?html:'<div class="empty">No alerts on your fleet.</div>';
 }
 
 /* ── PREDICTIVE INTELLIGENCE ── */
@@ -1288,12 +1316,17 @@ function renderPortfolio(){
   var intact=fl.filter(function(a){return aircraftValueTrend(health(a))==='stable';}).length;
   var atRisk=fl.filter(function(a){return aircraftValueTrend(health(a))!=='stable';}).length;
   var actNow=fl.filter(function(a){return (health(a).score||0)<50;}).length;
+  // week-over-week deltas from SCORE_MOVES (prior = current - this week's move)
+  var moveById={};SCORE_MOVES.forEach(function(m){moveById[m.ac]=(moveById[m.ac]||0)+m.delta;});
+  var priorScores=fl.map(function(a){return (health(a).score||0)-(moveById[a.id]||0);});
+  var priorAvg=priorScores.length?Math.round(priorScores.reduce(function(s,x){return s+x;},0)/priorScores.length):avg;
+  var priorAct=priorScores.filter(function(v){return v<50;}).length;
   el('poSummary').innerHTML=
     cell('Aircraft monitored',fl.length,'Under FleetWatch','')
-    +cell('Fleet health score',avg+' / 100','Portfolio average','')
+    +cell('Fleet health score',avg+' / 100','Portfolio average','',wwd(avg-priorAvg,' pt'))
     +cell('Value intact',intact+' of '+fl.length,'Condition holding','ok')
     +cell('Value at risk',atRisk,'Watching or eroding',atRisk?'due':'')
-    +cell('Act now',actNow,'Health below 50',actNow?'alert':'');
+    +cell('Act now',actNow,'Health below 50',actNow?'alert':'',wwd(actNow-priorAct,'',true));
   el('poCount').textContent=fl.length+' aircraft';
   var sorted=fl.slice().sort(function(a,b){return (health(a).score||0)-(health(b).score||0);});
   el('poBody').innerHTML=sorted.map(function(a){
@@ -1307,6 +1340,7 @@ function renderPortfolio(){
       +'<td class="fc-go">&rsaquo;</td>'
     +'</tr>';
   }).join('');
+  renderWatchItems();
   renderActivity();
 }
 
@@ -1349,20 +1383,28 @@ function downloadIntelReport(id){
 }
 
 /* ── DOCUMENTS (fleet-wide) ── */
+var _docQuery='',_docType='all';
 function renderDocuments(){
-  var rows=[];fleetInScope().forEach(function(a){a.docs.forEach(function(dc){rows.push({a:a,dc:dc});});});
-  rows.sort(function(x,y){return parseYMD(y.dc.date)-parseYMD(x.dc.date);});
-  var kinds={};rows.forEach(function(r){kinds[r.dc.kind]=(kinds[r.dc.kind]||0)+1;});
-  el('docSummary').innerHTML=cell('Deliverables',rows.length,'All watermarked files','')+cell('Reports',kinds['Report']||0,'Intelligence PDFs','')+cell('Visit packs',kinds['Visit pack']||0,'Per-visit evidence','')+cell('Contracts',kinds['Contract']||0,'Surveillance agreements','');
-  el('docAllCount').textContent=rows.length+' files';
-  el('docAll').innerHTML=rows.map(function(r){var a=r.a,dc=r.dc;
+  var all=[];fleetInScope().forEach(function(a){a.docs.forEach(function(dc){all.push({a:a,dc:dc});});});
+  all.sort(function(x,y){return parseYMD(y.dc.date)-parseYMD(x.dc.date);});
+  var kinds={};all.forEach(function(r){kinds[r.dc.kind]=(kinds[r.dc.kind]||0)+1;});
+  el('docSummary').innerHTML=cell('Deliverables',all.length,'All watermarked files','')+cell('Reports',kinds['Report']||0,'Intelligence PDFs','')+cell('Visit packs',kinds['Visit pack']||0,'Per-visit evidence','')+cell('Contracts',kinds['Contract']||0,'Surveillance agreements','');
+  // FR-AD-003: archive searchable by document type and free text (name / registration)
+  var q=(_docQuery||'').trim().toLowerCase();
+  var rows=all.filter(function(r){
+    if(_docType!=='all'&&r.dc.kind!==_docType)return false;
+    if(q&&(r.dc.name+' '+r.a.reg+' '+r.dc.kind).toLowerCase().indexOf(q)===-1)return false;
+    return true;
+  });
+  el('docAllCount').textContent=rows.length+' files'+(rows.length!==all.length?' of '+all.length:'');
+  el('docAll').innerHTML=rows.length?rows.map(function(r){var a=r.a,dc=r.dc;
     return '<div class="lrow">'
       +'<div class="ico">'+ICO_DOC+'</div>'
       +'<div class="body"><div class="hd"><h4>'+dc.name+'</h4></div>'
         +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span><b>'+dc.kind+'</b></span><span>'+fmtDate(dc.date)+'</span></div></div>'
       +'<div class="side"><button class="btn sm" type="button" onclick="downloadDoc(\''+a.id+'\',\''+dc.id+'\')">Download</button></div>'
     +'</div>';
-  }).join('');
+  }).join(''):'<div class="empty">No documents match your search.</div>';
 }
 
 /* ── ACCOUNT ── */
@@ -1414,8 +1456,37 @@ function renderFleet(){
   }).join('');
   el('fleetBody').innerHTML=rows;
 }
-function cell(lbl,num,cap,cls){
-  return '<div class="cell"><span class="lbl">'+lbl+'</span><span class="num'+(cls?' '+cls:'')+'">'+num+'</span><span class="cap">'+cap+'</span></div>';
+function cell(lbl,num,cap,cls,delta){
+  return '<div class="cell"><span class="lbl">'+lbl+'</span><span class="num'+(cls?' '+cls:'')+'">'+num+'</span><span class="cap">'+cap+'</span>'+(delta?'<span class="cdelta '+(delta.dir||'')+'">'+delta.txt+'</span>':'')+'</div>';
+}
+/* week-over-week delta helper for KPI cards (invert=true when a rise is bad) */
+function wwd(d,unit,invert){
+  var good=invert?d<0:d>0,bad=invert?d>0:d<0;
+  return {dir:good?'up':bad?'down':'flat',txt:(d>0?'↑ +'+d:d<0?'↓ '+d:'→ 0')+(unit||'')+' vs W12'};
+}
+/* This week's watch items (production parity) — derived from open anomalies */
+function watchItemLevel(sev){return sev==='sev-high'?{tag:'Action required',cls:'sev-high'}:sev==='sev-med'?{tag:'Monitor weekly',cls:'sev-med'}:{tag:'Flagged',cls:'sev-low'};}
+function watchItemsThisWeek(){
+  var out=[];
+  fleetInScope().forEach(function(a){
+    a.anomalies.filter(function(x){return x.status!=='ast-res';}).forEach(function(an){
+      out.push({reg:a.reg,cid:a.id,desc:an.title,sev:an.sev,ongoing:an.statusLbl==='Monitoring'});
+    });
+  });
+  var rank={'sev-high':0,'sev-med':1,'sev-low':2};
+  out.sort(function(x,y){return rank[x.sev]-rank[y.sev];});
+  return out.slice(0,6);
+}
+function renderWatchItems(){
+  var items=watchItemsThisWeek();
+  el('wiCount').textContent=items.length+(items.length===1?' item':' items');
+  el('wiList').innerHTML=items.length?items.map(function(w){
+    var lv=watchItemLevel(w.sev),wk=(health(findAircraft(w.cid)).weeksData||13);
+    return '<div class="lrow lrow-click" onclick="showAircraft(\''+w.cid+'\')">'
+      +'<div class="body"><div class="hd"><h4>'+w.reg+'</h4><span class="pill '+lv.cls+'">'+lv.tag+(w.ongoing?' · Ongoing':' · W'+wk)+'</span></div>'
+      +'<p>'+w.desc+'</p></div>'
+    +'</div>';
+  }).join(''):'<div class="empty">No watch items this week. Fleet condition is holding.</div>';
 }
 
 /* ── AIRCRAFT DETAIL render ── */
@@ -1433,6 +1504,7 @@ function showAircraft(id,opts){
   el('crumbBackTxt').textContent=VIEW_TITLE[_originView]||'Fleet under surveillance';
   el('crumbReg').textContent=a.reg;
   el('adReg').textContent=a.reg;
+  el('adDossierBtn').onclick=function(){downloadDossier(a.id);};
   el('adSub').textContent=a.type+'  ·  MSN '+a.msn+'  ·  '+a.operator+((health(a).base)?'  ·  '+health(a).base:'');
   var s=svState(a);
   var sp=el('adState');sp.className='pill '+s.cls;sp.innerHTML='<span class="dot"></span>'+s.lbl;
@@ -1461,7 +1533,7 @@ function showAircraft(id,opts){
       +'<div class="ad-hs-den">out of 100 · '+hsLabel(h.score)+'</div></div></div>'
     +'<div class="ad-cmp">'+compBars+'</div>'
     +'<div class="ad-stats">'
-      +stat('Total Hours',num(h.hoursTSN),'Since new')
+      +stat('Total Hours',num(h.hoursTSN),(h.cyclesWk!=null?'+'+Math.round(h.cyclesWk*13*0.85).toLocaleString()+' this quarter':'Since new'))
       +stat('Cycles',num(h.cycles),h.cyclesWk!=null?'Avg '+h.cyclesWk+'/week':'Total cycles')
       +stat('Open Defects',(defs),(h.deferred!=null?h.deferred+' deferred · '+(h.inWork||0)+' in work':'On file'),defs>0?'warn':'ok')
       +stat('Last C-Check',(h.ccMonths!=null?h.ccMonths+' mo':'—'),(h.ccMonths!=null?'ago · '+(h.ccLoc||''):(h.ccLoc||'')),(h.ccMonths!=null&&h.ccMonths>=12)?'warn':'')
@@ -1589,6 +1661,21 @@ function downloadDoc(id,docId){
   downloadStub('FleetWatch_'+a.reg+'_'+dc.name.replace(/[^A-Za-z0-9]+/g,'_')+'.txt',
     'ANDARA FLEETWATCH DELIVERABLE\n'+dc.name+'\nType: '+dc.kind+'\nAircraft '+a.reg+'\nDate '+fmtDate(dc.date)+'\n\n'+fwWatermark(wm)+'\n\n[Stub envelope, M2 renders the watermarked file server-side.]');
   toast('Deliverable downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
+}
+/* FR-AD-005: export the full aircraft dossier as a watermarked PDF */
+function downloadDossier(id){
+  var a=findAircraft(id);if(!a)return;var h=health(a);
+  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Aircraft dossier '+a.reg,format:'PDF'});
+  var rd=AC_REPORT[a.id]||{findings:[],actions:[]};
+  var body='ANDARA FLEETWATCH AIRCRAFT DOSSIER\n'+a.reg+' · '+a.type+' · MSN '+a.msn+' · '+a.operator+'\n'
+    +'Health score: '+(h.score||'-')+' / 100 ('+hsLabel(h.score)+')\n'
+    +'Current market value: $'+(h.valueEstM!=null?h.valueEstM.toFixed(1):'-')+'M · Value at risk: $'+valueAtRiskM(h).toFixed(1)+'M\n\n'
+    +'FINDINGS THIS WEEK\n'+(rd.findings.length?rd.findings.map(function(f,i){return (i+1)+'. ['+f.cost+'] '+f.plain;}).join('\n'):'None')+'\n\n'
+    +'RECOMMENDED ACTIONS\n'+(rd.actions.length?rd.actions.map(function(ac,i){return (i+1)+'. '+ac.what+' (by '+ac.by+')';}).join('\n'):'None')+'\n\n'
+    +'DOCUMENT ARCHIVE ('+a.docs.length+' files)\n'+a.docs.map(function(dc){return '- '+dc.name+' ['+dc.kind+' · '+fmtDate(dc.date)+']';}).join('\n')+'\n\n'
+    +fwWatermark(wm)+'\n\n[Stub envelope, M2 renders the full watermarked dossier PDF server-side.]';
+  downloadStub('FleetWatch_Dossier_'+a.reg+'.txt',body);
+  toast('Dossier exported · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 function ackAlert(id,alId){
   var a=findAircraft(id);if(!a)return;
