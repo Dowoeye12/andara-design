@@ -211,6 +211,10 @@ a{color:inherit;text-decoration:none}
 /* breadcrumb, sub-page only */
 .crumb{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--t4)}
 .crumb a{color:var(--t3)}.crumb a:hover{color:var(--amber)}
+.crumb-back{display:inline-flex;align-items:center;gap:7px;background:none;border:0;padding:4px 8px 4px 4px;margin-left:-4px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--t3);transition:background .12s,color .12s}
+.crumb-back svg{width:15px;height:15px;flex:none}
+.crumb-back:hover{color:var(--amber);background:var(--bg3)}
+.crumb-back:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
 .crumb .sep{color:var(--line3)}
 .crumb .cur{color:var(--t2)}
 
@@ -502,7 +506,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 
   <!-- AIRCRAFT DETAIL VIEW -->
   <div class="view" id="vw-aircraft" style="display:none">
-    <div class="crumb"><a id="crumbBack">Fleet under surveillance</a><span class="sep">/</span><span class="cur" id="crumbReg"></span></div>
+    <div class="crumb"><button id="crumbBack" class="crumb-back" type="button" aria-label="Go back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span id="crumbBackTxt">Fleet under surveillance</span></button><span class="sep">/</span><span class="cur" id="crumbReg"></span></div>
 
     <div class="ad-hero">
       <div class="ad-id">
@@ -574,6 +578,11 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
           <tbody id="poBody"></tbody>
         </table>
       </div>
+    </div>
+    <!-- Portfolio activity feed (FR-CP-004) -->
+    <div class="panel">
+      <div class="ph"><span class="bullet"></span><h3>Portfolio activity</h3><span class="meta" id="actCount"></span></div>
+      <div id="actFeed"></div>
     </div>
   </div>
 
@@ -856,6 +865,62 @@ function intelReportsInScope(){
     .slice().sort(function(x,y){return parseYMD(y.date)-parseYMD(x.date);});
 }
 
+/* ── portfolio activity feed (PRD v1.0 FR-CP-004) ──
+   Last 10 intelligence events across the portfolio: field visits completed,
+   score changes, new findings, report availability. Score moves are seeded
+   (no historical score series at M1); M2 derives them from the score history. */
+var SCORE_MOVES=[
+  {ac:'msn-2887',delta:-6,date:'2026-06-27',note:'Records gap widened, two line checks undocumented'},
+  {ac:'msn-6201',delta:-4,date:'2026-06-24',note:'Cabin pressurisation fault logged'},
+  {ac:'msn-17004',delta:-3,date:'2026-06-20',note:'APU oil consumption above baseline'},
+  {ac:'msn-39041',delta:-2,date:'2026-06-18',note:'No.2 engine borescope finding'},
+  {ac:'msn-30622',delta:2,date:'2026-06-14',note:'All component lines returned green'}
+];
+var ICO_VISIT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>';
+var ICO_TRUP='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7h-5m5 0v5"/></svg>';
+var ICO_TRDN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l6 6 4-4 8 8"/><path d="M21 17h-5m5 0v-5"/></svg>';
+function activityIcon(e){
+  if(e.type==='visit')return ICO_VISIT;
+  if(e.type==='report')return ICO_REPORT;
+  if(e.type==='finding')return ICO_ANOM;
+  return e.delta>=0?ICO_TRUP:ICO_TRDN;
+}
+function activityColor(e){
+  if(e.type==='finding')return e.sev==='sev-high'?'var(--dnd)':e.sev==='sev-med'?'var(--watch)':'var(--info)';
+  if(e.type==='score')return e.delta>=0?'var(--deploy)':'var(--dnd)';
+  return 'var(--info)';
+}
+function portfolioActivity(){
+  var fl=fleetInScope();var ids={};fl.forEach(function(a){ids[a.id]=a;});
+  var ev=[];
+  fl.forEach(function(a){
+    ev.push({ts:a.lastVisit,type:'visit',cid:a.id,reg:a.reg,title:'Field visit completed',sub:(health(a).base||a.operator)});
+    a.anomalies.filter(function(x){return x.status!=='ast-res';}).forEach(function(an){
+      ev.push({ts:an.captured,type:'finding',cid:a.id,reg:a.reg,sev:an.sev,title:'New finding · '+a.reg,sub:an.title});
+    });
+  });
+  SCORE_MOVES.forEach(function(m){var a=ids[m.ac];if(!a)return;
+    ev.push({ts:m.date,type:'score',cid:a.id,reg:a.reg,delta:m.delta,title:'Health score '+(m.delta>=0?'up ':'down ')+Math.abs(m.delta)+' pts · '+a.reg,sub:m.note});
+  });
+  intelReportsInScope().forEach(function(r){
+    ev.push({ts:r.date,type:'report',cid:(r.ac||null),reg:(r.ac&&ids[r.ac]?ids[r.ac].reg:''),title:'Report available',sub:r.title});
+  });
+  ev.sort(function(x,y){return parseYMD(y.ts)-parseYMD(x.ts);});
+  return ev.slice(0,10);
+}
+function renderActivity(){
+  var ev=portfolioActivity();
+  el('actCount').textContent=ev.length+(ev.length===1?' event':' events');
+  el('actFeed').innerHTML=ev.length?ev.map(function(e){
+    return '<div class="lrow'+(e.cid?' lrow-click':'')+'"'+(e.cid?' onclick="showAircraft(\''+e.cid+'\')"':'')+'>'
+      +'<div class="ico" style="color:'+activityColor(e)+'">'+activityIcon(e)+'</div>'
+      +'<div class="body"><div class="hd"><h4>'+e.title+'</h4></div>'
+        +'<p>'+e.sub+'</p>'
+        +'<div class="metaln"><span><b>'+fmtDate(e.ts)+'</b></span><span>'+relDays(e.ts)+'</span>'+(e.reg?'<span class="reg-tag">'+e.reg+'</span>':'')+'</div></div>'
+    +'</div>';
+  }).join(''):'<div class="empty">No recent portfolio activity.</div>';
+}
+
 /* ══════════════ VIEW SWITCHING (side nav) ══════════════ */
 var ICO_ANOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>';
 var ICO_ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
@@ -1011,6 +1076,7 @@ function renderPortfolio(){
       +'<td class="fc-go">&rsaquo;</td>'
     +'</tr>';
   }).join('');
+  renderActivity();
 }
 
 /* ── INTELLIGENCE REPORTS (portfolio-level report library) ── */
@@ -1133,7 +1199,7 @@ function showAircraft(id,opts){
   _curView='aircraft';setActiveNav(opts.navActive||_originView||'fleet');
   var mn=el('mn');if(mn)mn.scrollTop=0;
 
-  el('crumbBack').textContent=VIEW_TITLE[_originView]||'Fleet under surveillance';
+  el('crumbBackTxt').textContent=VIEW_TITLE[_originView]||'Fleet under surveillance';
   el('crumbReg').textContent=a.reg;
   el('adReg').textContent=a.reg;
   el('adSub').textContent=a.type+'  ·  MSN '+a.msn+'  ·  '+a.operator+((health(a).base)?'  ·  '+health(a).base:'');
