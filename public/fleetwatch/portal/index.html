@@ -334,6 +334,13 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .wr-act-meta{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.03em;margin-top:2px}
 .wr-act-meta b{color:var(--t2);font-weight:600}
 .wr-empty{font-family:var(--sans);font-size:13px;color:var(--t3);font-style:italic}
+.wr-chart{display:flex;flex-direction:column;gap:10px}
+.wr-chart-box{border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:12px 12px 6px}
+.wr-chart-svg{width:100%;height:auto;display:block}
+.wr-axt{font-family:var(--mono);font-size:9px;fill:var(--t4);letter-spacing:.03em}
+.wr-chart-cap{font-family:var(--mono);font-size:10.5px;color:var(--t4);letter-spacing:.02em;line-height:1.5}
+.pi-action{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.45;margin:0}
+.pi-action b{color:var(--amber);font-weight:600}
 @media (max-width:720px){.wr-means{grid-template-columns:1fr}.wr-traffic{grid-template-columns:1fr 1fr}}
 
 /* kv rows */
@@ -870,21 +877,21 @@ function needsAttention(a){var h=health(a);return (h.score||0)<50 || a.alerts.so
    Seeded predicted events by horizon (act 0-30d / plan 1-6mo / aware 6-12mo),
    with per-event value-at-risk. M2 wires the ML trajectory model. */
 var PREDICT=[
-  {ac:'msn-2887',hz:'act',cat:'Compliance',title:'AD compliance evidence overdue, 2 line checks undocumented',impact:'high',varM:3.2},
-  {ac:'msn-2887',hz:'act',cat:'Maintenance',title:'C-check overdue at 16 months, dispatch limit approaching',impact:'high',varM:0},
-  {ac:'msn-2887',hz:'plan',cat:'Maintenance',title:'Tyre replacement, MLG #3 beyond advisory',impact:'medium',varM:0},
-  {ac:'msn-6201',hz:'act',cat:'Systems',title:'Nose gear steering fault, dispatch-critical',impact:'high',varM:0},
-  {ac:'msn-6201',hz:'plan',cat:'Systems',title:'Cabin pressurisation outflow valve, projected failure',impact:'medium',varM:1.1},
-  {ac:'msn-6201',hz:'plan',cat:'Financial',title:'Revenue shortfall compounding deferred-maintenance backlog',impact:'medium',varM:0},
-  {ac:'msn-17004',hz:'plan',cat:'Powerplant',title:'APU overhaul window, oil consumption above baseline',impact:'medium',varM:0.8},
-  {ac:'msn-17004',hz:'plan',cat:'Compliance',title:'Two ADs pending compliance evidence',impact:'medium',varM:0},
-  {ac:'msn-17004',hz:'aware',cat:'Maintenance',title:'E175 C-check due Q4 2026',impact:'low',varM:0},
-  {ac:'msn-39041',hz:'plan',cat:'Powerplant',title:'No.2 engine HPC blade re-inspection, monitor wear rate',impact:'medium',varM:0},
-  {ac:'msn-39041',hz:'aware',cat:'Systems',title:'Cabin door seal L2 replacement due',impact:'low',varM:0},
-  {ac:'msn-6512',hz:'aware',cat:'Maintenance',title:'Nose gear shimmy damper overhaul',impact:'low',varM:0},
-  {ac:'msn-30622',hz:'aware',cat:'Maintenance',title:'Scheduled A-check, Q3 2026',impact:'low',varM:0},
-  {ac:'msn-30890',hz:'plan',cat:'Systems',title:'Thrust reverser actuator inspection',impact:'low',varM:0},
-  {ac:'msn-30890',hz:'aware',cat:'Records',title:'Records review cycle, Q3 2026',impact:'low',varM:0}
+  {ac:'msn-2887',hz:'act',cat:'Compliance',title:'AD compliance evidence overdue, 2 line checks undocumented',impact:'high',varM:3.2,due:'Within 2 weeks',action:'Recover the missing release-to-service records'},
+  {ac:'msn-2887',hz:'act',cat:'Maintenance',title:'C-check overdue at 16 months, dispatch limit approaching',impact:'high',varM:0.5,due:'Within 30 days',action:'Book the overdue C-check'},
+  {ac:'msn-2887',hz:'plan',cat:'Maintenance',title:'Tyre replacement, MLG #3 beyond advisory',impact:'medium',varM:0,due:'Aug 2026',action:'Replace the MLG #3 tyre at the next check'},
+  {ac:'msn-6201',hz:'act',cat:'Systems',title:'Nose gear steering fault, dispatch-critical',impact:'high',varM:0,due:'Before next dispatch',action:'Rectify the nose-gear steering fault'},
+  {ac:'msn-6201',hz:'plan',cat:'Systems',title:'Cabin pressurisation outflow valve, projected failure',impact:'medium',varM:1.1,due:'Sep 2026',action:'Replace the pressurisation outflow valve'},
+  {ac:'msn-6201',hz:'plan',cat:'Financial',title:'Revenue shortfall compounding deferred-maintenance backlog',impact:'medium',varM:0,due:'Aug 2026',action:'Review the backlog with the operator'},
+  {ac:'msn-17004',hz:'plan',cat:'Powerplant',title:'APU overhaul window, oil consumption above baseline',impact:'medium',varM:0.8,due:'Within 6 months',action:'Plan the APU overhaul into a maintenance window'},
+  {ac:'msn-17004',hz:'plan',cat:'Compliance',title:'Two ADs pending compliance evidence',impact:'medium',varM:0.15,due:'Within 30 days',action:'Close the two AD compliance records'},
+  {ac:'msn-17004',hz:'aware',cat:'Maintenance',title:'E175 C-check due Q4 2026',impact:'low',varM:0,due:'Q4 2026',action:'Budget the E175 C-check'},
+  {ac:'msn-39041',hz:'plan',cat:'Powerplant',title:'No.2 engine HPC blade re-inspection, monitor wear rate',impact:'medium',varM:0.3,due:'Next weekly visit',action:'Re-borescope the No.2 engine'},
+  {ac:'msn-39041',hz:'aware',cat:'Systems',title:'Cabin door seal L2 replacement due',impact:'low',varM:0,due:'Q1 2027',action:'Schedule the L2 door-seal replacement'},
+  {ac:'msn-6512',hz:'aware',cat:'Maintenance',title:'Nose gear shimmy damper overhaul',impact:'low',varM:0,due:'Q4 2026',action:'Overhaul the nose-gear shimmy damper'},
+  {ac:'msn-30622',hz:'aware',cat:'Maintenance',title:'Scheduled A-check, Q3 2026',impact:'low',varM:0,due:'Q3 2026',action:'Confirm the scheduled A-check slot'},
+  {ac:'msn-30890',hz:'plan',cat:'Systems',title:'Thrust reverser actuator inspection',impact:'low',varM:0.2,due:'Sep 2026',action:'Inspect the No.1 thrust-reverser actuator'},
+  {ac:'msn-30890',hz:'aware',cat:'Records',title:'Records review cycle, Q3 2026',impact:'low',varM:0,due:'Q3 2026',action:'Run the scheduled records review'}
 ];
 function impRank(i){return i==='high'?0:i==='medium'?1:2;}
 function impPill(i){return i==='high'?'sev-high':i==='medium'?'sev-med':'sev-low';}
@@ -1011,6 +1018,46 @@ function wrMeans(h,varM){var s=h.score||0,v=varM.toFixed(1);
   if(s>=50)return{banker:'Your collateral value is softening. About $'+v+'M is exposed until the items below are closed.',risk:'One or more areas need attention within the planned window. No immediate airworthiness risk, but drift is visible.',asset:'Remarketing value is exposed by about $'+v+'M until the open items are resolved and documented.'};
   return{banker:'Your collateral value is eroding. About $'+v+'M is at risk and widening until action is taken.',risk:'Material condition or compliance risk is present. Act now to prevent grounding or further value loss.',asset:'Remarketing value is materially discounted while these items remain open and unverified.'};}
 function wrToggleTech(btn){var d=btn.nextElementSibling;if(!d)return;d.hidden=!d.hidden;btn.textContent='Technical detail '+(d.hidden?'▾':'▴');}
+/* 52-week composite score history (FR-SC-004). Synthesised deterministically
+   from the aircraft id + current score + trend, ending at the live score.
+   M2 replaces this with the real per-week HealthScore series. */
+function wrHash(str){var h=2166136261>>>0;for(var i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619)>>>0;}return h>>>0;}
+function wrRng(seed){var s=seed>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+function scoreHistory(a,h){
+  var cur=h.score||70,down=(h.trend==='down');
+  var drop=down?(cur<65?14:8):3,start=Math.min(96,cur+drop);
+  var rng=wrRng(wrHash(a.id)),pts=[];
+  for(var i=0;i<52;i++){
+    var base=start+(cur-start)*(i/51),noise=(rng()-0.5)*(down?4:5),v=Math.round(base+noise);
+    if(i===51)v=cur;
+    pts.push(Math.max(28,Math.min(98,v)));
+  }
+  return pts;
+}
+function scoreHistorySvg(a,h){
+  var pts=scoreHistory(a,h),W=720,H=170,padL=34,padR=12,padT=12,padB=22;
+  var plotW=W-padL-padR,plotH=H-padT-padB;
+  var x=function(i){return padL+(i/51)*plotW;},y=function(v){return padT+(100-v)/100*plotH;};
+  var band=hsColor(h.score),col=band==='sv-ok'?'var(--deploy)':band==='sv-due'?'var(--watch)':'var(--dnd)';
+  var y70=y(70),y50=y(50),y100=y(100),y0=y(0);
+  var zones='<rect x="'+padL+'" y="'+y100+'" width="'+plotW+'" height="'+(y70-y100)+'" fill="var(--deploy)" opacity="0.05"/>'
+    +'<rect x="'+padL+'" y="'+y70+'" width="'+plotW+'" height="'+(y50-y70)+'" fill="var(--watch)" opacity="0.05"/>'
+    +'<rect x="'+padL+'" y="'+y50+'" width="'+plotW+'" height="'+(y0-y50)+'" fill="var(--dnd)" opacity="0.05"/>';
+  var lines='<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+y70+'" y2="'+y70+'" stroke="var(--deploy)" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>'
+    +'<line x1="'+padL+'" x2="'+(W-padR)+'" y1="'+y50+'" y2="'+y50+'" stroke="var(--watch)" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"/>';
+  var ylabels='<text x="'+(padL-6)+'" y="'+(y100+8)+'" text-anchor="end" class="wr-axt">100</text>'
+    +'<text x="'+(padL-6)+'" y="'+(y70+3)+'" text-anchor="end" class="wr-axt">70</text>'
+    +'<text x="'+(padL-6)+'" y="'+(y50+3)+'" text-anchor="end" class="wr-axt">50</text>';
+  var dLine='';pts.forEach(function(v,i){dLine+=(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)+' ';});
+  var dArea='M'+x(0).toFixed(1)+' '+y0.toFixed(1)+' '+pts.map(function(v,i){return 'L'+x(i).toFixed(1)+' '+y(v).toFixed(1);}).join(' ')+' L'+x(51).toFixed(1)+' '+y0.toFixed(1)+' Z';
+  var xl=[[0,'W-52','start'],[13,'W-39','middle'],[26,'W-26','middle'],[39,'W-13','middle'],[51,'Now','end']].map(function(t){return '<text x="'+x(t[0]).toFixed(1)+'" y="'+(H-6)+'" text-anchor="'+t[2]+'" class="wr-axt">'+t[1]+'</text>';}).join('');
+  return '<svg viewBox="0 0 '+W+' '+H+'" class="wr-chart-svg" role="img" aria-label="52-week composite score history">'
+    +zones+lines
+    +'<path d="'+dArea+'" fill="'+col+'" opacity="0.10"/>'
+    +'<path d="'+dLine+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+    +'<circle cx="'+x(51).toFixed(1)+'" cy="'+y(pts[51]).toFixed(1)+'" r="3.5" fill="'+col+'"/>'
+    +ylabels+xl+'</svg>';
+}
 function renderWeeklyReport(a,h){
   var host=el('adReport');if(!host)return;
   var cls=hsColor(h.score),band=cls==='sv-ok'?'ok':cls==='sv-due'?'due':'over',lbl=hsLabel(h.score);
@@ -1045,6 +1092,9 @@ function renderWeeklyReport(a,h){
       +'<div class="wr-act-meta"><span>By <b>'+ac.by+'</b></span><span>Cost to act <b>'+ac.costAction+'</b></span><span>Cost of inaction <b>'+ac.costInaction+'</b></span></div></div></div>';
   }).join(''):'<div class="wr-empty">No action required this week. Continue routine weekly monitoring.</div>';
   html+='</div>';
+  html+='<div class="wr-chart"><div class="wr-sec-h">Score history · 52 weeks</div>'
+    +'<div class="wr-chart-box">'+scoreHistorySvg(a,h)+'</div>'
+    +'<div class="wr-chart-cap">Weekly composite health score. Green zone Healthy (70+), amber Monitor (50–69), red Act Now (below 50).</div></div>';
   host.innerHTML=html;
 }
 
@@ -1159,7 +1209,8 @@ function renderPredictive(){
       return '<div class="lrow">'
         +'<div class="ico">'+ICO_ANOM+'</div>'
         +'<div class="body"><div class="hd"><h4>'+e.title+'</h4></div>'
-          +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>'+e.cat+'</span>'+(e.varM>0?'<span>~$'+e.varM.toFixed(1)+'M at risk</span>':'')+'</div></div>'
+          +(e.action?'<p class="pi-action"><b>Recommended:</b> '+e.action+'</p>':'')
+          +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>'+e.cat+'</span>'+(e.due?'<span>Due <b>'+e.due+'</b></span>':'')+'<span>'+(e.varM>0?'~$'+e.varM.toFixed(1)+'M at risk':'Operational impact')+'</span></div></div>'
         +'<div class="side"><span class="pill '+impPill(e.impact)+'">'+e.impact+'</span></div>'
       +'</div>';
     }).join(''):'<div class="empty">No predicted events in this window.</div>';
