@@ -4,15 +4,15 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Andara FleetWatch, Client Portal | Aircraft Surveillance</title>
-<meta name="description" content="Andara FleetWatch client portal, your fleet under surveillance. Quarterly reports, open anomalies, AOG alerts and the full deliverable index, per aircraft."/>
+<meta name="description" content="Andara FleetWatch client portal, your fleet under surveillance. Weekly intelligence reports, open anomalies, AOG alerts and the full deliverable index, per aircraft."/>
 <meta name="theme-color" content="#000000"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* ══════════════════════════════════════════════════════
-   ANDARA FLEETWATCH, CLIENT PORTAL DASHBOARD (PRD §3.2.3)
-   Features: Fleet list · Aircraft detail · Latest quarterly
+   ANDARA FLEETWATCH, CLIENT PORTAL DASHBOARD (FleetWatch PRD v1.0)
+   Features: Portfolio · Aircraft detail · Latest weekly
    report viewer · Open anomalies · Alert history · Document
    index. Design system inherited from Andara Credit
    Intelligence terminal (pure-black canvas, desaturated
@@ -222,6 +222,7 @@ a{color:inherit;text-decoration:none}
 
 /* summary stat strip, 16/8/24 */
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.summary.s5{grid-template-columns:repeat(5,1fr)}
 .cell{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px}
 .cell .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
 .cell .num{font-family:var(--sans);font-size:30px;font-weight:700;color:var(--display);letter-spacing:-.02em;line-height:1}
@@ -344,7 +345,7 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 
 @media (max-width:640px){
   .ls{grid-template-columns:1fr;max-width:420px;min-height:0}.ll{display:none}.lr{padding:30px 24px}
-  .summary{grid-template-columns:1fr 1fr}
+  .summary,.summary.s5{grid-template-columns:1fr 1fr}
   .phead .desc{display:none}
   .user .who{display:none}
 }
@@ -359,7 +360,7 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
       <div class="bm"><img src="/Andara%20Systems%20logo%20-%20dark%20mode.png" alt="Andara Systems" style="height:32px;width:auto;opacity:.95;flex-shrink:0"/></div>
       <div>
         <div class="lh">Your fleet,<br><em>under watch.</em></div>
-        <p class="lsub">The Andara FleetWatch client portal. Quarterly surveillance reports, open anomalies, AOG alerts and every deliverable Andara has shipped, per aircraft, in one place.</p>
+        <p class="lsub">The Andara FleetWatch client portal. Weekly surveillance intelligence, open anomalies, AOG alerts and every deliverable Andara has shipped, per aircraft, in one place.</p>
       </div>
       <div class="lmeta">
         <div class="lmr"><span>Surface</span><strong>Client Portal · FleetWatch</strong></div>
@@ -453,7 +454,6 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <a class="snav" data-v="fleet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></span><span class="lbl">Fleet Overview</span></a>
       <a class="snav" data-v="anomalies"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></span><span class="lbl">Anomalies</span><span class="cnt" id="navAnom"></span></a>
       <a class="snav" data-v="alerts"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span><span class="lbl">Alerts</span><span class="cnt" id="navAlerts"></span></a>
-      <a class="snav" data-v="defaultrisk"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></span><span class="lbl">Default risk</span><span class="cnt" id="navDefault"></span></a>
     </div>
     <div class="sgroup">
       <div class="sglabel">Deliverables</div>
@@ -497,7 +497,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       </div>
     </div>
 
-    <div class="foot">Andara FleetWatch · Client Portal · Restricted, Subscriber<br>PRD §3.2.3, Fleet list · Aircraft detail · Quarterly report · Anomalies · Alerts · Documents</div>
+    <div class="foot">Andara FleetWatch · Client Portal · Restricted, Subscriber<br>Portfolio · Aircraft detail · Weekly report · Anomalies · Alerts · Documents</div>
   </div>
 
   <!-- AIRCRAFT DETAIL VIEW -->
@@ -529,9 +529,9 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
           <div class="ph"><span class="bullet"></span><h3>Field Intelligence Observations</h3><span class="meta" id="obsCount"></span></div>
           <div id="obsList"></div>
         </div>
-        <!-- Latest quarterly report viewer -->
+        <!-- Latest weekly report viewer -->
         <div class="panel">
-          <div class="ph"><span class="bullet"></span><h3>Latest quarterly report</h3><span class="meta" id="rvPeriod"></span></div>
+          <div class="ph"><span class="bullet"></span><h3>Latest weekly report</h3><span class="meta" id="rvPeriod"></span></div>
           <div class="pb"><div class="rv" id="reportViewer"></div></div>
         </div>
         <!-- Open anomalies -->
@@ -546,11 +546,6 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         <div class="panel">
           <div class="ph"><span class="bullet"></span><h3>Surveillance contract</h3></div>
           <div class="pb" id="contractKv"></div>
-        </div>
-        <!-- Default flagging (§3.2.3) -->
-        <div class="panel">
-          <div class="ph"><span class="bullet"></span><h3>Default flagging</h3><span class="meta" id="dfHdr"></span></div>
-          <div class="pb" id="dfPanel"></div>
         </div>
         <!-- Alert history -->
         <div class="panel">
@@ -568,8 +563,8 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
 
   <!-- PORTFOLIO OVERVIEW (Fleet Health) -->
   <div class="view" id="vw-portfolio" style="display:none">
-    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · Fleet Health</div><h1>Portfolio overview</h1></div><div class="desc" id="poDesc">Fleet-wide health and value status across the aircraft Andara monitors for you. Field scans current through the latest surveillance cycle.</div></div>
-    <div class="summary" id="poSummary"></div>
+    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · Fleet Health</div><h1>Portfolio overview</h1></div><div class="desc" id="poDesc">Fleet-wide health and value status across the aircraft Andara monitors for you. Field scans current through the latest weekly visit.</div></div>
+    <div class="summary s5" id="poSummary"></div>
     <div class="panel">
       <div class="ph"><span class="bullet"></span><h3>Aircraft health &amp; value status</h3><span class="meta" id="poCount"></span></div>
       <div class="tblwrap">
@@ -590,13 +585,6 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <div class="panel"><div class="ph"><span class="bullet"></span><h3>Plan now · 1&ndash;6 months</h3><span class="meta" id="pi-plan-cnt"></span></div><div id="pi-plan"></div></div>
     <div class="panel"><div class="ph"><span class="bullet"></span><h3>Aware · 6&ndash;12 months</h3><span class="meta" id="pi-aware-cnt"></span></div><div id="pi-aware"></div></div>
     <div class="panel"><div class="ph"><span class="bullet"></span><h3>Asset value at risk</h3><span class="meta" id="piVarCount"></span></div><div id="piVar"></div></div>
-  </div>
-
-  <!-- DEFAULT RISK (fleet-wide, §3.2.3 Default flagging) -->
-  <div class="view" id="vw-defaultrisk" style="display:none">
-    <div class="phead"><div><div class="eyebrow">Client Portal · FleetWatch · §3.2.3</div><h1>Default risk</h1></div><div class="desc">Early default-risk signals: each operator's monthly sales measured against their documented business plan. Sustained shortfall flags credit risk before it hits your exposure.</div></div>
-    <div class="summary" id="dfSummary"></div>
-    <div class="panel"><div class="ph"><span class="bullet"></span><h3>Sales vs business plan, by carrier</h3><span class="meta" id="dfAllCount"></span></div><div id="dfAll"></div></div>
   </div>
 
   <!-- ANOMALIES (fleet-wide) -->
@@ -693,98 +681,98 @@ function toast(title,detail){
 
 /* ── data: this client's fleet under FleetWatch surveillance ── */
 var FLEET=[
-  {id:'msn-39041',reg:'5N-BQM',msn:'39041',type:'Boeing 737-800',operator:'Air Peace',region:'Nigeria',tier:'Tier 1 · Monthly',contractId:'FW-CT-1042',coverageStart:'2025-09-01',scope:'Records · Ramp · MRO',
+  {id:'msn-39041',reg:'5N-BQM',msn:'39041',type:'Boeing 737-800',operator:'Air Peace',region:'Nigeria',tier:'Weekly monitoring',contractId:'FW-CT-1042',coverageStart:'2025-09-01',scope:'Records · Ramp · MRO',
    defaultRisk:{planM:4.20,actualM:4.05,month:'May 2026'},
    lastVisit:'2026-05-18',nextVisit:'2026-06-18',reportReady:true,
-   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-15',pages:24,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   reports:[{id:'r1',title:'FleetWatch Weekly, Week 13',period:'Week 13 · 2026',issued:'2026-06-15',pages:24,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[
      {id:'a1',title:'No.2 engine borescope, early-stage HPC blade tip wear',sev:'sev-med',sevLbl:'Medium',captured:'2026-05-18',visit:'MRO observation · Lagos',status:'ast-open',statusLbl:'Open'},
      {id:'a2',title:'Cabin door seal degradation (L2)',sev:'sev-low',sevLbl:'Low',captured:'2026-05-18',visit:'Ramp inspection · Lagos',status:'ast-mon',statusLbl:'Monitoring'}
    ],
    alerts:[{id:'al1',title:'AOG, hydraulic system B pressure loss',dispatched:'2026-04-03 08:14',ack:'2026-04-03 08:41'}],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-15'},
+     {id:'d1',name:'FleetWatch Weekly, Week 13',kind:'Report',date:'2026-06-15'},
      {id:'d2',name:'Visit pack, MRO observation (May)',kind:'Visit pack',date:'2026-05-18'},
      {id:'d3',name:'Anomaly evidence, HPC blade borescope',kind:'Evidence',date:'2026-05-18'},
-     {id:'d4',name:'FleetWatch Quarterly, Q1 2026',kind:'Report',date:'2026-03-15'},
+     {id:'d4',name:'FleetWatch Weekly, Week 9',kind:'Report',date:'2026-03-15'},
      {id:'d5',name:'Surveillance contract, FW-CT-1042',kind:'Contract',date:'2025-09-01'}
    ]},
-  {id:'msn-6512',reg:'5N-JEA',msn:'6512',type:'Airbus A320-200',operator:'Ibom Air',region:'Nigeria',tier:'Tier 1 · Monthly',contractId:'FW-CT-1051',coverageStart:'2025-10-01',scope:'Records · Ramp',
+  {id:'msn-6512',reg:'5N-JEA',msn:'6512',type:'Airbus A320-200',operator:'Ibom Air',region:'Nigeria',tier:'Weekly monitoring',contractId:'FW-CT-1051',coverageStart:'2025-10-01',scope:'Records · Ramp',
    defaultRisk:{planM:2.80,actualM:2.48,month:'May 2026'},
    lastVisit:'2026-05-02',nextVisit:'2026-06-02',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-10',pages:21,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   reports:[{id:'r1',title:'FleetWatch Weekly, Week 13',period:'Week 13 · 2026',issued:'2026-06-10',pages:21,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[
      {id:'a1',title:'Nose landing gear shimmy damper, minor weep',sev:'sev-low',sevLbl:'Low',captured:'2026-05-02',visit:'Ramp inspection · Uyo',status:'ast-mon',statusLbl:'Monitoring'}
    ],
    alerts:[],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-10'},
+     {id:'d1',name:'FleetWatch Weekly, Week 13',kind:'Report',date:'2026-06-10'},
      {id:'d2',name:'Visit pack, Ramp inspection (May)',kind:'Visit pack',date:'2026-05-02'},
      {id:'d5',name:'Surveillance contract, FW-CT-1051',kind:'Contract',date:'2025-10-01'}
    ]},
-  {id:'msn-17004',reg:'5N-GAA',msn:'17004',type:'Embraer E175',operator:'Green Africa',region:'Nigeria',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1066',coverageStart:'2025-11-01',scope:'Records · Ramp · MRO',
+  {id:'msn-17004',reg:'5N-GAA',msn:'17004',type:'Embraer E175',operator:'Green Africa',region:'Nigeria',tier:'Weekly monitoring',contractId:'FW-CT-1066',coverageStart:'2025-11-01',scope:'Records · Ramp · MRO',
    defaultRisk:{planM:3.10,actualM:2.76,month:'May 2026'},
    lastVisit:'2026-03-20',nextVisit:'2026-06-20',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-12',pages:19,verdict:'Continue surveillance',condition:'Minor findings logged',visits:1}],
+   reports:[{id:'r1',title:'FleetWatch Weekly, Week 13',period:'Week 13 · 2026',issued:'2026-06-12',pages:19,verdict:'Continue surveillance',condition:'Minor findings logged',visits:1}],
    anomalies:[
      {id:'a1',title:'APU oil consumption trending above baseline',sev:'sev-med',sevLbl:'Medium',captured:'2026-03-20',visit:'MRO observation · Lagos',status:'ast-open',statusLbl:'Open'},
      {id:'a2',title:'Two cabin window crazing (rows 8–9)',sev:'sev-low',sevLbl:'Low',captured:'2026-03-20',visit:'Records review',status:'ast-res',statusLbl:'Resolved'}
    ],
    alerts:[],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-12'},
+     {id:'d1',name:'FleetWatch Weekly, Week 13',kind:'Report',date:'2026-06-12'},
      {id:'d2',name:'Visit pack, MRO observation (Mar)',kind:'Visit pack',date:'2026-03-20'},
      {id:'d5',name:'Surveillance contract, FW-CT-1066',kind:'Contract',date:'2025-11-01'}
    ]},
-  {id:'msn-2887',reg:'5N-UNA',msn:'2887',type:'Embraer ERJ-145',operator:'United Nigeria',region:'Nigeria',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1071',coverageStart:'2025-12-01',scope:'Records · Ramp',
+  {id:'msn-2887',reg:'5N-UNA',msn:'2887',type:'Embraer ERJ-145',operator:'United Nigeria',region:'Nigeria',tier:'Weekly monitoring',contractId:'FW-CT-1071',coverageStart:'2025-12-01',scope:'Records · Ramp',
    defaultRisk:{planM:2.60,actualM:1.85,month:'May 2026'},
    lastVisit:'2026-02-28',nextVisit:'2026-05-28',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly, Q1 2026',period:'Q1 2026',issued:'2026-03-18',pages:18,verdict:'Heightened surveillance',condition:'Records gaps, see anomalies',visits:1}],
+   reports:[{id:'r1',title:'FleetWatch Weekly, Week 9',period:'Week 9 · 2026',issued:'2026-03-18',pages:18,verdict:'Heightened surveillance',condition:'Records gaps, see anomalies',visits:1}],
    anomalies:[
      {id:'a1',title:'Maintenance records gap, 2 line checks undocumented',sev:'sev-high',sevLbl:'High',captured:'2026-02-28',visit:'Records review · Enugu',status:'ast-open',statusLbl:'Open'},
      {id:'a2',title:'Tyre wear beyond advisory on MLG #3',sev:'sev-med',sevLbl:'Medium',captured:'2026-02-28',visit:'Ramp inspection · Enugu',status:'ast-open',statusLbl:'Open'}
    ],
    alerts:[{id:'al1',title:'AOG, bird strike, No.1 engine inspection',dispatched:'2026-05-21 14:32',ack:null}],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly, Q1 2026',kind:'Report',date:'2026-03-18'},
+     {id:'d1',name:'FleetWatch Weekly, Week 9',kind:'Report',date:'2026-03-18'},
      {id:'d2',name:'Visit pack, Records review (Feb)',kind:'Visit pack',date:'2026-02-28'},
      {id:'d3',name:'Anomaly evidence, records gap memo',kind:'Evidence',date:'2026-02-28'},
      {id:'d5',name:'Surveillance contract, FW-CT-1071',kind:'Contract',date:'2025-12-01'}
    ]},
-  {id:'msn-30622',reg:'5N-MRT',msn:'30622',type:'Boeing 737-700',operator:'Max Air',region:'Nigeria',tier:'Tier 1 · Monthly',contractId:'FW-CT-1080',coverageStart:'2026-01-15',scope:'Records · Ramp · MRO',
+  {id:'msn-30622',reg:'5N-MRT',msn:'30622',type:'Boeing 737-700',operator:'Max Air',region:'Nigeria',tier:'Weekly monitoring',contractId:'FW-CT-1080',coverageStart:'2026-01-15',scope:'Records · Ramp · MRO',
    defaultRisk:{planM:3.80,actualM:3.72,month:'May 2026'},
    lastVisit:'2026-06-01',nextVisit:'2026-07-01',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-14',pages:22,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
+   reports:[{id:'r1',title:'FleetWatch Weekly, Week 13',period:'Week 13 · 2026',issued:'2026-06-14',pages:22,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:3}],
    anomalies:[],
    alerts:[],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-14'},
+     {id:'d1',name:'FleetWatch Weekly, Week 13',kind:'Report',date:'2026-06-14'},
      {id:'d2',name:'Visit pack, MRO observation (Jun)',kind:'Visit pack',date:'2026-06-01'},
      {id:'d5',name:'Surveillance contract, FW-CT-1080',kind:'Contract',date:'2026-01-15'}
    ]},
-  {id:'msn-30890',reg:'5V-TAK',msn:'30890',type:'Boeing 737-700',operator:'ASKY Airlines',region:'West Africa',tier:'Tier 2 · Quarterly',contractId:'FW-CT-1090',coverageStart:'2026-02-01',scope:'Records · Ramp',
+  {id:'msn-30890',reg:'5V-TAK',msn:'30890',type:'Boeing 737-700',operator:'ASKY Airlines',region:'West Africa',tier:'Weekly monitoring',contractId:'FW-CT-1090',coverageStart:'2026-02-01',scope:'Records · Ramp',
    defaultRisk:{planM:3.40,actualM:3.31,month:'May 2026'},
    lastVisit:'2026-05-09',nextVisit:'2026-08-09',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-16',pages:20,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:2}],
+   reports:[{id:'r1',title:'FleetWatch Weekly, Week 13',period:'Week 13 · 2026',issued:'2026-06-16',pages:20,verdict:'Continue surveillance',condition:'Airframe within tolerance',visits:2}],
    anomalies:[
      {id:'a1',title:'Thrust reverser actuator, slow deploy on No.1',sev:'sev-low',sevLbl:'Low',captured:'2026-05-09',visit:'Ramp inspection · Lomé',status:'ast-mon',statusLbl:'Monitoring'}
    ],
    alerts:[],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-16'},
+     {id:'d1',name:'FleetWatch Weekly, Week 13',kind:'Report',date:'2026-06-16'},
      {id:'d2',name:'Visit pack, Ramp inspection (May)',kind:'Visit pack',date:'2026-05-09'},
      {id:'d5',name:'Surveillance contract, FW-CT-1090',kind:'Contract',date:'2026-02-01'}
    ]},
-  {id:'msn-6201',reg:'TU-TSB',msn:'6201',type:'Airbus A319-100',operator:'Air Côte d’Ivoire',region:'West Africa',tier:'Tier 1 · Monthly',contractId:'FW-CT-1095',coverageStart:'2026-02-15',scope:'Records · Ramp · MRO',
+  {id:'msn-6201',reg:'TU-TSB',msn:'6201',type:'Airbus A319-100',operator:'Air Côte d’Ivoire',region:'West Africa',tier:'Weekly monitoring',contractId:'FW-CT-1095',coverageStart:'2026-02-15',scope:'Records · Ramp · MRO',
    defaultRisk:{planM:2.90,actualM:2.30,month:'May 2026'},
    lastVisit:'2026-05-24',nextVisit:'2026-06-24',reportReady:false,
-   reports:[{id:'r1',title:'FleetWatch Quarterly, Q2 2026',period:'Q2 2026',issued:'2026-06-17',pages:21,verdict:'Heightened surveillance',condition:'Revenue shortfall, see default flag',visits:2}],
+   reports:[{id:'r1',title:'FleetWatch Weekly, Week 13',period:'Week 13 · 2026',issued:'2026-06-17',pages:21,verdict:'Heightened surveillance',condition:'Revenue shortfall, see default flag',visits:2}],
    anomalies:[
      {id:'a1',title:'Cabin pressurisation outflow valve, intermittent fault',sev:'sev-med',sevLbl:'Medium',captured:'2026-05-24',visit:'MRO observation · Abidjan',status:'ast-open',statusLbl:'Open'}
    ],
    alerts:[{id:'al1',title:'AOG, nose gear steering fault',dispatched:'2026-05-30 11:20',ack:null}],
    docs:[
-     {id:'d1',name:'FleetWatch Quarterly, Q2 2026',kind:'Report',date:'2026-06-17'},
+     {id:'d1',name:'FleetWatch Weekly, Week 13',kind:'Report',date:'2026-06-17'},
      {id:'d2',name:'Visit pack, MRO observation (May)',kind:'Visit pack',date:'2026-05-24'},
      {id:'d5',name:'Surveillance contract, FW-CT-1095',kind:'Contract',date:'2026-02-15'}
    ]}
@@ -795,14 +783,6 @@ try{var _rs=localStorage.getItem('andara.fw.portal.region');if(_rs)_region=_rs;}
 function regionCounts(){var c={};FLEET.forEach(function(a){c[a.region]=(c[a.region]||0)+1;});return c;}
 function fleetInScope(){return _region==='all'?FLEET.slice():FLEET.filter(function(a){return a.region===_region;});}
 function setRegion(r){_region=r;try{localStorage.setItem('andara.fw.portal.region',r);}catch(_){}renderRegionSelector();updateNavCounts();showView(_curView==='aircraft'?'fleet':_curView);}
-/* default flagging (§3.2.3): monthly sales vs the operator's business plan */
-function defaultFlag(a){
-  var d=a.defaultRisk;if(!d)return{level:'ok',lbl:'On plan',variance:0,planM:0,actualM:0};
-  var variance=Math.round(((d.actualM-d.planM)/d.planM)*1000)/10;
-  var level = variance<=-20?'risk' : variance<=-8?'watch' : 'ok';
-  var lbl = level==='risk'?'Default risk' : level==='watch'?'Watch' : 'On plan';
-  return{level:level,lbl:lbl,variance:variance,planM:d.planM,actualM:d.actualM,month:d.month};
-}
 function findAircraft(id){for(var i=0;i<FLEET.length;i++)if(FLEET[i].id===id)return FLEET[i];return null;}
 
 /* ── fleet-health model (Portfolio Overview + enriched Aircraft Detail) ──
@@ -820,9 +800,15 @@ var HEALTH={
 };
 function health(a){return HEALTH[a.id]||{score:0,trend:'stable',components:{},obs:[]};}
 function healthDefects(h){return (h.openDefects!=null?h.openDefects:((h.deferred||0)+(h.inWork||0)));}
-function hsColor(s){return s>=75?'sv-ok':s>=60?'sv-due':'sv-over';}
+/* PRD v1.0 FR-SC-003 · FR-CP-003: Healthy >=70 (green) / Monitor 50-69 (amber) / Act Now <50 (red) */
+function hsColor(s){return s>=70?'sv-ok':s>=50?'sv-due':'sv-over';}
+function hsLabel(s){return s>=70?'Healthy':s>=50?'Monitor':'Act Now';}
+/* PRD v1.0 FR-CP-002: value trend Stable / Watching / Eroding */
+function aircraftValueTrend(h){if(h.valueTrend)return h.valueTrend;return (h.trend!=='down')?'stable':((h.score||0)<65?'eroding':'watching');}
+function valueTrendLabel(t){return t==='eroding'?'Eroding':t==='watching'?'Watching':'Stable';}
+function valueTrendCls(t){return t==='eroding'?'sv-over':t==='watching'?'sv-due':'sv-ok';}
 function watchItems(a){return a.anomalies.filter(function(x){return x.status!=='ast-res';}).length + a.alerts.filter(function(al){return !al.ack;}).length;}
-function needsAttention(a){var h=health(a);return (h.score||0)<60 || defaultFlag(a).level==='risk' || a.alerts.some(function(al){return !al.ack;});}
+function needsAttention(a){var h=health(a);return (h.score||0)<50 || a.alerts.some(function(al){return !al.ack;});}
 
 /* ── predictive intelligence (forward-looking risk) ──
    Seeded predicted events by horizon (act 0-30d / plan 1-6mo / aware 6-12mo),
@@ -875,9 +861,9 @@ var ICO_ANOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 var ICO_ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
 var ICO_DOC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
 var ICO_REPORT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 12h2"/></svg>';
-var ALL_VIEWS=['portfolio','predictive','fleet','defaultrisk','anomalies','alerts','reports','documents','account','aircraft'];
-var VIEW_RENDER={portfolio:renderPortfolio,predictive:renderPredictive,fleet:renderFleet,defaultrisk:renderDefaultRisk,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
-var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',defaultrisk:'Default risk',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Intelligence reports',documents:'Deliverables',account:'Account & contract'};
+var ALL_VIEWS=['portfolio','predictive','fleet','anomalies','alerts','reports','documents','account','aircraft'];
+var VIEW_RENDER={portfolio:renderPortfolio,predictive:renderPredictive,fleet:renderFleet,anomalies:renderAnomalies,alerts:renderAlerts,reports:renderReports,documents:renderDocuments,account:renderAccount};
+var VIEW_TITLE={portfolio:'Portfolio overview',predictive:'Predictive intelligence',fleet:'Fleet under surveillance',anomalies:'Open anomalies',alerts:'AOG alerts',reports:'Intelligence reports',documents:'Deliverables',account:'Account & contract'};
 var _curView='fleet',_originView='fleet',_lastAircraftId=null;
 function hideAllViews(){ALL_VIEWS.forEach(function(id){var e=el('vw-'+id);if(e)e.style.display='none';});}
 /* Sidebar "Aircraft Detail" entry: a per-aircraft page needs a target, so open the
@@ -908,21 +894,18 @@ function showView(v){
   var mn=el('mn');if(mn)mn.scrollTop=0;
 }
 function updateNavCounts(){
-  var openAnom=0,pendAlert=0,dfFlagged=0,dfRisk=0;
+  var openAnom=0,pendAlert=0;
   fleetInScope().forEach(function(a){
     openAnom+=a.anomalies.filter(function(x){return x.status!=='ast-res';}).length;
     a.alerts.forEach(function(al){if(!al.ack)pendAlert++;});
-    var lv=defaultFlag(a).level;if(lv!=='ok')dfFlagged++;if(lv==='risk')dfRisk++;
   });
   var na=el('navAnom');if(na){na.textContent=openAnom||'';na.style.display=openAnom?'':'none';}
   var nl=el('navAlerts');if(nl){nl.textContent=pendAlert||'';nl.className='cnt'+(pendAlert?' alert':'');nl.style.display=pendAlert?'':'none';}
-  var ndf=el('navDefault');if(ndf){ndf.textContent=dfFlagged||'';ndf.className='cnt'+(dfRisk?' alert':'');ndf.style.display=dfFlagged?'':'none';}
   var actNow=PREDICT.filter(function(e){return e.hz==='act' && fleetInScope().some(function(a){return a.id===e.ac;});}).length;
   var npr=el('navPredict');if(npr){npr.textContent=actNow||'';npr.className='cnt'+(actNow?' alert':'');npr.style.display=actNow?'':'none';}
   /* collapsed icon-rail dot indicators */
   var anomNav=document.querySelector('.snav[data-v="anomalies"]');if(anomNav)anomNav.classList.toggle('has-count',openAnom>0);
   var alertNav=document.querySelector('.snav[data-v="alerts"]');if(alertNav){alertNav.classList.toggle('has-count',pendAlert>0);alertNav.classList.toggle('alert-count',pendAlert>0);}
-  var dfNav=document.querySelector('.snav[data-v="defaultrisk"]');if(dfNav){dfNav.classList.toggle('has-count',dfFlagged>0);dfNav.classList.toggle('alert-count',dfRisk>0);}
 }
 
 /* ── ANOMALIES (fleet-wide) ── */
@@ -974,7 +957,7 @@ function renderPredictive(){
   var flagged=Object.keys(varByAc).length;
   el('piSummary').innerHTML=
     cell('Act now',actN,'Predicted, 0–30 days',actN?'alert':'')
-    +cell('Plan ahead',planN,'Predicted, 1–6 months','')
+    +cell('Plan now',planN,'Predicted, 1–6 months','')
     +cell('Value at risk','$'+totalVar.toFixed(1)+'M','Estimated exposure',totalVar>0?'due':'')
     +cell('Aircraft flagged',flagged,'With value at risk','');
   ['act','plan','aware'].forEach(function(hz){
@@ -1006,52 +989,27 @@ function renderPortfolio(){
   var fl=fleetInScope();
   var scores=fl.map(function(a){return health(a).score||0;});
   var avg=scores.length?Math.round(scores.reduce(function(s,x){return s+x;},0)/scores.length):0;
-  var intact=fl.filter(function(a){return health(a).trend!=='down';}).length;
-  var atRisk=fl.filter(function(a){return health(a).trend==='down';}).length;
-  var attention=fl.filter(needsAttention).length;
+  var intact=fl.filter(function(a){return aircraftValueTrend(health(a))==='stable';}).length;
+  var atRisk=fl.filter(function(a){return aircraftValueTrend(health(a))!=='stable';}).length;
+  var actNow=fl.filter(function(a){return (health(a).score||0)<50;}).length;
   el('poSummary').innerHTML=
-    cell('Fleet health score',avg+' / 100','Portfolio average','')
+    cell('Aircraft monitored',fl.length,'Under FleetWatch','')
+    +cell('Fleet health score',avg+' / 100','Portfolio average','')
     +cell('Value intact',intact+' of '+fl.length,'Condition holding','ok')
-    +cell('Value at risk',atRisk,'Condition trending down',atRisk?'due':'')
-    +cell('Immediate attention',attention,'Action required',attention?'alert':'');
+    +cell('Value at risk',atRisk,'Watching or eroding',atRisk?'due':'')
+    +cell('Act now',actNow,'Health below 50',actNow?'alert':'');
   el('poCount').textContent=fl.length+' aircraft';
   var sorted=fl.slice().sort(function(a,b){return (health(a).score||0)-(health(b).score||0);});
   el('poBody').innerHTML=sorted.map(function(a){
-    var h=health(a),wi=watchItems(a);
-    var trend=h.trend==='down'?'<span class="pill sv-over"><span class="dot"></span>Trending down</span>':'<span class="pill sv-ok"><span class="dot"></span>Stable</span>';
+    var h=health(a),wi=watchItems(a);var vt=aircraftValueTrend(h);
     return '<tr onclick="showAircraft(\''+a.id+'\')">'
       +'<td class="fc-reg">'+a.reg+'</td>'
       +'<td class="fc-op">'+a.type+' · '+a.operator+'</td>'
-      +'<td><span class="pill '+hsColor(h.score)+'">'+h.score+' / 100</span></td>'
-      +'<td>'+trend+'</td>'
-      +'<td class="fc-op">'+(wi?wi+(wi===1?' item':' items'):'None')+(needsAttention(a)?'<span class="df-tag df-risk">Attention</span>':'')+'</td>'
+      +'<td><span class="pill '+hsColor(h.score)+'">'+h.score+' · '+hsLabel(h.score)+'</span></td>'
+      +'<td><span class="pill '+valueTrendCls(vt)+'"><span class="dot"></span>'+valueTrendLabel(vt)+'</span></td>'
+      +'<td class="fc-op">'+(wi?wi+(wi===1?' item':' items'):'None')+(((h.score||0)<50)?'<span class="df-tag df-risk">Act now</span>':'')+'</td>'
       +'<td class="fc-go">&rsaquo;</td>'
     +'</tr>';
-  }).join('');
-}
-
-/* ── DEFAULT RISK (fleet-wide, §3.2.3 Default flagging) ── */
-function renderDefaultRisk(){
-  var fl=fleetInScope();
-  var rows=fl.map(function(a){return {a:a,df:defaultFlag(a)};});
-  var rank={risk:0,watch:1,ok:2};
-  rows.sort(function(x,y){return rank[x.df.level]-rank[y.df.level]||x.df.variance-y.df.variance;});
-  var risk=rows.filter(function(r){return r.df.level==='risk';}).length;
-  var watch=rows.filter(function(r){return r.df.level==='watch';}).length;
-  var onplan=rows.filter(function(r){return r.df.level==='ok';}).length;
-  el('dfSummary').innerHTML=cell('Carriers monitored',rows.length,'In this scope','')
-    +cell('Default risk',risk,'Material shortfall vs plan',risk?'alert':'')
-    +cell('Watch',watch,'Early shortfall signal','')
-    +cell('On plan',onplan,'Meeting business plan','ok');
-  el('dfAllCount').textContent=(risk+watch)+' flagged';
-  el('dfAll').innerHTML=rows.map(function(r){var a=r.a,df=r.df;
-    var pct=Math.max(4,Math.min(100,Math.round((df.actualM/df.planM)*100)));
-    return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
-      +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>'
-      +'<div class="body"><div class="hd"><h4>'+a.operator+'</h4><span class="pill df-'+df.level+'">'+df.lbl+'</span></div>'
-        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.region+'</span><span>Plan <b>$'+df.planM.toFixed(2)+'M</b></span><span>Actual <b>$'+df.actualM.toFixed(2)+'M</b></span><span>'+(df.variance>0?'+':'')+df.variance+'% vs plan</span></div>'
-        +'<div class="df-track" style="margin-top:8px"><div class="df-fill df-'+df.level+'" style="width:'+pct+'%"></div></div></div>'
-    +'</div>';
   }).join('');
 }
 
@@ -1098,7 +1056,7 @@ function renderDocuments(){
   var rows=[];fleetInScope().forEach(function(a){a.docs.forEach(function(dc){rows.push({a:a,dc:dc});});});
   rows.sort(function(x,y){return parseYMD(y.dc.date)-parseYMD(x.dc.date);});
   var kinds={};rows.forEach(function(r){kinds[r.dc.kind]=(kinds[r.dc.kind]||0)+1;});
-  el('docSummary').innerHTML=cell('Deliverables',rows.length,'All watermarked files','')+cell('Reports',kinds['Report']||0,'Quarterly PDFs','')+cell('Visit packs',kinds['Visit pack']||0,'Per-visit evidence','')+cell('Contracts',kinds['Contract']||0,'Surveillance agreements','');
+  el('docSummary').innerHTML=cell('Deliverables',rows.length,'All watermarked files','')+cell('Reports',kinds['Report']||0,'Intelligence PDFs','')+cell('Visit packs',kinds['Visit pack']||0,'Per-visit evidence','')+cell('Contracts',kinds['Contract']||0,'Surveillance agreements','');
   el('docAllCount').textContent=rows.length+' files';
   el('docAll').innerHTML=rows.map(function(r){var a=r.a,dc=r.dc;
     return '<div class="lrow">'
@@ -1113,7 +1071,7 @@ function renderDocuments(){
 /* ── ACCOUNT ── */
 function renderAccount(){
   var fl=fleetInScope();
-  el('acctSummary').innerHTML=cell('Contracts',fl.length,'Active surveillance','')+cell('Tier 1 · Monthly',fl.filter(function(a){return /Tier 1/.test(a.tier);}).length,'Monthly cadence','')+cell('Tier 2 · Quarterly',fl.filter(function(a){return /Tier 2/.test(a.tier);}).length,'Quarterly cadence','')+cell('Subscriber','Fidelity','Institutional client','');
+  el('acctSummary').innerHTML=cell('Contracts',fl.length,'Active surveillance','')+cell('Monitoring',fl.length,'Weekly field visits','ok')+cell('Regions',(function(){var r={};fl.forEach(function(a){r[a.region]=1;});return Object.keys(r).length;})(),'In your scope','')+cell('Subscriber','Fidelity','Institutional client','');
   el('acctCount').textContent=fl.length+' contracts';
   el('acctContracts').innerHTML=fl.map(function(a){
     return '<div class="lrow lrow-click" onclick="showAircraft(\''+a.id+'\')">'
@@ -1123,20 +1081,19 @@ function renderAccount(){
       +'<div class="side"><button class="btn sm" type="button" onclick="event.stopPropagation();showAircraft(\''+a.id+'\')">Open</button></div>'
     +'</div>';
   }).join('');
-  el('acctContact').innerHTML=kv('Customer success lead','Amara Okoro',false)+kv('FleetWatch desk','fleetwatch@andarasystems.com',false)+kv('AOG escalation (24/7)','+234 700 ANDARA',false)+kv('Reporting cadence','Quarterly, with off-cycle AOG alerts',false);
+  el('acctContact').innerHTML=kv('Customer success lead','Amara Okoro',false)+kv('FleetWatch desk','fleetwatch@andarasystems.com',false)+kv('AOG escalation (24/7)','+234 700 ANDARA',false)+kv('Reporting cadence','Weekly, with off-cycle AOG alerts',false);
 }
 
 /* ── FLEET LIST render ── */
 function renderFleet(){
   // summary strip (scoped to the selected region, §3.2.3 region selector)
   var fl=fleetInScope();
-  var total=fl.length, onSched=0, due=0, openAlerts=0, atRisk=0;
+  var total=fl.length, onSched=0, due=0, openAlerts=0;
   fl.forEach(function(a){
     var s=svState(a);
     if(s.cls==='sv-ok'||s.cls==='sv-rep')onSched++;
     if(s.cls==='sv-due'||s.cls==='sv-over')due++;
     a.alerts.forEach(function(al){if(!al.ack)openAlerts++;});
-    if(defaultFlag(a).level!=='ok')atRisk++;
   });
   el('fleetSummary').innerHTML=
     cell('Aircraft monitored',total,'Under FleetWatch contract','')+
@@ -1146,13 +1103,12 @@ function renderFleet(){
 
   el('fleetCount').textContent=total+' aircraft'+(_region!=='all'?' · '+_region:'');
   var rows=fl.map(function(a){
-    var s=svState(a);var df=defaultFlag(a);
-    var dfTag=df.level!=='ok'?'<span class="df-tag df-'+df.level+'" title="Monthly sales '+df.variance+'% vs business plan">'+df.lbl+'</span>':'';
+    var s=svState(a);
     return '<tr onclick="showAircraft(\''+a.id+'\')">'
       +'<td class="fc-reg">'+a.reg+'</td>'
       +'<td class="fc-msn">'+a.msn+'</td>'
       +'<td class="fc-type">'+a.type+'</td>'
-      +'<td class="fc-op">'+a.operator+dfTag+'</td>'
+      +'<td class="fc-op">'+a.operator+'</td>'
       +'<td><span class="pill '+s.cls+'"><span class="dot"></span>'+s.lbl+'</span></td>'
       +'<td class="fc-date">'+fmtDate(a.lastVisit)+'<span class="ago">'+relDays(a.lastVisit)+'</span></td>'
       +'<td class="fc-date">'+fmtDate(a.nextVisit)+'<span class="ago">'+relDays(a.nextVisit)+'</span></td>'
@@ -1188,11 +1144,9 @@ function showAircraft(id,opts){
   // fleet health (asset condition + engineering + observations)
   var h=health(a);
   var hc=hsColor(h.score);
-  el('adHeroHs').innerHTML='Health · <b class="'+hc+'">'+(h.score||'—')+'</b> / 100';
-  var trendDn=h.trend==='down';
-  el('fhTrend').innerHTML=trendDn
-    ?'<span class="pill sv-over"><span class="dot"></span>Trending down</span>'
-    :'<span class="pill sv-ok"><span class="dot"></span>Stable</span>';
+  el('adHeroHs').innerHTML='Health · <b class="'+hc+'">'+(h.score||'—')+' / 100 · '+hsLabel(h.score)+'</b>';
+  var vt=aircraftValueTrend(h);
+  el('fhTrend').innerHTML='<span class="pill '+hc+'"><span class="dot"></span>'+hsLabel(h.score)+'</span>';
   var compOrder=['Structural','Powerplant','Systems','Compliance','Maintenance'];
   var compBars=compOrder.filter(function(k){return h.components&&(k in h.components);}).map(function(k){
     var v=h.components[k];var col=v>=75?'var(--deploy)':v>=60?'var(--watch)':'var(--dnd)';
@@ -1206,7 +1160,7 @@ function showAircraft(id,opts){
   el('fhPanel').innerHTML=
     '<div class="ad-hs"><div class="ad-hs-num '+hc+'">'+(h.score||'—')+'</div>'
       +'<div class="ad-hs-meta"><div class="ad-hs-lbl">Asset health score</div>'
-      +'<div class="ad-hs-den">out of 100 · condition '+(trendDn?'trending down':'holding')+'</div></div></div>'
+      +'<div class="ad-hs-den">out of 100 · '+hsLabel(h.score)+'</div></div></div>'
     +'<div class="ad-cmp">'+compBars+'</div>'
     +'<div class="ad-stats">'
       +stat('Total Hours',num(h.hoursTSN),'Since new')
@@ -1214,7 +1168,7 @@ function showAircraft(id,opts){
       +stat('Open Defects',(defs),(h.deferred!=null?h.deferred+' deferred · '+(h.inWork||0)+' in work':'On file'),defs>0?'warn':'ok')
       +stat('Last C-Check',(h.ccMonths!=null?h.ccMonths+' mo':'—'),(h.ccMonths!=null?'ago · '+(h.ccLoc||''):(h.ccLoc||'')),(h.ccMonths!=null&&h.ccMonths>=12)?'warn':'')
       +stat('Value Estimate','$'+(h.valueEstM!=null?h.valueEstM.toFixed(1):'—')+'M',(h.valueMarket||'Market value'))
-      +stat('Value Trend',(trendDn?'⚠ Watching':'● Stable'),(h.valueTrendNote||''),trendDn?'bad':'ok')
+      +stat('Value Trend',((vt==='eroding'?'▼ ':vt==='watching'?'⚠ ':'● ')+valueTrendLabel(vt)),(h.valueTrendNote||''),(vt==='eroding'?'bad':vt==='watching'?'warn':'ok'))
       +stat('AD Compliance',(h.adCompliance!=null?h.adCompliance+'%':'—'),(h.adNote||''),(h.adCompliance===100?'ok':'warn'))
       +stat('Weeks of Data',(h.weeksData!=null?h.weeksData:'—'),'Field scans')
       +stat('Docs Ingested',num(h.docsIngested),'Records parsed')
@@ -1246,21 +1200,7 @@ function showAircraft(id,opts){
     kv('Last visit',fmtDate(a.lastVisit)+' · '+relDays(a.lastVisit),false)+
     kv('Next visit',fmtDate(a.nextVisit)+' · '+relDays(a.nextVisit),false);
 
-  // default flagging (§3.2.3): monthly sales vs documented business plan
-  var df=defaultFlag(a);
-  el('dfHdr').innerHTML='<span class="pill df-'+df.level+'">'+df.lbl+'</span>';
-  var pct=Math.max(4,Math.min(100,Math.round((df.actualM/df.planM)*100)));
-  el('dfPanel').innerHTML=
-    '<div class="df-desc">Monthly sales measured against the operator\'s documented business plan. A sustained shortfall is an early default-risk signal.</div>'
-    +'<div class="df-bars">'
-      +'<div class="df-brow"><span class="df-bl">Plan</span><div class="df-track"><div class="df-fill df-plan" style="width:100%"></div></div><b>$'+df.planM.toFixed(2)+'M</b></div>'
-      +'<div class="df-brow"><span class="df-bl">Actual</span><div class="df-track"><div class="df-fill df-'+df.level+'" style="width:'+pct+'%"></div></div><b>$'+df.actualM.toFixed(2)+'M</b></div>'
-    +'</div>'
-    +kv('Variance vs plan',(df.variance>0?'+':'')+df.variance+'%',false)
-    +kv('Reading month',df.month,false)
-    +'<div class="df-note">Flight-behaviour signals are added once flight-tracking (ADS-B) integration lands (PRD §7.4).</div>';
-
-  // latest quarterly report viewer
+  // latest weekly report viewer
   var rep=a.reports[0];
   el('rvPeriod').textContent=rep?rep.period:'';
   if(rep){
@@ -1269,12 +1209,12 @@ function showAircraft(id,opts){
     el('reportViewer').innerHTML=
       '<div class="rv-doc">'
         +'<div class="rv-wm"><span>'+wmLine+'</span></div>'
-        +'<div class="rv-eyebrow">Andara FleetWatch · Quarterly surveillance report</div>'
+        +'<div class="rv-eyebrow">Andara FleetWatch · Weekly surveillance report</div>'
         +'<h4>'+a.reg+', '+rep.title+'</h4>'
         +'<div class="rv-deck">'+a.type+' · MSN '+a.msn+' · operated by '+a.operator+'. Prepared for Fidelity Bank under contract '+a.contractId+'.</div>'
         +'<div class="rv-rule"></div>'
         +'<div class="rv-row"><span>Reporting period</span><span>'+rep.period+'</span></div>'
-        +'<div class="rv-row"><span>Visits this period</span><span>'+rep.visits+'</span></div>'
+        +'<div class="rv-row"><span>Field visits this week</span><span>'+rep.visits+'</span></div>'
         +'<div class="rv-row"><span>Open anomalies</span><span>'+a.anomalies.filter(function(x){return x.status!=='ast-res';}).length+'</span></div>'
         +'<div class="rv-row"><span>Airframe condition</span><span>'+rep.condition+'</span></div>'
         +'<div class="rv-row"><span>Surveillance recommendation</span><span>'+rep.verdict+'</span></div>'
@@ -1284,7 +1224,7 @@ function showAircraft(id,opts){
         +'<button class="btn primary" type="button" onclick="downloadReport(\''+a.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>Download PDF</button>'
       +'</div>';
   }else{
-    el('reportViewer').innerHTML='<div class="empty">No quarterly report issued yet for this aircraft.</div>';
+    el('reportViewer').innerHTML='<div class="empty">No weekly report issued yet for this aircraft.</div>';
   }
 
   // open anomalies, PRD §3.2.3: this is the OPEN list, so resolved are excluded
@@ -1340,7 +1280,7 @@ function backToFleet(){ showView(_originView||'fleet'); }
 /* ── actions ── */
 function downloadReport(id){
   var a=findAircraft(id);if(!a||!a.reports[0])return;var rep=a.reports[0];
-  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Quarterly report '+rep.period,format:'PDF'});
+  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Weekly report '+rep.period,format:'PDF'});
   downloadStub('FleetWatch_'+a.reg+'_'+rep.period.replace(/\s/g,'')+'.txt',
     'ANDARA FLEETWATCH, '+rep.title+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: Fidelity Bank\n\nWATERMARK\n  Seat: '+wm.user+'\n  Deliverable ID: '+wm.deliverableId+'\n  Token: '+wm.token+'\n  Issued: '+nowTs()+' UTC\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
   toast('Report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
