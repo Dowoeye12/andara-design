@@ -292,6 +292,50 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .ad-hero-hs b{font-weight:600}
 .ad-hero-hs b.sv-ok{color:var(--deploy)}.ad-hero-hs b.sv-due{color:var(--watch)}.ad-hero-hs b.sv-over{color:var(--dnd)}
 
+/* plain-English weekly report (FR-CP-005 / 006 / 007 / 008) */
+.ad-report{display:flex;flex-direction:column;gap:18px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:24px}
+.wr-verdict{display:flex;flex-direction:column;gap:9px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.wr-band{align-self:flex-start;display:inline-flex;align-items:center;height:24px;padding:0 12px;border-radius:5px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border:1px solid;margin:0}
+.wr-band.ok{color:var(--deploy);background:var(--deploy-soft);border-color:var(--deploy-line)}
+.wr-band.due{color:var(--watch);background:var(--watch-soft);border-color:var(--watch-line)}
+.wr-band.over{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.wr-headline{font-family:var(--sans);font-size:21px;font-weight:600;color:var(--display);line-height:1.3;margin:0;letter-spacing:-.01em}
+.wr-sub{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.05em}
+.wr-means{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.wr-mean{background:var(--bg2);padding:14px 15px;display:flex;flex-direction:column;gap:6px}
+.wr-mean-l{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--amber)}
+.wr-mean p{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5;margin:0}
+.wr-sec-h{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin:2px 0 -4px}
+.wr-traffic{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.wr-tl{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.wr-tl-top{display:flex;align-items:center;gap:8px}
+.wr-tl-dot{width:9px;height:9px;border-radius:50%;flex:none}
+.wr-tl.green .wr-tl-dot{background:var(--deploy)}.wr-tl.amber .wr-tl-dot{background:var(--watch)}.wr-tl.red .wr-tl-dot{background:var(--dnd)}
+.wr-tl h5{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--t1);margin:0}
+.wr-tl p{font-family:var(--sans);font-size:12px;color:var(--t3);line-height:1.45;margin:0}
+.wr-value{display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding:15px 18px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.wr-value .vcell{display:flex;flex-direction:column;gap:3px}
+.wr-value .vl{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.wr-value .vn{font-family:var(--sans);font-size:20px;font-weight:600;color:var(--display)}
+.wr-value .vn.risk{color:var(--dnd)}.wr-value .vn.safe{color:var(--deploy)}
+.wr-findings,.wr-actions{display:flex;flex-direction:column;gap:14px}
+.wr-finding{border-left:2px solid var(--line3);padding:2px 0 2px 14px;display:flex;flex-direction:column;gap:7px}
+.wr-fin-cost{align-self:flex-start;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--dnd);background:var(--dnd-soft);border:1px solid var(--dnd-line);border-radius:4px;padding:2px 8px}
+.wr-fin-plain{font-family:var(--sans);font-size:14px;color:var(--t1);line-height:1.5;margin:0}
+.wr-fin-toggle{align-self:flex-start;background:none;border:0;padding:0;cursor:pointer;font-family:var(--mono);font-size:11px;color:var(--amber);letter-spacing:.03em;display:inline-flex;align-items:center;gap:5px}
+.wr-fin-toggle:hover{color:var(--highlight)}
+.wr-fin-tech{font-family:var(--mono);font-size:12px;color:var(--t3);line-height:1.55;background:var(--bg3);border-radius:6px;padding:10px 12px}
+.wr-act{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.wr-act:last-child{border-bottom:none}
+.wr-act-n{flex:none;width:24px;height:24px;border-radius:6px;background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber-line);display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:600}
+.wr-act-body{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0}
+.wr-act-what{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1);line-height:1.4}
+.wr-act-why{font-family:var(--sans);font-size:13px;color:var(--t2);line-height:1.5}
+.wr-act-meta{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.03em;margin-top:2px}
+.wr-act-meta b{color:var(--t2);font-weight:600}
+.wr-empty{font-family:var(--sans);font-size:13px;color:var(--t3);font-style:italic}
+@media (max-width:720px){.wr-means{grid-template-columns:1fr}.wr-traffic{grid-template-columns:1fr 1fr}}
+
 /* kv rows */
 .kv{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
 .kv:last-child{border-bottom:none}
@@ -519,6 +563,9 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         <span class="ad-nextvisit">Next visit · <b id="adNext"></b></span>
       </div>
     </div>
+
+    <!-- Plain-English weekly report (FR-CP-005 / 006 / 007 / 008) -->
+    <div class="ad-report" id="adReport"></div>
 
     <div class="ad-grid">
       <!-- LEFT column -->
@@ -921,6 +968,86 @@ function renderActivity(){
   }).join(''):'<div class="empty">No recent portfolio activity.</div>';
 }
 
+/* ── plain-English weekly report (PRD v1.0 FR-CP-005 / 006 / 008) ──
+   Per-aircraft money-first findings + recommended actions. Verdict headline,
+   "what this means", traffic lights and value-at-risk are derived from the
+   health model; findings/actions are seeded (LLM-authored in production). */
+var AC_REPORT={
+  'msn-39041':{findings:[{cost:'$0.2M–$0.5M',plain:'One engine is showing very early blade-tip wear. Caught early it is cheap to watch; ignored it becomes a shop visit.',technical:'No.2 engine HPC blade-tip wear within limits on borescope, monitor rate of change over next two cycles.'}],
+    actions:[{what:'Re-borescope the No.2 engine at the next visit',why:'Confirms the wear is stable and not accelerating toward a shop visit',by:'Next weekly visit',costAction:'~$3k',costInaction:'$0.2M–$0.5M if it progresses to unplanned removal'}]},
+  'msn-6512':{findings:[{cost:'Under $50k',plain:'A minor nose-gear damper weep is present but has no operational impact yet.',technical:'Nose landing gear shimmy damper minor weep, within limits, no dispatch effect.'}],
+    actions:[{what:'Replace the nose-gear damper at the next scheduled check',why:'Removes a low-cost item before it becomes a defect',by:'Within 3 months',costAction:'~$15k',costInaction:'Under $50k if it develops into a leak'}]},
+  'msn-17004':{findings:[
+      {cost:'$0.6M–$1.0M',plain:'The APU is burning more oil than it should. Left alone, this points to an overhaul sooner than planned.',technical:'APU oil consumption trending above baseline, project overhaul window inside 6 months.'},
+      {cost:'$0.1M–$0.2M',plain:'Two airworthiness directives are still waiting on compliance paperwork, which weakens the maintenance record.',technical:'Two ADs pending compliance evidence, close before next report to keep RCS clean.'}],
+    actions:[
+      {what:'Plan the APU overhaul into the next maintenance window',why:'Turns an unplanned failure into a scheduled, cheaper event',by:'Within 6 months',costAction:'~$0.35M',costInaction:'$0.6M–$1.0M if it fails in service'},
+      {what:'Close out the two pending AD compliance records',why:'Restores a clean, verifiable compliance history',by:'Within 30 days',costAction:'~$5k admin',costInaction:'Ongoing value discount until the record is complete'}]},
+  'msn-2887':{findings:[
+      {cost:'$1.5M–$3.2M',plain:'Two recent maintenance checks are undocumented, so part of the maintenance history cannot be independently verified. This is the single biggest drag on the value.',technical:'Records gap across recent line checks, two with no CRS on file, deferred-item register incomplete.'},
+      {cost:'$0.4M–$0.7M',plain:'The heavy check is overdue and a main-gear tyre is past its wear limit, which will ground the aircraft if not addressed.',technical:'C-check overdue at 16 months, MLG #3 tyre beyond advisory, dispatch reliability slipping.'}],
+    actions:[
+      {what:'Recover the missing release-to-service records for the two checks',why:'Removes the largest value discount by restoring independent verification',by:'Within 2 weeks',costAction:'~$5k admin',costInaction:'$1.5M–$3.2M value erosion at remarketing'},
+      {what:'Book the overdue C-check and replace the MLG #3 tyre',why:'Prevents grounding and returns the aircraft to full dispatch',by:'Within 30 days',costAction:'~$0.3M',costInaction:'$0.4M–$0.7M plus lost utilisation'}]},
+  'msn-30622':{findings:[],actions:[]},
+  'msn-30890':{findings:[{cost:'$0.1M–$0.3M',plain:'A thrust-reverser actuator is deploying slowly. It still works, but it is trending toward a repair.',technical:'Thrust reverser actuator slow-deploy on No.1, within limits, under monitoring.'}],
+    actions:[{what:'Inspect the No.1 thrust-reverser actuator',why:'Confirms whether the repair can wait or should be scheduled',by:'Within 2 months',costAction:'~$20k',costInaction:'$0.1M–$0.3M if it fails and grounds a sector'}]},
+  'msn-6201':{findings:[
+      {cost:'$0.3M–$0.6M',plain:'A cabin pressurisation valve is intermittently faulting, which is starting to affect dispatch reliability.',technical:'Cabin pressurisation outflow valve intermittent fault, dispatch reliability slipping.'},
+      {cost:'Value drag',plain:'The operator is running behind its revenue plan, which is slowing scheduled maintenance and letting a backlog build.',technical:'Revenue shortfall vs plan compounding a deferred-maintenance backlog.'}],
+    actions:[
+      {what:'Replace the pressurisation outflow valve',why:'Restores dispatch reliability before it causes cancellations',by:'Within 30 days',costAction:'~$40k',costInaction:'$0.3M–$0.6M in disruption and further wear'},
+      {what:'Review the deferred-maintenance backlog with the operator',why:'Stops small deferrals compounding into a value problem',by:'Within 6 weeks',costAction:'Planning time',costInaction:'Accelerating value erosion if the backlog grows'}]}
+};
+var WR_AREA_MAP=[['Structural','Structural'],['Engines','Powerplant'],['Systems','Systems'],['Compliance','Compliance'],['Documentation','Maintenance']];
+var WR_PLAIN={Structural:'Airframe',Engines:'Engine',Systems:'Systems',Compliance:'Compliance',Documentation:'Records'};
+/* FR-SC-006: each score point below 70 maps to estimated value erosion (~0.7%/pt) */
+function valueAtRiskM(h){var s=h.score||0;if(s>=70||h.valueEstM==null)return 0;return Math.round(h.valueEstM*((70-s)*0.7)/100*10)/10;}
+function wrWeakestPlain(h){var c=h.components||{},lowK=null,lowV=999;WR_AREA_MAP.forEach(function(m){var v=c[m[1]];if(v!=null&&v<lowV){lowV=v;lowK=m[0];}});return WR_PLAIN[lowK]||'Condition';}
+function wrHeadline(h){var s=h.score||0;if(s>=70)return 'Condition strong, asset value holding';var w=wrWeakestPlain(h);if(s>=50)return w+' needs attention, value protectable with planned action';return 'Material risk on '+w.toLowerCase()+', act now to protect value';}
+function wrTraffic(h){var c=h.components||{};return WR_AREA_MAP.map(function(m){var v=c[m[1]];var st=(v==null)?'amber':(v>=70?'green':v>=50?'amber':'red');var pl=WR_PLAIN[m[0]];var note=st==='green'?pl+' in good order.':st==='amber'?pl+' shows early wear, under watch.':pl+' needs attention this week.';return {area:m[0],state:st,note:note};});}
+function wrMeans(h,varM){var s=h.score||0,v=varM.toFixed(1);
+  if(s>=70)return{banker:'Your collateral value is holding. Condition is strong and the asset is performing to plan.',risk:'No material airworthiness or compliance risk this week. Routine weekly monitoring continues.',asset:'Remarketing value is protected. The field-verified record supports full market value.'};
+  if(s>=50)return{banker:'Your collateral value is softening. About $'+v+'M is exposed until the items below are closed.',risk:'One or more areas need attention within the planned window. No immediate airworthiness risk, but drift is visible.',asset:'Remarketing value is exposed by about $'+v+'M until the open items are resolved and documented.'};
+  return{banker:'Your collateral value is eroding. About $'+v+'M is at risk and widening until action is taken.',risk:'Material condition or compliance risk is present. Act now to prevent grounding or further value loss.',asset:'Remarketing value is materially discounted while these items remain open and unverified.'};}
+function wrToggleTech(btn){var d=btn.nextElementSibling;if(!d)return;d.hidden=!d.hidden;btn.textContent='Technical detail '+(d.hidden?'▾':'▴');}
+function renderWeeklyReport(a,h){
+  var host=el('adReport');if(!host)return;
+  var cls=hsColor(h.score),band=cls==='sv-ok'?'ok':cls==='sv-due'?'due':'over',lbl=hsLabel(h.score);
+  var varM=valueAtRiskM(h),means=wrMeans(h,varM),traffic=wrTraffic(h);
+  var rep=(a.reports&&a.reports[0])||{period:'',issued:''};
+  var rd=AC_REPORT[a.id]||{findings:[],actions:[]};
+  var html='<div class="wr-verdict"><span class="wr-band '+band+'">'+lbl+'</span>'
+    +'<h2 class="wr-headline">'+wrHeadline(h)+'</h2>'
+    +'<div class="wr-sub">Weekly intelligence report'+(rep.period?' · '+rep.period:'')+(rep.issued?' · issued '+fmtDate(rep.issued):'')+'</div></div>';
+  html+='<div><div class="wr-sec-h">What this means</div><div class="wr-means" style="margin-top:10px">'
+    +'<div class="wr-mean"><span class="wr-mean-l">For the banker</span><p>'+means.banker+'</p></div>'
+    +'<div class="wr-mean"><span class="wr-mean-l">For the risk team</span><p>'+means.risk+'</p></div>'
+    +'<div class="wr-mean"><span class="wr-mean-l">For the asset team</span><p>'+means.asset+'</p></div></div></div>';
+  html+='<div><div class="wr-sec-h">Condition at a glance</div><div class="wr-traffic" style="margin-top:10px">'
+    +traffic.map(function(t){return '<div class="wr-tl '+t.state+'"><div class="wr-tl-top"><span class="wr-tl-dot"></span><h5>'+t.area+'</h5></div><p>'+t.note+'</p></div>';}).join('')+'</div></div>';
+  html+='<div class="wr-value">'
+    +'<div class="vcell"><span class="vl">Current value</span><span class="vn">$'+(h.valueEstM!=null?h.valueEstM.toFixed(1):'—')+'M</span></div>'
+    +'<div class="vcell"><span class="vl">Value at risk</span><span class="vn '+(varM>0?'risk':'safe')+'">'+(varM>0?'$'+varM.toFixed(1)+'M':'$0.0M')+'</span></div>'
+    +'<div class="vcell"><span class="vl">Condition band</span><span class="vn">'+lbl+'</span></div></div>';
+  html+='<div class="wr-findings"><div class="wr-sec-h">What we found this week</div>';
+  html+=rd.findings.length?rd.findings.map(function(f){
+    return '<div class="wr-finding"><span class="wr-fin-cost">'+f.cost+'</span>'
+      +'<p class="wr-fin-plain">'+f.plain+'</p>'
+      +'<button class="wr-fin-toggle" type="button" onclick="wrToggleTech(this)">Technical detail ▾</button>'
+      +'<div class="wr-fin-tech" hidden>'+f.technical+'</div></div>';
+  }).join(''):'<div class="wr-empty">No new material findings this week. Condition is holding.</div>';
+  html+='</div>';
+  html+='<div class="wr-actions"><div class="wr-sec-h">Recommended actions</div>';
+  html+=rd.actions.length?rd.actions.map(function(ac,i){
+    return '<div class="wr-act"><div class="wr-act-n">'+(i+1)+'</div><div class="wr-act-body">'
+      +'<div class="wr-act-what">'+ac.what+'</div><div class="wr-act-why">'+ac.why+'</div>'
+      +'<div class="wr-act-meta"><span>By <b>'+ac.by+'</b></span><span>Cost to act <b>'+ac.costAction+'</b></span><span>Cost of inaction <b>'+ac.costInaction+'</b></span></div></div></div>';
+  }).join(''):'<div class="wr-empty">No action required this week. Continue routine weekly monitoring.</div>';
+  html+='</div>';
+  host.innerHTML=html;
+}
+
 /* ══════════════ VIEW SWITCHING (side nav) ══════════════ */
 var ICO_ANOM='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>';
 var ICO_ALERT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>';
@@ -1211,6 +1338,7 @@ function showAircraft(id,opts){
   var h=health(a);
   var hc=hsColor(h.score);
   el('adHeroHs').innerHTML='Health · <b class="'+hc+'">'+(h.score||'—')+' / 100 · '+hsLabel(h.score)+'</b>';
+  renderWeeklyReport(a,h);
   var vt=aircraftValueTrend(h);
   el('fhTrend').innerHTML='<span class="pill '+hc+'"><span class="dot"></span>'+hsLabel(h.score)+'</span>';
   var compOrder=['Structural','Powerplant','Systems','Compliance','Maintenance'];
