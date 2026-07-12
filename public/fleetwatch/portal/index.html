@@ -1052,7 +1052,14 @@ var AC_REPORT={
 var WR_AREA_MAP=[['Structural','Structural'],['Engines','Powerplant'],['Systems','Systems'],['Compliance','Compliance'],['Documentation','Maintenance']];
 var WR_PLAIN={Structural:'Airframe',Engines:'Engine',Systems:'Systems',Compliance:'Compliance',Documentation:'Records'};
 /* FR-SC-006: each score point below 70 maps to estimated value erosion (~0.7%/pt) */
-function valueAtRiskM(h){var s=h.score||0;if(s>=70||h.valueEstM==null)return 0;return Math.round(h.valueEstM*((70-s)*0.7)/100*10)/10;}
+/* Value erosion per FleetWatch Technical Build Guide §4.4: 0.4%/pt below 70,
+   accelerating to 0.8%/pt below 50, capped at 25% of CMV, rounded to nearest $1k. */
+function valueAtRiskM(h){
+  var s=h.score||0,cmv=h.valueEstM;if(cmv==null)return 0;
+  var pct=s>=70?0:(s>=50?(70-s)*0.004:(20*0.004+(50-s)*0.008));
+  pct=Math.min(pct,0.25);
+  return Math.round(cmv*pct*1000)/1000;
+}
 function wrWeakestPlain(h){var c=h.components||{},lowK=null,lowV=999;WR_AREA_MAP.forEach(function(m){var v=c[m[1]];if(v!=null&&v<lowV){lowV=v;lowK=m[0];}});return WR_PLAIN[lowK]||'Condition';}
 function wrHeadline(h){var s=h.score||0;if(s>=70)return 'Condition strong, asset value holding';var w=wrWeakestPlain(h);if(s>=50)return w+' needs attention, value protectable with planned action';return 'Material risk on '+w.toLowerCase()+', act now to protect value';}
 function wrTraffic(h){var c=h.components||{};return WR_AREA_MAP.map(function(m){var v=c[m[1]];var st=(v==null)?'amber':(v>=70?'green':v>=50?'amber':'red');var pl=WR_PLAIN[m[0]];var note=st==='green'?pl+' in good order.':st==='amber'?pl+' shows early wear, under watch.':pl+' needs attention this week.';return {area:m[0],state:st,note:note};});}
@@ -1117,9 +1124,11 @@ function renderWeeklyReport(a,h){
     +'<div class="wr-mean"><span class="wr-mean-l">For the asset team</span><p>'+means.asset+'</p></div></div></div>';
   html+='<div><div class="wr-sec-h">Condition at a glance</div><div class="wr-traffic" style="margin-top:10px">'
     +traffic.map(function(t){return '<div class="wr-tl '+t.state+'"><div class="wr-tl-top"><span class="wr-tl-dot"></span><h5>'+t.area+'</h5></div><p>'+t.note+'</p></div>';}).join('')+'</div></div>';
+  var cmv=h.valueEstM;
   html+='<div class="wr-value">'
-    +'<div class="vcell"><span class="vl">Current value</span><span class="vn">$'+(h.valueEstM!=null?h.valueEstM.toFixed(1):'—')+'M</span></div>'
+    +'<div class="vcell"><span class="vl">Current value</span><span class="vn">$'+(cmv!=null?cmv.toFixed(1):'—')+'M</span></div>'
     +'<div class="vcell"><span class="vl">Value at risk</span><span class="vn '+(varM>0?'risk':'safe')+'">'+(varM>0?'$'+varM.toFixed(1)+'M':'$0.0M')+'</span></div>'
+    +'<div class="vcell"><span class="vl">Protected floor</span><span class="vn safe">$'+(cmv!=null?(cmv-varM).toFixed(1):'—')+'M</span></div>'
     +'<div class="vcell"><span class="vl">Condition band</span><span class="vn">'+lbl+'</span></div></div>';
   html+='<div class="wr-findings"><div class="wr-sec-h">What we found this week</div>';
   html+=rd.findings.length?rd.findings.map(function(f){
