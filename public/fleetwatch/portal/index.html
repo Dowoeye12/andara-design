@@ -694,6 +694,8 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <div class="doc-toolbar">
       <input id="docSearch" class="doc-search" type="text" placeholder="Search by name or registration" oninput="_docQuery=this.value;renderDocuments()"/>
       <select id="docType" onchange="_docType=this.value;renderDocuments()"><option value="all">All types</option><option value="Report">Reports</option><option value="Visit pack">Visit packs</option><option value="Evidence">Evidence</option><option value="Contract">Contracts</option></select>
+      <select id="docSev" onchange="_docSev=this.value;renderDocuments()"><option value="all">All severities</option><option value="Critical">Critical</option><option value="Watch">Watch</option><option value="Nominal">Nominal</option></select>
+      <select id="docZone" onchange="_docZone=this.value;renderDocuments()"><option value="all">All zones</option><option value="Structural">Structural</option><option value="Powerplant">Powerplant</option><option value="Systems">Systems</option><option value="Compliance">Compliance</option><option value="Documentation">Documentation</option></select>
     </div>
     <div class="panel"><div class="ph"><span class="bullet"></span><h3>Document index, fleet-wide</h3><span class="meta" id="docAllCount"></span></div><div id="docAll"></div></div>
   </div>
@@ -1383,17 +1385,56 @@ function downloadIntelReport(id){
 }
 
 /* ── DOCUMENTS (fleet-wide) ── */
-var _docQuery='',_docType='all';
+var _docQuery='',_docType='all',_docSev='all',_docZone='all';
+/* FR-IP-003 / FR-AD-003: tag every dossier document with a finding zone
+   (Structural / Powerplant / Systems / Compliance / Documentation) and finding
+   severity (Critical / Watch / Nominal) so the archive is searchable by both.
+   Zone is inferred from the document name; severity ties evidence/visit packs to
+   the aircraft's worst open anomaly. M2 sources these from the real finding set. */
+function docZoneFromText(n){
+  n=(n||'').toLowerCase();
+  if(/blade|engine|hpc|oil|apu|powerplant|thrust|egt|borescope/.test(n))return 'Powerplant';
+  if(/pressuris|valve|avionic|electric|hydraul|system|reverser|steering|door seal/.test(n))return 'Systems';
+  if(/airframe|structural|skin|gear|tyre|tire|corros|fuselage|window|craz/.test(n))return 'Structural';
+  if(/\bad\b|ad-|compliance|aoc|regulat|directive|airworth|insur|contract|licen/.test(n))return 'Compliance';
+  if(/record|gap|crs|document|log|snag|defect/.test(n))return 'Documentation';
+  return null;
+}
+function docZoneOf(dc,a){
+  var z=docZoneFromText(dc.name);if(z)return z;
+  if(dc.kind==='Contract')return 'Compliance';
+  if((dc.kind==='Visit pack'||dc.kind==='Evidence')&&a){
+    var worst=(a.anomalies||[]).filter(function(x){return x.status!=='ast-res';})
+      .sort(function(x,y){var r={'sev-high':0,'sev-med':1,'sev-low':2};return r[x.sev]-r[y.sev];})[0];
+    if(worst){var wz=docZoneFromText(worst.title);if(wz)return wz;}
+  }
+  return 'Documentation';
+}
+function docSevOf(dc,a){
+  if(dc.kind==='Contract')return 'Nominal';
+  if(dc.kind==='Evidence'||dc.kind==='Visit pack'){
+    var worst=(a.anomalies||[]).filter(function(x){return x.status!=='ast-res';})
+      .sort(function(x,y){var r={'sev-high':0,'sev-med':1,'sev-low':2};return r[x.sev]-r[y.sev];})[0];
+    if(worst)return worst.sev==='sev-high'?'Critical':worst.sev==='sev-med'?'Watch':'Nominal';
+    return 'Nominal';
+  }
+  return 'Nominal';
+}
+function enrichDocs(){FLEET.forEach(function(a){(a.docs||[]).forEach(function(dc){if(!dc.zone)dc.zone=docZoneOf(dc,a);if(!dc.severity)dc.severity=docSevOf(dc,a);});});}
+function docSevTag(s){return s==='Critical'?'df-risk':s==='Watch'?'df-watch':'df-ok';}
 function renderDocuments(){
+  enrichDocs();
   var all=[];fleetInScope().forEach(function(a){a.docs.forEach(function(dc){all.push({a:a,dc:dc});});});
   all.sort(function(x,y){return parseYMD(y.dc.date)-parseYMD(x.dc.date);});
   var kinds={};all.forEach(function(r){kinds[r.dc.kind]=(kinds[r.dc.kind]||0)+1;});
   el('docSummary').innerHTML=cell('Deliverables',all.length,'All watermarked files','')+cell('Reports',kinds['Report']||0,'Intelligence PDFs','')+cell('Visit packs',kinds['Visit pack']||0,'Per-visit evidence','')+cell('Contracts',kinds['Contract']||0,'Surveillance agreements','');
-  // FR-AD-003: archive searchable by document type and free text (name / registration)
+  // FR-AD-003: archive searchable by document type, finding severity, finding zone and free text
   var q=(_docQuery||'').trim().toLowerCase();
   var rows=all.filter(function(r){
     if(_docType!=='all'&&r.dc.kind!==_docType)return false;
-    if(q&&(r.dc.name+' '+r.a.reg+' '+r.dc.kind).toLowerCase().indexOf(q)===-1)return false;
+    if(_docSev!=='all'&&r.dc.severity!==_docSev)return false;
+    if(_docZone!=='all'&&r.dc.zone!==_docZone)return false;
+    if(q&&(r.dc.name+' '+r.a.reg+' '+r.dc.kind+' '+r.dc.zone+' '+r.dc.severity).toLowerCase().indexOf(q)===-1)return false;
     return true;
   });
   el('docAllCount').textContent=rows.length+' files'+(rows.length!==all.length?' of '+all.length:'');
@@ -1401,7 +1442,7 @@ function renderDocuments(){
     return '<div class="lrow">'
       +'<div class="ico">'+ICO_DOC+'</div>'
       +'<div class="body"><div class="hd"><h4>'+dc.name+'</h4></div>'
-        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span><b>'+dc.kind+'</b></span><span>'+fmtDate(dc.date)+'</span></div></div>'
+        +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span><b>'+dc.kind+'</b></span><span>'+dc.zone+'</span><span class="df-tag '+docSevTag(dc.severity)+'">'+dc.severity+'</span><span>'+fmtDate(dc.date)+'</span></div></div>'
       +'<div class="side"><button class="btn sm" type="button" onclick="downloadDoc(\''+a.id+'\',\''+dc.id+'\')">Download</button></div>'
     +'</div>';
   }).join(''):'<div class="empty">No documents match your search.</div>';
