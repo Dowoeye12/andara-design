@@ -2707,30 +2707,13 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
         <span class="cnt">16</span>
       </div>
     </div>
-    <!-- ANALYSIS -->
+    <!-- DELIVERABLES -->
+    <!-- Analyst Workspace, Scoring Committee, Methodology and Audit Trail were
+         removed from Credit Intelligence; they move to the Super Admin console.
+         Their view markup + builders are intentionally left in place (unreachable)
+         for that migration. Only Reports & Downloads remains client-facing here. -->
     <div class="sgrp">
-      <div class="sgrp-hd"><span class="lbl">Analysis</span><span class="rule"></span></div>
-      <div class="sitem" data-v="method">
-        <span class="ico"><svg viewBox="0 0 17 17"><path d="M8.5 2 L15 5.8 L8.5 9.6 L2 5.8 Z"/><path d="M2 10.2 L8.5 14 L15 10.2"/></svg></span>
-        <span class="lbl">Methodology</span>
-      </div>
-      <div class="sitem" data-v="workspace">
-        <span class="ico"><svg viewBox="0 0 17 17"><rect x="2.5" y="2.5" width="12" height="12" rx="2"/><line x1="8.5" y1="6" x2="8.5" y2="11"/><line x1="6" y1="8.5" x2="11" y2="8.5"/></svg></span>
-        <span class="lbl">Analyst Workspace</span>
-      </div>
-    </div>
-    <!-- GOVERNANCE -->
-    <div class="sgrp">
-      <div class="sgrp-hd"><span class="lbl">Governance</span><span class="rule"></span></div>
-      <div class="sitem" data-v="committee">
-        <span class="ico"><svg viewBox="0 0 17 17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13.5 L8.5 3 L14 13.5 Z"/><line x1="3" y1="13.5" x2="14" y2="13.5"/><line x1="6" y1="10" x2="11" y2="10"/></svg></span>
-        <span class="lbl">Scoring Committee</span>
-        <span class="cnt" id="ccSidebarCnt">0</span>
-      </div>
-      <div class="sitem" data-v="audit">
-        <span class="ico"><svg viewBox="0 0 17 17"><circle cx="8.5" cy="8.5" r="6.2"/><path d="M8.5 5 V8.5 L11 10.5"/></svg></span>
-        <span class="lbl">Audit Trail</span>
-      </div>
+      <div class="sgrp-hd"><span class="lbl">Deliverables</span><span class="rule"></span></div>
       <div class="sitem" data-v="reports">
         <span class="ico"><svg viewBox="0 0 17 17"><path d="M4 2.5 H10 L13 5.5 V14.5 H4 Z"/><line x1="6" y1="9" x2="11" y2="9"/><line x1="6" y1="11.5" x2="11" y2="11.5"/></svg></span>
         <span class="lbl">Reports &amp; Downloads</span>
@@ -9337,7 +9320,7 @@ function bindNav(){
     const wm = moLogDeliverable({scope,deliverable:'Market report',format:'PDF'});
     toast(`Market report · ${scope}`, `Watermark <strong>${wm.token}</strong> · ${wm.deliverableId}. Opening report centre…`);
     setTimeout(()=>{
-      const item = document.querySelector('.sitem[data-v="method"]');
+      const item = document.querySelector('.sitem[data-v="reports"]');
       if (item) item.click();
     }, 400);
   });
