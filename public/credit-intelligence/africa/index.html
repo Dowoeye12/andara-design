@@ -533,7 +533,7 @@ select{
 
 .mo-heat-sort{background-color:var(--bg2);border:1px solid var(--line);color:var(--t1);font-family:var(--mono);font-size:12px;padding:0 32px 0 10px;background-position:right 10px center;height:28px;outline:none;border-radius:3px;box-sizing:border-box}
 .mo-heat-sort:focus{border-color:rgba(77,144,217,.5)}
-.mo-heat{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.mo-heat{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .mo-hcell{aspect-ratio:1.5/1;padding:12px;border:1px solid var(--line);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;gap:8px;transition:border-color .12s,transform .12s;border-radius:3px;position:relative;overflow:hidden}
 .mo-hcell:hover{border-color:var(--t3);transform:translateY(-1px)}
 .mo-hcell .mo-hname{font-family:var(--sans);font-size:12px;font-weight:600;color:var(--display);line-height:1.2;letter-spacing:-.005em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -4950,10 +4950,10 @@ const SA_CARRIERS = [
 
   {id:'dhl-aviation-sa',name:'DHL Aviation South Africa',code:'·DHV',founded:'n/a',hq:'Johannesburg',hub:'JNB',own:'South African subsidiary of DHL Aviation (Deutsche Post DHL Group)',region:'southern-africa',jurisdiction:'South Africa',iso:'ZA',iataCode:'',monitoringTier:3,dateOfAssessment:'2026-05',scoringTier:'PRELIMINARY',scoringTierLabel:'Preliminary',
     scores:{svs:{value:8.0,confidence:'high'},pps:{value:7.8,confidence:'high'},aps:{value:7.8,confidence:'high'},rcs:{value:8.2,confidence:'high'},ras:{value:7.2,confidence:'high'}},
-    composite:78,displayScore:78,verdict:'watch',verdictBand:'upper-watch',
+    composite:78,displayScore:78,verdict:'deploy',verdictBand:'lower-deploy',
     hardFloor:{ppsTriggered:false,rcsTriggered:false,atBoundary:false,note:'No hard floor. SACAA regulatory environment. DHL parent financial strength is the relevant backstop.'},
     differentiatedVerdicts:{westernInstitutional:'deploy',chineseInstitutional:'deploy',regionalAfricanInstitutional:'deploy',miningOilGasCounterparty:'deploy'},
-    verdictNarrative:"DHL Aviation South Africa benefits from Deutsche Post DHL Group's global financial strength. SACAA regulated. WATCH aggregate reflects South African subsidiary-specific financial data not separately scored — the parent group's creditworthiness is not the same as subsidiary AOC-holder standing. For practical purposes this is among the most financially secure operators in the universe. All four client tiers: DEPLOY based on parent financial strength.",
+    verdictNarrative:"DHL Aviation South Africa benefits from Deutsche Post DHL Group's global financial strength. SACAA regulated. A composite of 78 places it in DEPLOY, with the parent group's creditworthiness underpinning all four client tiers. The one caveat, flagged under data gaps, is that South African subsidiary-specific financial statements are not separately published, so the parent backstop is what carries the verdict. For practical purposes this is among the most financially secure operators in the universe.",
     conditions:['SA subsidiary AOC currency maintenance'],
     monitoringTriggers:['Any SACAA adverse action on DHL Aviation SA AOC'],
     dataGapFlags:['South African subsidiary-specific financial statements not separately published'],
