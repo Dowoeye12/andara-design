@@ -373,6 +373,7 @@ table.fleet tbody tr:hover .fc-go{color:var(--amber)}
 .rv-doc .rv-row span:first-child{color:#6a6f7a}
 .rv-doc .rv-row span:last-child{font-family:var(--mono);font-weight:600}
 .rv-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rv-actions{display:flex;gap:10px;flex-wrap:wrap}
 .rv-meta .info{font-family:var(--mono);font-size:11px;color:var(--t4);letter-spacing:.04em;line-height:1.6}
 
 /* list rows (anomalies / alerts / documents), list-row typography canon */
@@ -1255,7 +1256,7 @@ function renderAlerts(){
   var html=rows.map(function(r){var a=r.a,al=r.al,acked=!!al.ack;
     return '<div class="lrow">'
       +'<div class="ico">'+ICO_ALERT+'</div>'
-      +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip amber">AOG</span></div>'
+      +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip red">AOG</span></div>'
         +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>Dispatched <b>'+al.dispatched+' UTC</b></span>'+(acked?'<span>Ack <b>'+al.ack+' UTC</b></span>':'')+'</div></div>'
       +'<div class="side">'+(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')+'</div>'
     +'</div>';
@@ -1632,7 +1633,10 @@ function showAircraft(id,opts){
       +'</div>'
       +'<div class="rv-meta">'
         +'<div class="info">Issued '+fmtDate(rep.issued)+' · '+rep.pages+' pp · Watermarked PDF<br>Preview bears your seat watermark; download regenerates a fresh token.</div>'
-        +'<button class="btn primary" type="button" onclick="downloadReport(\''+a.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>Download PDF</button>'
+        +'<div class="rv-actions">'
+          +'<button class="btn primary" type="button" onclick="downloadReport(\''+a.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>Weekly PDF</button>'
+          +'<button class="btn" type="button" onclick="downloadQuarterlyReport(\''+a.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/></svg>Quarterly PDF</button>'
+        +'</div>'
       +'</div>';
   }else{
     el('reportViewer').innerHTML='<div class="empty">No weekly report issued yet for this aircraft.</div>';
@@ -1661,7 +1665,7 @@ function showAircraft(id,opts){
       var acked=!!al.ack;
       return '<div class="lrow">'
         +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>'
-        +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip amber">AOG</span></div>'
+        +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip red">AOG</span></div>'
           +'<div class="metaln"><span>Dispatched <b>'+al.dispatched+' UTC</b></span>'+(acked?'<span>Acknowledged <b>'+al.ack+' UTC</b></span>':'')+'</div></div>'
         +'<div class="side">'
           +(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')
@@ -1694,7 +1698,18 @@ function downloadReport(id){
   var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Weekly report '+rep.period,format:'PDF'});
   downloadStub('FleetWatch_'+a.reg+'_'+rep.period.replace(/\s/g,'')+'.txt',
     'ANDARA FLEETWATCH, '+rep.title+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: '+wm.client+'\n\n'+fwWatermark(wm)+'\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
-  toast('Report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
+  toast('Weekly report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
+}
+function reportQuarter(rep){
+  var d=(rep&&rep.issued)||'';var m=parseInt(d.slice(5,7),10)||1;var y=d.slice(0,4)||'2026';
+  return 'Q'+Math.ceil(m/3)+' '+y;
+}
+function downloadQuarterlyReport(id){
+  var a=findAircraft(id);if(!a||!a.reports[0])return;var rep=a.reports[0];var q=reportQuarter(rep);
+  var wm=fwLogDeliverable({aircraft:a.reg,deliverable:'Quarterly report '+q,format:'PDF'});
+  downloadStub('FleetWatch_'+a.reg+'_'+q.replace(/\s/g,'')+'_Quarterly.txt',
+    'ANDARA FLEETWATCH, Quarterly surveillance report '+q+'\nAircraft '+a.reg+' ('+a.type+', MSN '+a.msn+')\nPrepared for: '+wm.client+'\nRolls up the weekly field intelligence across the quarter.\n\n'+fwWatermark(wm)+'\n\n[Stub envelope, M2 renders the full watermarked PDF server-side.]');
+  toast('Quarterly report downloaded · watermarked','ID '+wm.deliverableId+'  ·  '+wm.token);
 }
 function downloadDoc(id,docId){
   var a=findAircraft(id);if(!a)return;var dc=null;a.docs.forEach(function(x){if(x.id===docId)dc=x;});if(!dc)return;
