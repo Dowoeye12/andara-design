@@ -75,6 +75,7 @@ a{color:inherit;text-decoration:none}
 .ichip.muted{color:var(--t4);background:var(--bg3);border-color:var(--line)}
 .ichip.amber{color:var(--highlight);background:var(--highlight-soft);border-color:var(--highlight-line)}
 .ichip.red{color:var(--dnd);background:var(--dnd-soft);border-color:var(--dnd-line)}
+.ichip.aog{color:#f0736f;background:rgba(228,82,82,0.20);border-color:rgba(228,82,82,0.60)}
 
 /* ══════════════════════════════════════════ LOGIN ══════════════════════════════════════════ */
 #login{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;background:var(--bg);overflow:auto}
@@ -1256,7 +1257,7 @@ function renderAlerts(){
   var html=rows.map(function(r){var a=r.a,al=r.al,acked=!!al.ack;
     return '<div class="lrow">'
       +'<div class="ico">'+ICO_ALERT+'</div>'
-      +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip red">AOG</span></div>'
+      +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip aog">AOG</span></div>'
         +'<div class="metaln"><span class="reg-tag">'+a.reg+'</span><span>'+a.operator+'</span><span>Dispatched <b>'+al.dispatched+' UTC</b></span>'+(acked?'<span>Ack <b>'+al.ack+' UTC</b></span>':'')+'</div></div>'
       +'<div class="side">'+(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')+'</div>'
     +'</div>';
@@ -1665,7 +1666,7 @@ function showAircraft(id,opts){
       var acked=!!al.ack;
       return '<div class="lrow">'
         +'<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>'
-        +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip red">AOG</span></div>'
+        +'<div class="body"><div class="hd"><h4>'+al.title+'</h4><span class="pill ichip aog">AOG</span></div>'
           +'<div class="metaln"><span>Dispatched <b>'+al.dispatched+' UTC</b></span>'+(acked?'<span>Acknowledged <b>'+al.ack+' UTC</b></span>':'')+'</div></div>'
         +'<div class="side">'
           +(acked?'<span class="pill ack-ok">Acknowledged</span>':'<span class="pill ack-pend">Pending</span><button class="btn sm" type="button" onclick="ackAlert(\''+a.id+'\',\''+al.id+'\')">Acknowledge</button>')
