@@ -400,6 +400,23 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .svc-meta b{color:var(--t2);font-weight:600}
 .jq-fill{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;flex:1}
 .jq-fill span{display:block;height:100%;background:var(--amber)}
+/* SLO error budget bar (§4.3.7) */
+.eb{height:10px;background:var(--bg3);border:1px solid var(--line);border-radius:5px;overflow:hidden;flex:1;min-width:80px}
+.eb span{display:block;height:100%}
+.eb span.ok{background:var(--deploy)}.eb span.low{background:var(--watch)}.eb span.bad{background:var(--dnd)}
+/* distributed tracing waterfall (§4.3.7) */
+.trace{display:flex;flex-direction:column;gap:7px}
+.trace-row{display:flex;align-items:center;gap:12px}
+.trace-lbl{width:150px;flex:none;font-family:var(--sans);font-size:12.5px;color:var(--t2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trace-track{flex:1;height:20px;background:var(--bg3);border-radius:4px;position:relative;overflow:hidden}
+.trace-span{position:absolute;top:3px;height:14px;border-radius:3px;background:linear-gradient(90deg,var(--amber),var(--amber-dim));min-width:2px}
+.trace-span.slow{background:linear-gradient(90deg,var(--watch),#b98a3e)}
+.trace-dur{width:66px;flex:none;text-align:right;font-family:var(--mono);font-size:12px;color:var(--t1);font-weight:600}
+.trace-hd{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.trace-hd .th-t{font-family:var(--sans);font-size:14px;font-weight:600;color:var(--t1)}
+.trace-hd .th-m{font-family:var(--mono);font-size:12px;color:var(--t4)}
+.rb-chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:4px;border:1px solid var(--info-line);background:var(--info-soft);color:var(--info);font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer}
+.rb-chip:hover{background:rgba(124,159,199,0.2)}
 
 /* Product Management v2 (§4.3.3): funnel + velocity + mini stats */
 .fun{display:flex;flex-direction:column;gap:12px}
@@ -2947,30 +2964,38 @@ function downloadCsv(name,headers,rows){var csv=[headers.join(',')].concat(rows.
   try{var blob=new Blob([csv],{type:'text/csv'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove();},300);}catch(_){}}
 
 var audTab='log',audQ='';
+var AUD_LOG_TABS=['log','downloads','auth','access'];
 function audMatch(text){if(!audQ)return true;return text.toLowerCase().indexOf(audQ.toLowerCase())>=0;}
 function renderAudit(){
+  hydrateAuditV2();
   var accessN=AUDIT.filter(isAccessChange).length;
-  var tabs=[['log','Audit log',AUDIT.length],['downloads','Downloads',DELIVERABLE_LOG.length],['auth','Authentication',audAuthEvents().length],['access','Access changes',accessN]];
+  var isLog=AUD_LOG_TABS.indexOf(audTab)>=0;
+  var tabs=[['log','Audit log',AUDIT.length],['downloads','Downloads',DELIVERABLE_LOG.length],['auth','Authentication',audAuthEvents().length],['access','Access changes',accessN],
+    ['soc2','SOC 2',soc2OpenCount()],['dpa','DPA register',dpaPendingCount()],['questionnaires','Questionnaires',QUESTIONNAIRES.length],['review','Access review','']];
   var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.7</div><h1>Audit &amp; Compliance</h1></div>'+
-    '<div class="phead-actions"><button class="btn" id="audExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 21h14"/></svg>Export CSV</button></div></div>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.7 / §4.3.6</div><h1>Audit &amp; Compliance</h1></div>'+
+    '<div class="phead-actions">'+(isLog?'<button class="btn" id="audExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 21h14"/></svg>Export CSV</button>':'')+'</div></div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Audit events</div><div class="num">'+AUDIT.length+'</div><div class="cap">State-changing actions</div></div>'+
     '<div class="cell"><div class="lbl">Deliverable downloads</div><div class="num">'+DELIVERABLE_LOG.length+'</div><div class="cap">Watermarked</div></div>'+
-    '<div class="cell"><div class="lbl">Auth events</div><div class="num">'+audAuthEvents().length+'</div><div class="cap">Login, MFA, resets</div></div>'+
-    '<div class="cell"><div class="lbl">Access changes</div><div class="num">'+accessN+'</div><div class="cap">Roles, provisioning</div></div>'+
+    '<div class="cell"><div class="lbl">SOC 2 controls satisfied</div><div class="num'+(soc2OpenCount()?' due':' ok')+'">'+SOC2_CONTROLS.filter(function(c){return c.status==='satisfied';}).length+'/'+SOC2_CONTROLS.length+'</div><div class="cap">'+soc2OpenCount()+' open</div></div>'+
+    '<div class="cell"><div class="lbl">DPAs pending</div><div class="num'+(dpaPendingCount()?' alert':'')+'">'+dpaPendingCount()+'</div><div class="cap">Awaiting signature</div></div>'+
   '</div>'+
-  '<div class="doc-toolbar"><input class="doc-search" id="audSearch" placeholder="Search user, action, target, IP, token ..." value="'+esc(audQ)+'"/></div>'+
-  '<div class="fb" id="audTabs">'+tabs.map(function(t){return '<button class="fp'+(audTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+' <span class="fpn">'+t[2]+'</span></button>';}).join('')+'</div>'+
+  (isLog?'<div class="doc-toolbar"><input class="doc-search" id="audSearch" placeholder="Search user, action, target, IP, token ..." value="'+esc(audQ)+'"/></div>':'')+
+  '<div class="fb" id="audTabs">'+tabs.map(function(t){return '<button class="fp'+(audTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
   '<div id="audPane"></div>';
   el('vw-audit').innerHTML=body;
-  el('audSearch').addEventListener('input',function(){audQ=this.value;audRenderPane();var s=el('audSearch');s.focus();s.setSelectionRange(s.value.length,s.value.length);});
-  [].forEach.call(el('audTabs').children,function(b){b.addEventListener('click',function(){audTab=b.getAttribute('data-t');renderAudit();});});
-  el('audExport').addEventListener('click',audExport);
+  if(el('audSearch'))el('audSearch').addEventListener('input',function(){audQ=this.value;audRenderPane();var s=el('audSearch');s.focus();s.setSelectionRange(s.value.length,s.value.length);});
+  [].forEach.call(el('audTabs').children,function(b){b.addEventListener('click',function(){audTab=b.getAttribute('data-t');audQ='';renderAudit();});});
+  if(el('audExport'))el('audExport').addEventListener('click',audExport);
   audRenderPane();
 }
 function audRenderPane(){
   var pane=el('audPane');
+  if(audTab==='soc2'){pane.innerHTML=audPaneSoc2();audBindSoc2();return;}
+  if(audTab==='dpa'){pane.innerHTML=audPaneDpa();audBindDpa();return;}
+  if(audTab==='questionnaires'){pane.innerHTML=audPaneQuest();audBindQuest();return;}
+  if(audTab==='review'){pane.innerHTML=audPaneReview();audBindReviewV2();return;}
   if(audTab==='downloads'){
     var rows=DELIVERABLE_LOG.filter(function(d){return audMatch(d.ts+' '+d.user+' '+d.deliverable+' '+d.deliverableId+' '+d.ip+' '+d.token);});
     pane.innerHTML=audPanel('Deliverable download log',rows.length,'<th>Timestamp</th><th>User</th><th>Deliverable</th><th>Deliverable ID</th><th>IP</th><th>Watermark token</th>',
@@ -3009,16 +3034,205 @@ function audExport(){
   renderAudit();
 }
 
+/* ══════════════════ AUDIT & COMPLIANCE v2 (§4.3.6) ══════════════════ */
+var SOC2_CONTROLS=[
+  {id:'CC1.1',family:'Control Environment',name:'Board oversight & integrity',status:'satisfied',owner:'CTO',evidence:4,last:'2026-07-10'},
+  {id:'CC2.1',family:'Communication',name:'Security policies communicated',status:'satisfied',owner:'Ops Lead',evidence:3,last:'2026-06-28'},
+  {id:'CC5.2',family:'Control Activities',name:'Access control policy enforced',status:'satisfied',owner:'CTO',evidence:6,last:'2026-07-18'},
+  {id:'CC6.1',family:'Logical Access',name:'Logical access provisioning & de-provisioning',status:'satisfied',owner:'CTO',evidence:5,last:'2026-07-20'},
+  {id:'CC6.6',family:'Logical Access',name:'MFA / FIDO2 enforcement',status:'in_progress',owner:'CTO',evidence:2,last:'2026-07-22'},
+  {id:'CC7.2',family:'System Operations',name:'Security event monitoring',status:'satisfied',owner:'Ops Lead',evidence:4,last:'2026-07-15'},
+  {id:'CC7.4',family:'System Operations',name:'Incident response programme',status:'in_progress',owner:'Ops Lead',evidence:1,last:'2026-07-21'},
+  {id:'A1.2',family:'Availability',name:'Backup & disaster recovery procedures',status:'gap',owner:'CTO',evidence:0,last:'—'},
+  {id:'C1.1',family:'Confidentiality',name:'Data classification & handling',status:'satisfied',owner:'DPO',evidence:3,last:'2026-06-30'}
+];
+var DPA_REGISTER={
+  'cl-fidelity':{status:'signed',version:'DPA v2.1',date:'2026-01-20'},
+  'cl-afc':{status:'signed',version:'DPA v2.1',date:'2026-03-05'},
+  'cl-zenith':{status:'signed',version:'DPA v2.0',date:'2026-06-15'},
+  'cl-kestrel':{status:'pending',version:'—',date:''},
+  'cl-stanchart':{status:'signed',version:'DPA v2.1',date:'2025-09-25'},
+  'cl-dbn':{status:'pending',version:'—',date:''}
+};
+var QUESTIONNAIRES=[
+  {id:'SIG-LITE-2026',name:'SIG Lite 2026',type:'Standard',status:'complete',updated:'2026-05-10',client:''},
+  {id:'CAIQ-v4',name:'CAIQ v4.0.2',type:'Standard',status:'complete',updated:'2026-04-22',client:''},
+  {id:'VSAQ-2026',name:'Google VSAQ',type:'Standard',status:'complete',updated:'2026-06-01',client:''},
+  {id:'CQ-FIDELITY-01',name:'Fidelity Bank security questionnaire',type:'Custom',status:'complete',updated:'2026-02-14',client:'cl-fidelity'},
+  {id:'CQ-AFC-01',name:'AFC vendor due diligence',type:'Custom',status:'in_progress',updated:'2026-07-18',client:'cl-afc'},
+  {id:'CQ-STANCHART-01',name:'Standard Chartered TPRM',type:'Custom',status:'in_progress',updated:'2026-07-20',client:'cl-stanchart'}
+];
+var ACCESS_REVIEWS=[
+  {id:'AR-2026Q2',ts:'2026-04-05',reviewer:'Dikko Abubakar',count:19,attestation:'Q2 2026 quarterly access review. All roles confirmed appropriate; no dormant accounts.'}
+];
+function hydrateAuditV2(){loadState();if(STATE.soc2)SOC2_CONTROLS=STATE.soc2;if(STATE.dpa)DPA_REGISTER=Object.assign({},DPA_REGISTER,STATE.dpa);if(STATE.quest)QUESTIONNAIRES=STATE.quest;if(STATE.accessReviews)ACCESS_REVIEWS=STATE.accessReviews;}
+function persistAuditV2(){loadState();STATE.soc2=SOC2_CONTROLS;STATE.dpa=DPA_REGISTER;STATE.quest=QUESTIONNAIRES;STATE.accessReviews=ACCESS_REVIEWS;saveState();}
+function soc2OpenCount(){return SOC2_CONTROLS.filter(function(c){return c.status!=='satisfied';}).length;}
+function dpaStatusFor(cid){return DPA_REGISTER[cid]||{status:'pending',version:'—',date:''};}
+function dpaPendingCount(){return CLIENTS.filter(function(c){return c.status!=='offboarded'&&dpaStatusFor(c.id).status!=='signed';}).length;}
+function soc2Chip(s){var m={satisfied:['green','Satisfied'],in_progress:['watch','In progress'],gap:['red','Gap']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function dpaChip(s){var m={signed:['green','Signed'],pending:['watch','Pending'],na:['muted','N/A']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function questChip(s){var m={complete:['green','Complete'],in_progress:['watch','In progress'],pending:['muted','Pending']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function soc2ById(id){var r=null;SOC2_CONTROLS.forEach(function(c){if(c.id===id)r=c;});return r;}
+function questById(id){var r=null;QUESTIONNAIRES.forEach(function(q){if(q.id===id)r=q;});return r;}
+
+/* SOC 2 control evidence dashboard */
+function audPaneSoc2(){
+  var sat=SOC2_CONTROLS.filter(function(c){return c.status==='satisfied';}).length;
+  var prog=SOC2_CONTROLS.filter(function(c){return c.status==='in_progress';}).length;
+  var gap=SOC2_CONTROLS.filter(function(c){return c.status==='gap';}).length;
+  return ''+
+  '<div class="mini3" style="margin-bottom:24px">'+
+    '<div class="m3"><span class="ml">Satisfied</span><span class="mv" style="color:var(--deploy)">'+sat+'</span><span class="ms">of '+SOC2_CONTROLS.length+' controls</span></div>'+
+    '<div class="m3"><span class="ml">In progress</span><span class="mv" style="color:var(--watch)">'+prog+'</span><span class="ms">evidence gathering</span></div>'+
+    '<div class="m3"><span class="ml">Gaps</span><span class="mv"'+(gap?' style="color:var(--dnd)"':'')+'>'+gap+'</span><span class="ms">need remediation</span></div>'+
+  '</div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>SOC 2 control evidence</h3><span class="meta">audit engagement</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Control</th><th>Trust criteria</th><th>Owner</th><th class="num">Evidence</th><th>Last collected</th><th>Status</th><th></th></tr></thead><tbody>'+
+  SOC2_CONTROLS.map(function(c){return '<tr>'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(c.id)+'<span class="sub" style="display:block;font-family:var(--sans);font-size:12px;color:var(--t2);font-weight:400;margin-top:3px">'+esc(c.name)+'</span></td>'+
+    '<td class="c-sec">'+esc(c.family)+'</td>'+
+    '<td class="c-sec">'+esc(c.owner)+'</td>'+
+    '<td class="c-num"'+(c.evidence?'':' style="color:var(--dnd)"')+'>'+c.evidence+'</td>'+
+    '<td class="c-mono">'+esc(c.last)+'</td>'+
+    '<td>'+soc2Chip(c.status)+'</td>'+
+    '<td class="c-go" style="text-align:right"><button class="btn sm soc2Ev" data-id="'+esc(c.id)+'">Add evidence</button></td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+function audBindSoc2(){[].forEach.call(el('audPane').querySelectorAll('.soc2Ev'),function(b){b.addEventListener('click',function(){openSoc2Evidence(b.getAttribute('data-id'));});});}
+function openSoc2Evidence(id){
+  var c=soc2ById(id);if(!c)return;
+  mdOpen({title:'Collect evidence, '+c.id,
+    body:''+
+      '<div class="msummary"><div class="ml">Control</div><div class="mv">'+esc(c.id)+' · '+esc(c.name)+'</div></div>'+
+      '<div class="mfield"><label>Evidence description</label><textarea id="soDesc" placeholder="e.g. Q3 access-provisioning review export, ticket AND-1204"></textarea></div>'+
+      '<div class="mfield"><label>Set control status</label><select id="soStatus"><option value="satisfied"'+(c.status==='satisfied'?' selected':'')+'>Satisfied</option><option value="in_progress"'+(c.status==='in_progress'?' selected':'')+'>In progress</option><option value="gap"'+(c.status==='gap'?' selected':'')+'>Gap</option></select></div>',
+    foot:'<button class="btn sm" id="soCancel">Cancel</button><button class="btn sm primary" id="soGo">Record evidence</button>',
+    onMount:function(){
+      el('soCancel').addEventListener('click',mdClose);
+      el('soGo').addEventListener('click',function(){
+        var d=(el('soDesc').value||'').trim();if(d.length<8){toast('Description required','Describe the evidence (8+ chars).');return;}
+        c.evidence=(c.evidence||0)+1;c.last=nowStamp().slice(0,10);c.status=el('soStatus').value;persistAuditV2();
+        logAudit({carrier:'Compliance',crit:'SOC 2 evidence collected',fr:c.id,to:c.status+' · '+d.slice(0,40),status:'Recorded',note:c.id});
+        mdClose();renderAudit();toast('Evidence recorded',c.id+' · '+c.evidence+' on file');
+      });
+    }
+  });
+}
+
+/* DPA addendum register */
+function audPaneDpa(){
+  var rows=CLIENTS.filter(function(c){return c.status!=='offboarded';});
+  return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>DPA addendum register</h3><span class="meta">'+dpaPendingCount()+' pending</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Client</th><th>Jurisdiction</th><th>DPA version</th><th>Signed</th><th>Status</th><th></th></tr></thead><tbody>'+
+  rows.map(function(c){var d=dpaStatusFor(c.id);return '<tr>'+
+    '<td class="c-name">'+esc(c.name)+'<span class="sub">'+esc(c.contractId)+'</span></td>'+
+    '<td class="c-sec">'+esc(c.region)+'</td>'+
+    '<td class="c-mono">'+esc(d.version||'—')+'</td>'+
+    '<td class="c-mono">'+esc(d.date||'—')+'</td>'+
+    '<td>'+dpaChip(d.status)+'</td>'+
+    '<td class="c-go" style="text-align:right">'+(d.status!=='signed'?'<button class="btn sm dpaRec" data-id="'+c.id+'">Record DPA</button>':'<button class="btn sm dpaRec" data-id="'+c.id+'">Update</button>')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+function audBindDpa(){[].forEach.call(el('audPane').querySelectorAll('.dpaRec'),function(b){b.addEventListener('click',function(){openDpaRecord(b.getAttribute('data-id'));});});}
+function openDpaRecord(cid){
+  var c=clientById(cid);if(!c)return;var d=dpaStatusFor(cid);
+  mdOpen({title:'Record DPA addendum',
+    body:''+
+      '<div class="msummary"><div class="ml">Client</div><div class="mv">'+esc(c.name)+'</div></div>'+
+      '<div class="mfield"><label>Status</label><select id="dpStatus"><option value="signed"'+(d.status!=='na'?' selected':'')+'>Signed</option><option value="pending"'+(false?' selected':'')+'>Pending</option><option value="na"'+(d.status==='na'?' selected':'')+'>Not applicable</option></select></div>'+
+      '<div class="mrow"><div class="mfield"><label>DPA version</label><input id="dpVer" class="mono" value="'+esc(d.version&&d.version!=='—'?d.version:'DPA v2.1')+'"/></div>'+
+      '<div class="mfield"><label>Signed date</label><input id="dpDate" class="mono" value="'+esc(d.date||nowStamp().slice(0,10))+'"/></div></div>',
+    foot:'<button class="btn sm" id="dpCancel">Cancel</button><button class="btn sm primary" id="dpGo">Save</button>',
+    onMount:function(){
+      el('dpCancel').addEventListener('click',mdClose);
+      el('dpGo').addEventListener('click',function(){
+        var st=el('dpStatus').value;
+        DPA_REGISTER[cid]={status:st,version:(st==='na'?'—':(el('dpVer').value||'').trim()),date:(st==='signed'?(el('dpDate').value||'').trim():'')};persistAuditV2();
+        logAudit({carrier:c.name,crit:'DPA addendum recorded',fr:'—',to:st+(st==='signed'?' · '+DPA_REGISTER[cid].version:''),status:'Updated'});
+        mdClose();renderAudit();toast('DPA updated',c.name+' · '+st);
+      });
+    }
+  });
+}
+
+/* Vendor questionnaire library */
+function audPaneQuest(){
+  var std=QUESTIONNAIRES.filter(function(q){return q.type==='Standard';});
+  var cust=QUESTIONNAIRES.filter(function(q){return q.type==='Custom';});
+  var mk=function(title,list){return '<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>'+title+'</h3><span class="meta">'+list.length+'</span></div>'+
+    '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Questionnaire</th>'+(title==='Custom client questionnaires'?'<th>Client</th>':'')+'<th>Updated</th><th>Status</th><th></th></tr></thead><tbody>'+
+    list.map(function(q){return '<tr>'+
+      '<td class="c-name">'+esc(q.name)+'<span class="sub">'+esc(q.id)+'</span></td>'+
+      (title==='Custom client questionnaires'?'<td class="c-sec">'+esc((clientById(q.client)||{}).name||'—')+'</td>':'')+
+      '<td class="c-mono">'+esc(q.updated)+'</td>'+
+      '<td>'+questChip(q.status)+'</td>'+
+      '<td class="c-go" style="text-align:right">'+(q.status!=='complete'?'<button class="btn sm qResp" data-id="'+esc(q.id)+'">Log response</button>':'<span class="c-mono" style="color:var(--t4);font-size:12px">on file</span>')+'</td>'+
+    '</tr>';}).join('')+
+    '</tbody></table></div></div></div>';};
+  return mk('Standard questionnaires on file',std)+mk('Custom client questionnaires',cust);
+}
+function audBindQuest(){[].forEach.call(el('audPane').querySelectorAll('.qResp'),function(b){b.addEventListener('click',function(){var q=questById(b.getAttribute('data-id'));if(!q)return;q.status='complete';q.updated=nowStamp().slice(0,10);persistAuditV2();logAudit({carrier:'Compliance',crit:'Questionnaire response logged',fr:q.id,to:'complete',status:'Complete'});renderAudit();toast('Response logged',q.name);});});}
+
+/* Quarterly access review, bulk sign-off */
+var audRevSel={};
+function audPaneReview(){
+  var users=USERS.concat(CLIENT_USERS).filter(function(u){return u.status!=='terminated';});
+  var selN=Object.keys(audRevSel).length;
+  var head='<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p>Quarterly access review with sign-off capture (§4.3.6). Select accounts, then record a signed attestation. The captured sign-off is the audit artefact for the review cycle.</p></div>';
+  var bulkBar=selN?'<div class="bulkbar"><span class="bn">'+selN+' selected</span><button class="btn sm primary" id="audRevSign">Sign off on selected</button><button class="btn sm" id="audRevClear" style="margin-left:auto">Clear</button></div>':'';
+  var allChecked=users.length&&users.every(function(u){return audRevSel[u.id];});
+  var histPanel=ACCESS_REVIEWS.length?'<div class="panel" style="margin-top:24px"><div class="ph"><span class="bullet"></span><h3>Sign-off history</h3><span class="meta">'+ACCESS_REVIEWS.length+'</span></div><div class="pb flush">'+
+    ACCESS_REVIEWS.map(function(r){return '<div class="lrow"><div class="body"><h4>'+esc(r.id)+' <span class="ichip green">Signed off</span></h4><div class="metaln"><span><b>'+esc(r.reviewer)+'</b></span><span>'+esc(r.ts)+'</span><span>'+r.count+' accounts</span></div><div class="metaln"><span>'+esc(r.attestation)+'</span></div></div></div>';}).join('')+
+  '</div></div>':'';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Accounts for review</h3><span class="meta">'+users.length+'</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th class="c-ck"><input type="checkbox" class="umall" id="audRevAll"'+(allChecked?' checked':'')+'/></th><th>User</th><th>Role</th><th>Side</th><th>Last login</th></tr></thead><tbody>'+
+    users.map(function(u){var rm=roleMeta(u.role);var kind=userById(u.id).kind;return '<tr><td class="c-ck"><input type="checkbox" class="audRevCk" data-id="'+u.id+'"'+(audRevSel[u.id]?' checked':'')+'/></td><td class="c-name">'+esc(u.name)+'<span class="sub">'+esc(u.email)+'</span></td><td class="c-sec">'+esc(rm.name)+'</td><td class="c-sec">'+(kind==='client'?'Client':'Andara')+'</td><td class="c-mono">'+esc(u.lastLogin)+'</td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+bulkBar+tbl+histPanel;
+}
+function audBindReviewV2(){
+  var pane=el('audPane');
+  [].forEach.call(pane.querySelectorAll('.audRevCk'),function(cb){cb.addEventListener('click',function(){var id=cb.getAttribute('data-id');if(audRevSel[id])delete audRevSel[id];else audRevSel[id]=true;audRenderPane();});});
+  var all=pane.querySelector('#audRevAll');if(all)all.addEventListener('click',function(){var on=all.checked;USERS.concat(CLIENT_USERS).filter(function(u){return u.status!=='terminated';}).forEach(function(u){if(on)audRevSel[u.id]=true;else delete audRevSel[u.id];});audRenderPane();});
+  if(el('audRevClear'))el('audRevClear').addEventListener('click',function(){audRevSel={};audRenderPane();});
+  if(el('audRevSign'))el('audRevSign').addEventListener('click',openAccessReviewSignoff);
+}
+function openAccessReviewSignoff(){
+  var ids=Object.keys(audRevSel);if(!ids.length){toast('No selection','Select accounts to sign off.');return;}
+  requireReauth('Access review sign-off','This records a signed quarterly access-review attestation for '+ids.length+' accounts.',function(){
+    mdOpen({title:'Record access-review sign-off',
+      body:''+
+        '<div class="msummary"><div class="ml">Accounts reviewed</div><div class="mv">'+ids.length+' account'+(ids.length===1?'':'s')+'</div></div>'+
+        '<div class="mfield"><label>Attestation</label><textarea id="arText" placeholder="e.g. Q3 2026 access review. All selected roles confirmed appropriate.">Q'+(Math.floor(((new Date()).getUTCMonth())/3)+1)+' '+((new Date()).getUTCFullYear())+' quarterly access review. All selected roles confirmed appropriate.</textarea><div class="helper">Captured as the signed audit artefact and written to the audit log (§3.3.7).</div></div>',
+      foot:'<button class="btn sm" id="arCancel">Cancel</button><button class="btn sm primary" id="arGo">Record sign-off</button>',
+      onMount:function(){
+        el('arCancel').addEventListener('click',mdClose);
+        el('arGo').addEventListener('click',function(){
+          var txt=(el('arText').value||'').trim();if(txt.length<20){toast('Attestation required','Enter an attestation (20+ chars).');return;}
+          var d=new Date();var id='AR-'+d.getUTCFullYear()+'Q'+(Math.floor(d.getUTCMonth()/3)+1)+'-'+Math.random().toString(36).slice(2,5);
+          ACCESS_REVIEWS=[{id:id,ts:nowStamp().slice(0,10),reviewer:profileName(),count:ids.length,attestation:txt}].concat(ACCESS_REVIEWS);
+          persistAuditV2();
+          logAudit({carrier:'Compliance',crit:'Access review signed off',fr:'—',to:ids.length+' accounts attested',status:'Signed',note:id});
+          audRevSel={};mdClose();renderAudit();toast('Access review signed off',id+' · '+ids.length+' accounts');
+        });
+      }
+    });
+  });
+}
+
 /* ── §3.3.8 System Health ── */
 var SERVICES=[
-  {name:'API Gateway',status:'green',uptime:'99.98%',last:'2026-06-02'},
-  {name:'Arbiter Scoring Engine',status:'green',uptime:'99.95%',last:'2026-05-18'},
-  {name:'FleetWatch Ingestion',status:'amber',uptime:'99.71%',last:'2026-07-22'},
-  {name:'Document Ingestion',status:'green',uptime:'99.90%',last:'2026-06-30'},
-  {name:'AIR Delivery',status:'green',uptime:'99.99%',last:'2026-04-11'},
-  {name:'Alert Dispatch',status:'green',uptime:'99.97%',last:'2026-06-15'},
-  {name:'Auth / SSO',status:'green',uptime:'100.00%',last:'—'},
-  {name:'Data Warehouse',status:'amber',uptime:'99.62%',last:'2026-07-21'}
+  {name:'API Gateway',status:'green',uptime:'99.98%',last:'2026-06-02',slo:99.9},
+  {name:'Arbiter Scoring Engine',status:'green',uptime:'99.95%',last:'2026-05-18',slo:99.9},
+  {name:'FleetWatch Ingestion',status:'amber',uptime:'99.71%',last:'2026-07-22',slo:99.9},
+  {name:'Document Ingestion',status:'green',uptime:'99.90%',last:'2026-06-30',slo:99.5},
+  {name:'AIR Delivery',status:'green',uptime:'99.99%',last:'2026-04-11',slo:99.9},
+  {name:'Alert Dispatch',status:'green',uptime:'99.97%',last:'2026-06-15',slo:99.9},
+  {name:'Auth / SSO',status:'green',uptime:'100.00%',last:'—',slo:99.99},
+  {name:'Data Warehouse',status:'amber',uptime:'99.62%',last:'2026-07-21',slo:99.5}
 ];
 var JOB_QUEUES=[
   {name:'Document ingestion',depth:34,processing:6,failed:1,cap:120},
@@ -3027,29 +3241,62 @@ var JOB_QUEUES=[
   {name:'Alert dispatch',depth:3,processing:1,failed:2,cap:50}
 ];
 var INCIDENTS=[
-  {id:'INC-2041',sev:'SEV-2',title:'FleetWatch ingestion lag on ADS-B feed',service:'FleetWatch Ingestion',status:'monitoring',opened:'2026-07-22 04:10',resolved:''},
-  {id:'INC-2039',sev:'SEV-3',title:'Data warehouse nightly job slow',service:'Data Warehouse',status:'open',opened:'2026-07-21 23:40',resolved:''},
-  {id:'INC-2035',sev:'SEV-2',title:'Alert dispatch retry backlog',service:'Alert Dispatch',status:'resolved',opened:'2026-06-15 09:12',resolved:'2026-06-15 11:48'},
-  {id:'INC-2028',sev:'SEV-1',title:'Scoring engine outage, 22 min',service:'Arbiter Scoring Engine',status:'resolved',opened:'2026-05-18 14:02',resolved:'2026-05-18 14:24'},
-  {id:'INC-2019',sev:'SEV-3',title:'Document OCR queue spike',service:'Document Ingestion',status:'resolved',opened:'2026-06-30 08:30',resolved:'2026-06-30 10:15'}
+  {id:'INC-2041',sev:'SEV-2',title:'FleetWatch ingestion lag on ADS-B feed',service:'FleetWatch Ingestion',status:'monitoring',opened:'2026-07-22 04:10',resolved:'',runbook:'RB-FW-INGEST-LAG'},
+  {id:'INC-2039',sev:'SEV-3',title:'Data warehouse nightly job slow',service:'Data Warehouse',status:'open',opened:'2026-07-21 23:40',resolved:'',runbook:'RB-WAREHOUSE-JOB'},
+  {id:'INC-2035',sev:'SEV-2',title:'Alert dispatch retry backlog',service:'Alert Dispatch',status:'resolved',opened:'2026-06-15 09:12',resolved:'2026-06-15 11:48',runbook:'RB-ALERT-RETRY'},
+  {id:'INC-2028',sev:'SEV-1',title:'Scoring engine outage, 22 min',service:'Arbiter Scoring Engine',status:'resolved',opened:'2026-05-18 14:02',resolved:'2026-05-18 14:24',runbook:'RB-SCORING-OUTAGE'},
+  {id:'INC-2019',sev:'SEV-3',title:'Document OCR queue spike',service:'Document Ingestion',status:'resolved',opened:'2026-06-30 08:30',resolved:'2026-06-30 10:15',runbook:'RB-OCR-SPIKE'}
 ];
+var CRITICAL_PATHS=[
+  {name:'Scoring submission',status:'green',spans:[['API gateway',12],['Auth',8],['Validation',22],['Score compute',340],['Persist verdict',45]]},
+  {name:'Field upload sync',status:'amber',spans:[['Mobile sync',180],['Intake API',30],['Virus scan',120],['Object store',90],['OCR enqueue',15]]},
+  {name:'Report generation',status:'green',spans:[['Trigger',10],['Data fetch',260],['Render PDF',890],['Watermark',60],['Deliver',40]]},
+  {name:'AIR delivery',status:'green',spans:[['Publish',20],['Subscriber fanout',140],['Email gateway',320],['Receipt log',25]]}
+];
+var DR_DRILLS=[
+  {id:'DR-2026-06',date:'2026-06-20',scope:'Warehouse restore',result:'pass',rto:'42 min',rpo:'5 min',by:'Ops Lead',status:'complete'},
+  {id:'DR-2026-03',date:'2026-03-15',scope:'Full region failover',result:'pass',rto:'58 min',rpo:'8 min',by:'CTO',status:'complete'},
+  {id:'DR-2025-12',date:'2025-12-10',scope:'Backup integrity check',result:'pass',rto:'—',rpo:'—',by:'Ops Lead',status:'complete'}
+];
+function hydrateHealth(){loadState();if(STATE.drDrills)DR_DRILLS=STATE.drDrills;}
+function persistHealth(){loadState();STATE.drDrills=DR_DRILLS;saveState();}
 function svcStatusLbl(s){return s==='green'?'Operational':(s==='amber'?'Degraded':'Down');}
 function sevChip(s){var m={'SEV-1':'red','SEV-2':'watch','SEV-3':'blue'};return '<span class="ichip '+(m[s]||'muted')+'">'+esc(s)+'</span>';}
-function incStatusChip(s){var m={open:['red','Open'],monitoring:['watch','Monitoring'],resolved:['green','Resolved']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function incStatusChip(s){var m={open:['red','Open'],monitoring:['watch','Monitoring'],resolved:['green','Resolved'],scheduled:['blue','Scheduled'],complete:['green','Complete']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+/* SLO error budget: allowed downtime vs actual, over a 30d window */
+function sloBudget(svc){var att=parseFloat(svc.uptime)||0;var tgt=svc.slo||99.9;var allowed=100-tgt;var actual=100-att;var remaining=allowed<=0?1:(allowed-actual)/allowed;return {att:att,tgt:tgt,remaining:remaining,breached:remaining<0};}
+var hlTab='overview';
 function renderHealth(){
+  hydrateHealth();
   var green=SERVICES.filter(function(s){return s.status==='green';}).length;
   var openInc=INCIDENTS.filter(function(i){return i.status!=='resolved';}).length;
   var queued=JOB_QUEUES.reduce(function(s,q){return s+q.depth;},0);
-  var failed=JOB_QUEUES.reduce(function(s,q){return s+q.failed;},0);
+  var breached=SERVICES.filter(function(s){return sloBudget(s).breached;}).length;
+  var tabs=[['overview','Overview',''],['slo','SLO dashboards',breached||''],['tracing','Tracing',CRITICAL_PATHS.length],['incidents','Incidents',openInc||''],['dr','DR drills',DR_DRILLS.filter(function(d){return d.status==='scheduled';}).length||'']];
   var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.8</div><h1>System Health</h1></div>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.8 / §4.3.7</div><h1>System Health</h1></div>'+
     '<div class="phead-actions"><span class="ichip '+(openInc?'red':'green')+'">'+(openInc?openInc+' open incident'+(openInc>1?'s':''):'All clear')+'</span></div></div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Services healthy</div><div class="num'+(green===SERVICES.length?' ok':' due')+'">'+green+'/'+SERVICES.length+'</div><div class="cap">Green status</div></div>'+
+    '<div class="cell"><div class="lbl">SLOs breached</div><div class="num'+(breached?' alert':' ok')+'">'+breached+'</div><div class="cap">Over error budget</div></div>'+
     '<div class="cell"><div class="lbl">Open incidents</div><div class="num'+(openInc?' alert':'')+'">'+openInc+'</div><div class="cap">Not yet resolved</div></div>'+
     '<div class="cell"><div class="lbl">Jobs queued</div><div class="num">'+queued+'</div><div class="cap">Across queues</div></div>'+
-    '<div class="cell"><div class="lbl">Failed jobs</div><div class="num'+(failed?' alert':'')+'">'+failed+'</div><div class="cap">Need retry</div></div>'+
   '</div>'+
+  '<div class="fb" id="hlTabs">'+tabs.map(function(t){return '<button class="fp'+(hlTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
+  '<div id="hlPane"></div>';
+  el('vw-health').innerHTML=body;
+  [].forEach.call(el('hlTabs').children,function(b){b.addEventListener('click',function(){hlTab=b.getAttribute('data-t');renderHealth();});});
+  hlRenderPane();
+  setNav('navHealth',openInc,true);
+}
+function hlRenderPane(){
+  var pane=el('hlPane');
+  if(hlTab==='slo'){pane.innerHTML=hlPaneSlo();return;}
+  if(hlTab==='tracing'){pane.innerHTML=hlPaneTracing();return;}
+  if(hlTab==='incidents'){pane.innerHTML=hlPaneIncidents();hlBindIncidents();return;}
+  if(hlTab==='dr'){pane.innerHTML=hlPaneDr();hlBindDr();return;}
+  // overview: service board + job queues
+  pane.innerHTML=''+
   '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Service health board</h3><span class="meta">'+SERVICES.length+' services</span></div><div class="pb">'+
     '<div class="svc-grid">'+SERVICES.map(function(s){return '<div class="svc-card"><div class="svc-top"><span class="svc-dot '+s.status+'"></span><span class="svc-name">'+esc(s.name)+'</span><span class="svc-st '+s.status+'">'+svcStatusLbl(s.status)+'</span></div><div class="svc-meta">Uptime 90d <b>'+esc(s.uptime)+'</b><br>Last incident <b>'+esc(s.last)+'</b></div></div>';}).join('')+'</div>'+
   '</div></div>'+
@@ -3061,14 +3308,94 @@ function renderHealth(){
     '<td class="c-num">'+q.processing+'</td>'+
     '<td class="c-num" style="color:'+(q.failed?'var(--dnd)':'var(--t2)')+'">'+q.failed+'</td>'+
     '<td>'+incStatusChip(st==='red'?'open':(st==='watch'?'monitoring':'resolved')).replace('Open','Attention').replace('Monitoring','Busy').replace('Resolved','Healthy')+'</td></tr>';}).join('')+
-  '</tbody></table></div></div></div>'+
-  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Incident log</h3><span class="meta">'+INCIDENTS.length+'</span></div>'+
-  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Incident</th><th>Severity</th><th>Title</th><th>Service</th><th>Opened</th><th>Status</th></tr></thead><tbody>'+
-  INCIDENTS.map(function(i){return ''+
-    '<tr><td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(i.id)+'</td><td>'+sevChip(i.sev)+'</td><td class="c-name" style="font-weight:500">'+esc(i.title)+'</td><td class="c-sec">'+esc(i.service)+'</td><td class="c-mono">'+esc(i.opened)+'</td><td>'+incStatusChip(i.status)+'</td></tr>';}).join('')+
   '</tbody></table></div></div></div>';
-  el('vw-health').innerHTML=body;
-  setNav('navHealth',openInc,true);
+}
+/* SLO dashboards with error budget (§4.3.7) */
+function hlPaneSlo(){
+  return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Service-level objectives</h3><span class="meta">30-day window</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Service</th><th class="num">SLO target</th><th class="num">Attainment</th><th style="width:26%">Error budget</th><th>Status</th></tr></thead><tbody>'+
+  SERVICES.map(function(s){var b=sloBudget(s);var pct=Math.round(b.remaining*100);var cls=b.breached?'bad':(b.remaining<0.3?'low':'ok');var w=Math.max(0,Math.min(100,pct));
+    return '<tr><td class="c-name">'+esc(s.name)+'</td>'+
+      '<td class="c-num">'+b.tgt.toFixed(2)+'%</td>'+
+      '<td class="c-num" style="color:'+(b.att>=b.tgt?'var(--deploy)':'var(--dnd)')+';font-weight:600">'+b.att.toFixed(2)+'%</td>'+
+      '<td><div style="display:flex;align-items:center;gap:10px"><div class="eb"><span class="'+cls+'" style="width:'+w+'%"></span></div><span class="c-mono" style="font-size:11px;color:'+(b.breached?'var(--dnd)':'var(--t3)')+'">'+pct+'%</span></div></td>'+
+      '<td>'+(b.breached?'<span class="ichip red">Breached</span>':(b.remaining<0.3?'<span class="ichip watch">At risk</span>':'<span class="ichip green">Healthy</span>'))+'</td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+/* distributed tracing console (§4.3.7) */
+function hlPaneTracing(){
+  return '<div class="reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h6"/></svg><p style="color:var(--t2)">Critical-path traces (§4.3.7): representative latest-trace waterfalls for the four business-critical paths.</p></div>'+
+  CRITICAL_PATHS.map(function(p){var total=p.spans.reduce(function(s,x){return s+x[1];},0);var cum=0;
+    var rows=p.spans.map(function(sp){var left=cum/total*100;var w=sp[1]/total*100;cum+=sp[1];var slow=sp[1]>=total*0.35;
+      return '<div class="trace-row"><div class="trace-lbl">'+esc(sp[0])+'</div><div class="trace-track"><div class="trace-span'+(slow?' slow':'')+'" style="left:'+left+'%;width:'+Math.max(1,w)+'%"></div></div><div class="trace-dur">'+sp[1]+'ms</div></div>';}).join('');
+    return '<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>'+esc(p.name)+'</h3><span class="meta">'+SERVICES.length+' spans</span></div><div class="pb">'+
+      '<div class="trace-hd"><span class="th-t">'+esc(p.name)+'</span><span class="th-m">total '+total+'ms · p95 '+Math.round(total*1.4)+'ms · '+p.spans.length+' spans</span></div>'+
+      '<div class="trace">'+rows+'</div></div></div>';}).join('');
+}
+/* incident response board (§4.3.7) */
+function hlPaneIncidents(){
+  var active=INCIDENTS.filter(function(i){return i.status!=='resolved';});
+  var head=active.length?'<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet" style="background:var(--dnd)"></span><h3>Active incidents</h3><span class="meta">'+active.length+'</span></div><div class="pb flush">'+
+    active.map(function(i){return '<div class="lrow"><div class="body"><h4>'+sevChip(i.sev)+' '+esc(i.title)+'</h4><div class="metaln"><span><b>'+esc(i.id)+'</b></span><span>'+esc(i.service)+'</span><span>Opened '+esc(i.opened)+'</span></div><div style="display:flex;gap:8px;margin-top:8px"><span class="rb-chip incRb" data-id="'+i.id+'"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h13l3 3v13H4Z"/><path d="M8 10h8M8 14h5"/></svg>'+esc(i.runbook)+'</span><button class="btn sm incComms" data-id="'+i.id+'">Comms template</button></div></div><div class="side">'+incStatusChip(i.status)+'</div></div>';}).join('')+
+  '</div></div>':'<div class="panel" style="margin-bottom:24px"><div class="empty">No active incidents. All systems nominal.</div></div>';
+  var log='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Incident log</h3><span class="meta">'+INCIDENTS.length+'</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Incident</th><th>Severity</th><th>Title</th><th>Service</th><th>Opened</th><th>Runbook</th><th>Status</th></tr></thead><tbody>'+
+  INCIDENTS.map(function(i){return '<tr><td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(i.id)+'</td><td>'+sevChip(i.sev)+'</td><td class="c-name" style="font-weight:500">'+esc(i.title)+'</td><td class="c-sec">'+esc(i.service)+'</td><td class="c-mono">'+esc(i.opened)+'</td><td class="c-mono" style="font-size:12px;color:var(--info)">'+esc(i.runbook)+'</td><td>'+incStatusChip(i.status)+'</td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+log;
+}
+function hlBindIncidents(){
+  [].forEach.call(el('hlPane').querySelectorAll('.incRb'),function(b){b.addEventListener('click',function(){toast('Runbook',b.getAttribute('data-id')+' · opening '+b.textContent.trim());});});
+  [].forEach.call(el('hlPane').querySelectorAll('.incComms'),function(b){b.addEventListener('click',function(){openCommsTemplate(b.getAttribute('data-id'));});});
+}
+function incById(id){var r=null;INCIDENTS.forEach(function(i){if(i.id===id)r=i;});return r;}
+function openCommsTemplate(id){
+  var i=incById(id);if(!i)return;
+  var tpl='['+i.sev+'] '+i.service+' incident, '+i.id+'\n\nStatus: '+(i.status==='monitoring'?'Monitoring':'Investigating')+'\nImpact: '+i.title+'\nOpened: '+i.opened+' UTC\nNext update: within 30 minutes\n\nWe are actively working this incident per runbook '+i.runbook+'. No client action required.';
+  mdOpen({title:'Comms template, '+i.id,
+    body:'<div class="msummary"><div class="ml">Incident</div><div class="mv">'+esc(i.id)+' · '+esc(i.service)+'</div></div>'+
+      '<div class="mfield"><label>Status update (copy)</label><textarea id="ctText" style="min-height:150px;font-family:var(--mono);font-size:12px">'+esc(tpl)+'</textarea><div class="helper">Pre-filled from the incident. Edit and copy into the status page or client comms.</div></div>',
+    foot:'<button class="btn sm" id="ctCancel">Close</button><button class="btn sm primary" id="ctCopy">Copy to clipboard</button>',
+    onMount:function(){
+      el('ctCancel').addEventListener('click',mdClose);
+      el('ctCopy').addEventListener('click',function(){var t=el('ctText');t.select();try{document.execCommand('copy');}catch(_){}toast('Copied',i.id+' comms template copied.');});
+    }
+  });
+}
+/* DR drill scheduler + history (§4.3.7) */
+function hlPaneDr(){
+  var scheduled=DR_DRILLS.filter(function(d){return d.status==='scheduled';});
+  var done=DR_DRILLS.filter(function(d){return d.status==='complete';});
+  var head='<div class="doc-toolbar" style="justify-content:flex-end"><button class="btn primary" id="drSchedule"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Schedule drill</button></div>';
+  var sched=scheduled.length?'<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Scheduled drills</h3><span class="meta">'+scheduled.length+'</span></div><div class="pb flush">'+
+    scheduled.map(function(d){return '<div class="lrow"><div class="body"><h4>'+esc(d.scope)+'</h4><div class="metaln"><span><b>'+esc(d.id)+'</b></span><span>Scheduled '+esc(d.date)+'</span><span>By '+esc(d.by)+'</span></div></div><div class="side">'+incStatusChip('scheduled')+'</div></div>';}).join('')+
+  '</div></div>':'';
+  var hist='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Drill history</h3><span class="meta">'+done.length+'</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Drill</th><th>Date</th><th>Scope</th><th class="num">RTO</th><th class="num">RPO</th><th>By</th><th>Result</th></tr></thead><tbody>'+
+  done.map(function(d){return '<tr><td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(d.id)+'</td><td class="c-mono">'+esc(d.date)+'</td><td class="c-name">'+esc(d.scope)+'</td><td class="c-num">'+esc(d.rto)+'</td><td class="c-num">'+esc(d.rpo)+'</td><td class="c-sec">'+esc(d.by)+'</td><td>'+(d.result==='pass'?'<span class="ichip green">Pass</span>':'<span class="ichip red">Fail</span>')+'</td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+sched+hist;
+}
+function hlBindDr(){if(el('drSchedule'))el('drSchedule').addEventListener('click',openScheduleDrill);}
+function openScheduleDrill(){
+  var def=new Date(Date.now()+30*86400000);var p=function(n){return String(n).padStart(2,'0');};
+  var defStr=def.getUTCFullYear()+'-'+p(def.getUTCMonth()+1)+'-'+p(def.getUTCDate());
+  mdOpen({title:'Schedule DR drill',
+    body:''+
+      '<div class="mfield"><label>Drill scope</label><select id="drScope"><option>Warehouse restore</option><option>Full region failover</option><option>Backup integrity check</option><option>Database point-in-time restore</option><option>Object store restore</option></select></div>'+
+      '<div class="mfield"><label>Scheduled date</label><input id="drDate" class="mono" value="'+defStr+'"/></div>',
+    foot:'<button class="btn sm" id="drCancel">Cancel</button><button class="btn sm primary" id="drGo">Schedule drill</button>',
+    onMount:function(){
+      el('drCancel').addEventListener('click',mdClose);
+      el('drGo').addEventListener('click',function(){
+        var date=(el('drDate').value||'').trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){toast('Valid date required','Use YYYY-MM-DD.');return;}
+        var scope=el('drScope').value;var id='DR-'+date.slice(0,7);
+        DR_DRILLS=[{id:id,date:date,scope:scope,result:'—',rto:'—',rpo:'—',by:profileName(),status:'scheduled'}].concat(DR_DRILLS);persistHealth();
+        logAudit({carrier:'System Health',crit:'DR drill scheduled',fr:'—',to:scope+' · '+date,status:'Scheduled',note:id});
+        mdClose();renderHealth();toast('DR drill scheduled',scope+' · '+date);
+      });
+    }
+  });
 }
 
 /* ══════════════════ PLACEHOLDER AREAS (built in later increments) ══════════════════ */
