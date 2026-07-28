@@ -401,6 +401,29 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .jq-fill{height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;flex:1}
 .jq-fill span{display:block;height:100%;background:var(--amber)}
 
+/* Product Management v2 (§4.3.3): funnel + velocity + mini stats */
+.fun{display:flex;flex-direction:column;gap:12px}
+.fun-stage{display:flex;flex-direction:column;gap:5px}
+.fun-lbl{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.fun-lbl .fl{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--t1)}
+.fun-lbl .fc{font-family:var(--mono);font-size:12px;color:var(--t4)}
+.fun-track{height:40px;border-radius:7px;background:var(--bg3);border:1px solid var(--line);overflow:hidden;display:flex}
+.fun-fill{height:100%;display:flex;align-items:center;padding:0 14px;font-family:var(--sans);font-size:15px;font-weight:700;color:#00121f;white-space:nowrap;min-width:44px}
+.fun-fill.f1{background:linear-gradient(90deg,var(--amber),var(--amber2))}
+.fun-fill.f2{background:linear-gradient(90deg,var(--deploy),#8ac6a6)}
+.fun-fill.f3{background:linear-gradient(90deg,var(--info),#9db9d6)}
+.fun-arrow{align-self:center;color:var(--t4);font-family:var(--mono);font-size:11px;letter-spacing:.05em}
+.vel{display:flex;align-items:flex-end;gap:10px;height:130px;padding-top:8px}
+.vel-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;justify-content:flex-end;height:100%}
+.vel-bar{width:100%;max-width:38px;background:linear-gradient(180deg,var(--amber),var(--amber-dim));border-radius:4px 4px 0 0;min-height:3px}
+.vel-n{font-family:var(--mono);font-size:12px;color:var(--t1);font-weight:600}
+.vel-x{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.03em}
+.mini3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.mini3 .m3{background:var(--bg2);padding:13px 14px;display:flex;flex-direction:column;gap:5px}
+.mini3 .m3 .ml{font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--t3)}
+.mini3 .m3 .mv{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--display);line-height:1}
+.mini3 .m3 .ms{font-family:var(--mono);font-size:11px;color:var(--t4)}
+
 /* ══════════════════════════════ MODAL ══════════════════════════════ */
 .md-back{position:fixed;inset:0;z-index:120;background:rgba(3,8,16,.66);display:none;align-items:center;justify-content:center;padding:20px;overflow:auto}
 .md-back.show{display:flex}
@@ -1985,13 +2008,36 @@ function fwVisitChip(v){var m={scheduled:['muted','Scheduled'],assigned:['blue',
 function anomChip(n){return n>0?'<span class="ichip watch">'+n+' open</span>':'<span class="ichip muted">0</span>';}
 
 var fwState={q:'',client:'all',due:'all'};
+var fwTab='portfolio';
 function renderFleetwatch(){
   hydrateFw();
   var fleet=FW_FLEET;
   var openA=fleet.reduce(function(s,a){return s+a.anomOpen;},0);
   var aog=fleet.filter(function(a){return a.alert==='aog';}).length;
   var dueN=fleet.filter(function(a){var k=dueState(a.nextVisit).k;return k==='over'||k==='now';}).length;
-  var fwClients=CLIENTS.filter(function(c){return c.products.indexOf('FleetWatch')>=0;});
+  var fwClients=CLIENTS.filter(function(c){return c.products.indexOf('FleetWatch')>=0&&c.status!=='offboarded';});
+  var tabs=[['portfolio','Portfolio',fleet.length],['pan','Pan-portfolio',fwClients.length]];
+  var body=''+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.4 / §4.3.3</div><h1>FleetWatch</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Every aircraft under surveillance across every client, and the pan-portfolio aggregate view.</span></div></div>'+
+  '<div class="summary">'+
+    '<div class="cell"><div class="lbl">Aircraft under surveillance</div><div class="num">'+fleet.length+'</div><div class="cap">Across '+fwClients.length+' clients</div></div>'+
+    '<div class="cell"><div class="lbl">Open anomalies</div><div class="num'+(openA?' due':'')+'">'+openA+'</div><div class="cap">Fleet-wide</div></div>'+
+    '<div class="cell"><div class="lbl">AOG alerts pending</div><div class="num'+(aog?' alert':'')+'">'+aog+'</div><div class="cap">Off-cycle</div></div>'+
+    '<div class="cell"><div class="lbl">Visits due</div><div class="num'+(dueN?' due':'')+'">'+dueN+'</div><div class="cap">Overdue or within 7d</div></div>'+
+  '</div>'+
+  '<div class="fb" id="fwTabs">'+tabs.map(function(t){return '<button class="fp'+(fwTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+' <span class="fpn">'+t[2]+'</span></button>';}).join('')+'</div>'+
+  '<div id="fwPane"></div>';
+  el('vw-fleetwatch').innerHTML=body;
+  [].forEach.call(el('fwTabs').children,function(b){b.addEventListener('click',function(){fwTab=b.getAttribute('data-t');renderFleetwatch();});});
+  fwRenderPane();
+  setNav('navFleet',aog,true);
+}
+function fwRenderPane(){
+  var pane=el('fwPane');
+  if(fwTab==='pan'){pane.innerHTML=fwPanePan();return;}
+  var fleet=FW_FLEET;
+  var fwClients=CLIENTS.filter(function(c){return c.products.indexOf('FleetWatch')>=0&&c.status!=='offboarded';});
   var rows=fleet.filter(function(a){
     if(fwState.client!=='all'&&a.clientId!==fwState.client)return false;
     if(fwState.due!=='all'&&dueState(a.nextVisit).k!==fwState.due)return false;
@@ -1999,15 +2045,7 @@ function renderFleetwatch(){
     return true;
   });
   var dueF=[['all','All'],['over','Overdue'],['now','Due 7d'],['soon','Due 30d'],['ok','Scheduled']];
-  var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.4</div><h1>FleetWatch, portfolio</h1></div>'+
-    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Every aircraft under surveillance across every client. Click a row to assign a field agent or update visit completion.</span></div></div>'+
-  '<div class="summary">'+
-    '<div class="cell"><div class="lbl">Aircraft under surveillance</div><div class="num">'+fleet.length+'</div><div class="cap">Across '+fwClients.length+' clients</div></div>'+
-    '<div class="cell"><div class="lbl">Open anomalies</div><div class="num'+(openA?' due':'')+'">'+openA+'</div><div class="cap">Fleet-wide</div></div>'+
-    '<div class="cell"><div class="lbl">AOG alerts pending</div><div class="num'+(aog?' alert':'')+'">'+aog+'</div><div class="cap">Off-cycle</div></div>'+
-    '<div class="cell"><div class="lbl">Visits due</div><div class="num'+(dueN?' due':'')+'">'+dueN+'</div><div class="cap">Overdue or within 7d</div></div>'+
-  '</div>'+
+  pane.innerHTML=''+
   '<div class="doc-toolbar">'+
     '<input class="doc-search" id="fwSearch" placeholder="Search registration, type, operator ..." value="'+esc(fwState.q)+'"/>'+
     '<select class="inp" id="fwClient"><option value="all">All clients</option>'+fwClients.map(function(c){return '<option value="'+c.id+'"'+sel(fwState.client,c.id)+'>'+esc(c.name)+'</option>';}).join('')+'</select>'+
@@ -2029,12 +2067,47 @@ function renderFleetwatch(){
       '<td class="c-go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></td>'+
     '</tr>';}).join(''):'<tr><td colspan="8"><div class="empty">No aircraft match the current filter.</div></td></tr>')+
   '</tbody></table></div></div></div>';
-  el('vw-fleetwatch').innerHTML=body;
-  el('fwSearch').addEventListener('input',function(){fwState.q=this.value;renderFleetwatch();var s=el('fwSearch');s.focus();s.setSelectionRange(s.value.length,s.value.length);});
-  el('fwClient').value=fwState.client;el('fwClient').addEventListener('change',function(){fwState.client=this.value;renderFleetwatch();});
-  [].forEach.call(el('fwDueF').children,function(b){b.addEventListener('click',function(){fwState.due=b.getAttribute('data-d');renderFleetwatch();});});
-  [].forEach.call(el('vw-fleetwatch').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){openAssignAgent(tr.getAttribute('data-id'));});});
-  setNav('navFleet',aog,true);
+  el('fwSearch').addEventListener('input',function(){fwState.q=this.value;fwRenderPane();var s=el('fwSearch');s.focus();s.setSelectionRange(s.value.length,s.value.length);});
+  el('fwClient').value=fwState.client;el('fwClient').addEventListener('change',function(){fwState.client=this.value;fwRenderPane();});
+  [].forEach.call(el('fwDueF').children,function(b){b.addEventListener('click',function(){fwState.due=b.getAttribute('data-d');fwRenderPane();});});
+  [].forEach.call(pane.querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){openAssignAgent(tr.getAttribute('data-id'));});});
+}
+/* pan-portfolio aggregate dashboard (§4.3.3) */
+function fwPanePan(){
+  var fleet=FW_FLEET;
+  var fwClients=CLIENTS.filter(function(c){return c.products.indexOf('FleetWatch')>=0&&c.status!=='offboarded';});
+  var byClient=fwClients.map(function(c){var acs=fleet.filter(function(a){return a.clientId===c.id;});
+    return {name:c.name,ac:acs.length,anom:acs.reduce(function(s,a){return s+a.anomOpen;},0),aog:acs.filter(function(a){return a.alert==='aog';}).length,due:acs.filter(function(a){var k=dueState(a.nextVisit).k;return k==='over'||k==='now';}).length};
+  }).sort(function(a,b){return b.anom-a.anom||b.ac-a.ac;});
+  var regions={};fleet.forEach(function(a){regions[a.region]=(regions[a.region]||0)+1;});
+  var regKeys=Object.keys(regions).sort(function(a,b){return regions[b]-regions[a];});
+  var maxReg=Math.max.apply(null,regKeys.map(function(k){return regions[k];}).concat([1]));
+  var vis={scheduled:0,assigned:0,in_progress:0,captured:0};fleet.forEach(function(a){vis[a.visit]=(vis[a.visit]||0)+1;});
+  var weekly=fleet.filter(function(a){return a.tier==='Weekly';}).length,monthly=fleet.length-weekly;
+  var avgAnom=(fleet.reduce(function(s,a){return s+a.anomOpen;},0)/(fleet.length||1)).toFixed(1);
+  return ''+
+  '<div class="mini3" style="margin-bottom:24px">'+
+    '<div class="m3"><span class="ml">Avg anomalies / aircraft</span><span class="mv">'+avgAnom+'</span><span class="ms">Fleet-wide</span></div>'+
+    '<div class="m3"><span class="ml">Weekly cadence</span><span class="mv">'+weekly+'</span><span class="ms">'+monthly+' monthly</span></div>'+
+    '<div class="m3"><span class="ml">Captured this cycle</span><span class="mv">'+vis.captured+'</span><span class="ms">'+vis.in_progress+' in progress</span></div>'+
+  '</div>'+
+  '<div class="d-grid">'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Surveillance by client</h3><span class="meta">'+fwClients.length+' clients</span></div>'+
+    '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Client</th><th class="num">Aircraft</th><th class="num">Open anomalies</th><th class="num">AOG</th><th class="num">Visits due</th></tr></thead><tbody>'+
+      byClient.map(function(c){return '<tr><td class="c-name">'+esc(c.name)+'</td><td class="c-num">'+c.ac+'</td><td class="c-num"'+(c.anom?' style="color:var(--watch);font-weight:600"':'')+'>'+c.anom+'</td><td class="c-num"'+(c.aog?' style="color:var(--dnd);font-weight:600"':'')+'>'+c.aog+'</td><td class="c-num"'+(c.due?' style="color:var(--watch)"':'')+'>'+c.due+'</td></tr>';}).join('')+
+    '</tbody></table></div></div></div>'+
+    '<div style="display:flex;flex-direction:column;gap:24px">'+
+      '<div class="panel"><div class="ph"><span class="bullet"></span><h3>By region</h3></div><div class="pb">'+
+        regKeys.map(function(k){return barRowN(k,regions[k],maxReg,'fw');}).join('')+
+      '</div></div>'+
+      '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Visit status</h3></div><div class="pb">'+
+        '<div class="kv"><span class="k">Scheduled</span><span class="v">'+vis.scheduled+'</span></div>'+
+        '<div class="kv"><span class="k">Assigned</span><span class="v">'+vis.assigned+'</span></div>'+
+        '<div class="kv"><span class="k">In progress</span><span class="v">'+vis.in_progress+'</span></div>'+
+        '<div class="kv"><span class="k">Captured</span><span class="v">'+vis.captured+'</span></div>'+
+      '</div></div>'+
+    '</div>'+
+  '</div>';
 }
 function openAssignAgent(id){
   var a=fwById(id);if(!a)return;var agents=fieldAgents();var d=dueState(a.nextVisit);
@@ -2069,10 +2142,10 @@ var SCORING_FILES=[
   {id:'SF-202607-APE-04',carrier:'Air Peace',analyst:'u-tunde',state:'submitted',composite:78,verdict:'deploy',validUntil:'2026-12-31',updated:'2026-07-20'},
   {id:'SF-202607-IBM-03',carrier:'Ibom Air',analyst:'u-ngozi',state:'approved',composite:72,verdict:'deploy',validUntil:'2027-01-15',updated:'2026-07-18'},
   {id:'SF-202607-ASK-02',carrier:'ASKY Airlines',analyst:'u-amara',state:'submitted',composite:64,verdict:'watch',validUntil:'2026-11-30',updated:'2026-07-21'},
-  {id:'SF-202606-GRN-05',carrier:'Green Africa',analyst:'u-tunde',state:'shipped',composite:69,verdict:'watch',validUntil:'2026-12-15',updated:'2026-06-28'},
+  {id:'SF-202606-GRN-05',carrier:'Green Africa',analyst:'u-tunde',state:'shipped',composite:69,verdict:'watch',validUntil:'2026-08-20',updated:'2026-06-28'},
   {id:'SF-202607-UNA-01',carrier:'United Nigeria Airlines',analyst:'u-ngozi',state:'draft',composite:0,verdict:'',validUntil:'',updated:'2026-07-22'},
   {id:'SF-202607-DHL-02',carrier:'DHL Aviation South Africa',analyst:'u-amara',state:'submitted',composite:81,verdict:'deploy',validUntil:'2027-02-28',updated:'2026-07-19'},
-  {id:'SF-202606-AIR-06',carrier:'Air Cote d Ivoire',analyst:'u-tunde',state:'shipped',composite:66,verdict:'watch',validUntil:'2026-12-01',updated:'2026-06-20'},
+  {id:'SF-202606-AIR-06',carrier:'Air Cote d Ivoire',analyst:'u-tunde',state:'shipped',composite:66,verdict:'watch',validUntil:'2026-09-10',updated:'2026-06-20'},
   {id:'SF-202607-MAX-01',carrier:'Max Air',analyst:'u-ngozi',state:'returned',composite:52,verdict:'watch',validUntil:'',updated:'2026-07-17'},
   {id:'SF-202607-RWD-03',carrier:'RwandAir',analyst:'u-amara',state:'approved',composite:74,verdict:'deploy',validUntil:'2027-01-31',updated:'2026-07-16'},
   {id:'SF-202605-AZM-02',carrier:'Azman Air',analyst:'u-tunde',state:'rejected',composite:41,verdict:'dnd',validUntil:'',updated:'2026-05-30'}
@@ -2081,12 +2154,34 @@ function sfStateChip(s){var m={draft:['muted','Draft'],submitted:['blue','Submit
 function verdictChip(v){var m={deploy:['green','Deploy'],watch:['watch','Watch'],dnd:['red','Do Not Deploy']};var x=m[v];return x?'<span class="ichip '+x[0]+'">'+x[1]+'</span>':'<span class="ichip muted">Pending</span>';}
 function compositeCell(n){if(!n)return '<span class="c-mono" style="color:var(--t4)">—</span>';var cls=n>=75?'var(--deploy)':(n>=50?'var(--watch)':'var(--dnd)');return '<span class="c-mono" style="color:'+cls+';font-weight:600">'+n+'</span>';}
 function analystName(id){var f=(typeof userById==='function')?userById(id):null;return f?f.u.name:id;}
+
+/* ── Arbiter v2 (§4.3.3): committee throughput + refresh queue ── */
+var SC_DECISIONS=[
+  {sfId:'SF-202607-IBM-03',carrier:'Ibom Air',submittedTs:'2026-07-16',decidedTs:'2026-07-18',decision:'Approved',chair:'u-sofia'},
+  {sfId:'SF-202607-RWD-03',carrier:'RwandAir',submittedTs:'2026-07-14',decidedTs:'2026-07-16',decision:'Approved',chair:'u-sofia'},
+  {sfId:'SF-202607-MAX-01',carrier:'Max Air',submittedTs:'2026-07-13',decidedTs:'2026-07-17',decision:'Returned',chair:'u-david'},
+  {sfId:'SF-202607-KEN-02',carrier:'Kenya Airways',submittedTs:'2026-07-08',decidedTs:'2026-07-11',decision:'Approved',chair:'u-sofia'},
+  {sfId:'SF-202607-ETH-01',carrier:'Ethiopian Airlines',submittedTs:'2026-07-02',decidedTs:'2026-07-04',decision:'Approved',chair:'u-david'},
+  {sfId:'SF-202606-TAG-03',carrier:'TAAG Angola',submittedTs:'2026-06-30',decidedTs:'2026-07-03',decision:'Returned',chair:'u-sofia'},
+  {sfId:'SF-202606-GRN-05',carrier:'Green Africa',submittedTs:'2026-06-25',decidedTs:'2026-06-28',decision:'Approved',chair:'u-sofia'},
+  {sfId:'SF-202606-AIR-06',carrier:'Air Cote d Ivoire',submittedTs:'2026-06-18',decidedTs:'2026-06-20',decision:'Approved',chair:'u-sofia'},
+  {sfId:'SF-202606-SAA-02',carrier:'South African Airways',submittedTs:'2026-06-10',decidedTs:'2026-06-14',decision:'Approved',chair:'u-david'},
+  {sfId:'SF-202605-AZM-02',carrier:'Azman Air',submittedTs:'2026-05-27',decidedTs:'2026-05-30',decision:'Rejected',chair:'u-david'}
+];
+var REFRESH_JOBS=[];
+function hydrateRefresh(){loadState();if(STATE.refreshJobs)REFRESH_JOBS=STATE.refreshJobs;}
+function persistRefresh(){loadState();STATE.refreshJobs=REFRESH_JOBS;saveState();}
+function sfScheduled(id){return REFRESH_JOBS.some(function(j){return j.sfId===id&&j.status==='scheduled';});}
+function decLatency(d){return Math.max(0,Math.round((parseYMD(d.decidedTs)-parseYMD(d.submittedTs))/86400000));}
+function median(arr){if(!arr.length)return 0;var s=arr.slice().sort(function(a,b){return a-b;});var m=Math.floor(s.length/2);return s.length%2?s[m]:Math.round((s[m-1]+s[m])/2);}
 var arbTab='files';
 function renderArbiter(){
+  hydrateRefresh();
   var files=SCORING_FILES;
   var byState=function(s){return files.filter(function(f){return f.state===s;}).length;};
   var queue=files.filter(function(f){return f.state==='submitted';});
-  var tabs=[['files','Scoring files',files.length],['queue','Committee queue',queue.length]];
+  var refreshN=refreshQueueRows().length;
+  var tabs=[['files','Scoring files',files.length],['queue','Committee queue',queue.length],['throughput','Throughput',SC_DECISIONS.length],['refresh','Refresh queue',refreshN]];
   var body=''+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.4</div><h1>Arbiter, scoring files</h1></div>'+
     '<div class="phead-actions"><span class="phead desc" style="text-align:right">Operational oversight of every scoring file and the Scoring Committee queue. Decisioning happens in the internal workspace.</span></div></div>'+
@@ -2104,7 +2199,10 @@ function renderArbiter(){
   setNav('navArb',queue.length,false);
 }
 function arbRenderPane(queue){
-  var pane=el('arbPane'),isQueue=arbTab==='queue';
+  var pane=el('arbPane');
+  if(arbTab==='throughput'){pane.innerHTML=arbPaneThroughput();return;}
+  if(arbTab==='refresh'){pane.innerHTML=arbPaneRefresh();arbBindRefresh();return;}
+  var isQueue=arbTab==='queue';
   var rows=isQueue?queue:SCORING_FILES;
   var notice=isQueue?'<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><p>These scoring files are submitted and awaiting Scoring Committee review. The committee decides in the internal workspace; this is the super-admin oversight view.</p></div>':'';
   pane.innerHTML=notice+'<div class="panel"><div class="ph"><span class="bullet"></span><h3>'+(isQueue?'Committee submission queue':'All scoring files')+'</h3><span class="meta">'+rows.length+' files</span></div>'+
@@ -2124,6 +2222,99 @@ function arbRenderPane(queue){
     '</tr>';}).join(''):'<tr><td colspan="8"><div class="empty">'+(isQueue?'No submissions are pending committee review.':'No scoring files.')+'</div></td></tr>')+
   '</tbody></table></div></div></div>';
 }
+/* committee throughput board (§4.3.3) */
+function arbPaneThroughput(){
+  var lat=SC_DECISIONS.map(decLatency);
+  var medLat=median(lat);
+  var now=new Date();
+  var dec30=SC_DECISIONS.filter(function(d){return (now-parseYMD(d.decidedTs))/86400000<=30;}).length;
+  var approvals=SC_DECISIONS.filter(function(d){return d.decision==='Approved';}).length;
+  var apprRate=SC_DECISIONS.length?Math.round(approvals/SC_DECISIONS.length*100):0;
+  var backlog=SCORING_FILES.filter(function(f){return f.state==='submitted';});
+  var oldest=backlog.map(function(f){return Math.round((now-parseYMD(f.updated))/86400000);}).sort(function(a,b){return b-a;})[0]||0;
+  // velocity: decisions per week, last 6 weeks (oldest left -> newest right)
+  var buckets=[0,0,0,0,0,0];
+  SC_DECISIONS.forEach(function(d){var days=Math.floor((now-parseYMD(d.decidedTs))/86400000);var b=Math.floor(days/7);if(b>=0&&b<6)buckets[b]++;});
+  var maxB=Math.max.apply(null,buckets.concat([1]));
+  var velCols=[5,4,3,2,1,0].map(function(i){var h=Math.round(buckets[i]/maxB*100);return '<div class="vel-col"><div class="vel-n">'+buckets[i]+'</div><div class="vel-bar" style="height:'+Math.max(3,h)+'%"></div><div class="vel-x">'+(i===0?'This wk':i+' wk')+'</div></div>';}).join('');
+  return ''+
+  '<div class="mini3" style="margin-bottom:24px">'+
+    '<div class="m3"><span class="ml">In flight (backlog)</span><span class="mv"'+(backlog.length?' style="color:var(--watch)"':'')+'>'+backlog.length+'</span><span class="ms">Oldest '+oldest+'d waiting</span></div>'+
+    '<div class="m3"><span class="ml">Median decision latency</span><span class="mv">'+medLat+'d</span><span class="ms">Submit to decision</span></div>'+
+    '<div class="m3"><span class="ml">Decisions, 30d</span><span class="mv">'+dec30+'</span><span class="ms">'+apprRate+'% approved</span></div>'+
+  '</div>'+
+  '<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Submission velocity</h3><span class="meta">decisions / week</span></div><div class="pb"><div class="vel">'+velCols+'</div></div></div>'+
+  '<div class="d-grid">'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Recent decisions &amp; latency</h3><span class="meta">'+SC_DECISIONS.length+'</span></div>'+
+    '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Carrier</th><th>Submitted</th><th>Decided</th><th class="num">Latency</th><th>Outcome</th></tr></thead><tbody>'+
+      SC_DECISIONS.slice().sort(function(a,b){return (b.decidedTs||'').localeCompare(a.decidedTs||'');}).map(function(d){var L=decLatency(d);return '<tr><td class="c-name">'+esc(d.carrier)+'</td><td class="c-mono">'+esc(d.submittedTs)+'</td><td class="c-mono">'+esc(d.decidedTs)+'</td><td class="c-num"'+(L>3?' style="color:var(--watch)"':'')+'>'+L+'d</td><td>'+decisionChip(d.decision)+'</td></tr>';}).join('')+
+    '</tbody></table></div></div></div>'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Backlog</h3><span class="meta">'+backlog.length+'</span></div><div class="pb flush">'+
+      (backlog.length?backlog.map(function(f){var age=Math.round((now-parseYMD(f.updated))/86400000);return '<div class="lrow"><div class="body"><h4>'+esc(f.carrier)+'</h4><div class="metaln"><span><b>'+esc(f.id)+'</b></span><span>'+esc(analystName(f.analyst))+'</span></div></div><div class="side"><span class="ichip '+(age>5?'watch':'muted')+'">'+age+'d waiting</span></div></div>';}).join(''):'<div class="empty">No submissions in the backlog.</div>')+
+    '</div></div>'+
+  '</div>';
+}
+/* refresh queue management (§4.3.3) */
+function refreshQueueRows(){
+  return SCORING_FILES.filter(function(f){return f.validUntil&&(f.state==='shipped'||f.state==='approved');})
+    .map(function(f){return {f:f,days:daysUntil(f.validUntil)};})
+    .filter(function(x){return x.days<=180;})
+    .sort(function(a,b){return a.days-b.days;});
+}
+function expiryChip(days){if(days<0)return '<span class="ichip red">Expired '+(-days)+'d</span>';if(days<=30)return '<span class="ichip red">'+days+'d left</span>';if(days<=90)return '<span class="ichip watch">'+days+'d left</span>';return '<span class="ichip blue">'+days+'d left</span>';}
+var arbRefSel={};
+function arbPaneRefresh(){
+  var rows=refreshQueueRows();
+  var selN=Object.keys(arbRefSel).length;
+  var head='<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><p>Shipped and approved verdicts approaching validity expiry (within 180 days). Select verdicts and schedule a refresh; the analyst workspace picks up scheduled refreshes (§3.4.1).</p></div>';
+  var bulkBar=selN?'<div class="bulkbar"><span class="bn">'+selN+' selected</span><button class="btn sm primary" id="arbSchedBulk">Schedule refresh</button><button class="btn sm" id="arbSchedClear" style="margin-left:auto">Clear</button></div>':'';
+  var allChecked=rows.length&&rows.every(function(x){return arbRefSel[x.f.id]||sfScheduled(x.f.id);});
+  var panel='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Verdicts approaching expiry</h3><span class="meta">'+rows.length+'</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th class="c-ck"><input type="checkbox" class="umall" id="arbRefAll"'+(allChecked?' checked':'')+'/></th><th>Scoring file</th><th>Carrier</th><th>Verdict</th><th>Valid until</th><th>Expiry</th><th>Refresh</th></tr></thead><tbody>'+
+    (rows.length?rows.map(function(x){var f=x.f;var sched=sfScheduled(f.id);return '<tr>'+
+      '<td class="c-ck"><input type="checkbox" class="arbRefCk" data-id="'+f.id+'"'+((arbRefSel[f.id]||sched)?' checked':'')+(sched?' disabled':'')+'/></td>'+
+      '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(f.id)+'</td>'+
+      '<td class="c-name">'+esc(f.carrier)+'</td>'+
+      '<td>'+verdictChip(f.verdict)+'</td>'+
+      '<td class="c-mono">'+esc(f.validUntil)+'</td>'+
+      '<td>'+expiryChip(x.days)+'</td>'+
+      '<td>'+(sched?'<span class="ichip green">Scheduled</span>':'<button class="btn sm arbSchedOne" data-id="'+f.id+'">Schedule</button>')+'</td>'+
+    '</tr>';}).join(''):'<tr><td colspan="7"><div class="empty">No verdicts are approaching expiry.</div></td></tr>')+
+  '</tbody></table></div></div></div>';
+  return head+bulkBar+panel;
+}
+function arbBindRefresh(){
+  var pane=el('arbPane');
+  [].forEach.call(pane.querySelectorAll('.arbRefCk'),function(cb){if(cb.disabled)return;cb.addEventListener('click',function(){var id=cb.getAttribute('data-id');if(arbRefSel[id])delete arbRefSel[id];else arbRefSel[id]=true;arbRenderPane(SCORING_FILES.filter(function(f){return f.state==='submitted';}));});});
+  var all=pane.querySelector('#arbRefAll');if(all)all.addEventListener('click',function(){var on=all.checked;refreshQueueRows().forEach(function(x){if(sfScheduled(x.f.id))return;if(on)arbRefSel[x.f.id]=true;else delete arbRefSel[x.f.id];});arbRenderPane(SCORING_FILES.filter(function(f){return f.state==='submitted';}));});
+  [].forEach.call(pane.querySelectorAll('.arbSchedOne'),function(b){b.addEventListener('click',function(){openScheduleRefresh([b.getAttribute('data-id')]);});});
+  if(el('arbSchedBulk'))el('arbSchedBulk').addEventListener('click',function(){openScheduleRefresh(Object.keys(arbRefSel));});
+  if(el('arbSchedClear'))el('arbSchedClear').addEventListener('click',function(){arbRefSel={};arbRenderPane(SCORING_FILES.filter(function(f){return f.state==='submitted';}));});
+}
+function sfById(id){var r=null;SCORING_FILES.forEach(function(f){if(f.id===id)r=f;});return r;}
+function openScheduleRefresh(ids){
+  ids=ids.filter(function(id){return !sfScheduled(id);});
+  if(!ids.length){toast('Nothing to schedule','Select verdicts not already scheduled.');return;}
+  var def=new Date(Date.now()+14*86400000);var p=function(n){return String(n).padStart(2,'0');};
+  var defStr=def.getUTCFullYear()+'-'+p(def.getUTCMonth()+1)+'-'+p(def.getUTCDate());
+  mdOpen({title:'Schedule refresh',
+    body:''+
+      '<div class="msummary"><div class="ml">Verdicts to refresh</div><div class="mv">'+ids.length+' verdict'+(ids.length===1?'':'s')+'</div></div>'+
+      '<div class="mfield"><label>Refresh by date</label><input id="srDate" class="mono" value="'+defStr+'"/><div class="helper">Analysts must re-score these carriers before this date to keep verdicts valid.</div></div>'+
+      '<div class="mfield"><label>Note (optional)</label><input id="srNote" placeholder="e.g. Q3 refresh cycle"/></div>',
+    foot:'<button class="btn sm" id="srCancel">Cancel</button><button class="btn sm primary" id="srGo">Schedule '+ids.length+'</button>',
+    onMount:function(){
+      el('srCancel').addEventListener('click',mdClose);
+      el('srGo').addEventListener('click',function(){
+        var date=(el('srDate').value||'').trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){toast('Valid date required','Use YYYY-MM-DD.');return;}
+        var note=(el('srNote').value||'').trim();
+        ids.forEach(function(id){var f=sfById(id);REFRESH_JOBS.unshift({id:'REF-'+(3000+Math.floor(Math.random()*900)),sfId:id,carrier:f?f.carrier:id,scheduledFor:date,by:profileName(),ts:nowStamp(),note:note,status:'scheduled'});
+          logAudit({carrier:f?f.carrier:id,crit:'Verdict refresh scheduled',fr:(f?f.validUntil:'')+'',to:'refresh by '+date,status:'Scheduled',note:id});});
+        persistRefresh();arbRefSel={};mdClose();renderArbiter();toast('Refresh scheduled',ids.length+' verdict'+(ids.length===1?'':'s')+' · by '+date);
+      });
+    }
+  });
+}
 
 /* ── AIR: issue pipeline + subscriber list (§3.3.4) ── */
 var AIR_ISSUES=[
@@ -2142,12 +2333,14 @@ var AIR_SUBS=[
 function airStateChip(s){var m={drafting:['muted','Drafting'],review:['watch','In review'],publication:['blue','Publication'],delivered:['green','Delivered']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
 function tierChipAir(t){var m={Enterprise:'blue',Standard:'muted',Pilot:'watch'};return '<span class="ichip '+(m[t]||'muted')+'">'+esc(t)+'</span>';}
 function subExpiry(ymd){var d=daysUntil(ymd);if(d<0)return{lbl:'Expired',cls:'red'};if(d<=45)return{lbl:'Expiring '+d+'d',cls:'watch'};return{lbl:'Active',cls:'green'};}
+/* AIR paid funnel (§4.3.3): free volume -> paid -> Arbiter/FleetWatch cross-sell */
+var AIR_FREE_READERS=340;
 var airTab='pipeline';
 function renderAir(){
   var delivered=AIR_ISSUES.filter(function(i){return i.state==='delivered';}).length;
   var prod=AIR_ISSUES.filter(function(i){return i.state!=='delivered';}).length;
   var seats=AIR_SUBS.reduce(function(s,x){return s+x.seats;},0);
-  var tabs=[['pipeline','Issue pipeline',AIR_ISSUES.length],['subs','Subscribers',AIR_SUBS.length]];
+  var tabs=[['pipeline','Issue pipeline',AIR_ISSUES.length],['subs','Subscribers',AIR_SUBS.length],['funnel','Conversion funnel','']];
   var body=''+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.4</div><h1>AIR, Andara Intelligence Report</h1></div>'+
     '<div class="phead-actions"><span class="phead desc" style="text-align:right">The issue pipeline from drafting to delivery, and the full subscriber base.</span></div></div>'+
@@ -2166,6 +2359,7 @@ function renderAir(){
 }
 function airRenderPane(){
   var pane=el('airPane');
+  if(airTab==='funnel'){pane.innerHTML=airPaneFunnel();return;}
   if(airTab==='subs'){
     pane.innerHTML='<div class="panel"><div class="ph"><span class="bullet"></span><h3>AIR subscribers</h3><span class="meta">'+AIR_SUBS.length+'</span></div>'+
     '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Subscriber</th><th>Tier</th><th class="num">Seats</th><th>Expiry</th><th>Status</th></tr></thead><tbody>'+
@@ -2203,23 +2397,51 @@ function airRenderPane(){
       '</tr>';}).join('')+
     '</tbody></table></div></div></div>';
 }
+/* AIR paid-conversion funnel (§4.3.3) */
+function airPaneFunnel(){
+  var paidClients=AIR_SUBS.filter(function(s){return s.clientId;}).map(function(s){return clientById(s.clientId);}).filter(Boolean);
+  var alsoArbiter=paidClients.filter(function(c){return c.products.indexOf('Arbiter')>=0;});
+  var alsoFleet=paidClients.filter(function(c){return c.products.indexOf('FleetWatch')>=0;});
+  var free=AIR_FREE_READERS,paid=AIR_SUBS.length;
+  var conv=free?(paid/free*100):0;
+  var arbRate=paid?Math.round(alsoArbiter.length/paid*100):0;
+  var fwRate=paid?Math.round(alsoFleet.length/paid*100):0;
+  var w=function(n){return Math.max(8,Math.round(n/free*100));};
+  var funnel='<div class="fun">'+
+    '<div class="fun-stage"><div class="fun-lbl"><span class="fl">Free intelligence readers</span><span class="fc">volume</span></div><div class="fun-track"><div class="fun-fill f1" style="width:100%">'+free+'</div></div></div>'+
+    '<div class="fun-arrow">↓ '+conv.toFixed(1)+'% convert to paid</div>'+
+    '<div class="fun-stage"><div class="fun-lbl"><span class="fl">Paid AIR subscribers</span><span class="fc">'+conv.toFixed(1)+'% of free</span></div><div class="fun-track"><div class="fun-fill f2" style="width:'+Math.max(18,w(paid*6))+'%">'+paid+'</div></div></div>'+
+    '<div class="fun-arrow">↓ cross-sell into other products</div>'+
+    '<div class="fun-stage"><div class="fun-lbl"><span class="fl">Also on Arbiter</span><span class="fc">'+arbRate+'% of paid</span></div><div class="fun-track"><div class="fun-fill f3" style="width:'+Math.max(14,Math.round(alsoArbiter.length/Math.max(paid,1)*60))+'%">'+alsoArbiter.length+'</div></div></div>'+
+    '<div class="fun-stage"><div class="fun-lbl"><span class="fl">Also on FleetWatch</span><span class="fc">'+fwRate+'% of paid</span></div><div class="fun-track"><div class="fun-fill f3" style="width:'+Math.max(12,Math.round(alsoFleet.length/Math.max(paid,1)*60))+'%">'+alsoFleet.length+'</div></div></div>'+
+  '</div>';
+  return ''+
+  '<div class="mini3" style="margin-bottom:24px">'+
+    '<div class="m3"><span class="ml">Free to paid</span><span class="mv">'+conv.toFixed(1)+'%</span><span class="ms">'+paid+' of '+free+'</span></div>'+
+    '<div class="m3"><span class="ml">Paid to Arbiter</span><span class="mv">'+arbRate+'%</span><span class="ms">'+alsoArbiter.length+' subscribers</span></div>'+
+    '<div class="m3"><span class="ml">Paid to FleetWatch</span><span class="mv">'+fwRate+'%</span><span class="ms">'+alsoFleet.length+' subscribers</span></div>'+
+  '</div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Conversion funnel</h3><span class="meta">§4.3.3</span></div><div class="pb">'+funnel+
+    '<div class="helper" style="font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:14px;letter-spacing:.02em">Cross-sell is measured from paid AIR subscribers who are also commissioned clients on Arbiter or FleetWatch. Standalone subscribers are not cross-sell candidates.</div>'+
+  '</div></div>';
+}
 
 /* ══════════════════════════════════════════════════════
    BILLING & FINANCE (§3.3.5)
 ══════════════════════════════════════════════════════ */
 function fmtUsdFull(n){return '$'+(n||0).toLocaleString('en-US');}
 var INVOICES=[
-  {id:'AND-INV-2051',clientId:'cl-fidelity',amount:120000,issued:'2026-07-01',due:'2026-07-31',status:'issued',method:'Stripe',recon:'Pending',paid:''},
-  {id:'AND-INV-2039',clientId:'cl-fidelity',amount:120000,issued:'2026-04-01',due:'2026-04-30',status:'paid',method:'Stripe',recon:'Reconciled',paid:'2026-04-22'},
-  {id:'AND-INV-2044',clientId:'cl-ecobank',amount:75000,issued:'2026-04-22',due:'2026-05-22',status:'overdue',method:'Paystack',recon:'Failed',paid:''},
-  {id:'AND-INV-2048',clientId:'cl-afc',amount:152500,issued:'2026-06-01',due:'2026-06-30',status:'paid',method:'Bank transfer',recon:'Reconciled',paid:'2026-06-18'},
-  {id:'AND-INV-2053',clientId:'cl-afc',amount:152500,issued:'2026-07-01',due:'2026-07-31',status:'issued',method:'Bank transfer',recon:'Pending',paid:''},
-  {id:'AND-INV-2046',clientId:'cl-zenith',amount:45000,issued:'2026-06-10',due:'2026-07-10',status:'overdue',method:'Paystack',recon:'Pending',paid:''},
-  {id:'AND-INV-2050',clientId:'cl-kestrel',amount:80000,issued:'2026-07-01',due:'2026-07-31',status:'issued',method:'Stripe',recon:'Pending',paid:''},
-  {id:'AND-INV-2033',clientId:'cl-kestrel',amount:80000,issued:'2026-04-01',due:'2026-04-30',status:'paid',method:'Stripe',recon:'Reconciled',paid:'2026-04-28'},
-  {id:'AND-INV-2052',clientId:'cl-stanchart',amount:47500,issued:'2026-07-05',due:'2026-08-04',status:'issued',method:'Stripe',recon:'Pending',paid:''},
-  {id:'AND-INV-2041',clientId:'cl-dbn',amount:12000,issued:'2026-04-22',due:'2026-05-22',status:'overdue',method:'Paystack',recon:'Failed',paid:''},
-  {id:'AND-INV-2019',clientId:'cl-sahel',amount:55000,issued:'2025-09-01',due:'2025-09-30',status:'paid',method:'Bank transfer',recon:'Reconciled',paid:'2025-09-25'}
+  {id:'AND-INV-2051',clientId:'cl-fidelity',amount:120000,issued:'2026-07-01',due:'2026-07-31',status:'issued',method:'Stripe',recon:'Pending',paid:'',entity:'Andara Systems Ltd',currency:'USD'},
+  {id:'AND-INV-2039',clientId:'cl-fidelity',amount:120000,issued:'2026-04-01',due:'2026-04-30',status:'paid',method:'Stripe',recon:'Reconciled',paid:'2026-04-22',entity:'Andara Systems Ltd',currency:'USD'},
+  {id:'AND-INV-2044',clientId:'cl-ecobank',amount:75000,issued:'2026-04-22',due:'2026-05-22',status:'overdue',method:'Paystack',recon:'Failed',paid:'',entity:'BAC Intelligence LLC',currency:'USD'},
+  {id:'AND-INV-2048',clientId:'cl-afc',amount:152500,issued:'2026-06-01',due:'2026-06-30',status:'paid',method:'Bank transfer',recon:'Reconciled',paid:'2026-06-18',entity:'BAC Intelligence LLC',currency:'USD'},
+  {id:'AND-INV-2053',clientId:'cl-afc',amount:152500,issued:'2026-07-01',due:'2026-07-31',status:'issued',method:'Bank transfer',recon:'Pending',paid:'',entity:'BAC Intelligence LLC',currency:'USD'},
+  {id:'AND-INV-2046',clientId:'cl-zenith',amount:45000,issued:'2026-06-10',due:'2026-07-10',status:'overdue',method:'Paystack',recon:'Pending',paid:'',entity:'Andara Systems Ltd',currency:'NGN'},
+  {id:'AND-INV-2050',clientId:'cl-kestrel',amount:80000,issued:'2026-07-01',due:'2026-07-31',status:'issued',method:'Stripe',recon:'Pending',paid:'',entity:'BAC Intelligence LLC',currency:'USD'},
+  {id:'AND-INV-2033',clientId:'cl-kestrel',amount:80000,issued:'2026-04-01',due:'2026-04-30',status:'paid',method:'Stripe',recon:'Reconciled',paid:'2026-04-28',entity:'BAC Intelligence LLC',currency:'USD'},
+  {id:'AND-INV-2052',clientId:'cl-stanchart',amount:47500,issued:'2026-07-05',due:'2026-08-04',status:'issued',method:'Stripe',recon:'Pending',paid:'',entity:'BAC Intelligence LLC',currency:'USD'},
+  {id:'AND-INV-2041',clientId:'cl-dbn',amount:12000,issued:'2026-04-22',due:'2026-05-22',status:'overdue',method:'Paystack',recon:'Failed',paid:'',entity:'Andara Systems Ltd',currency:'NGN'},
+  {id:'AND-INV-2019',clientId:'cl-sahel',amount:55000,issued:'2025-09-01',due:'2025-09-30',status:'paid',method:'Bank transfer',recon:'Reconciled',paid:'2025-09-25',entity:'BAC Intelligence LLC',currency:'USD'}
 ];
 function hydrateInvoices(){loadState();(STATE.invoices||[]).forEach(function(si){var i=-1;INVOICES.forEach(function(x,idx){if(x.id===si.id)i=idx;});if(i>=0)INVOICES[i]=Object.assign({},INVOICES[i],si);else INVOICES.unshift(si);});}
 function persistInvoice(inv){loadState();STATE.invoices=STATE.invoices||[];var i=-1;STATE.invoices.forEach(function(x,idx){if(x.id===inv.id)i=idx;});if(i>=0)STATE.invoices[i]=inv;else STATE.invoices.push(inv);saveState();}
@@ -2230,6 +2452,24 @@ function methodChip(mth){return '<span class="ichip muted">'+esc(mth)+'</span>';
 function daysOverdue(inv){return Math.max(0,-daysUntil(inv.due));}
 function dunStageIdx(d){if(d>=90)return 4;if(d>=60)return 3;if(d>=30)return 2;if(d>=15)return 1;return 0;}
 
+/* ── Billing v2 (§4.3.4): multi-entity, multi-currency, recognition, forecast ── */
+var BILL_ENTITIES=['BAC Intelligence LLC','Andara Systems Ltd'];
+var FX_NGN=1600; /* 1 USD = 1600 NGN (demo rate) */
+function clientEntity(c){return (c&&c.region==='Nigeria')?'Andara Systems Ltd':'BAC Intelligence LLC';}
+function fmtMoney(usd,ccy){if(ccy==='NGN')return '₦'+Math.round((usd||0)*FX_NGN).toLocaleString('en-US');return '$'+(usd||0).toLocaleString('en-US');}
+function entityChip(e){return '<span class="ichip '+(e==='Andara Systems Ltd'?'blue':'muted')+'">'+esc(e==='Andara Systems Ltd'?'Andara Ltd':'BAC LLC')+'</span>';}
+function ccyChip(ccy){return ccy==='NGN'?'<span class="ichip watch">NGN</span>':'<span class="ichip muted">USD</span>';}
+var PIPELINE=[
+  {name:'Access Bank',stage:'Contracting',product:'FleetWatch',valueUsd:150000,prob:85,close:'2026-08',region:'Nigeria'},
+  {name:'First Bank of Nigeria',stage:'Negotiation',product:'Arbiter',valueUsd:200000,prob:70,close:'2026-09',region:'Nigeria'},
+  {name:'Kenya Commercial Bank',stage:'Proposal',product:'Arbiter + AIR',valueUsd:340000,prob:40,close:'2026-11',region:'East Africa'},
+  {name:'Afreximbank',stage:'Proposal',product:'Arbiter',valueUsd:420000,prob:50,close:'2026-12',region:'Pan-African'},
+  {name:'BOAD',stage:'Discovery',product:'AIR',valueUsd:60000,prob:25,close:'2027-01',region:'West Africa'}
+];
+function pipeWeighted(p){return Math.round(p.valueUsd*p.prob/100);}
+function stageChip(s){var m={Contracting:'green',Negotiation:'blue',Proposal:'watch',Discovery:'muted'};return '<span class="ichip '+(m[s]||'muted')+'">'+esc(s)+'</span>';}
+function qOf(ym){var y=+ym.slice(0,4),m=+ym.slice(5,7)||1;return y+' Q'+Math.ceil(m/3);}
+
 var billTab='revenue';
 function renderBilling(){
   hydrateInvoices();
@@ -2238,9 +2478,9 @@ function renderBilling(){
   var monthly=Math.round(arr/12);
   var overdue=INVOICES.filter(function(i){return i.status==='overdue';});
   var outstanding=overdue.reduce(function(s,i){return s+i.amount;},0);
-  var tabs=[['revenue','Revenue summary',''],['contracts','Contract register',CLIENTS.filter(function(c){return c.status!=='offboarded';}).length],['invoices','Invoices',INVOICES.length],['dunning','Dunning',overdue.length]];
+  var tabs=[['revenue','Revenue summary',''],['contracts','Contract register',CLIENTS.filter(function(c){return c.status!=='offboarded';}).length],['invoices','Invoices',INVOICES.length],['dunning','Dunning',overdue.length],['recognition','Revenue recognition',''],['forecast','Forecast','']];
   var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.5</div><h1>Billing &amp; Finance</h1></div>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.5 / §4.3.4</div><h1>Billing &amp; Finance</h1></div>'+
     '<div class="phead-actions"><button class="btn primary" id="btnIssueInv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Issue invoice</button></div></div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">ARR</div><div class="num blue">'+fmtUsd(arr)+'</div><div class="cap">Active contracts</div></div>'+
@@ -2261,11 +2501,14 @@ function billRenderPane(){
   if(billTab==='revenue'){pane.innerHTML=billRevenue();return;}
   if(billTab==='contracts'){pane.innerHTML=billContracts();return;}
   if(billTab==='dunning'){pane.innerHTML=billDunning();return;}
+  if(billTab==='recognition'){pane.innerHTML=billRecognition();return;}
+  if(billTab==='forecast'){pane.innerHTML=billForecast();return;}
   // invoices
   pane.innerHTML=billInvoices();
   [].forEach.call(pane.querySelectorAll('.invPay'),function(b){b.addEventListener('click',function(e){e.stopPropagation();openRecordPayment(b.getAttribute('data-id'));});});
 }
 function barRow(label,value,max,cls){var pct=max?Math.round(value/max*100):0;return '<div class="brow"><div class="bl">'+esc(label)+'</div><div class="btrack"><div class="bfill '+cls+'" style="width:'+pct+'%"></div></div><div class="bv">'+fmtUsd(value)+'</div><div class="bpct">'+pct+'%</div></div>';}
+function barRowN(label,value,max,cls){var pct=max?Math.round(value/max*100):0;return '<div class="brow"><div class="bl">'+esc(label)+'</div><div class="btrack"><div class="bfill '+cls+'" style="width:'+pct+'%"></div></div><div class="bv">'+value+'</div></div>';}
 function billRevenue(){
   var active=CLIENTS.filter(function(c){return c.status==='active';});
   var arr=active.reduce(function(s,c){return s+c.contractValueUsd;},0);
@@ -2289,7 +2532,18 @@ function billRevenue(){
       barRow('Pilot',byTier.Pilot,maxT,'pil')+
       '<div class="kv" style="margin-top:12px;border-top:1px solid var(--line);padding-top:14px"><span class="k">Monthly recognized</span><span class="v big">'+fmtUsd(Math.round(arr/12))+'</span></div>'+
     '</div></div>'+
-  '</div>';
+  '</div>'+
+  billEntityPanel();
+}
+/* multi-entity split (§4.3.4) */
+function billEntityPanel(){
+  var byEnt={};BILL_ENTITIES.forEach(function(e){byEnt[e]={arr:0,inv:0};});
+  CLIENTS.filter(function(c){return c.status==='active';}).forEach(function(c){var e=clientEntity(c);if(byEnt[e])byEnt[e].arr+=c.contractValueUsd;});
+  INVOICES.forEach(function(i){var e=i.entity||clientEntity(clientById(i.clientId));if(byEnt[e])byEnt[e].inv+=i.amount;});
+  return '<div class="panel" style="margin-top:24px"><div class="ph"><span class="bullet"></span><h3>By billing entity</h3><span class="meta">§4.3.4</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Legal entity</th><th>Jurisdiction</th><th class="num">Contracted ARR</th><th class="num">Invoiced (lifetime)</th></tr></thead><tbody>'+
+  BILL_ENTITIES.map(function(e){return '<tr><td class="c-name">'+esc(e)+'</td><td class="c-sec">'+(e==='Andara Systems Ltd'?'Nigeria':'International')+'</td><td class="c-num">'+fmtUsdFull(byEnt[e].arr)+'</td><td class="c-num">'+fmtUsdFull(byEnt[e].inv)+'</td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
 }
 function billContracts(){
   var rows=CLIENTS.filter(function(c){return c.status!=='offboarded';});
@@ -2309,13 +2563,13 @@ function billContracts(){
 function billInvoices(){
   var rows=INVOICES.slice().sort(function(a,b){return (b.issued||'').localeCompare(a.issued||'');});
   return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Invoices</h3><span class="meta">'+rows.length+'</span></div>'+
-  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Invoice</th><th>Client</th><th class="num">Amount</th><th>Issued</th><th>Due</th><th>Status</th><th>Payment</th><th></th></tr></thead><tbody>'+
-  rows.map(function(i){var c=clientById(i.clientId)||{name:'—'};return ''+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Invoice</th><th>Client</th><th>Billing entity</th><th class="num">Amount</th><th>Due</th><th>Status</th><th>Payment</th><th></th></tr></thead><tbody>'+
+  rows.map(function(i){var c=clientById(i.clientId)||{name:'—'};var ccy=i.currency||'USD';return ''+
     '<tr>'+
-      '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(i.id)+'</td>'+
+      '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(i.id)+'<span class="sub" style="display:block;font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:3px">issued '+esc(i.issued)+'</span></td>'+
       '<td class="c-name" style="font-weight:500">'+esc(c.name)+'</td>'+
-      '<td class="c-num">'+fmtUsdFull(i.amount)+'</td>'+
-      '<td class="c-mono">'+esc(i.issued)+'</td>'+
+      '<td>'+entityChip(i.entity||clientEntity(c))+'</td>'+
+      '<td class="c-num">'+fmtMoney(i.amount,ccy)+' '+ccyChip(ccy)+(ccy==='NGN'?'<span class="sub" style="display:block;font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:2px">'+fmtUsdFull(i.amount)+'</span>':'')+'</td>'+
       '<td class="c-mono">'+esc(i.due)+'</td>'+
       '<td>'+invStatusChip(i.status)+'</td>'+
       '<td>'+methodChip(i.method)+' '+reconChip(i.recon)+'</td>'+
@@ -2336,6 +2590,65 @@ function billDunning(){
         '<div class="pl">'+ladder+'</div></div>';}).join('')+
   '</div></div>';
 }
+/* revenue recognition, period-aligned by contract and product (§4.3.4) */
+function billRecognition(){
+  var active=CLIENTS.filter(function(c){return c.status==='active';});
+  var arr=active.reduce(function(s,c){return s+c.contractValueUsd;},0);
+  var monthly=Math.round(arr/12);
+  var moElapsed=(new Date()).getUTCMonth()+1; /* Jan..Dec -> 1..12; today 2026-07 -> 7 */
+  var ytd=monthly*moElapsed;
+  var deferred=arr-ytd;
+  var byProd={FleetWatch:0,Arbiter:0,AIR:0};
+  active.forEach(function(c){var per=c.products.length?(c.contractValueUsd/12)/c.products.length:0;c.products.forEach(function(p){if(byProd[p]!=null)byProd[p]+=per;});});
+  var maxP=Math.max(byProd.FleetWatch,byProd.Arbiter,byProd.AIR,1);
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var sched=months.map(function(m,i){var recognized=i<moElapsed;return '<div class="vel-col"><div class="vel-n" style="font-size:10px">'+(recognized?'✓':'')+'</div><div class="vel-bar" style="height:'+(recognized?100:55)+'%;'+(recognized?'':'opacity:.4')+'"></div><div class="vel-x">'+m+'</div></div>';}).join('');
+  var perContract=active.slice().sort(function(a,b){return b.contractValueUsd-a.contractValueUsd;});
+  return ''+
+  '<div class="mini3" style="margin-bottom:24px">'+
+    '<div class="m3"><span class="ml">Monthly recognized</span><span class="mv">'+fmtUsd(monthly)+'</span><span class="ms">Even recognition</span></div>'+
+    '<div class="m3"><span class="ml">Recognized YTD 2026</span><span class="mv">'+fmtUsd(ytd)+'</span><span class="ms">'+moElapsed+' months</span></div>'+
+    '<div class="m3"><span class="ml">Deferred (2026)</span><span class="mv">'+fmtUsd(deferred)+'</span><span class="ms">'+(12-moElapsed)+' months remaining</span></div>'+
+  '</div>'+
+  '<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>2026 recognition schedule</h3><span class="meta">'+fmtUsd(monthly)+' / month</span></div><div class="pb"><div class="vel" style="height:110px">'+sched+'</div></div></div>'+
+  '<div class="d-grid">'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Recognition by contract</h3><span class="meta">'+perContract.length+'</span></div>'+
+    '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Contract</th><th>Products</th><th class="num">Annual</th><th class="num">Monthly</th><th class="num">YTD</th></tr></thead><tbody>'+
+      perContract.map(function(c){return '<tr><td class="c-name">'+esc(c.name)+'<span class="sub">'+esc(c.contractId)+'</span></td><td>'+prodChips(c.products)+'</td><td class="c-num">'+fmtUsdFull(c.contractValueUsd)+'</td><td class="c-num">'+fmtUsdFull(Math.round(c.contractValueUsd/12))+'</td><td class="c-num">'+fmtUsdFull(Math.round(c.contractValueUsd/12)*moElapsed)+'</td></tr>';}).join('')+
+    '</tbody></table></div></div></div>'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Monthly by product</h3></div><div class="pb">'+
+      barRow('FleetWatch',Math.round(byProd.FleetWatch),maxP,'fw')+
+      barRow('Arbiter',Math.round(byProd.Arbiter),maxP,'arb')+
+      barRow('AIR',Math.round(byProd.AIR),maxP,'air')+
+      '<div class="helper" style="font-family:var(--mono);font-size:11px;color:var(--t4);margin-top:10px">Monthly recognized revenue attributed across each contract\'s products.</div>'+
+    '</div></div>'+
+  '</div>';
+}
+/* ARR forecast, contract base + weighted pipeline (§4.3.4) */
+function billForecast(){
+  var base=CLIENTS.filter(function(c){return c.status==='active';}).reduce(function(s,c){return s+c.contractValueUsd;},0);
+  var weighted=PIPELINE.reduce(function(s,p){return s+pipeWeighted(p);},0);
+  var gross=PIPELINE.reduce(function(s,p){return s+p.valueUsd;},0);
+  var forecast=base+weighted;
+  var rows=PIPELINE.slice().sort(function(a,b){return (a.close||'').localeCompare(b.close||'');});
+  // cumulative forecast by quarter
+  var quarters=[];rows.forEach(function(p){var q=qOf(p.close);if(quarters.indexOf(q)<0)quarters.push(q);});
+  var cum=base;var qBars=quarters.map(function(q){var add=rows.filter(function(p){return qOf(p.close)===q;}).reduce(function(s,p){return s+pipeWeighted(p);},0);cum+=add;return {q:q,val:cum,add:add};});
+  var maxV=Math.max.apply(null,qBars.map(function(x){return x.val;}).concat([base,1]));
+  var qStrip='<div class="vel" style="height:150px">'+
+    ['Now'].concat(qBars.map(function(x){return x.q;})).map(function(lbl,i){var v=i===0?base:qBars[i-1].val;var h=Math.round(v/maxV*100);return '<div class="vel-col"><div class="vel-n" style="font-size:11px">'+fmtUsd(v)+'</div><div class="vel-bar" style="height:'+Math.max(6,h)+'%'+(i===0?';background:linear-gradient(180deg,var(--info),var(--amber-dim))':'')+'"></div><div class="vel-x">'+esc(lbl)+'</div></div>';}).join('')+'</div>';
+  return ''+
+  '<div class="mini3" style="margin-bottom:24px">'+
+    '<div class="m3"><span class="ml">Contracted ARR</span><span class="mv">'+fmtUsd(base)+'</span><span class="ms">Signed base</span></div>'+
+    '<div class="m3"><span class="ml">Weighted pipeline</span><span class="mv" style="color:var(--amber)">'+fmtUsd(weighted)+'</span><span class="ms">of '+fmtUsd(gross)+' gross</span></div>'+
+    '<div class="m3"><span class="ml">Forecast ARR</span><span class="mv" style="color:var(--deploy)">'+fmtUsd(forecast)+'</span><span class="ms">base + weighted</span></div>'+
+  '</div>'+
+  '<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Forecast projection</h3><span class="meta">cumulative ARR</span></div><div class="pb">'+qStrip+'</div></div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Pipeline</h3><span class="meta">'+PIPELINE.length+' deals</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Prospect</th><th>Stage</th><th>Product</th><th class="num">Value</th><th class="num">Prob</th><th class="num">Weighted</th><th>Expected close</th></tr></thead><tbody>'+
+    rows.map(function(p){return '<tr><td class="c-name">'+esc(p.name)+'<span class="sub">'+esc(p.region)+'</span></td><td>'+stageChip(p.stage)+'</td><td class="c-sec">'+esc(p.product)+'</td><td class="c-num">'+fmtUsdFull(p.valueUsd)+'</td><td class="c-num">'+p.prob+'%</td><td class="c-num" style="color:var(--amber);font-weight:600">'+fmtUsdFull(pipeWeighted(p))+'</td><td class="c-mono">'+esc(qOf(p.close))+'</td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
 
 /* Issue invoice (sensitive: re-auth) */
 function openIssueInvoice(){
@@ -2344,25 +2657,34 @@ function openIssueInvoice(){
     mdOpen({
       title:'Issue invoice',
       body:''+
-        '<div class="mfield"><label>Client</label><select id="ivClient">'+payable.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+' ('+esc(c.contractId)+')</option>';}).join('')+'</select></div>'+
+        '<div class="mfield"><label>Client</label><select id="ivClient">'+payable.map(function(c){return '<option value="'+c.id+'" data-region="'+esc(c.region)+'">'+esc(c.name)+' ('+esc(c.contractId)+')</option>';}).join('')+'</select></div>'+
         '<div class="mrow">'+
-          '<div class="mfield"><label>Amount (USD)</label><input id="ivAmount" class="mono" inputmode="numeric" placeholder="e.g. 120000"/></div>'+
+          '<div class="mfield"><label>Billing entity</label><select id="ivEntity">'+BILL_ENTITIES.map(function(e){return '<option>'+esc(e)+'</option>';}).join('')+'</select><div class="helper">Issue from the entity named on the contract.</div></div>'+
+          '<div class="mfield"><label>Currency</label><select id="ivCcy"><option>USD</option><option>NGN</option></select></div>'+
+        '</div>'+
+        '<div class="mrow">'+
+          '<div class="mfield"><label>Amount (USD base)</label><input id="ivAmount" class="mono" inputmode="numeric" placeholder="e.g. 120000"/><div class="helper" id="ivCcyHint">Stored in USD; NGN shown at 1:'+FX_NGN+'.</div></div>'+
           '<div class="mfield"><label>Due date</label><input id="ivDue" class="mono" placeholder="2026-08-31"/></div>'+
         '</div>'+
         '<div class="mfield"><label>Payment method</label><select id="ivMethod"><option>Stripe</option><option>Paystack</option><option>Bank transfer</option></select><div class="helper">Card and mobile-money invoices reconcile automatically via Stripe / Paystack; bank transfers reconcile on receipt.</div></div>',
       foot:'<button class="btn sm" id="ivCancel">Cancel</button><button class="btn sm primary" id="ivGo">Issue invoice</button>',
       onMount:function(){
+        var syncDefaults=function(){var opt=el('ivClient').options[el('ivClient').selectedIndex];var reg=opt?opt.getAttribute('data-region'):'';el('ivEntity').value=(reg==='Nigeria')?'Andara Systems Ltd':'BAC Intelligence LLC';el('ivCcy').value=(reg==='Nigeria')?'NGN':'USD';};
+        syncDefaults();
+        el('ivClient').addEventListener('change',syncDefaults);
+        var updHint=function(){var amt=parseInt((el('ivAmount').value||'').replace(/[^0-9]/g,''),10)||0;el('ivCcyHint').textContent=el('ivCcy').value==='NGN'?('= '+fmtMoney(amt,'NGN')+' at 1:'+FX_NGN):'Stored in USD.';};
+        el('ivCcy').addEventListener('change',updHint);el('ivAmount').addEventListener('input',updHint);
         el('ivCancel').addEventListener('click',mdClose);
         el('ivGo').addEventListener('click',function(){
           var cid=el('ivClient').value;var amt=parseInt((el('ivAmount').value||'').replace(/[^0-9]/g,''),10)||0;
-          var due=(el('ivDue').value||'').trim();var mth=el('ivMethod').value;
+          var due=(el('ivDue').value||'').trim();var mth=el('ivMethod').value;var ent=el('ivEntity').value;var ccy=el('ivCcy').value;
           if(!amt){toast('Amount required','Enter the invoice amount.');return;}
           if(!/^\d{4}-\d{2}-\d{2}$/.test(due)){toast('Valid due date required','Use format YYYY-MM-DD.');return;}
           var id='AND-INV-'+(2054+Math.floor(Math.random()*400));
-          var inv={id:id,clientId:cid,amount:amt,issued:nowStamp().slice(0,10),due:due,status:'issued',method:mth,recon:'Pending',paid:''};
+          var inv={id:id,clientId:cid,amount:amt,issued:nowStamp().slice(0,10),due:due,status:'issued',method:mth,recon:'Pending',paid:'',entity:ent,currency:ccy};
           INVOICES.unshift(inv);persistInvoice(inv);
-          logAudit({carrier:(clientById(cid)||{}).name||'—',crit:'Invoice issued',fr:'—',to:fmtUsdFull(amt)+' · due '+due+' · '+mth,status:'Issued',note:id});
-          mdClose();renderBilling();toast('Invoice issued',id+' · '+fmtUsdFull(amt)+' · '+(clientById(cid)||{}).name);
+          logAudit({carrier:(clientById(cid)||{}).name||'—',crit:'Invoice issued',fr:ent,to:fmtMoney(amt,ccy)+' · due '+due+' · '+mth,status:'Issued',note:id+' · '+ccy});
+          mdClose();renderBilling();toast('Invoice issued',id+' · '+fmtMoney(amt,ccy)+' · '+ent);
         });
       }
     });
@@ -2414,44 +2736,173 @@ var COMMITTEE_MINUTES=[
   {ts:'2026-05-30',sfId:'SF-202605-AZM-02',carrier:'Azman Air',decision:'Rejected',chair:'u-david',note:'Hard floor tripped, RCS 38, Do Not Deploy'}
 ];
 function decisionChip(d){var m={Approved:['green','Approved'],Returned:['watch','Returned'],Rejected:['red','Rejected']};var x=m[d]||['muted',d];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+
+/* ── Methodology v2 (§4.3.5): config model + change workflow + version history ── */
+var METH_DEFAULT={version:'v1.5-NG',weights:{SVS:15,PPS:25,APS:20,RCS:25,RAS:15},hardFloor:{dims:['PPS','RCS'],threshold:40,cap:65},thresholds:{deploy:75,watch:50}};
+function methConfig(){loadState();return STATE.methConfig?JSON.parse(JSON.stringify(STATE.methConfig)):JSON.parse(JSON.stringify(METH_DEFAULT));}
+function methPersistConfig(cfg){loadState();STATE.methConfig=cfg;saveState();}
+var METH_VERSIONS=[
+  {version:'v1.5-NG',ts:'2026-03-01',summary:'RCS weight raised 20 to 25; APS lowered 25 to 20',by:'Scoring Committee',ref:'SC-2026-03-01',verdictsUnder:34},
+  {version:'v1.4-NG',ts:'2025-11-15',summary:'Hard floor cap lowered 70 to 65',by:'Scoring Committee',ref:'SC-2025-11-15',verdictsUnder:22},
+  {version:'v1.3-NG',ts:'2025-08-01',summary:'Initial Nigeria methodology',by:'Scoring Committee',ref:'SC-2025-08-01',verdictsUnder:18}
+];
+var METH_CHANGES=[
+  {id:'MCR-2041',ts:'2026-07-24',proposedBy:'Amara Eze (Senior Analyst)',type:'thresholds',summary:'Raise Watch floor 50 to 52',detail:{thresholds:{deploy:75,watch:52}},rationale:'Tighten the Watch band after the Q2 default review showed sub-52 composites underperforming their verdicts.',status:'proposed'}
+];
+function hydrateMeth(){loadState();if(STATE.methVersions)METH_VERSIONS=STATE.methVersions;if(STATE.methChanges)METH_CHANGES=STATE.methChanges;}
+function persistMeth(){loadState();STATE.methVersions=METH_VERSIONS;STATE.methChanges=METH_CHANGES;saveState();}
+function methBumpVersion(v){var m=(v||'v1.0').match(/v(\d+)\.(\d+)(.*)/);if(!m)return v+'.1';return 'v'+m[1]+'.'+(parseInt(m[2],10)+1)+(m[3]||'');}
+function methChangeTypeChip(t){var m={weights:['blue','5-Score weights'],hardfloor:['watch','Hard floor'],thresholds:['muted','Verdict thresholds']};var x=m[t]||['muted',t];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function methChangeStatusChip(s){var m={proposed:['watch','Proposed'],approved:['green','Approved'],rejected:['red','Rejected']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function methChangeById(id){var r=null;METH_CHANGES.forEach(function(c){if(c.id===id)r=c;});return r;}
+
 function renderMethodology(){
-  var total=DIMS.reduce(function(s,d){return s+d.weight;},0);
-  var thresholds=[['deploy','&ge; 75','Deploy','Composite 75 or above, subject to hard floor'],['watch','50 to 74','Watch','Composite between 50 and 74'],['dnd','&lt; 50','Do Not Deploy','Composite below 50']];
+  hydrateMeth();
+  var cfg=methConfig();
+  var w=cfg.weights,total=DIMS.reduce(function(s,d){return s+(w[d.code]||0);},0);
+  var th=cfg.thresholds,hf=cfg.hardFloor;
+  var thresholds=[['deploy','&ge; '+th.deploy,'Deploy','Composite '+th.deploy+' or above, subject to hard floor'],['watch',th.watch+' to '+(th.deploy-1),'Watch','Composite between '+th.watch+' and '+(th.deploy-1)],['dnd','&lt; '+th.watch,'Do Not Deploy','Composite below '+th.watch]];
+  var pending=METH_CHANGES.filter(function(c){return c.status==='proposed';});
   var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.6</div><h1>Methodology &amp; Governance</h1></div>'+
-    '<div class="phead-actions"><span class="ichip blue">Read-only at M1</span></div></div>'+
-  '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">Active methodology versions: <b style="color:var(--info)">v1.5-NG</b>, <b style="color:var(--info)">v1.0-WA</b>, <b style="color:var(--info)">v1.0-EA</b>. Weights and thresholds are read-only at M1; changes are gated by the Scoring Committee (change-request workflow ships in M2).</p></div>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.6 / §4.3.5</div><h1>Methodology &amp; Governance</h1></div>'+
+    '<div class="phead-actions"><button class="btn primary" id="btnMethPropose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Propose change</button></div></div>'+
+  '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">Active version <b style="color:var(--info)">'+esc(cfg.version)+'</b> (+ v1.0-WA, v1.0-EA). Changes to weights, hard floor, or thresholds route through a Scoring-Committee-gated propose &rarr; review &rarr; approve workflow. Every approved change is versioned.</p></div>'+
   '<div class="panel"><div class="ph"><span class="bullet"></span><h3>5-Score weights</h3><span class="meta">Total '+total+'</span></div><div class="pb">'+
-    '<div class="mth-grid">'+DIMS.map(function(d){return '<div class="mth-card"><div class="mstripe"></div><div class="mbody"><div class="mcode">'+d.code+'</div><div class="mw">'+d.weight+'<span> / 100</span></div><div class="mname">'+esc(d.name)+'</div></div></div>';}).join('')+'</div>'+
+    '<div class="mth-grid">'+DIMS.map(function(d){return '<div class="mth-card"><div class="mstripe"></div><div class="mbody"><div class="mcode">'+d.code+'</div><div class="mw">'+(w[d.code]||0)+'<span> / 100</span></div><div class="mname">'+esc(d.name)+'</div></div></div>';}).join('')+'</div>'+
   '</div></div>'+
   '<div class="d-grid">'+
     '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Verdict thresholds</h3></div><div class="pb">'+
       thresholds.map(function(t){return '<div class="thr '+t[0]+'"><div class="thv">'+t[1]+'</div><div class="thb"><div class="thl">'+t[2]+'</div><div class="thd">'+t[3]+'</div></div></div>';}).join('')+
     '</div></div>'+
     '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Hard floor rule</h3></div><div class="pb">'+
-      '<div class="warn-note" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Composite capped at 65</b> when PPS &lt; 40 or RCS &lt; 40, regardless of the weighted total.</p></div>'+
-      '<div class="kv"><span class="k">Trigger</span><span class="v">PPS &lt; 40 or RCS &lt; 40</span></div>'+
-      '<div class="kv"><span class="k">Effect</span><span class="v">Composite capped at 65</span></div>'+
+      '<div class="warn-note" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Composite capped at '+hf.cap+'</b> when '+hf.dims.join(' or ')+' &lt; '+hf.threshold+', regardless of the weighted total.</p></div>'+
+      '<div class="kv"><span class="k">Trigger</span><span class="v">'+esc(hf.dims.join(' or '))+' &lt; '+hf.threshold+'</span></div>'+
+      '<div class="kv"><span class="k">Effect</span><span class="v">Composite capped at '+hf.cap+'</span></div>'+
       '<div class="kv"><span class="k">Consequence</span><span class="v">Deploy verdict blocked</span></div>'+
     '</div></div>'+
   '</div>'+
-  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Scoring Committee minutes index</h3><span class="meta">'+COMMITTEE_MINUTES.length+' decisions</span></div>'+
-  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Scoring file</th><th>Carrier</th><th>Decision</th><th>Chair</th><th>Note</th></tr></thead><tbody>'+
-  COMMITTEE_MINUTES.map(function(m){return ''+
-    '<tr>'+
-      '<td class="c-mono">'+esc(m.ts)+'</td>'+
-      '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(m.sfId)+'</td>'+
-      '<td class="c-name">'+esc(m.carrier)+'</td>'+
-      '<td>'+decisionChip(m.decision)+'</td>'+
-      '<td class="c-sec">'+esc(analystName(m.chair))+'</td>'+
-      '<td class="c-sec">'+esc(m.note)+'</td>'+
-    '</tr>';}).join('')+
-  '</tbody></table></div></div></div>'+
-  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Methodology change request</h3><span class="meta">M2</span></div><div class="pb">'+
-    '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><p>Weight, hard-floor, and threshold changes will route through a Scoring-Committee-gated change-request workflow in M2. Read-only at M1.</p></div>'+
-    '<button class="btn" disabled style="margin-top:14px">Request methodology change (M2)</button>'+
-  '</div></div>';
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Pending methodology changes</h3><span class="meta">'+pending.length+' awaiting SC</span></div><div class="pb flush">'+
+    (METH_CHANGES.length?METH_CHANGES.slice().sort(function(a,b){var r={proposed:0,approved:1,rejected:2};return r[a.status]-r[b.status]||(b.ts||'').localeCompare(a.ts||'');}).map(function(c){return ''+
+      '<div class="lrow"><div class="body"><h4>'+esc(c.summary)+' '+methChangeTypeChip(c.type)+'</h4>'+
+        '<div class="metaln"><span><b>'+esc(c.id)+'</b></span><span>By '+esc(c.proposedBy)+'</span><span>'+esc(c.ts)+'</span>'+(c.version?'<span>&rarr; '+esc(c.version)+'</span>':'')+'</div>'+
+        '<div class="metaln"><span>'+esc(c.rationale)+'</span></div></div>'+
+        '<div class="side">'+methChangeStatusChip(c.status)+(c.status==='proposed'?'<div style="display:flex;gap:8px;margin-top:6px"><button class="btn sm primary mcApprove" data-id="'+c.id+'">Approve</button><button class="btn sm danger mcReject" data-id="'+c.id+'">Reject</button></div>':'')+'</div></div>';}).join('')
+      :'<div class="empty">No methodology changes proposed. Use Propose change to start the committee workflow.</div>')+
+  '</div></div>'+
+  '<div class="d-grid">'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Version history</h3><span class="meta">'+METH_VERSIONS.length+' versions</span></div>'+
+    '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Version</th><th>Date</th><th>Change</th><th class="num">Verdicts</th><th>Sign-off</th></tr></thead><tbody>'+
+      METH_VERSIONS.map(function(v,i){return '<tr><td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(v.version)+(i===0?' <span class="ichip green">Active</span>':'')+'</td><td class="c-mono">'+esc(v.ts)+'</td><td class="c-sec">'+esc(v.summary)+'</td><td class="c-num">'+(v.verdictsUnder||0)+'</td><td class="c-mono" style="font-size:12px">'+esc(v.ref||'')+'</td></tr>';}).join('')+
+    '</tbody></table></div></div></div>'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>SC minutes index</h3><span class="meta">'+COMMITTEE_MINUTES.length+'</span></div>'+
+    '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Carrier</th><th>Decision</th></tr></thead><tbody>'+
+    COMMITTEE_MINUTES.map(function(m){return '<tr><td class="c-mono">'+esc(m.ts)+'</td><td class="c-name">'+esc(m.carrier)+'<span class="sub">'+esc(m.sfId)+'</span></td><td>'+decisionChip(m.decision)+'</td></tr>';}).join('')+
+    '</tbody></table></div></div></div>'+
+  '</div>';
   el('vw-methodology').innerHTML=body;
+  el('btnMethPropose').addEventListener('click',methPropose);
+  [].forEach.call(el('vw-methodology').querySelectorAll('.mcApprove'),function(b){b.addEventListener('click',function(){methDecide(b.getAttribute('data-id'),true);});});
+  [].forEach.call(el('vw-methodology').querySelectorAll('.mcReject'),function(b){b.addEventListener('click',function(){methDecide(b.getAttribute('data-id'),false);});});
+}
+/* propose a methodology change (§4.3.5) */
+var methDraft={};
+function methPropose(){
+  var cfg=methConfig();
+  methDraft={type:'weights',cfg:cfg,weights:Object.assign({},cfg.weights),hfDims:cfg.hardFloor.dims.slice(),hfThreshold:cfg.hardFloor.threshold,hfCap:cfg.hardFloor.cap,deploy:cfg.thresholds.deploy,watch:cfg.thresholds.watch,summary:'',rationale:''};
+  mdOpen({title:'Propose methodology change',wide:true,body:methBody(),foot:'<button class="btn sm" id="mcCancel">Cancel</button><button class="btn sm primary" id="mcSubmit">Submit to committee</button>',onMount:function(){el('mcCancel').addEventListener('click',mdClose);el('mcSubmit').addEventListener('click',methSubmit);methBindBody();}});
+}
+function methBody(){
+  var t=methDraft.type;
+  var typeSel='<div class="mfield"><label>Change type</label><select id="mcType"><option value="weights"'+(t==='weights'?' selected':'')+'>5-Score weights</option><option value="hardfloor"'+(t==='hardfloor'?' selected':'')+'>Hard floor</option><option value="thresholds"'+(t==='thresholds'?' selected':'')+'>Verdict thresholds</option></select></div>';
+  var fields='';
+  if(t==='weights'){
+    var sum=DIMS.reduce(function(s,d){return s+(methDraft.weights[d.code]||0);},0);
+    fields='<div class="mrow">'+DIMS.slice(0,3).map(function(d){return '<div class="mfield"><label>'+d.code+' weight</label><input id="mw_'+d.code+'" class="mono mcW" data-code="'+d.code+'" inputmode="numeric" value="'+(methDraft.weights[d.code]||0)+'"/></div>';}).join('')+'</div>'+
+      '<div class="mrow">'+DIMS.slice(3).map(function(d){return '<div class="mfield"><label>'+d.code+' weight</label><input id="mw_'+d.code+'" class="mono mcW" data-code="'+d.code+'" inputmode="numeric" value="'+(methDraft.weights[d.code]||0)+'"/></div>';}).join('')+'<div class="mfield"><label>Total</label><input id="mwTotal" class="mono" value="'+sum+'" readonly style="color:'+(sum===100?'var(--deploy)':'var(--dnd)')+'"/><div class="helper">Must total 100.</div></div></div>';
+  }else if(t==='hardfloor'){
+    fields='<div class="mfield"><label>Trigger dimensions</label><div class="mchips" id="mcHfDims">'+DIMS.map(function(d){return chip(d.code,methDraft.hfDims.indexOf(d.code)>=0,true);}).join('')+'</div><div class="helper">Hard floor trips when any selected dimension falls below the threshold.</div></div>'+
+      '<div class="mrow"><div class="mfield"><label>Dimension threshold</label><input id="mcHfThresh" class="mono" inputmode="numeric" value="'+methDraft.hfThreshold+'"/></div>'+
+      '<div class="mfield"><label>Composite cap</label><input id="mcHfCap" class="mono" inputmode="numeric" value="'+methDraft.hfCap+'"/></div></div>';
+  }else{
+    fields='<div class="mrow"><div class="mfield"><label>Deploy threshold (&ge;)</label><input id="mcDeploy" class="mono" inputmode="numeric" value="'+methDraft.deploy+'"/></div>'+
+      '<div class="mfield"><label>Watch floor (&ge;)</label><input id="mcWatch" class="mono" inputmode="numeric" value="'+methDraft.watch+'"/><div class="helper">Below this is Do Not Deploy.</div></div></div>';
+  }
+  return typeSel+fields+
+    '<div class="mfield"><label>Summary</label><input id="mcSummary" value="'+esc(methDraft.summary)+'" placeholder="One line, e.g. Raise Watch floor 50 to 52"/></div>'+
+    '<div class="mfield"><label>Rationale</label><textarea id="mcRationale" placeholder="Why this change? (committee reviews this)">'+esc(methDraft.rationale)+'</textarea></div>'+
+    '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p>Submitting creates a <b>proposed</b> change. It applies and versions only after the Scoring Committee signs off (approve step captures the minutes reference).</p></div>';
+}
+function methCollect(){
+  var t=methDraft.type=el('mcType').value;
+  if(t==='weights'){[].forEach.call(document.querySelectorAll('.mcW'),function(inp){methDraft.weights[inp.getAttribute('data-code')]=parseInt(inp.value,10)||0;});}
+  if(t==='hardfloor'){if(el('mcHfThresh'))methDraft.hfThreshold=parseInt(el('mcHfThresh').value,10)||0;if(el('mcHfCap'))methDraft.hfCap=parseInt(el('mcHfCap').value,10)||0;}
+  if(t==='thresholds'){if(el('mcDeploy'))methDraft.deploy=parseInt(el('mcDeploy').value,10)||0;if(el('mcWatch'))methDraft.watch=parseInt(el('mcWatch').value,10)||0;}
+  if(el('mcSummary'))methDraft.summary=(el('mcSummary').value||'').trim();
+  if(el('mcRationale'))methDraft.rationale=(el('mcRationale').value||'').trim();
+}
+function methBindBody(){
+  el('mcType').addEventListener('change',function(){methCollect();methDraft.type=this.value;el('mdBody').innerHTML=methBody();methBindBody();});
+  [].forEach.call(document.querySelectorAll('.mcW'),function(inp){inp.addEventListener('input',function(){var sum=0;[].forEach.call(document.querySelectorAll('.mcW'),function(x){sum+=parseInt(x.value,10)||0;});if(el('mwTotal')){el('mwTotal').value=sum;el('mwTotal').style.color=sum===100?'var(--deploy)':'var(--dnd)';}});});
+  if(el('mcHfDims'))[].forEach.call(el('mcHfDims').children,function(b){b.addEventListener('click',function(){var v=b.getAttribute('data-val'),i=methDraft.hfDims.indexOf(v);if(i>=0)methDraft.hfDims.splice(i,1);else methDraft.hfDims.push(v);b.classList.toggle('on');});});
+}
+function methSubmit(){
+  methCollect();
+  if(!methDraft.summary){toast('Summary required','Add a one-line summary.');return;}
+  if(methDraft.rationale.length<20){toast('Rationale required','Give the committee a rationale (20+ chars).');return;}
+  var t=methDraft.type,detail={};
+  if(t==='weights'){var sum=DIMS.reduce(function(s,d){return s+(methDraft.weights[d.code]||0);},0);if(sum!==100){toast('Weights must total 100','Currently '+sum+'.');return;}detail={weights:Object.assign({},methDraft.weights)};}
+  else if(t==='hardfloor'){if(!methDraft.hfDims.length){toast('Pick trigger dimensions','Select at least one.');return;}detail={hardFloor:{dims:methDraft.hfDims.slice(),threshold:methDraft.hfThreshold,cap:methDraft.hfCap}};}
+  else{if(methDraft.watch>=methDraft.deploy){toast('Invalid thresholds','Watch floor must be below Deploy.');return;}detail={thresholds:{deploy:methDraft.deploy,watch:methDraft.watch}};}
+  var id='MCR-'+(2050+Math.floor(Math.random()*400));
+  var c={id:id,ts:nowStamp().slice(0,10),proposedBy:profileName()+' (Super Admin)',type:t,summary:methDraft.summary,detail:detail,rationale:methDraft.rationale,status:'proposed'};
+  METH_CHANGES=[c].concat(METH_CHANGES);persistMeth();
+  logAudit({carrier:'Methodology',crit:'Methodology change proposed',fr:'—',to:t+' · '+methDraft.summary,status:'Proposed',note:id});
+  mdClose();renderMethodology();toast('Change proposed',id+' · awaiting committee');
+}
+function methDecide(id,approve){
+  var c=methChangeById(id);if(!c)return;
+  if(approve){
+    mdOpen({title:'Committee sign-off',
+      body:''+
+        '<div class="msummary"><div class="ml">Change</div><div class="mv">'+esc(c.summary)+'</div></div>'+
+        '<div class="warn-note" style="background:var(--info-soft);border-color:var(--info-line)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p style="color:var(--t2)">Approving applies the change to the live methodology and mints a new version. This requires a recorded Scoring Committee minutes reference.</p></div>'+
+        '<div class="mfield"><label>Committee minutes reference</label><input id="mcRef" class="mono" placeholder="e.g. SC-2026-07-28"/></div>',
+      foot:'<button class="btn sm" id="mcSoCancel">Cancel</button><button class="btn sm primary" id="mcSoGo">Record sign-off &amp; apply</button>',
+      onMount:function(){
+        el('mcSoCancel').addEventListener('click',mdClose);
+        el('mcSoGo').addEventListener('click',function(){
+          var ref=(el('mcRef').value||'').trim();if(ref.length<4){toast('Reference required','Enter the committee minutes reference.');return;}
+          requireReauth('Apply methodology change','This changes the live scoring methodology for '+c.summary+'.',function(){
+            var cfg=methConfig();var oldV=cfg.version;
+            if(c.type==='weights')cfg.weights=c.detail.weights;
+            else if(c.type==='hardfloor')cfg.hardFloor=c.detail.hardFloor;
+            else if(c.type==='thresholds')cfg.thresholds=c.detail.thresholds;
+            var newV=methBumpVersion(oldV);cfg.version=newV;methPersistConfig(cfg);
+            c.status='approved';c.decidedBy=profileName();c.decidedTs=nowStamp().slice(0,10);c.version=newV;c.committeeRef=ref;
+            METH_VERSIONS=[{version:newV,ts:nowStamp().slice(0,10),summary:c.summary,by:'Scoring Committee',ref:ref,verdictsUnder:0}].concat(METH_VERSIONS);
+            persistMeth();
+            logAudit({carrier:'Methodology',crit:'Methodology change approved',fr:oldV,to:newV+' · '+c.summary,status:'Approved · CCC',note:c.id+' · '+ref});
+            mdClose();renderMethodology();toast('Methodology updated',newV+' · '+c.summary);
+          });
+        });
+      }
+    });
+  }else{
+    mdOpen({title:'Reject change',
+      body:'<div class="msummary"><div class="ml">Change</div><div class="mv">'+esc(c.id)+' · '+esc(c.summary)+'</div></div>'+
+        '<div class="mfield"><label>Reason</label><textarea id="mcRejReason" placeholder="Why is the committee rejecting this?"></textarea></div>',
+      foot:'<button class="btn sm" id="mcRejCancel">Cancel</button><button class="btn sm danger" id="mcRejGo">Reject change</button>',
+      onMount:function(){
+        el('mcRejCancel').addEventListener('click',mdClose);
+        el('mcRejGo').addEventListener('click',function(){
+          var reason=(el('mcRejReason').value||'').trim()||'Rejected by Scoring Committee.';
+          c.status='rejected';c.decidedBy=profileName();c.decidedTs=nowStamp().slice(0,10);c.rejectReason=reason;persistMeth();
+          logAudit({carrier:'Methodology',crit:'Methodology change rejected',fr:c.id+' · proposed',to:'rejected',status:'Rejected',note:reason});
+          mdClose();renderMethodology();toast('Change rejected',c.id);
+        });
+      }
+    });
+  }
 }
 
 /* ── §3.3.7 Audit & Compliance ── */
