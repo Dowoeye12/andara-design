@@ -417,6 +417,12 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .trace-hd .th-m{font-family:var(--mono);font-size:12px;color:var(--t4)}
 .rb-chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px;border-radius:4px;border:1px solid var(--info-line);background:var(--info-soft);color:var(--info);font-family:var(--mono);font-size:11px;font-weight:600;cursor:pointer}
 .rb-chip:hover{background:rgba(124,159,199,0.2)}
+/* AI agent version lists (§4.3.8) */
+.ver-list{display:flex;flex-direction:column;gap:2px}
+.ver-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.ver-row.pinned{border-color:var(--amber-line);background:var(--amber-soft)}
+.ver-row .vv{font-family:var(--mono);font-size:13px;color:var(--t1);font-weight:600;flex:1}
+.ver-row .vm{font-family:var(--mono);font-size:11px;color:var(--t4)}
 
 /* Product Management v2 (§4.3.3): funnel + velocity + mini stats */
 .fun{display:flex;flex-direction:column;gap:12px}
@@ -648,6 +654,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <a class="snav" data-v="methodology"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="18" cy="18" r="2.5"/></svg></span><span class="lbl">Methodology</span></a>
       <a class="snav" data-v="audit"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6Z"/></svg></span><span class="lbl">Audit &amp; Compliance</span></a>
       <a class="snav" data-v="health"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg></span><span class="lbl">System Health</span><span class="cnt" id="navHealth"></span></a>
+      <a class="snav" data-v="agents"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></span><span class="lbl">AI Agents</span><span class="cnt" id="navAgents"></span></a>
     </div>
     <div class="sb-foot">Andara Super Admin<br>PRD §3.3 · M1<br><span id="footBuild"></span></div>
   </nav>
@@ -667,6 +674,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <section id="vw-methodology" class="view" style="display:none"></section>
     <section id="vw-audit" class="view" style="display:none"></section>
     <section id="vw-health" class="view" style="display:none"></section>
+    <section id="vw-agents" class="view" style="display:none"></section>
   </main>
 </div>
 
@@ -2000,6 +2008,7 @@ function updateProductNavCounts(){
   setNav('navAir',AIR_ISSUES.filter(function(i){return i.state!=='delivered';}).length,false);
   if(typeof hydrateInvoices==='function'){hydrateInvoices();setNav('navBilling',INVOICES.filter(function(i){return i.status==='overdue';}).length,true);}
   if(typeof INCIDENTS!=='undefined')setNav('navHealth',INCIDENTS.filter(function(i){return i.status!=='resolved';}).length,true);
+  if(typeof hydrateAgents==='function'){hydrateAgents();setNav('navAgents',halluOpenCount(),true);}
 }
 
 /* ── FleetWatch: aircraft under surveillance across every client (§3.3.4) ── */
@@ -3398,6 +3407,221 @@ function openScheduleDrill(){
   });
 }
 
+/* ══════════════════════════════════════════════════════
+   AI AGENT CONSOLE (§4.3.8, new at M2)
+══════════════════════════════════════════════════════ */
+var AGENTS=[
+  {id:'ag-monitor',name:'Market Monitoring Agent',purpose:'Signal triage from market and news feeds',owner:'CTO',status:'production',
+   model:'claude-sonnet-4.5',models:['claude-sonnet-4.5','claude-sonnet-4','claude-haiku-4.5'],prompt:'v3.2',prompts:['v3.2','v3.1','v3.0','v2.8'],
+   inv30:18400,p50:1.2,p95:3.4,cost:0.008,accept:0.91,acceptTrend:[88,89,90,91,91,92],featureDrift:0.06,outputDrift:0.04,drift:'ok',hallu:1},
+  {id:'ag-draft',name:'Credit Report Drafting Agent',purpose:'Arbiter verdict commentary drafting',owner:'Analytics Lead',status:'production',
+   model:'claude-opus-4.1',models:['claude-opus-4.1','claude-opus-4','claude-sonnet-4.5'],prompt:'v2.1',prompts:['v2.1','v2.0','v1.4'],
+   inv30:3200,p50:4.8,p95:11.2,cost:0.14,accept:0.84,acceptTrend:[80,81,83,84,84,84],featureDrift:0.09,outputDrift:0.12,drift:'warn',hallu:3},
+  {id:'ag-ocr',name:'Document Extraction Agent',purpose:'FleetWatch capture OCR and field extraction',owner:'Eng, Platform',status:'production',
+   model:'andara-ocr-v2',models:['andara-ocr-v2','andara-ocr-v1'],prompt:'n/a',prompts:['n/a'],
+   inv30:9600,p50:0.9,p95:2.1,cost:0.003,accept:0.96,acceptTrend:[94,95,95,96,96,96],featureDrift:0.03,outputDrift:0.02,drift:'ok',hallu:0},
+  {id:'ag-anom',name:'Anomaly Classification Agent',purpose:'FleetWatch anomaly severity classification',owner:'Eng, Platform',status:'canary',
+   model:'claude-sonnet-4.5',models:['claude-sonnet-4.5','claude-sonnet-4'],prompt:'v1.3',prompts:['v1.3','v1.2','v1.0'],
+   inv30:1400,p50:1.6,p95:4.0,cost:0.01,accept:0.79,acceptTrend:[72,74,76,78,79,79],featureDrift:0.14,outputDrift:0.18,drift:'alert',hallu:2},
+  {id:'ag-air',name:'AIR Editorial Assistant',purpose:'AIR issue drafting support',owner:'Editor',status:'production',
+   model:'claude-opus-4.1',models:['claude-opus-4.1','claude-opus-4'],prompt:'v4.0',prompts:['v4.0','v3.5','v3.0'],
+   inv30:640,p50:6.2,p95:14.8,cost:0.19,accept:0.88,acceptTrend:[85,86,87,88,88,88],featureDrift:0.05,outputDrift:0.06,drift:'ok',hallu:1}
+];
+var HALLU_FLAGS=[
+  {id:'HF-3021',agent:'ag-draft',ts:'2026-07-22 09:14',summary:'Cited a 2024 restructuring not present in source documents',severity:'high',status:'open',reviewer:'',note:'',rootCause:''},
+  {id:'HF-3018',agent:'ag-anom',ts:'2026-07-21 15:02',summary:'Classified corrosion as structural without borescope evidence',severity:'high',status:'open',reviewer:'',note:'',rootCause:''},
+  {id:'HF-3012',agent:'ag-monitor',ts:'2026-07-19 11:40',summary:'Over-weighted a duplicate news item in the signal',severity:'medium',status:'reviewed',reviewer:'Amara Eze',note:'Dedup filter gap, ticket AND-1288 filed',rootCause:'Retrieval dedup'},
+  {id:'HF-3007',agent:'ag-draft',ts:'2026-07-16 08:30',summary:'Rounded PPS sub-score inconsistently in narrative',severity:'low',status:'reviewed',reviewer:'Tunde Bakare',note:'Prompt clarified in v2.1',rootCause:'Prompt ambiguity'},
+  {id:'HF-3001',agent:'ag-air',ts:'2026-07-10 14:20',summary:'Drafted a forward-looking claim without an AAV tag',severity:'medium',status:'dismissed',reviewer:'Grace Adeyemi',note:'Editorial caught pre-publish',rootCause:'—'}
+];
+var BIAS_PACKS=[
+  {id:'BIAS-2026Q2',quarter:'Q2 2026',generated:'2026-04-08',by:'Ops Lead',agents:5,status:'delivered'}
+];
+function hydrateAgents(){loadState();if(STATE.agents)STATE.agents.forEach(function(sa){var a=agentById(sa.id);if(a)Object.assign(a,sa);});if(STATE.halluFlags)HALLU_FLAGS=STATE.halluFlags;if(STATE.biasPacks)BIAS_PACKS=STATE.biasPacks;}
+function persistAgents(){loadState();STATE.agents=AGENTS.map(function(a){return {id:a.id,model:a.model,prompt:a.prompt};});STATE.halluFlags=HALLU_FLAGS;STATE.biasPacks=BIAS_PACKS;saveState();}
+function agentById(id){var r=null;AGENTS.forEach(function(a){if(a.id===id)r=a;});return r;}
+function agName(_id){var a=agentById(_id);return a?a.name:_id;}
+function driftChip(d){var m={ok:['green','Stable'],warn:['watch','Drifting'],alert:['red','Alert']};var x=m[d]||['muted',d];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function halluSevChip(s){var m={high:['red','High'],medium:['watch','Medium'],low:['muted','Low']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function halluStatusChip(s){var m={open:['red','Open'],reviewed:['green','Reviewed'],dismissed:['muted','Dismissed']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function agStatusChip(s){return s==='canary'?'<span class="ichip watch">Canary</span>':'<span class="ichip green">Production</span>';}
+function halluOpenCount(){return HALLU_FLAGS.filter(function(h){return h.status==='open';}).length;}
+function sparkline(vals,w,h){if(!vals||vals.length<2)return '';var max=Math.max.apply(null,vals),min=Math.min.apply(null,vals),rng=(max-min)||1;
+  var pts=vals.map(function(v,i){var x=i/(vals.length-1)*w;var y=h-((v-min)/rng)*(h-3)-1.5;return x.toFixed(1)+','+y.toFixed(1);}).join(' ');
+  return '<svg width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" style="vertical-align:middle"><polyline points="'+pts+'" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-linejoin="round"/></svg>';}
+
+var agTab='inventory';
+function renderAgents(){
+  hydrateAgents();
+  var totInv=AGENTS.reduce(function(s,a){return s+a.inv30;},0);
+  var totCost=AGENTS.reduce(function(s,a){return s+a.inv30*a.cost;},0);
+  var avgAccept=Math.round(AGENTS.reduce(function(s,a){return s+a.accept;},0)/AGENTS.length*100);
+  var driftAlerts=AGENTS.filter(function(a){return a.drift!=='ok';}).length;
+  var tabs=[['inventory','Inventory',AGENTS.length],['invocations','Invocations',''],['acceptance','Acceptance',''],['hallucinations','Hallucinations',halluOpenCount()||''],['drift','Drift',driftAlerts||''],['bias','Bias pack','']];
+  var body=''+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §4.3.8</div><h1>AI Agent Console</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Observability and governance for every production AI agent, model and prompt pins, cost, quality and drift.</span></div></div>'+
+  '<div class="summary">'+
+    '<div class="cell"><div class="lbl">Production agents</div><div class="num">'+AGENTS.length+'</div><div class="cap">'+AGENTS.filter(function(a){return a.status==='canary';}).length+' in canary</div></div>'+
+    '<div class="cell"><div class="lbl">Invocations, 30d</div><div class="num">'+(totInv>=1000?(totInv/1000).toFixed(1)+'K':totInv)+'</div><div class="cap">'+fmtUsdFull(Math.round(totCost))+' spend</div></div>'+
+    '<div class="cell"><div class="lbl">Avg acceptance</div><div class="num'+(avgAccept>=85?' ok':' due')+'">'+avgAccept+'%</div><div class="cap">Human-accepted</div></div>'+
+    '<div class="cell"><div class="lbl">Open hallucinations</div><div class="num'+(halluOpenCount()?' alert':'')+'">'+halluOpenCount()+'</div><div class="cap">'+driftAlerts+' drift alerts</div></div>'+
+  '</div>'+
+  '<div class="fb" id="agTabs">'+tabs.map(function(t){return '<button class="fp'+(agTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
+  '<div id="agPane"></div>';
+  el('vw-agents').innerHTML=body;
+  [].forEach.call(el('agTabs').children,function(b){b.addEventListener('click',function(){agTab=b.getAttribute('data-t');renderAgents();});});
+  agRenderPane();
+  setNav('navAgents',halluOpenCount(),true);
+}
+function agRenderPane(){
+  var pane=el('agPane');
+  if(agTab==='invocations'){pane.innerHTML=agPaneInvocations();return;}
+  if(agTab==='acceptance'){pane.innerHTML=agPaneAcceptance();return;}
+  if(agTab==='hallucinations'){pane.innerHTML=agPaneHallu();agBindHallu();return;}
+  if(agTab==='drift'){pane.innerHTML=agPaneDrift();return;}
+  if(agTab==='bias'){pane.innerHTML=agPaneBias();agBindBias();return;}
+  // inventory
+  pane.innerHTML='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Agent inventory</h3><span class="meta">'+AGENTS.length+' agents</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th>Owner</th><th>Model pin</th><th>Prompt pin</th><th>Status</th><th></th></tr></thead><tbody>'+
+  AGENTS.map(function(a){return '<tr class="rowclick" data-id="'+a.id+'">'+
+    '<td class="c-name">'+esc(a.name)+'<span class="sub">'+esc(a.purpose)+'</span></td>'+
+    '<td class="c-sec">'+esc(a.owner)+'</td>'+
+    '<td class="c-mono" style="color:var(--t1)">'+esc(a.model)+'</td>'+
+    '<td class="c-mono">'+esc(a.prompt)+'</td>'+
+    '<td>'+agStatusChip(a.status)+'</td>'+
+    '<td class="c-go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  [].forEach.call(pane.querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){openAgent(tr.getAttribute('data-id'));});});
+}
+/* agent detail: model + prompt version controls, rollback */
+function openAgent(id){
+  var a=agentById(id);if(!a)return;
+  var models=a.models.map(function(m){var pinned=m===a.model;return '<div class="ver-row'+(pinned?' pinned':'')+'"><span class="vv">'+esc(m)+'</span>'+(pinned?'<span class="ichip amber">Pinned</span>':'<button class="btn sm agRollback" data-model="'+esc(m)+'">Roll back</button>')+'</div>';}).join('');
+  var prompts=a.prompts.map(function(p){var pinned=p===a.prompt;return '<div class="ver-row'+(pinned?' pinned':'')+'"><span class="vv">'+esc(p)+'</span>'+(pinned?'<span class="ichip amber">Pinned</span>':'<span class="vm">archived</span>')+'</div>';}).join('');
+  mdOpen({title:a.name,wide:true,
+    body:''+
+      '<div class="d-hero" style="gap:16px"><div class="d-id"><div class="nm" style="font-size:22px">'+esc(a.name)+'</div><div class="sub">'+agStatusChip(a.status)+'<span>'+esc(a.purpose)+'</span></div></div><div class="d-hero-side"><span class="ichip muted">Owner '+esc(a.owner)+'</span></div></div>'+
+      '<div class="mini3" style="margin-bottom:4px"><div class="m3"><span class="ml">Invocations 30d</span><span class="mv">'+(a.inv30>=1000?(a.inv30/1000).toFixed(1)+'K':a.inv30)+'</span></div><div class="m3"><span class="ml">Latency p95</span><span class="mv">'+a.p95+'s</span></div><div class="m3"><span class="ml">Acceptance</span><span class="mv">'+Math.round(a.accept*100)+'%</span></div></div>'+
+      '<div class="d-grid" style="margin-top:8px">'+
+        '<div><div class="wr-sec-h" style="margin-bottom:10px">Model versions</div><div class="ver-list">'+models+'</div></div>'+
+        '<div><div class="wr-sec-h" style="margin-bottom:10px">Prompt versions</div><div class="ver-list">'+prompts+'</div></div>'+
+      '</div>',
+    foot:'<button class="btn sm" id="agDone">Close</button>',
+    onMount:function(){
+      el('agDone').addEventListener('click',mdClose);
+      [].forEach.call(el('mdBody').querySelectorAll('.agRollback'),function(b){b.addEventListener('click',function(){agRollback(id,b.getAttribute('data-model'));});});
+    }
+  });
+}
+function agRollback(id,model){
+  var a=agentById(id);if(!a)return;
+  requireReauth('Roll back model version','This re-pins '+a.name+' to '+model+' in production.',function(){
+    var prev=a.model;a.model=model;persistAgents();
+    logAudit({carrier:'AI Agents',crit:'Model version rollback',fr:a.name+' · '+prev,to:model,status:'Rolled back',note:a.id});
+    mdClose();renderAgents();toast('Model rolled back',a.name+' → '+model);
+  });
+}
+/* invocation dashboard */
+function agPaneInvocations(){
+  var totCost=AGENTS.reduce(function(s,a){return s+a.inv30*a.cost;},0);
+  return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Invocations &amp; cost</h3><span class="meta">30-day window · '+fmtUsdFull(Math.round(totCost))+' spend</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th class="num">Invocations</th><th class="num">Latency p50</th><th class="num">Latency p95</th><th class="num">Cost / call</th><th class="num">30d cost</th></tr></thead><tbody>'+
+  AGENTS.slice().sort(function(a,b){return b.inv30-a.inv30;}).map(function(a){return '<tr>'+
+    '<td class="c-name">'+esc(a.name)+'</td>'+
+    '<td class="c-num">'+a.inv30.toLocaleString('en-US')+'</td>'+
+    '<td class="c-num">'+a.p50+'s</td>'+
+    '<td class="c-num"'+(a.p95>10?' style="color:var(--watch)"':'')+'>'+a.p95+'s</td>'+
+    '<td class="c-num">$'+a.cost.toFixed(3)+'</td>'+
+    '<td class="c-num">'+fmtUsdFull(Math.round(a.inv30*a.cost))+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+/* acceptance rate dashboard */
+function agPaneAcceptance(){
+  return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Human-acceptance rate</h3><span class="meta">6-week trend</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th class="num">Acceptance</th><th>Trend</th><th class="num">6-wk change</th></tr></thead><tbody>'+
+  AGENTS.slice().sort(function(a,b){return b.accept-a.accept;}).map(function(a){var t=a.acceptTrend;var delta=t[t.length-1]-t[0];return '<tr>'+
+    '<td class="c-name">'+esc(a.name)+'</td>'+
+    '<td class="c-num" style="color:'+(a.accept>=0.85?'var(--deploy)':'var(--watch)')+';font-weight:600">'+Math.round(a.accept*100)+'%</td>'+
+    '<td>'+sparkline(t,110,26)+'</td>'+
+    '<td class="c-num" style="color:'+(delta>=0?'var(--deploy)':'var(--dnd)')+'">'+(delta>=0?'+':'')+delta+'pt</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+/* hallucination flag review */
+function agPaneHallu(){
+  var open=HALLU_FLAGS.filter(function(h){return h.status==='open';});
+  var head=open.length?'<div class="warn-note" style="margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>'+open.length+' flag'+(open.length>1?'s':'')+' awaiting review.</b> Assign a root cause and reviewer note to close each flag.</p></div>':'';
+  return head+'<div class="panel"><div class="ph"><span class="bullet"></span><h3>Flagged invocations</h3><span class="meta">'+HALLU_FLAGS.length+'</span></div><div class="pb flush">'+
+  HALLU_FLAGS.slice().sort(function(a,b){var r={open:0,reviewed:1,dismissed:2};return r[a.status]-r[b.status]||(b.ts||'').localeCompare(a.ts||'');}).map(function(h){return '<div class="lrow"><div class="body"><h4>'+halluSevChip(h.severity)+' '+esc(h.summary)+'</h4>'+
+    '<div class="metaln"><span><b>'+esc(h.id)+'</b></span><span>'+esc(agName(h.agent))+'</span><span>'+esc(h.ts)+'</span>'+(h.rootCause&&h.rootCause!=='—'?'<span>Root cause: <b>'+esc(h.rootCause)+'</b></span>':'')+'</div>'+
+    (h.note?'<div class="metaln"><span>'+esc(h.reviewer)+': '+esc(h.note)+'</span></div>':'')+'</div>'+
+    '<div class="side">'+halluStatusChip(h.status)+(h.status==='open'?'<button class="btn sm primary hfReview" data-id="'+h.id+'" style="margin-top:6px">Review</button>':'')+'</div></div>';}).join('')+
+  '</div></div>';
+}
+function agBindHallu(){[].forEach.call(el('agPane').querySelectorAll('.hfReview'),function(b){b.addEventListener('click',function(){openHalluReview(b.getAttribute('data-id'));});});}
+function halluById(id){var r=null;HALLU_FLAGS.forEach(function(h){if(h.id===id)r=h;});return r;}
+function openHalluReview(id){
+  var h=halluById(id);if(!h)return;
+  mdOpen({title:'Review flag '+h.id,
+    body:''+
+      '<div class="msummary"><div class="ml">Flagged output</div><div class="mv">'+esc(h.summary)+'</div></div>'+
+      '<div class="mfield"><label>Root cause</label><select id="hfRoot"><option>Retrieval dedup</option><option>Retrieval miss</option><option>Prompt ambiguity</option><option>Model limitation</option><option>Stale context</option><option>Not a hallucination</option></select></div>'+
+      '<div class="mfield"><label>Reviewer note</label><textarea id="hfNote" placeholder="What happened and what is the remediation?"></textarea></div>'+
+      '<div class="mfield"><label>Outcome</label><select id="hfOutcome"><option value="reviewed">Reviewed (valid flag)</option><option value="dismissed">Dismiss (not an issue)</option></select></div>',
+    foot:'<button class="btn sm" id="hfCancel">Cancel</button><button class="btn sm primary" id="hfGo">Record review</button>',
+    onMount:function(){
+      el('hfCancel').addEventListener('click',mdClose);
+      el('hfGo').addEventListener('click',function(){
+        var note=(el('hfNote').value||'').trim();if(note.length<10){toast('Note required','Add a reviewer note (10+ chars).');return;}
+        h.status=el('hfOutcome').value;h.rootCause=el('hfRoot').value;h.note=note;h.reviewer=profileName();persistAgents();
+        logAudit({carrier:'AI Agents',crit:'Hallucination flag reviewed',fr:h.id+' · open',to:h.status+' · '+h.rootCause,status:'Reviewed',note:h.id});
+        mdClose();renderAgents();toast('Flag reviewed',h.id+' · '+h.status);
+      });
+    }
+  });
+}
+/* drift detection */
+function agPaneDrift(){
+  return '<div class="reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M3 17l6-6 4 4 8-8"/></svg><p style="color:var(--t2)">Feature-distribution drift (PSI) and model-output drift per agent. PSI below 0.10 is stable; 0.10 to 0.20 is drifting; above 0.20 alerts.</p></div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Drift detection</h3><span class="meta">'+AGENTS.filter(function(a){return a.drift!=='ok';}).length+' alerts</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th class="num">Feature drift (PSI)</th><th class="num">Output drift</th><th>Status</th></tr></thead><tbody>'+
+  AGENTS.slice().sort(function(a,b){var r={alert:0,warn:1,ok:2};return r[a.drift]-r[b.drift];}).map(function(a){return '<tr>'+
+    '<td class="c-name">'+esc(a.name)+'</td>'+
+    '<td class="c-num" style="color:'+(a.featureDrift>0.2?'var(--dnd)':(a.featureDrift>0.1?'var(--watch)':'var(--t2)'))+';font-weight:600">'+a.featureDrift.toFixed(2)+'</td>'+
+    '<td class="c-num" style="color:'+(a.outputDrift>0.15?'var(--dnd)':(a.outputDrift>0.1?'var(--watch)':'var(--t2)'))+'">'+a.outputDrift.toFixed(2)+'</td>'+
+    '<td>'+driftChip(a.drift)+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+/* quarterly bias review pack */
+function agPaneBias(){
+  var d=new Date();var q='Q'+(Math.floor(d.getUTCMonth()/3)+1)+' '+d.getUTCFullYear();
+  var exists=BIAS_PACKS.some(function(p){return p.quarter===q;});
+  var head='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Current quarter</h3><span class="meta">'+q+'</span></div><div class="pb">'+
+    '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p>Auto-generated bias-review pack for the Scoring Committee, covering acceptance, drift and hallucination metrics across all '+AGENTS.length+' agents.</p></div>'+
+    '<button class="btn primary" id="biasGen" style="margin-top:14px"'+(exists?' disabled':'')+'>'+(exists?q+' pack already generated':'Generate '+q+' bias pack')+'</button>'+
+  '</div></div>';
+  var hist='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Pack history</h3><span class="meta">'+BIAS_PACKS.length+'</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Pack</th><th>Quarter</th><th>Generated</th><th>By</th><th class="num">Agents</th><th>Status</th></tr></thead><tbody>'+
+  BIAS_PACKS.map(function(p){return '<tr><td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(p.id)+'</td><td class="c-sec">'+esc(p.quarter)+'</td><td class="c-mono">'+esc(p.generated)+'</td><td class="c-sec">'+esc(p.by)+'</td><td class="c-num">'+p.agents+'</td><td><span class="ichip green">'+esc(p.status.charAt(0).toUpperCase()+p.status.slice(1))+'</span></td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+hist;
+}
+function agBindBias(){if(el('biasGen'))el('biasGen').addEventListener('click',genBiasPack);}
+function genBiasPack(){
+  var d=new Date();var q='Q'+(Math.floor(d.getUTCMonth()/3)+1)+' '+d.getUTCFullYear();
+  var headers=['Agent','Owner','Model','Acceptance %','Feature drift (PSI)','Output drift','Open hallucinations'];
+  var rows=AGENTS.map(function(a){return [a.name,a.owner,a.model,Math.round(a.accept*100),a.featureDrift.toFixed(2),a.outputDrift.toFixed(2),HALLU_FLAGS.filter(function(h){return h.agent===a.id&&h.status==='open';}).length];});
+  var id='BIAS-'+d.getUTCFullYear()+'Q'+(Math.floor(d.getUTCMonth()/3)+1);
+  downloadCsv('andara-bias-review-'+id+'.csv',headers,rows);
+  BIAS_PACKS=[{id:id,quarter:q,generated:nowStamp().slice(0,10),by:profileName(),agents:AGENTS.length,status:'delivered'}].concat(BIAS_PACKS);persistAgents();
+  logAudit({carrier:'AI Agents',crit:'Bias review pack generated',fr:'—',to:q+' · '+AGENTS.length+' agents',status:'Generated',note:id});
+  renderAgents();toast('Bias pack generated',id+' · sent to Scoring Committee');
+}
+
 /* ══════════════════ PLACEHOLDER AREAS (built in later increments) ══════════════════ */
 function stubPane(target,eyebrow,title,heading,desc,feats,ico){
   el(target).innerHTML=''+
@@ -3427,7 +3651,8 @@ var VIEW_RENDER={
   air:renderAir,
   methodology:renderMethodology,
   audit:renderAudit,
-  health:renderHealth
+  health:renderHealth,
+  agents:renderAgents
 };
 
 /* ══════════════════ ROUTING / SHELL ══════════════════ */
