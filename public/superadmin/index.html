@@ -656,7 +656,13 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <a class="snav" data-v="health"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 6 4-14 2 8h6"/></svg></span><span class="lbl">System Health</span><span class="cnt" id="navHealth"></span></a>
       <a class="snav" data-v="agents"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></svg></span><span class="lbl">AI Agents</span><span class="cnt" id="navAgents"></span></a>
     </div>
-    <div class="sb-foot">Andara Super Admin<br>PRD §3.3 · M1<br><span id="footBuild"></span></div>
+    <div class="sgroup">
+      <div class="sglabel">Open Platform</div>
+      <a class="snav" data-v="eapi"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/><path d="M9 9h6v6H9z"/></svg></span><span class="lbl">Enterprise API</span><span class="cnt" id="navEapi"></span></a>
+      <a class="snav" data-v="windex"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/><circle cx="20" cy="7" r="1.4"/></svg></span><span class="lbl">Watch Index</span><span class="cnt" id="navWindex"></span></a>
+      <a class="snav" data-v="bizjet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12l-8-1-3-8h-2l1 8-4 1-2-3H2l2 4-2 4h2l2-3 4 1-1 8h2l3-8 8-1z"/></svg></span><span class="lbl">Bizjet Vertical</span><span class="cnt" id="navBizjet"></span></a>
+    </div>
+    <div class="sb-foot">Andara Super Admin<br>PRD §3.3 M1 · §4.3 M2 · §5.3 M3<br><span id="footBuild"></span></div>
   </nav>
   <div class="sb-backdrop" id="sbBackdrop"></div>
 
@@ -675,6 +681,9 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <section id="vw-audit" class="view" style="display:none"></section>
     <section id="vw-health" class="view" style="display:none"></section>
     <section id="vw-agents" class="view" style="display:none"></section>
+    <section id="vw-eapi" class="view" style="display:none"></section>
+    <section id="vw-windex" class="view" style="display:none"></section>
+    <section id="vw-bizjet" class="view" style="display:none"></section>
   </main>
 </div>
 
@@ -2009,6 +2018,9 @@ function updateProductNavCounts(){
   if(typeof hydrateInvoices==='function'){hydrateInvoices();setNav('navBilling',INVOICES.filter(function(i){return i.status==='overdue';}).length,true);}
   if(typeof INCIDENTS!=='undefined')setNav('navHealth',INCIDENTS.filter(function(i){return i.status!=='resolved';}).length,true);
   if(typeof hydrateAgents==='function'){hydrateAgents();setNav('navAgents',halluOpenCount(),true);}
+  if(typeof hydrateEapi==='function'){hydrateEapi();setNav('navEapi',eapiAlertCount(),true);}
+  if(typeof hydrateWindex==='function'){hydrateWindex();setNav('navWindex',windexAlertCount(),true);}
+  if(typeof hydrateBizjet==='function'){hydrateBizjet();setNav('navBizjet',bizjetAlertCount(),false);}
 }
 
 /* ── FleetWatch: aircraft under surveillance across every client (§3.3.4) ── */
@@ -3622,6 +3634,741 @@ function genBiasPack(){
   renderAgents();toast('Bias pack generated',id+' · sent to Scoring Committee');
 }
 
+/* ══════════════════════════════════════════════════════
+   ENTERPRISE API MANAGEMENT (§5.3.1, new at M3)
+   Open Platform. Per-tenant quota, endpoint access control,
+   consumption analytics + abuse detection, webhook delivery
+   monitor, and API version lifecycle.
+══════════════════════════════════════════════════════ */
+var API_ENDPOINTS=[
+  {key:'carriers.read',method:'GET',path:'/v1/carriers',desc:'Carrier registry and metadata'},
+  {key:'score.read',method:'GET',path:'/v1/carriers/{id}/score',desc:'5-Score scoring panel and verdict'},
+  {key:'signals.read',method:'GET',path:'/v1/signals',desc:'Andara Signal feed'},
+  {key:'fleetwatch.read',method:'GET',path:'/v1/fleetwatch/aircraft',desc:'FleetWatch surveillance state'},
+  {key:'verdicts.read',method:'GET',path:'/v1/verdicts/{id}',desc:'Verdict letter deliverable'},
+  {key:'webhooks.manage',method:'POST',path:'/v1/webhooks',desc:'Manage webhook subscriptions'}
+];
+/* Enterprise-tier clients that consume the API. quotaRpm = rate limit, quotaMonthly = call cap.
+   usage30d rolls the last 30 days; errRate is share of 5xx/429; endpoints is the per-endpoint grant map. */
+var API_TENANTS=[
+  {id:'at-fidelity',clientId:'cl-fidelity',name:'Fidelity Bank',plan:'Enterprise',status:'active',
+   apiVersion:'v1',quotaRpm:600,quotaMonthly:2000000,usage30d:1284000,errRate:0.6,p95:180,
+   keyMasked:'ak_live_****3f9a',keyIssued:'2025-02-01',topEndpoint:'/v1/carriers/{id}/score',
+   spark:[38,41,39,44,46,43,47],
+   endpoints:{'carriers.read':true,'score.read':true,'signals.read':true,'fleetwatch.read':true,'verdicts.read':true,'webhooks.manage':true}},
+  {id:'at-afc',clientId:'cl-afc',name:'Africa Finance Corporation',plan:'Enterprise',status:'active',
+   apiVersion:'v1',quotaRpm:400,quotaMonthly:1500000,usage30d:1410000,errRate:2.9,p95:240,
+   keyMasked:'ak_live_****7d20',keyIssued:'2025-03-05',topEndpoint:'/v1/signals',
+   spark:[40,44,47,49,52,55,58],
+   endpoints:{'carriers.read':true,'score.read':true,'signals.read':true,'fleetwatch.read':false,'verdicts.read':true,'webhooks.manage':true}},
+  {id:'at-stanchart',clientId:'cl-stanchart',name:'Standard Chartered',plan:'Enterprise',status:'active',
+   apiVersion:'v0',quotaRpm:200,quotaMonthly:400000,usage30d:96000,errRate:1.1,p95:150,
+   keyMasked:'ak_live_****b118',keyIssued:'2025-09-22',topEndpoint:'/v1/signals',
+   spark:[9,8,10,9,11,10,9],
+   endpoints:{'carriers.read':true,'score.read':false,'signals.read':true,'fleetwatch.read':false,'verdicts.read':false,'webhooks.manage':true}}
+];
+var API_VERSIONS=[
+  {v:'v2',status:'beta',released:'2026-06-01',sunset:'—',notes:'Adds bizjet entities and Watch Index endpoints. Opt-in preview.'},
+  {v:'v1',status:'ga',released:'2025-02-01',sunset:'—',notes:'Current stable surface. Signal, scoring, FleetWatch, verdicts.'},
+  {v:'v0',status:'deprecated',released:'2024-09-01',sunset:'2026-09-30',notes:'Pre-GA preview. Migrate consumers to v1 before sunset.'}
+];
+var API_WEBHOOKS=[
+  {id:'wh-fid-1',tenantId:'at-fidelity',event:'verdict.changed',url:'https://hooks.fidelitybank.com/andara/verdict',status:'healthy',successRate:0.998,lastDelivery:'2026-07-29 06:12',last24:412,failed24:1},
+  {id:'wh-fid-2',tenantId:'at-fidelity',event:'aog.alert',url:'https://hooks.fidelitybank.com/andara/aog',status:'healthy',successRate:1.0,lastDelivery:'2026-07-28 22:40',last24:3,failed24:0},
+  {id:'wh-afc-1',tenantId:'at-afc',event:'signal.deteriorating',url:'https://api.afcorp.org/ingest/andara',status:'degraded',successRate:0.941,lastDelivery:'2026-07-29 05:58',last24:118,failed24:7},
+  {id:'wh-sc-1',tenantId:'at-stanchart',event:'air.published',url:'https://sc.com/webhooks/andara-air',status:'failing',successRate:0.612,lastDelivery:'2026-07-27 09:14',last24:2,failed24:1}
+];
+function hydrateEapi(){loadState();
+  if(STATE.apiTenants)STATE.apiTenants.forEach(function(st){var t=eapiTenantById(st.id);if(t)Object.assign(t,st);});
+  if(STATE.apiVersions)API_VERSIONS=STATE.apiVersions;
+  if(STATE.apiWebhooks)API_WEBHOOKS=STATE.apiWebhooks;}
+function persistEapi(){loadState();
+  STATE.apiTenants=API_TENANTS.map(function(t){return {id:t.id,quotaRpm:t.quotaRpm,quotaMonthly:t.quotaMonthly,apiVersion:t.apiVersion,status:t.status,endpoints:t.endpoints};});
+  STATE.apiVersions=API_VERSIONS;STATE.apiWebhooks=API_WEBHOOKS;saveState();}
+function eapiTenantById(id){var r=null;API_TENANTS.forEach(function(t){if(t.id===id)r=t;});return r;}
+function apiVerByV(v){var r=null;API_VERSIONS.forEach(function(x){if(x.v===v)r=x;});return r;}
+function apiWebhookById(id){var r=null;API_WEBHOOKS.forEach(function(w){if(w.id===id)r=w;});return r;}
+function eapiEndpointCount(t){return API_ENDPOINTS.reduce(function(s,e){return s+(t.endpoints[e.key]?1:0);},0);}
+/* abuse detection: sustained error rate, monthly-cap saturation, or a deprecated-version consumer past migration */
+function tenantAbuse(t){
+  var reasons=[];
+  if(t.errRate>=2.5)reasons.push('Error rate '+t.errRate.toFixed(1)+'%');
+  if(t.usage30d/t.quotaMonthly>=0.9)reasons.push('At '+Math.round(t.usage30d/t.quotaMonthly*100)+'% of monthly cap');
+  var ver=apiVerByV(t.apiVersion);if(ver&&ver.status==='deprecated')reasons.push('On deprecated '+t.apiVersion);
+  return reasons;
+}
+function eapiAlertCount(){
+  var n=API_TENANTS.filter(function(t){return tenantAbuse(t).length;}).length;
+  n+=API_WEBHOOKS.filter(function(w){return w.status==='failing';}).length;
+  return n;
+}
+function fmtCompact(n){n=n||0;if(n>=1e6)return (n/1e6).toFixed(2)+'M';if(n>=1e3)return (n/1e3).toFixed(1)+'K';return ''+n;}
+function planChip(p){return '<span class="ichip amber">'+esc(p)+'</span>';}
+function apiVerChip(v){var x=apiVerByV(v);var st=x?x.status:'';var m={ga:['green','GA'],beta:['blue','Beta'],deprecated:['red','Deprecated']};var c=m[st]||['muted',st];return '<span class="ichip '+c[0]+'">'+esc(v)+'</span>';}
+function whStatusChip(s){var m={healthy:['green','Healthy'],degraded:['watch','Degraded'],failing:['red','Failing']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function methodChip(m){return '<span class="ichip '+(m==='POST'?'blue':'muted')+'">'+esc(m)+'</span>';}
+
+var eapiTab='tenants';
+function renderEapi(){
+  hydrateEapi();
+  var totCalls=API_TENANTS.reduce(function(s,t){return s+t.usage30d;},0);
+  var activeT=API_TENANTS.filter(function(t){return t.status==='active';}).length;
+  var abuseN=API_TENANTS.filter(function(t){return tenantAbuse(t).length;}).length;
+  var whBad=API_WEBHOOKS.filter(function(w){return w.status!=='healthy';}).length;
+  var whFail=API_WEBHOOKS.filter(function(w){return w.status==='failing';}).length;
+  var tabs=[['tenants','Tenants & quota',API_TENANTS.length],['access','Endpoint access',''],['consumption','Consumption',abuseN||''],['webhooks','Webhooks',whBad||''],['versions','API versions',API_VERSIONS.length]];
+  var body=''+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §5.3.1 · M3</div><h1>Enterprise API Management</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Per-tenant quota, endpoint-level access, consumption and abuse detection, webhook delivery health, and API version lifecycle.</span></div></div>'+
+  '<div class="summary">'+
+    '<div class="cell"><div class="lbl">Enterprise tenants</div><div class="num">'+API_TENANTS.length+'</div><div class="cap">'+activeT+' active on the API</div></div>'+
+    '<div class="cell"><div class="lbl">API calls, 30d</div><div class="num">'+fmtCompact(totCalls)+'</div><div class="cap">Across all tenants</div></div>'+
+    '<div class="cell"><div class="lbl">Abuse flags</div><div class="num'+(abuseN?' alert':'')+'">'+abuseN+'</div><div class="cap">Tenants over threshold</div></div>'+
+    '<div class="cell"><div class="lbl">Webhook health</div><div class="num'+(whFail?' alert':'')+'">'+whBad+'</div><div class="cap">'+whFail+' failing · '+(API_WEBHOOKS.length-whBad)+' healthy</div></div>'+
+  '</div>'+
+  '<div class="fb" id="eapiTabs">'+tabs.map(function(t){return '<button class="fp'+(eapiTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
+  '<div id="eapiPane"></div>';
+  el('vw-eapi').innerHTML=body;
+  [].forEach.call(el('eapiTabs').children,function(b){b.addEventListener('click',function(){eapiTab=b.getAttribute('data-t');renderEapi();});});
+  eapiRenderPane();
+  setNav('navEapi',eapiAlertCount(),true);
+}
+function eapiRenderPane(){
+  var pane=el('eapiPane');
+  if(eapiTab==='access'){pane.innerHTML=eapiPaneAccess();eapiBindAccess();return;}
+  if(eapiTab==='consumption'){pane.innerHTML=eapiPaneConsumption();return;}
+  if(eapiTab==='webhooks'){pane.innerHTML=eapiPaneWebhooks();eapiBindWebhooks();return;}
+  if(eapiTab==='versions'){pane.innerHTML=eapiPaneVersions();eapiBindVersions();return;}
+  // tenants & quota
+  pane.innerHTML='<div class="panel"><div class="ph"><span class="bullet"></span><h3>API tenants &amp; quota</h3><span class="meta">'+API_TENANTS.length+' Enterprise tenants</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Tenant</th><th>Plan</th><th>Version</th><th class="num">Rate limit</th><th>Monthly usage</th><th>Endpoints</th><th></th></tr></thead><tbody>'+
+  API_TENANTS.map(function(t){var pct=Math.min(100,Math.round(t.usage30d/t.quotaMonthly*100));var bcls=pct>=90?'red':(pct>=70?'watch':'fw');var ab=tenantAbuse(t).length;return '<tr class="rowclick" data-id="'+t.id+'">'+
+    '<td class="c-name">'+esc(t.name)+(ab?' <span class="ichip red" style="margin-left:4px">Abuse</span>':'')+'<span class="sub">Key '+esc(t.keyMasked)+'</span></td>'+
+    '<td>'+planChip(t.plan)+'</td>'+
+    '<td>'+apiVerChip(t.apiVersion)+'</td>'+
+    '<td class="c-num">'+t.quotaRpm+' rpm</td>'+
+    '<td style="min-width:180px"><div class="brow"><div class="btrack"><div class="bfill '+bcls+'" style="width:'+pct+'%"></div></div><div class="bv">'+pct+'%</div></div><div class="c-mono" style="font-size:11px;color:var(--t4);margin-top:2px">'+fmtCompact(t.usage30d)+' / '+fmtCompact(t.quotaMonthly)+'</div></td>'+
+    '<td class="c-num">'+eapiEndpointCount(t)+' / '+API_ENDPOINTS.length+'</td>'+
+    '<td class="c-go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  [].forEach.call(pane.querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){openTenant(tr.getAttribute('data-id'));});});
+}
+/* tenant detail: quota + rate-limit adjustment (re-auth gated), version pin */
+function openTenant(id){
+  var t=eapiTenantById(id);if(!t)return;
+  var reasons=tenantAbuse(t);
+  var abuseBlk=reasons.length?'<div class="warn-note" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Abuse signals.</b> '+esc(reasons.join(' · '))+'</p></div>':'';
+  var verOpts=API_VERSIONS.map(function(x){return '<option value="'+x.v+'"'+(x.v===t.apiVersion?' selected':'')+'>'+x.v+' · '+x.status+'</option>';}).join('');
+  mdOpen({title:t.name,wide:true,
+    body:''+
+      '<div class="d-hero" style="gap:16px"><div class="d-id"><div class="nm" style="font-size:22px">'+esc(t.name)+'</div><div class="sub">'+planChip(t.plan)+'<span>API key '+esc(t.keyMasked)+' · issued '+esc(t.keyIssued)+'</span></div></div><div class="d-hero-side">'+apiVerChip(t.apiVersion)+'</div></div>'+
+      abuseBlk+
+      '<div class="mini3" style="margin-bottom:12px"><div class="m3"><span class="ml">Usage 30d</span><span class="mv">'+fmtCompact(t.usage30d)+'</span></div><div class="m3"><span class="ml">Error rate</span><span class="mv"'+(t.errRate>=2.5?' style="color:var(--dnd)"':'')+'>'+t.errRate.toFixed(1)+'%</span></div><div class="m3"><span class="ml">Latency p95</span><span class="mv">'+t.p95+'ms</span></div></div>'+
+      '<div class="wr-sec-h" style="margin-bottom:10px">Quota &amp; rate limits</div>'+
+      '<div class="mfield"><label>Rate limit (requests / minute)</label><input id="tnRpm" class="mono" value="'+t.quotaRpm+'"/></div>'+
+      '<div class="mfield"><label>Monthly call cap</label><input id="tnCap" class="mono" value="'+t.quotaMonthly+'"/><div class="helper">Currently '+fmtCompact(t.usage30d)+' consumed this window ('+Math.round(t.usage30d/t.quotaMonthly*100)+'% of cap).</div></div>'+
+      '<div class="mfield"><label>API version pin</label><select id="tnVer">'+verOpts+'</select></div>',
+    foot:'<button class="btn sm" id="tnCancel">Cancel</button><button class="btn sm primary" id="tnSave">Save quota</button>',
+    onMount:function(){
+      el('tnCancel').addEventListener('click',mdClose);
+      el('tnSave').addEventListener('click',function(){
+        var rpm=parseInt(el('tnRpm').value,10),cap=parseInt(el('tnCap').value,10),ver=el('tnVer').value;
+        if(!(rpm>0)||!(cap>0)){toast('Invalid quota','Rate limit and cap must be positive numbers.');return;}
+        requireReauth('Adjust API quota','This changes the production rate limit and cap for '+t.name+'.',function(){
+          var prev=t.quotaRpm+' rpm · '+fmtCompact(t.quotaMonthly)+' cap · '+t.apiVersion;
+          t.quotaRpm=rpm;t.quotaMonthly=cap;t.apiVersion=ver;persistEapi();
+          logAudit({carrier:t.name,crit:'API quota adjusted',fr:prev,to:rpm+' rpm · '+fmtCompact(cap)+' cap · '+ver,status:'Updated',note:t.id});
+          mdClose();renderEapi();toast('Quota updated',t.name+' → '+rpm+' rpm');
+        });
+      });
+    }
+  });
+}
+/* endpoint-level access control: endpoints (rows) x tenants (cols) grant matrix */
+function eapiPaneAccess(){
+  var head='<div class="reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p style="color:var(--t2)">Granular permission per endpoint per tenant. Toggle a cell to grant or revoke; every change is written to the audit log (§3.3.7).</p></div>';
+  var rows=API_ENDPOINTS.map(function(e){
+    var cells=API_TENANTS.map(function(t){var on=!!t.endpoints[e.key];return '<td style="text-align:center"><span class="tgl'+(on?' on':'')+' epTgl" data-t="'+t.id+'" data-e="'+e.key+'" role="switch" aria-checked="'+on+'" style="display:inline-block;vertical-align:middle"></span></td>';}).join('');
+    return '<tr><td class="c-name">'+methodChip(e.method)+' <span class="c-mono" style="color:var(--t1)">'+esc(e.path)+'</span><span class="sub">'+esc(e.desc)+'</span></td>'+cells+'</tr>';
+  }).join('');
+  return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Endpoint access matrix</h3><span class="meta">'+API_ENDPOINTS.length+' endpoints · '+API_TENANTS.length+' tenants</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Endpoint</th>'+API_TENANTS.map(function(t){return '<th style="text-align:center">'+esc(t.name.split(' ')[0])+'</th>';}).join('')+'</tr></thead><tbody>'+rows+'</tbody></table></div></div></div>'+head;
+}
+function eapiBindAccess(){[].forEach.call(el('eapiPane').querySelectorAll('.epTgl'),function(sw){sw.addEventListener('click',function(){eapiToggleEndpoint(sw.getAttribute('data-t'),sw.getAttribute('data-e'));});});}
+function eapiToggleEndpoint(tid,ekey){
+  var t=eapiTenantById(tid);if(!t)return;var ep=null;API_ENDPOINTS.forEach(function(e){if(e.key===ekey)ep=e;});
+  var was=!!t.endpoints[ekey];t.endpoints[ekey]=!was;persistEapi();
+  logAudit({carrier:t.name,crit:'API endpoint access change',fr:(ep?ep.path:ekey)+' · '+(was?'granted':'revoked'),to:!was?'granted':'revoked',status:!was?'Granted':'Revoked',note:t.id+' · '+ekey});
+  eapiRenderPane();toast('Access '+(!was?'granted':'revoked'),t.name+' · '+(ep?ep.path:ekey));
+}
+/* consumption analytics + abuse detection */
+function eapiPaneConsumption(){
+  var abusers=API_TENANTS.filter(function(t){return tenantAbuse(t).length;});
+  var head=abusers.length?'<div class="warn-note" style="margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>'+abusers.length+' tenant'+(abusers.length>1?'s':'')+' flagged.</b> '+esc(abusers.map(function(t){return t.name+' ('+tenantAbuse(t).join(', ')+')';}).join(' · '))+'</p></div>':'';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Per-tenant consumption</h3><span class="meta">30-day window</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Tenant</th><th class="num">Calls 30d</th><th>7-day trend</th><th class="num">Error rate</th><th class="num">Latency p95</th><th>Top endpoint</th><th>Detection</th></tr></thead><tbody>'+
+  API_TENANTS.slice().sort(function(a,b){return b.usage30d-a.usage30d;}).map(function(t){var ab=tenantAbuse(t);return '<tr>'+
+    '<td class="c-name">'+esc(t.name)+'</td>'+
+    '<td class="c-num">'+t.usage30d.toLocaleString('en-US')+'</td>'+
+    '<td>'+sparkline(t.spark,110,26)+'</td>'+
+    '<td class="c-num" style="color:'+(t.errRate>=2.5?'var(--dnd)':(t.errRate>=1.5?'var(--watch)':'var(--t2)'))+';font-weight:600">'+t.errRate.toFixed(1)+'%</td>'+
+    '<td class="c-num"'+(t.p95>200?' style="color:var(--watch)"':'')+'>'+t.p95+'ms</td>'+
+    '<td class="c-mono">'+esc(t.topEndpoint)+'</td>'+
+    '<td>'+(ab.length?'<span class="ichip red">Flagged</span>':'<span class="ichip green">Normal</span>')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+tbl;
+}
+/* webhook delivery monitor */
+function eapiPaneWebhooks(){
+  var bad=API_WEBHOOKS.filter(function(w){return w.status==='failing';});
+  var head=bad.length?'<div class="warn-note" style="margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>'+bad.length+' subscription'+(bad.length>1?'s':'')+' failing delivery.</b> Retry or inspect the endpoint. Repeated failures auto-suspend the subscription.</p></div>':'';
+  var list='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Webhook subscriptions</h3><span class="meta">'+API_WEBHOOKS.length+' across '+API_TENANTS.length+' tenants</span></div><div class="pb flush">'+
+  API_WEBHOOKS.slice().sort(function(a,b){var r={failing:0,degraded:1,healthy:2};return r[a.status]-r[b.status];}).map(function(w){var t=eapiTenantById(w.tenantId);return '<div class="lrow"><div class="body"><h4>'+whStatusChip(w.status)+' <span class="c-mono" style="color:var(--t1)">'+esc(w.event)+'</span></h4>'+
+    '<div class="metaln"><span><b>'+esc(t?t.name:w.tenantId)+'</b></span><span class="c-mono">'+esc(w.url)+'</span></div>'+
+    '<div class="metaln"><span>Success '+(w.successRate*100).toFixed(1)+'%</span><span>'+w.last24+' sent / '+w.failed24+' failed (24h)</span><span>Last '+esc(w.lastDelivery)+'</span></div></div>'+
+    '<div class="side"><button class="btn sm whTest" data-id="'+w.id+'">Send test</button>'+(w.status!=='healthy'?'<button class="btn sm primary whRetry" data-id="'+w.id+'" style="margin-top:6px">Retry failed</button>':'')+'</div></div>';}).join('')+
+  '</div></div>';
+  return head+list;
+}
+function eapiBindWebhooks(){
+  [].forEach.call(el('eapiPane').querySelectorAll('.whTest'),function(b){b.addEventListener('click',function(){eapiWebhookTest(b.getAttribute('data-id'));});});
+  [].forEach.call(el('eapiPane').querySelectorAll('.whRetry'),function(b){b.addEventListener('click',function(){eapiWebhookRetry(b.getAttribute('data-id'));});});
+}
+function eapiWebhookTest(id){
+  var w=apiWebhookById(id);if(!w)return;var t=eapiTenantById(w.tenantId);
+  w.lastDelivery=nowStamp();w.last24+=1;persistEapi();
+  logAudit({carrier:t?t.name:w.tenantId,crit:'Webhook test delivery',fr:w.event,to:'Test event sent · '+w.url,status:'Delivered',note:w.id});
+  eapiRenderPane();toast('Test event sent',w.event+' → '+(t?t.name:w.tenantId));
+}
+function eapiWebhookRetry(id){
+  var w=apiWebhookById(id);if(!w)return;var t=eapiTenantById(w.tenantId);
+  var prev=w.status;w.status='healthy';w.successRate=Math.max(w.successRate,0.99);w.failed24=0;w.lastDelivery=nowStamp();persistEapi();
+  logAudit({carrier:t?t.name:w.tenantId,crit:'Webhook delivery retried',fr:w.event+' · '+prev,to:'healthy',status:'Recovered',note:w.id});
+  eapiRenderPane();toast('Retry succeeded',w.event+' delivery recovered');
+}
+/* API version lifecycle: deprecation + migration windows */
+function eapiPaneVersions(){
+  var dep=API_VERSIONS.filter(function(x){return x.status==='deprecated'&&x.sunset&&x.sunset!=='—';});
+  var head=dep.map(function(x){var d=daysUntil(x.sunset);return '<div class="reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><p style="color:var(--t2)"><b>'+esc(x.v)+' migration window.</b> Sunset '+esc(x.sunset)+' · '+(d>=0?d+' days remaining':'past sunset')+'. Standard Chartered is the last consumer on '+esc(x.v)+'.</p></div>';}).join('');
+  var counts={};API_TENANTS.forEach(function(t){counts[t.apiVersion]=(counts[t.apiVersion]||0)+1;});
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>API version lifecycle</h3><span class="meta">'+API_VERSIONS.length+' versions</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Version</th><th>Status</th><th>Released</th><th>Sunset</th><th class="num">Consumers</th><th>Notes</th><th></th></tr></thead><tbody>'+
+  API_VERSIONS.map(function(x){var d=x.sunset&&x.sunset!=='—'?daysUntil(x.sunset):null;return '<tr>'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(x.v)+'</td>'+
+    '<td>'+apiVerChip(x.v)+'</td>'+
+    '<td class="c-mono">'+esc(x.released)+'</td>'+
+    '<td class="c-mono">'+esc(x.sunset)+(d!==null?' <span class="ichip '+(d<0?'red':(d<=60?'watch':'muted'))+'" style="margin-left:4px">'+(d<0?'Past':d+'d')+'</span>':'')+'</td>'+
+    '<td class="c-num">'+(counts[x.v]||0)+'</td>'+
+    '<td class="c-sec" style="max-width:280px">'+esc(x.notes)+'</td>'+
+    '<td>'+(x.status!=='deprecated'?'<button class="btn sm verDep" data-v="'+x.v+'">Deprecate</button>':'<button class="btn sm verExt" data-v="'+x.v+'">Set sunset</button>')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+tbl;
+}
+function eapiBindVersions(){
+  [].forEach.call(el('eapiPane').querySelectorAll('.verDep'),function(b){b.addEventListener('click',function(){openDeprecate(b.getAttribute('data-v'));});});
+  [].forEach.call(el('eapiPane').querySelectorAll('.verExt'),function(b){b.addEventListener('click',function(){openDeprecate(b.getAttribute('data-v'));});});
+}
+function openDeprecate(v){
+  var x=apiVerByV(v);if(!x)return;
+  var def=new Date(Date.now()+90*86400000);var p=function(n){return String(n).padStart(2,'0');};
+  var defStr=(x.sunset&&x.sunset!=='—')?x.sunset:def.getUTCFullYear()+'-'+p(def.getUTCMonth()+1)+'-'+p(def.getUTCDate());
+  mdOpen({title:'Deprecate '+x.v,
+    body:''+
+      '<div class="msummary"><div class="ml">Version</div><div class="mv">'+esc(x.v)+' · '+esc(x.status)+'</div></div>'+
+      '<div class="mfield"><label>Sunset date (end of migration window)</label><input id="depDate" class="mono" value="'+defStr+'"/><div class="helper">Consumers must migrate before this date. A migration window of 90+ days is recommended.</div></div>',
+    foot:'<button class="btn sm" id="depCancel">Cancel</button><button class="btn sm primary" id="depGo">Set deprecation</button>',
+    onMount:function(){
+      el('depCancel').addEventListener('click',mdClose);
+      el('depGo').addEventListener('click',function(){
+        var date=(el('depDate').value||'').trim();if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){toast('Valid date required','Use YYYY-MM-DD.');return;}
+        requireReauth('Deprecate API version','This marks '+x.v+' deprecated and starts the migration window ending '+date+'.',function(){
+          var prev=x.status+' · sunset '+x.sunset;x.status='deprecated';x.sunset=date;persistEapi();
+          logAudit({carrier:'Enterprise API',crit:'API version deprecated',fr:x.v+' · '+prev,to:'deprecated · sunset '+date,status:'Deprecated',note:x.v});
+          mdClose();renderEapi();toast('Version deprecated',x.v+' sunsets '+date);
+        });
+      });
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   WATCH INDEX MANAGEMENT (§5.3.2, new at M3)
+   Publish the continental Watch Index. Per-period calculation
+   runs with a reproducibility hash, methodology version control
+   with publication artefacts, the subscriber licence registry,
+   and the coverage-breadth publication gate.
+══════════════════════════════════════════════════════ */
+var WIX_REGIONS=['Nigeria','West Africa','East Africa','Southern Africa','Central Africa'];
+/* per-region coverage: carriers included in the index vs total in the universe */
+var WINDEX_COVERAGE=[
+  {r:'Nigeria',covered:24,universe:28},
+  {r:'West Africa',covered:14,universe:17},
+  {r:'East Africa',covered:13,universe:16},
+  {r:'Southern Africa',covered:12,universe:15},
+  {r:'Central Africa',covered:8,universe:9}
+];
+/* publication gate: overall coverage and per-region floor the index must clear before it can publish */
+var WIX_THRESHOLD={overallPct:60,regionPct:60,regionMin:5};
+/* index calculation runs. value is the 0-100 continental index; sub holds regional sub-indices.
+   hash is the reproducibility hash over the run inputs (same inputs -> same hash). */
+var WINDEX_RUNS=[
+  {id:'WIX-2026Q2',period:'Q2 2026',ranTs:'2026-07-01 02:00',value:58.4,methVersion:'v1.0',coverage:71,universe:85,status:'published',by:'Index Engine',
+   sub:{'Nigeria':61.2,'West Africa':55.8,'East Africa':60.1,'Southern Africa':57.3,'Central Africa':49.6}},
+  {id:'WIX-2026Q1',period:'Q1 2026',ranTs:'2026-04-01 02:00',value:56.9,methVersion:'v1.0',coverage:68,universe:85,status:'published',by:'Index Engine',
+   sub:{'Nigeria':59.4,'West Africa':54.1,'East Africa':58.8,'Southern Africa':56.0,'Central Africa':48.2}},
+  {id:'WIX-2025Q4',period:'Q4 2025',ranTs:'2026-01-02 02:00',value:55.1,methVersion:'v1.0',coverage:63,universe:82,status:'published',by:'Index Engine',
+   sub:{'Nigeria':57.8,'West Africa':52.6,'East Africa':57.0,'Southern Africa':54.4,'Central Africa':46.9}}
+];
+var WINDEX_METH=[
+  {v:'v1.0',effective:'2025-10-01',status:'active',summary:'Initial Watch Index methodology. Composite-weighted continental aggregate with five regional sub-indices, quarterly cadence.',artefact:'watch-index-methodology-v1.0.pdf',signoff:'CCC-2025-09-28'},
+  {v:'v0.9',effective:'2025-07-01',status:'superseded',summary:'Pre-publication calibration build. Not licensed externally.',artefact:'watch-index-methodology-v0.9-draft.pdf',signoff:'CCC-2025-06-30'}
+];
+var WINDEX_LICENCES=[
+  {id:'WIL-001',org:'Africa Finance Corporation',clientId:'cl-afc',type:'Institutional',scope:'Internal use + client reporting',redistribution:false,seats:25,term:'2026-01-01 to 2026-12-31',status:'active'},
+  {id:'WIL-002',org:'Standard Chartered',clientId:'cl-stanchart',type:'Institutional',scope:'Internal use only',redistribution:false,seats:15,term:'2026-03-01 to 2027-02-28',status:'active'},
+  {id:'WIL-003',org:'Reuters Aviation Data',clientId:'',type:'Data redistributor',scope:'Redistribution (licensed republication, attributed)',redistribution:true,seats:0,term:'2026-05-01 to 2027-04-30',status:'active'}
+];
+function hydrateWindex(){loadState();
+  if(STATE.windexRuns)WINDEX_RUNS=STATE.windexRuns;
+  if(STATE.windexMeth)WINDEX_METH=STATE.windexMeth;
+  if(STATE.windexLicences)WINDEX_LICENCES=STATE.windexLicences;}
+function persistWindex(){loadState();STATE.windexRuns=WINDEX_RUNS;STATE.windexMeth=WINDEX_METH;STATE.windexLicences=WINDEX_LICENCES;saveState();}
+/* FNV-1a reproducibility hash over the run's defining inputs */
+function wixHash(period,value,coverage,methV){var s=period+'|'+value+'|'+coverage+'|'+methV;var h=0x811c9dc5;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=(h+((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24)))>>>0;}return ('0000000'+h.toString(16)).slice(-8);}
+function wixRunHash(r){return wixHash(r.period,r.value,r.coverage,r.methVersion);}
+function wixActiveMeth(){var r=null;WINDEX_METH.forEach(function(m){if(m.status==='active')r=m;});return r||WINDEX_METH[0];}
+function wixLatestPublished(){var r=null;WINDEX_RUNS.forEach(function(x){if(x.status==='published'&&!r)r=x;});return r;}
+function wixCoverageTotals(){var c=0,u=0;WINDEX_COVERAGE.forEach(function(x){c+=x.covered;u+=x.universe;});return {covered:c,universe:u,pct:u?c/u*100:0};}
+function wixRegionMet(x){var pct=x.universe?x.covered/x.universe*100:0;return pct>=WIX_THRESHOLD.regionPct&&x.covered>=WIX_THRESHOLD.regionMin;}
+function wixGateMet(){var t=wixCoverageTotals();if(t.pct<WIX_THRESHOLD.overallPct)return false;return WINDEX_COVERAGE.every(wixRegionMet);}
+function wixBand(v){if(v>=70)return ['green','Strong'];if(v>=50)return ['watch','Mixed'];return ['red','Weak'];}
+function wixBandChip(v){var b=wixBand(v);return '<span class="ichip '+b[0]+'">'+b[1]+'</span>';}
+function wixStatusChip(s){var m={published:['green','Published'],draft:['watch','Draft'],archived:['muted','Archived']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function wixDraftCount(){return WINDEX_RUNS.filter(function(r){return r.status==='draft';}).length;}
+function windexAlertCount(){return wixDraftCount()+(wixGateMet()?0:1);}
+
+var windexTab='runs';
+function renderWindex(){
+  hydrateWindex();
+  var latest=wixLatestPublished();
+  var cov=wixCoverageTotals();
+  var gate=wixGateMet();
+  var activeLic=WINDEX_LICENCES.filter(function(l){return l.status==='active';}).length;
+  var meth=wixActiveMeth();
+  var tabs=[['runs','Calculation runs',WINDEX_RUNS.length],['methodology','Methodology',WINDEX_METH.filter(function(m){return m.status==='active';}).length],['licences','Subscriber licences',activeLic],['coverage','Coverage monitor',gate?'':'!']];
+  var body=''+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §5.3.2 · M3</div><h1>Watch Index Management</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Publish the continental Watch Index. Calculation runs with reproducibility hashes, methodology version control, the licence registry, and the coverage publication gate.</span></div></div>'+
+  '<div class="summary">'+
+    '<div class="cell"><div class="lbl">Continental index</div><div class="num">'+(latest?latest.value.toFixed(1):'—')+'</div><div class="cap">'+(latest?wixBand(latest.value)[1]+' · '+latest.period:'no run')+'</div></div>'+
+    '<div class="cell"><div class="lbl">Coverage</div><div class="num'+(gate?'':' alert')+'">'+cov.pct.toFixed(0)+'%</div><div class="cap">'+cov.covered+' / '+cov.universe+' · gate '+(gate?'met':'below')+'</div></div>'+
+    '<div class="cell"><div class="lbl">Licence subscribers</div><div class="num">'+activeLic+'</div><div class="cap">Active Watch Index licences</div></div>'+
+    '<div class="cell"><div class="lbl">Methodology</div><div class="num">'+esc(meth.v)+'</div><div class="cap">Effective '+esc(meth.effective)+'</div></div>'+
+  '</div>'+
+  '<div class="fb" id="windexTabs">'+tabs.map(function(t){return '<button class="fp'+(windexTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn'+(t[2]==='!'?' alert':'')+'">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
+  '<div id="windexPane"></div>';
+  el('vw-windex').innerHTML=body;
+  [].forEach.call(el('windexTabs').children,function(b){b.addEventListener('click',function(){windexTab=b.getAttribute('data-t');renderWindex();});});
+  windexRenderPane();
+  setNav('navWindex',windexAlertCount(),true);
+}
+function windexRenderPane(){
+  var pane=el('windexPane');
+  if(windexTab==='methodology'){pane.innerHTML=wixPaneMethodology();wixBindMethodology();return;}
+  if(windexTab==='licences'){pane.innerHTML=wixPaneLicences();wixBindLicences();return;}
+  if(windexTab==='coverage'){pane.innerHTML=wixPaneCoverage();return;}
+  // calculation runs
+  pane.innerHTML=wixPaneRuns();wixBindRuns();
+}
+/* per-period calculation history with reproducibility hash */
+function wixPaneRuns(){
+  var pub=WINDEX_RUNS.filter(function(r){return r.status==='published';}).slice().reverse();
+  var trend=pub.length>1?'<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Index history</h3><span class="meta">'+pub.length+' published periods</span></div><div class="pb"><div style="display:flex;align-items:center;gap:16px">'+sparkline(pub.map(function(r){return r.value;}),320,60)+'<div class="mini3" style="flex:1"><div class="m3"><span class="ml">Latest</span><span class="mv">'+pub[pub.length-1].value.toFixed(1)+'</span></div><div class="m3"><span class="ml">'+esc(pub[0].period)+'</span><span class="mv">'+pub[0].value.toFixed(1)+'</span></div><div class="m3"><span class="ml">Trend</span><span class="mv" style="color:'+(pub[pub.length-1].value>=pub[0].value?'var(--deploy)':'var(--dnd)')+'">'+(pub[pub.length-1].value>=pub[0].value?'+':'')+(pub[pub.length-1].value-pub[0].value).toFixed(1)+'</span></div></div></div></div></div>':'';
+  var canRun=!WINDEX_RUNS.some(function(r){return r.period===wixNextPeriod();});
+  var runBar='<div class="reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M4 4v6h6M20 20v-6h-6"/><path d="M20 8a8 8 0 0 0-14-3M4 16a8 8 0 0 0 14 3"/></svg><p style="color:var(--t2)">Each run recomputes the index from current carrier composites and stamps a reproducibility hash over its inputs. Re-running identical inputs reproduces the same hash. '+(wixGateMet()?'Coverage gate is met, runs can publish.':'<b>Coverage gate is below threshold, new runs stay in draft until coverage recovers.</b>')+'</p></div>';
+  var head='<div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn primary" id="wixRun"'+(canRun?'':' disabled')+'>'+(canRun?'Run '+wixNextPeriod()+' calculation':wixNextPeriod()+' already run')+'</button></div>';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Calculation runs</h3><span class="meta">'+WINDEX_RUNS.length+' periods</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Run</th><th>Period</th><th class="num">Index</th><th>Band</th><th class="num">Coverage</th><th>Method</th><th>Reproducibility hash</th><th>Status</th><th></th></tr></thead><tbody>'+
+  WINDEX_RUNS.map(function(r){return '<tr class="rowclick" data-id="'+esc(r.id)+'">'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(r.id)+'</td>'+
+    '<td class="c-sec">'+esc(r.period)+'</td>'+
+    '<td class="c-num" style="font-weight:600">'+r.value.toFixed(1)+'</td>'+
+    '<td>'+wixBandChip(r.value)+'</td>'+
+    '<td class="c-num">'+r.coverage+'/'+r.universe+'</td>'+
+    '<td class="c-mono">'+esc(r.methVersion)+'</td>'+
+    '<td class="c-mono" style="letter-spacing:.04em" title="FNV-1a over period · value · coverage · method">'+wixRunHash(r)+'</td>'+
+    '<td>'+wixStatusChip(r.status)+(r.status==='draft'?' <button class="btn sm primary wixPub" data-id="'+esc(r.id)+'" style="margin-left:6px">Publish</button>':'')+'</td>'+
+    '<td class="c-go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return trend+runBar+head+tbl;
+}
+function wixNextPeriod(){
+  // newest run period -> next quarter
+  var latest=WINDEX_RUNS[0];if(!latest)return 'Q1 2026';
+  var m=latest.period.match(/Q(\d) (\d{4})/);if(!m)return 'next period';
+  var q=+m[1],y=+m[2];q++;if(q>4){q=1;y++;}return 'Q'+q+' '+y;
+}
+function wixBindRuns(){
+  if(el('wixRun'))el('wixRun').addEventListener('click',wixRunCalc);
+  [].forEach.call(el('windexPane').querySelectorAll('.wixPub'),function(b){b.addEventListener('click',function(e){e.stopPropagation();wixPublishRun(b.getAttribute('data-id'));});});
+  [].forEach.call(el('windexPane').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wixOpenRun(tr.getAttribute('data-id'));});});
+}
+function wixRunCalc(){
+  var period=wixNextPeriod();var cov=wixCoverageTotals();var meth=wixActiveMeth();
+  // synthesise the new index as a small drift on the latest published value, weighted by coverage
+  var base=wixLatestPublished();var val=base?Math.round((base.value+ (Math.random()*2-0.6))*10)/10:57.0;
+  var sub={};WIX_REGIONS.forEach(function(rg){var pv=base&&base.sub[rg]?base.sub[rg]:val;sub[rg]=Math.round((pv+(Math.random()*2-0.7))*10)/10;});
+  var pp=period.split(' ');
+  var run={id:'WIX-'+pp[1]+pp[0],period:period,ranTs:nowStamp(),value:val,methVersion:meth.v,coverage:cov.covered,universe:cov.universe,status:'draft',by:profileName(),sub:sub};
+  WINDEX_RUNS=[run].concat(WINDEX_RUNS);persistWindex();
+  logAudit({carrier:'Watch Index',crit:'Index calculation run',fr:'—',to:period+' · index '+val.toFixed(1)+' · hash '+wixRunHash(run),status:'Draft',note:run.id});
+  renderWindex();toast('Calculation complete',period+' · index '+val.toFixed(1)+' (draft)');
+}
+function wixPublishRun(id){
+  var r=null;WINDEX_RUNS.forEach(function(x){if(x.id===id)r=x;});if(!r)return;
+  if(!wixGateMet()){toast('Cannot publish','Coverage gate is below the publication threshold.');return;}
+  requireReauth('Publish Watch Index','This publishes '+r.period+' to all licensed subscribers.',function(){
+    r.status='published';persistWindex();
+    logAudit({carrier:'Watch Index',crit:'Index published',fr:r.period+' · draft',to:'published · hash '+wixRunHash(r),status:'Published',note:r.id});
+    mdClose();renderWindex();toast('Index published',r.period+' · '+r.value.toFixed(1));
+  });
+}
+function wixOpenRun(id){
+  var r=null;WINDEX_RUNS.forEach(function(x){if(x.id===id)r=x;});if(!r)return;
+  var subRows=WIX_REGIONS.map(function(rg){var v=r.sub[rg];return '<div class="kv"><span class="k">'+esc(rg)+'</span><span class="v">'+v.toFixed(1)+' '+wixBandChip(v)+'</span></div>';}).join('');
+  mdOpen({title:r.id,wide:true,
+    body:''+
+      '<div class="d-hero" style="gap:16px"><div class="d-id"><div class="nm" style="font-size:22px">'+esc(r.period)+' · '+r.value.toFixed(1)+'</div><div class="sub">'+wixBandChip(r.value)+wixStatusChip(r.status)+'<span>Ran '+esc(r.ranTs)+' by '+esc(r.by)+'</span></div></div><div class="d-hero-side"><span class="ichip muted">'+esc(r.methVersion)+'</span></div></div>'+
+      '<div class="mini3" style="margin-bottom:12px"><div class="m3"><span class="ml">Coverage</span><span class="mv">'+r.coverage+'/'+r.universe+'</span></div><div class="m3"><span class="ml">Reproducibility hash</span><span class="mv c-mono" style="font-size:14px">'+wixRunHash(r)+'</span></div><div class="m3"><span class="ml">Method</span><span class="mv">'+esc(r.methVersion)+'</span></div></div>'+
+      '<div class="wr-sec-h" style="margin-bottom:10px">Regional sub-indices</div>'+subRows,
+    foot:'<button class="btn sm" id="wixRunClose">Close</button>'+(r.status==='draft'?'<button class="btn sm primary" id="wixRunPub">Publish</button>':''),
+    onMount:function(){
+      el('wixRunClose').addEventListener('click',mdClose);
+      if(el('wixRunPub'))el('wixRunPub').addEventListener('click',function(){wixPublishRun(r.id);});
+    }
+  });
+}
+/* methodology version control with publication artefacts */
+function wixPaneMethodology(){
+  var head='<div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn primary" id="wixBump">Bump methodology version</button></div>';
+  var list='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Methodology versions</h3><span class="meta">'+WINDEX_METH.length+'</span></div><div class="pb flush">'+
+  WINDEX_METH.map(function(m){return '<div class="lrow"><div class="body"><h4>'+(m.status==='active'?'<span class="ichip green">Active</span>':'<span class="ichip muted">Superseded</span>')+' Watch Index methodology '+esc(m.v)+'</h4>'+
+    '<div class="metaln"><span>Effective <b>'+esc(m.effective)+'</b></span><span>Sign-off '+esc(m.signoff)+'</span></div>'+
+    '<div class="metaln"><span>'+esc(m.summary)+'</span></div>'+
+    '<div class="metaln"><span>Publication artefact: <span class="c-mono">'+esc(m.artefact)+'</span></span></div></div>'+
+    '<div class="side"><button class="btn sm wixArtefact" data-v="'+esc(m.v)+'">Artefact</button></div></div>';}).join('')+
+  '</div></div>';
+  return head+list;
+}
+function wixBindMethodology(){
+  if(el('wixBump'))el('wixBump').addEventListener('click',wixOpenBump);
+  [].forEach.call(el('windexPane').querySelectorAll('.wixArtefact'),function(b){b.addEventListener('click',function(){wixDownloadArtefact(b.getAttribute('data-v'));});});
+}
+function wixNextMethV(){var a=wixActiveMeth();var m=a.v.match(/v(\d+)\.(\d+)/);if(!m)return 'v1.1';return 'v'+m[1]+'.'+(+m[2]+1);}
+function wixOpenBump(){
+  var nextV=wixNextMethV();
+  mdOpen({title:'Bump methodology version',
+    body:''+
+      '<div class="msummary"><div class="ml">New version</div><div class="mv">'+esc(wixActiveMeth().v)+' → '+esc(nextV)+'</div></div>'+
+      '<div class="mfield"><label>Change summary</label><textarea id="wbSummary" placeholder="What changed in the index methodology and why (20+ chars)"></textarea></div>'+
+      '<div class="mfield"><label>Committee sign-off reference</label><input id="wbSignoff" class="mono" placeholder="CCC-2026-07-29"/><div class="helper">A methodology bump requires Scoring Committee sign-off and produces a versioned publication artefact.</div></div>',
+    foot:'<button class="btn sm" id="wbCancel">Cancel</button><button class="btn sm primary" id="wbGo">Bump version</button>',
+    onMount:function(){
+      el('wbCancel').addEventListener('click',mdClose);
+      el('wbGo').addEventListener('click',function(){
+        var sum=(el('wbSummary').value||'').trim();var so=(el('wbSignoff').value||'').trim();
+        if(sum.length<20){toast('Summary required','Describe the change (20+ chars).');return;}
+        if(!/^CCC-/.test(so)){toast('Sign-off required','Enter a committee sign-off reference (CCC-...).');return;}
+        requireReauth('Bump Watch Index methodology','This publishes methodology '+nextV+' and supersedes '+wixActiveMeth().v+'.',function(){
+          WINDEX_METH.forEach(function(m){if(m.status==='active')m.status='superseded';});
+          var art='watch-index-methodology-'+nextV+'.pdf';
+          WINDEX_METH=[{v:nextV,effective:nowStamp().slice(0,10),status:'active',summary:sum,artefact:art,signoff:so}].concat(WINDEX_METH);persistWindex();
+          logAudit({carrier:'Watch Index',crit:'Methodology version bumped',fr:'—',to:nextV+' · artefact '+art,status:'Published',note:so});
+          mdClose();renderWindex();toast('Methodology bumped',nextV+' published · '+art);
+        });
+      });
+    }
+  });
+}
+function wixDownloadArtefact(v){
+  var m=null;WINDEX_METH.forEach(function(x){if(x.v===v)m=x;});if(!m)return;
+  var text='ANDARA WATCH INDEX — METHODOLOGY PUBLICATION ARTEFACT\r\n\r\nVersion: '+m.v+'\r\nEffective: '+m.effective+'\r\nStatus: '+m.status+'\r\nCommittee sign-off: '+m.signoff+'\r\n\r\nSummary:\r\n'+m.summary+'\r\n\r\nGenerated '+nowStamp()+' by '+profileName()+'\r\nConfidential — Andara Systems.';
+  var blob=new Blob([text],{type:'text/plain'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=m.artefact;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1500);
+  logAudit({carrier:'Watch Index',crit:'Methodology artefact downloaded',fr:m.v,to:m.artefact,status:'Downloaded',note:m.v});
+  toast('Artefact downloaded',m.artefact);
+}
+/* subscriber licence registry with permitted-use scope */
+function wixPaneLicences(){
+  var head='<div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn primary" id="wixAddLic">Add licence</button></div>';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Watch Index licence subscribers</h3><span class="meta">'+WINDEX_LICENCES.filter(function(l){return l.status==='active';}).length+' active</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Licence</th><th>Subscriber</th><th>Type</th><th>Permitted-use scope</th><th class="num">Seats</th><th>Term</th><th>Status</th><th></th></tr></thead><tbody>'+
+  WINDEX_LICENCES.map(function(l){return '<tr>'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(l.id)+'</td>'+
+    '<td class="c-name">'+esc(l.org)+'</td>'+
+    '<td class="c-sec">'+esc(l.type)+'</td>'+
+    '<td class="c-sec">'+esc(l.scope)+(l.redistribution?' <span class="ichip blue">Redistribution</span>':'')+'</td>'+
+    '<td class="c-num">'+(l.seats||'—')+'</td>'+
+    '<td class="c-mono">'+esc(l.term)+'</td>'+
+    '<td>'+(l.status==='active'?'<span class="ichip green">Active</span>':'<span class="ichip muted">Revoked</span>')+'</td>'+
+    '<td>'+(l.status==='active'?'<button class="btn sm wixRevoke" data-id="'+esc(l.id)+'">Revoke</button>':'')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+tbl;
+}
+function wixBindLicences(){
+  if(el('wixAddLic'))el('wixAddLic').addEventListener('click',wixOpenAddLic);
+  [].forEach.call(el('windexPane').querySelectorAll('.wixRevoke'),function(b){b.addEventListener('click',function(){wixRevokeLic(b.getAttribute('data-id'));});});
+}
+function wixOpenAddLic(){
+  mdOpen({title:'Add Watch Index licence',
+    body:''+
+      '<div class="mfield"><label>Subscriber organisation</label><input id="wlOrg" placeholder="Organisation name"/></div>'+
+      '<div class="mfield"><label>Licence type</label><select id="wlType"><option>Institutional</option><option>Data redistributor</option><option>Academic</option><option>Regulator</option></select></div>'+
+      '<div class="mfield"><label>Permitted-use scope</label><select id="wlScope"><option>Internal use only</option><option>Internal use + client reporting</option><option>Redistribution (licensed republication, attributed)</option></select></div>'+
+      '<div class="mfield"><label>Seats</label><input id="wlSeats" class="mono" value="10"/></div>'+
+      '<div class="mfield"><label>Term</label><input id="wlTerm" class="mono" placeholder="2026-08-01 to 2027-07-31"/></div>',
+    foot:'<button class="btn sm" id="wlCancel">Cancel</button><button class="btn sm primary" id="wlGo">Add licence</button>',
+    onMount:function(){
+      el('wlCancel').addEventListener('click',mdClose);
+      el('wlGo').addEventListener('click',function(){
+        var org=(el('wlOrg').value||'').trim();if(org.length<2){toast('Organisation required','Enter the subscriber name.');return;}
+        var term=(el('wlTerm').value||'').trim();if(!/\d{4}-\d{2}-\d{2}/.test(term)){toast('Term required','Enter a term (e.g. 2026-08-01 to 2027-07-31).');return;}
+        var scope=el('wlScope').value;var n=WINDEX_LICENCES.length+1;var id='WIL-'+('00'+n).slice(-3);
+        WINDEX_LICENCES=WINDEX_LICENCES.concat([{id:id,org:org,clientId:'',type:el('wlType').value,scope:scope,redistribution:/Redistribution/.test(scope),seats:parseInt(el('wlSeats').value,10)||0,term:term,status:'active'}]);persistWindex();
+        logAudit({carrier:'Watch Index',crit:'Licence issued',fr:'—',to:org+' · '+scope,status:'Active',note:id});
+        mdClose();renderWindex();toast('Licence issued',id+' · '+org);
+      });
+    }
+  });
+}
+function wixRevokeLic(id){
+  var l=null;WINDEX_LICENCES.forEach(function(x){if(x.id===id)l=x;});if(!l)return;
+  requireReauth('Revoke Watch Index licence','This revokes '+l.org+' access to the Watch Index.',function(){
+    l.status='revoked';persistWindex();
+    logAudit({carrier:'Watch Index',crit:'Licence revoked',fr:l.org+' · active',to:'revoked',status:'Revoked',note:l.id});
+    mdClose();renderWindex();toast('Licence revoked',l.org);
+  });
+}
+/* coverage breadth monitor — publication threshold gate */
+function wixPaneCoverage(){
+  var t=wixCoverageTotals();var gate=wixGateMet();
+  var gateBlk=gate?
+    '<div class="reauth-note" style="margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p><b>Publication gate met.</b> Overall coverage '+t.pct.toFixed(1)+'% (threshold '+WIX_THRESHOLD.overallPct+'%) and every region clears its floor. The index can publish.</p></div>':
+    '<div class="warn-note" style="margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Publication gate below threshold.</b> Coverage does not meet the publication floor. New runs stay in draft until coverage recovers.</p></div>';
+  var mini='<div class="mini3" style="margin-bottom:24px"><div class="m3"><span class="ml">Overall coverage</span><span class="mv">'+t.pct.toFixed(1)+'%</span></div><div class="m3"><span class="ml">Carriers in index</span><span class="mv">'+t.covered+' / '+t.universe+'</span></div><div class="m3"><span class="ml">Threshold</span><span class="mv">'+WIX_THRESHOLD.overallPct+'% + '+WIX_THRESHOLD.regionMin+'/region</span></div></div>';
+  var rows=WINDEX_COVERAGE.map(function(x){var pct=x.universe?x.covered/x.universe*100:0;var met=wixRegionMet(x);var bcls=met?'fw':'red';return '<tr>'+
+    '<td class="c-name">'+esc(x.r)+'</td>'+
+    '<td class="c-num">'+x.covered+' / '+x.universe+'</td>'+
+    '<td style="min-width:200px"><div class="brow"><div class="btrack"><div class="bfill '+bcls+'" style="width:'+Math.round(pct)+'%"></div></div><div class="bv">'+pct.toFixed(0)+'%</div></div></td>'+
+    '<td>'+(met?'<span class="ichip green">Meets floor</span>':'<span class="ichip red">Below floor</span>')+'</td>'+
+  '</tr>';}).join('');
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Coverage by region</h3><span class="meta">floor '+WIX_THRESHOLD.regionPct+'% · min '+WIX_THRESHOLD.regionMin+' carriers</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Region</th><th class="num">In index</th><th>Coverage</th><th>Gate</th></tr></thead><tbody>'+rows+'</tbody></table></div></div></div>';
+  return gateBlk+mini+tbl;
+}
+
+/* ══════════════════════════════════════════════════════
+   BIZJET VERTICAL MANAGEMENT (§5.3.3, new at M3)
+   The business-jet vertical on the platform spine. An operator
+   registry distinct from commercial AOCs, the bizjet v1.0
+   methodology instrument (re-weighted for the operator class),
+   and a bizjet-specific Scoring Committee submission queue.
+══════════════════════════════════════════════════════ */
+/* bizjet operators are distinct entities from commercial AOCs: smaller fleets, a management
+   model (owner-flown / managed / charter), and asset-value-dominant risk. */
+var BIZJET_OPERATORS=[
+  {id:'bj-execujet',name:'ExecuJet Africa',country:'South Africa',region:'Southern Africa',base:'Lanseria (FALA)',model:'Charter',fleet:9,types:'Gulfstream G650, Bombardier Global 6000, Challenger 350',verdict:'deploy',composite:79,valueUsdM:210},
+  {id:'bj-westwind',name:'Westwind Aviation',country:'Nigeria',region:'Nigeria',base:'Lagos (DNMM)',model:'Managed',fleet:4,types:'Gulfstream G550, Challenger 350',verdict:'watch',composite:64,valueUsdM:96},
+  {id:'bj-nile',name:'Nile Business Aviation',country:'Egypt',region:'East Africa',base:'Cairo (HECA)',model:'Charter',fleet:6,types:'Embraer Legacy 500, Cessna Citation Latitude',verdict:'watch',composite:58,valueUsdM:78},
+  {id:'bj-cverde',name:'Cabo Verde Executive',country:'Cabo Verde',region:'West Africa',base:'Praia (GVNP)',model:'Managed',fleet:3,types:'Dassault Falcon 2000, Citation XLS+',verdict:'deploy',composite:76,valueUsdM:64},
+  {id:'bj-sahara',name:'Sahara Executive Jets',country:'Nigeria',region:'Nigeria',base:'Abuja (DNAA)',model:'Owner-flown',fleet:2,types:'Hawker 900XP, Learjet 60',verdict:'dnd',composite:41,valueUsdM:22,hardFloor:true},
+  {id:'bj-kalahari',name:'Kalahari Air Charter',country:'Botswana',region:'Southern Africa',base:'Gaborone (FBSK)',model:'Charter',fleet:5,types:'Pilatus PC-24, King Air 350',verdict:'watch',composite:61,valueUsdM:47}
+];
+/* bizjet v1.0 methodology: same 5-Score family, re-weighted for the operator class.
+   SVS down (national strategic value marginal for private lift); RAS up (bizjet assets are
+   liquid and highly redeployable). Hard floor keyed to RCS/RAS rather than PPS/RCS. */
+var BIZJET_DIMS=[
+  {code:'SVS',name:'Strategic Value Score',weight:10,note:'Lower than commercial. Private lift has marginal national strategic value.'},
+  {code:'PPS',name:'Payment Priority Score',weight:20,note:'Contract and management-fee payment behaviour.'},
+  {code:'APS',name:'Operator Performance Score',weight:20,note:'Dispatch reliability, safety record, management quality.'},
+  {code:'RCS',name:'Risk Containment Score',weight:25,note:'Jurisdiction, registration integrity, insurance depth.'},
+  {code:'RAS',name:'Redeployment Suitability Score',weight:25,note:'Higher than commercial. Bizjet assets are liquid and redeployable.'}
+];
+var BIZJET_METH={version:'v1.0-BJ',effective:'2026-06-01',thresholds:{deploy:75,watch:50},hardFloor:{dims:['RCS','RAS'],threshold:40,cap:65},signoff:'CCC-2026-05-27'};
+/* bizjet Scoring Committee submissions, distinct from the commercial Arbiter queue.
+   Oversight-only here; decisioning stays in the internal workspace (§5.4.1). */
+var BIZJET_SUBMISSIONS=[
+  {id:'BJS-2026-014',operator:'Westwind Aviation',analyst:'Amara Eze',state:'submitted',composite:64,verdict:'watch',submitted:'2026-07-24',validUntil:'2026-10-24'},
+  {id:'BJS-2026-013',operator:'Nile Business Aviation',analyst:'Tunde Bakare',state:'submitted',composite:58,verdict:'watch',submitted:'2026-07-22',validUntil:'2026-10-22'},
+  {id:'BJS-2026-012',operator:'ExecuJet Africa',analyst:'Grace Adeyemi',state:'approved',composite:79,verdict:'deploy',submitted:'2026-07-10',validUntil:'2026-10-10'},
+  {id:'BJS-2026-011',operator:'Sahara Executive Jets',analyst:'Amara Eze',state:'rejected',composite:41,verdict:'dnd',submitted:'2026-06-28',validUntil:'2026-09-28'},
+  {id:'BJS-2026-010',operator:'Cabo Verde Executive',analyst:'Tunde Bakare',state:'approved',composite:76,verdict:'deploy',submitted:'2026-06-20',validUntil:'2026-09-20'},
+  {id:'BJS-2026-009',operator:'Kalahari Air Charter',analyst:'Grace Adeyemi',state:'returned',composite:61,verdict:'watch',submitted:'2026-06-15',validUntil:'2026-09-15'}
+];
+function hydrateBizjet(){loadState();
+  if(STATE.bizjetOperators)BIZJET_OPERATORS=STATE.bizjetOperators;
+  if(STATE.bizjetSubmissions)BIZJET_SUBMISSIONS=STATE.bizjetSubmissions;}
+function persistBizjet(){loadState();STATE.bizjetOperators=BIZJET_OPERATORS;STATE.bizjetSubmissions=BIZJET_SUBMISSIONS;saveState();}
+function bjOperatorById(id){var r=null;BIZJET_OPERATORS.forEach(function(o){if(o.id===id)r=o;});return r;}
+function bjModelChip(m){var x={Charter:['blue','Charter'],Managed:['muted','Managed'],'Owner-flown':['muted','Owner-flown']}[m]||['muted',m];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function bjStateChip(s){var m={draft:['muted','Draft'],submitted:['watch','Submitted'],approved:['green','Approved'],returned:['blue','Returned'],shipped:['green','Shipped'],rejected:['red','Rejected']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function bizjetAlertCount(){return BIZJET_SUBMISSIONS.filter(function(s){return s.state==='submitted';}).length;}
+
+var bizjetTab='registry';
+function renderBizjet(){
+  hydrateBizjet();
+  var ops=BIZJET_OPERATORS.length;
+  var atRisk=BIZJET_OPERATORS.filter(function(o){return o.verdict==='watch'||o.verdict==='dnd';}).length;
+  var queue=bizjetAlertCount();
+  var fleetTotal=BIZJET_OPERATORS.reduce(function(s,o){return s+(o.fleet||0);},0);
+  var valueTotal=BIZJET_OPERATORS.reduce(function(s,o){return s+(o.valueUsdM||0);},0);
+  var tabs=[['registry','Operator registry',ops],['methodology','Methodology',''],['committee','Committee queue',queue||'']];
+  var body=''+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §5.3.3 · M3</div><h1>Bizjet Vertical Management</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">The business-jet vertical on the platform spine. Operator registry distinct from commercial AOCs, the bizjet v1.0 methodology instrument, and the bizjet Scoring Committee queue.</span></div></div>'+
+  '<div class="summary">'+
+    '<div class="cell"><div class="lbl">Bizjet operators</div><div class="num">'+ops+'</div><div class="cap">'+fleetTotal+' aircraft tracked</div></div>'+
+    '<div class="cell"><div class="lbl">Watch or Do Not Deploy</div><div class="num'+(atRisk?' due':'')+'">'+atRisk+'</div><div class="cap">Of '+ops+' scored operators</div></div>'+
+    '<div class="cell"><div class="lbl">Committee queue</div><div class="num'+(queue?' alert':'')+'">'+queue+'</div><div class="cap">Bizjet submissions pending</div></div>'+
+    '<div class="cell"><div class="lbl">Asset value</div><div class="num">$'+valueTotal+'M</div><div class="cap">Bizjet fleet, aggregate</div></div>'+
+  '</div>'+
+  '<div class="fb" id="bizjetTabs">'+tabs.map(function(t){return '<button class="fp'+(bizjetTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
+  '<div id="bizjetPane"></div>';
+  el('vw-bizjet').innerHTML=body;
+  [].forEach.call(el('bizjetTabs').children,function(b){b.addEventListener('click',function(){bizjetTab=b.getAttribute('data-t');renderBizjet();});});
+  bizjetRenderPane();
+  setNav('navBizjet',bizjetAlertCount(),false);
+}
+function bizjetRenderPane(){
+  var pane=el('bizjetPane');
+  if(bizjetTab==='methodology'){pane.innerHTML=bjPaneMethodology();return;}
+  if(bizjetTab==='committee'){pane.innerHTML=bjPaneCommittee();bjBindCommittee();return;}
+  pane.innerHTML=bjPaneRegistry();bjBindRegistry();
+}
+/* bizjet operator registry — records distinct from commercial AOCs */
+function bjPaneRegistry(){
+  var head='<div style="display:flex;justify-content:flex-end;margin-bottom:16px"><button class="btn primary" id="bjAddOp">Add operator</button></div>';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Bizjet operators</h3><span class="meta">'+BIZJET_OPERATORS.length+' registered</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Operator</th><th>Base</th><th>Model</th><th class="num">Fleet</th><th class="num">Value</th><th class="num">Composite</th><th>Verdict</th><th></th></tr></thead><tbody>'+
+  BIZJET_OPERATORS.slice().sort(function(a,b){return (b.composite||0)-(a.composite||0);}).map(function(o){return '<tr class="rowclick" data-id="'+esc(o.id)+'">'+
+    '<td class="c-name">'+esc(o.name)+(o.hardFloor?' <span class="ichip red" style="margin-left:4px">HF</span>':'')+'<span class="sub">'+esc(o.country)+' · '+esc(o.region)+'</span></td>'+
+    '<td class="c-sec">'+esc(o.base)+'</td>'+
+    '<td>'+bjModelChip(o.model)+'</td>'+
+    '<td class="c-num">'+o.fleet+'</td>'+
+    '<td class="c-num">'+(o.valueUsdM?'$'+o.valueUsdM+'M':'—')+'</td>'+
+    '<td class="c-num" style="font-weight:600;color:'+(o.composite>=75?'var(--deploy)':(o.composite>=50?'var(--watch)':'var(--dnd)'))+'">'+(o.composite||'—')+'</td>'+
+    '<td>'+verdictChip(o.verdict)+'</td>'+
+    '<td class="c-go"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+tbl;
+}
+function bjBindRegistry(){
+  if(el('bjAddOp'))el('bjAddOp').addEventListener('click',bjOpenAddOp);
+  [].forEach.call(el('bizjetPane').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){bjOpenOperator(tr.getAttribute('data-id'));});});
+}
+function bjOpenOperator(id){
+  var o=bjOperatorById(id);if(!o)return;
+  var subs=BIZJET_SUBMISSIONS.filter(function(s){return s.operator===o.name;});
+  var subRows=subs.length?subs.map(function(s){return '<div class="kv"><span class="k">'+esc(s.id)+'</span><span class="v">'+bjStateChip(s.state)+' '+verdictChip(s.verdict)+' · composite '+s.composite+'</span></div>';}).join(''):'<div class="empty">No committee submissions yet.</div>';
+  mdOpen({title:o.name,wide:true,
+    body:''+
+      '<div class="d-hero" style="gap:16px"><div class="d-id"><div class="nm" style="font-size:22px">'+esc(o.name)+'</div><div class="sub">'+verdictChip(o.verdict)+bjModelChip(o.model)+'<span>'+esc(o.country)+' · '+esc(o.base)+'</span></div></div><div class="d-hero-side"><span class="ichip muted">Composite '+(o.composite||'—')+'</span></div></div>'+
+      (o.hardFloor?'<div class="warn-note" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Hard floor tripped.</b> Composite capped under the bizjet v1.0 hard-floor rule (RCS or RAS below 40).</p></div>':'')+
+      '<div class="mini3" style="margin-bottom:12px"><div class="m3"><span class="ml">Fleet</span><span class="mv">'+o.fleet+' aircraft</span></div><div class="m3"><span class="ml">Asset value</span><span class="mv">'+(o.valueUsdM?'$'+o.valueUsdM+'M':'—')+'</span></div><div class="m3"><span class="ml">Management</span><span class="mv" style="font-size:14px">'+esc(o.model)+'</span></div></div>'+
+      '<div class="wr-sec-h" style="margin-bottom:8px">Fleet types</div><div class="kv"><span class="k">Aircraft</span><span class="v" style="max-width:60%">'+esc(o.types)+'</span></div>'+
+      '<div class="wr-sec-h" style="margin:16px 0 8px">Committee submissions</div>'+subRows,
+    foot:'<button class="btn sm" id="bjOpClose">Close</button>',
+    onMount:function(){el('bjOpClose').addEventListener('click',mdClose);}
+  });
+}
+function bjOpenAddOp(){
+  mdOpen({title:'Add bizjet operator',
+    body:''+
+      '<div class="mfield"><label>Operator name</label><input id="boName" placeholder="Operator name"/></div>'+
+      '<div class="mfield"><label>Country</label><input id="boCountry" placeholder="Country"/></div>'+
+      '<div class="mfield"><label>Region</label><select id="boRegion"><option>Nigeria</option><option>West Africa</option><option>East Africa</option><option>Southern Africa</option><option>Central Africa</option></select></div>'+
+      '<div class="mfield"><label>Home base</label><input id="boBase" placeholder="City (ICAO)"/></div>'+
+      '<div class="mfield"><label>Management model</label><select id="boModel"><option>Charter</option><option>Managed</option><option>Owner-flown</option></select></div>'+
+      '<div class="mfield"><label>Fleet size</label><input id="boFleet" class="mono" value="1"/></div>'+
+      '<div class="mfield"><label>Aircraft types</label><input id="boTypes" placeholder="e.g. Gulfstream G550, Challenger 350"/></div>'+
+      '<div class="mfield"><label>Estimated asset value ($M)</label><input id="boValue" class="mono" value="0"/><div class="helper">The operator is registered as unscored. A bizjet scoring file is raised in the internal workspace (§5.4.1).</div></div>',
+    foot:'<button class="btn sm" id="boCancel">Cancel</button><button class="btn sm primary" id="boGo">Register operator</button>',
+    onMount:function(){
+      el('boCancel').addEventListener('click',mdClose);
+      el('boGo').addEventListener('click',function(){
+        var name=(el('boName').value||'').trim();if(name.length<2){toast('Name required','Enter the operator name.');return;}
+        var id='bj-'+name.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,10)+'-'+Math.random().toString(36).slice(2,5);
+        BIZJET_OPERATORS=BIZJET_OPERATORS.concat([{id:id,name:name,country:(el('boCountry').value||'').trim()||'—',region:el('boRegion').value,base:(el('boBase').value||'').trim()||'—',model:el('boModel').value,fleet:parseInt(el('boFleet').value,10)||0,types:(el('boTypes').value||'').trim()||'—',verdict:'pending',composite:null,valueUsdM:parseFloat(el('boValue').value)||0}]);persistBizjet();
+        logAudit({carrier:name,crit:'Bizjet operator registered',fr:'—',to:el('boModel').value+' · '+el('boRegion').value,status:'Registered',note:id});
+        mdClose();renderBizjet();toast('Operator registered',name+' · unscored');
+      });
+    }
+  });
+}
+/* bizjet v1.0 methodology view — weights + thresholds distinct from commercial */
+function bjPaneMethodology(){
+  var m=BIZJET_METH;var total=BIZJET_DIMS.reduce(function(s,d){return s+d.weight;},0);var th=m.thresholds,hf=m.hardFloor;
+  var thresholds=[['deploy','&ge; '+th.deploy,'Deploy','Composite '+th.deploy+' or above, subject to the bizjet hard floor'],['watch',th.watch+' to '+(th.deploy-1),'Watch','Composite between '+th.watch+' and '+(th.deploy-1)],['dnd','&lt; '+th.watch,'Do Not Deploy','Composite below '+th.watch]];
+  var note='<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">Bizjet instrument <b style="color:var(--info)">'+esc(m.version)+'</b>, effective '+esc(m.effective)+' (sign-off '+esc(m.signoff)+'). Re-weighted from the commercial 5-Score for the operator class: <b>SVS lowered</b> (private lift has marginal strategic value) and <b>RAS raised</b> (bizjet assets are liquid and highly redeployable). Read-only. Changes route through the Scoring Committee.</p></div>';
+  var weights='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Bizjet 5-Score weights</h3><span class="meta">Total '+total+'</span></div><div class="pb">'+
+    '<div class="mth-grid">'+BIZJET_DIMS.map(function(d){return '<div class="mth-card"><div class="mstripe"></div><div class="mbody"><div class="mcode">'+d.code+'</div><div class="mw">'+d.weight+'<span> / 100</span></div><div class="mname">'+esc(d.name)+'</div></div></div>';}).join('')+'</div>'+
+    '<div class="tblwrap" style="margin-top:16px"><table class="tbl"><thead><tr><th>Dimension</th><th class="num">Bizjet weight</th><th class="num">Commercial</th><th>Rationale</th></tr></thead><tbody>'+
+    BIZJET_DIMS.map(function(d){var c=null;DIMS.forEach(function(x){if(x.code===d.code)c=x.weight;});var delta=d.weight-(c||0);return '<tr><td class="c-name">'+d.code+' <span class="sub">'+esc(d.name)+'</span></td><td class="c-num" style="font-weight:600">'+d.weight+'</td><td class="c-num" style="color:var(--t4)">'+(c||0)+(delta?' <span style="color:'+(delta>0?'var(--deploy)':'var(--dnd)')+'">('+(delta>0?'+':'')+delta+')</span>':'')+'</td><td class="c-sec" style="max-width:320px">'+esc(d.note)+'</td></tr>';}).join('')+
+    '</tbody></table></div>'+
+  '</div></div>';
+  var grid='<div class="d-grid">'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Verdict thresholds</h3></div><div class="pb">'+
+      thresholds.map(function(t){return '<div class="thr '+t[0]+'"><div class="thv">'+t[1]+'</div><div class="thb"><div class="thl">'+t[2]+'</div><div class="thd">'+t[3]+'</div></div></div>';}).join('')+
+    '</div></div>'+
+    '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Bizjet hard floor rule</h3></div><div class="pb">'+
+      '<div class="warn-note" style="margin-bottom:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Composite capped at '+hf.cap+'</b> when '+hf.dims.join(' or ')+' &lt; '+hf.threshold+'. Keyed to RCS/RAS, not the commercial PPS/RCS.</p></div>'+
+      '<div class="kv"><span class="k">Trigger</span><span class="v">'+esc(hf.dims.join(' or '))+' &lt; '+hf.threshold+'</span></div>'+
+      '<div class="kv"><span class="k">Effect</span><span class="v">Composite capped at '+hf.cap+'</span></div>'+
+      '<div class="kv"><span class="k">Consequence</span><span class="v">Deploy verdict blocked</span></div>'+
+    '</div></div>'+
+  '</div>';
+  return note+weights+grid;
+}
+/* bizjet-specific Scoring Committee submission queue (oversight-only) */
+function bjPaneCommittee(){
+  var order={submitted:0,returned:1,approved:2,rejected:3,draft:4,shipped:5};
+  var rows=BIZJET_SUBMISSIONS.slice().sort(function(a,b){return (order[a.state]-order[b.state])||(b.submitted||'').localeCompare(a.submitted||'');});
+  var note='<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">Bizjet Scoring Committee submissions, distinct from the commercial Arbiter queue. Oversight-only. Decisioning happens in the internal Scoring Workspace (§5.4.1).</p></div>';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Bizjet committee submissions</h3><span class="meta">'+bizjetAlertCount()+' pending</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Submission</th><th>Operator</th><th>Analyst</th><th class="num">Composite</th><th>Verdict</th><th>State</th><th>Submitted</th><th>Validity</th></tr></thead><tbody>'+
+  rows.map(function(s){return '<tr class="rowclick" data-id="'+esc(s.id)+'">'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(s.id)+'</td>'+
+    '<td class="c-name">'+esc(s.operator)+'</td>'+
+    '<td class="c-sec">'+esc(s.analyst)+'</td>'+
+    '<td class="c-num" style="font-weight:600">'+s.composite+'</td>'+
+    '<td>'+verdictChip(s.verdict)+'</td>'+
+    '<td>'+bjStateChip(s.state)+'</td>'+
+    '<td class="c-mono">'+esc(s.submitted)+'</td>'+
+    '<td>'+dueChip(s.validUntil)+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return note+tbl;
+}
+function bjBindCommittee(){[].forEach.call(el('bizjetPane').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){bjOpenSubmission(tr.getAttribute('data-id'));});});}
+function bjOpenSubmission(id){
+  var s=null;BIZJET_SUBMISSIONS.forEach(function(x){if(x.id===id)s=x;});if(!s)return;
+  var o=null;BIZJET_OPERATORS.forEach(function(x){if(x.name===s.operator)o=x;});
+  mdOpen({title:s.id,wide:true,
+    body:''+
+      '<div class="d-hero" style="gap:16px"><div class="d-id"><div class="nm" style="font-size:22px">'+esc(s.operator)+'</div><div class="sub">'+bjStateChip(s.state)+verdictChip(s.verdict)+'<span>Composite '+s.composite+' · '+esc(s.analyst)+'</span></div></div><div class="d-hero-side"><span class="ichip muted">'+esc(BIZJET_METH.version)+'</span></div></div>'+
+      '<div class="mini3" style="margin-bottom:12px"><div class="m3"><span class="ml">Submitted</span><span class="mv" style="font-size:14px">'+esc(s.submitted)+'</span></div><div class="m3"><span class="ml">Verdict validity</span><span class="mv" style="font-size:14px">'+esc(s.validUntil)+'</span></div><div class="m3"><span class="ml">Analyst</span><span class="mv" style="font-size:14px">'+esc(s.analyst)+'</span></div></div>'+
+      (o?'<div class="wr-sec-h" style="margin-bottom:8px">Operator</div><div class="kv"><span class="k">Base</span><span class="v">'+esc(o.base)+'</span></div><div class="kv"><span class="k">Fleet</span><span class="v">'+o.fleet+' · '+esc(o.types)+'</span></div><div class="kv"><span class="k">Model</span><span class="v">'+esc(o.model)+'</span></div>':'')+
+      '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-top:16px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">Read-only oversight. This submission is decided in the internal Scoring Workspace; the Super Admin console mirrors its state.</p></div>',
+    foot:'<button class="btn sm" id="bjSubClose">Close</button>',
+    onMount:function(){el('bjSubClose').addEventListener('click',mdClose);}
+  });
+}
+
 /* ══════════════════ PLACEHOLDER AREAS (built in later increments) ══════════════════ */
 function stubPane(target,eyebrow,title,heading,desc,feats,ico){
   el(target).innerHTML=''+
@@ -3652,7 +4399,10 @@ var VIEW_RENDER={
   methodology:renderMethodology,
   audit:renderAudit,
   health:renderHealth,
-  agents:renderAgents
+  agents:renderAgents,
+  eapi:renderEapi,
+  windex:renderWindex,
+  bizjet:renderBizjet
 };
 
 /* ══════════════════ ROUTING / SHELL ══════════════════ */
