@@ -2992,12 +2992,14 @@ var AUD_LOG_TABS=['log','downloads','auth','access'];
 function audMatch(text){if(!audQ)return true;return text.toLowerCase().indexOf(audQ.toLowerCase())>=0;}
 function renderAudit(){
   hydrateAuditV2();
+  if(typeof hydrateComplianceV3==='function')hydrateComplianceV3();
   var accessN=AUDIT.filter(isAccessChange).length;
   var isLog=AUD_LOG_TABS.indexOf(audTab)>=0;
   var tabs=[['log','Audit log',AUDIT.length],['downloads','Downloads',DELIVERABLE_LOG.length],['auth','Authentication',audAuthEvents().length],['access','Access changes',accessN],
-    ['soc2','SOC 2',soc2OpenCount()],['dpa','DPA register',dpaPendingCount()],['questionnaires','Questionnaires',QUESTIONNAIRES.length],['review','Access review','']];
+    ['soc2','SOC 2',soc2OpenCount()],['dpa','DPA register',dpaPendingCount()],['questionnaires','Questionnaires',QUESTIONNAIRES.length],['review','Access review',''],
+    ['soc2dist','SOC 2 distribution',''],['iso','ISO 27001',isoGapCount()||''],['bugbounty','Bug bounty',bountyOpenCount()||''],['biaspack','Bias pack','']];
   var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.7 / §4.3.6</div><h1>Audit &amp; Compliance</h1></div>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.7 / §4.3.6 / §5.3.6</div><h1>Audit &amp; Compliance</h1></div>'+
     '<div class="phead-actions">'+(isLog?'<button class="btn" id="audExport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 21h14"/></svg>Export CSV</button>':'')+'</div></div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Audit events</div><div class="num">'+AUDIT.length+'</div><div class="cap">State-changing actions</div></div>'+
@@ -3020,6 +3022,10 @@ function audRenderPane(){
   if(audTab==='dpa'){pane.innerHTML=audPaneDpa();audBindDpa();return;}
   if(audTab==='questionnaires'){pane.innerHTML=audPaneQuest();audBindQuest();return;}
   if(audTab==='review'){pane.innerHTML=audPaneReview();audBindReviewV2();return;}
+  if(audTab==='soc2dist'){pane.innerHTML=audPaneSoc2Dist();audBindSoc2Dist();return;}
+  if(audTab==='iso'){pane.innerHTML=audPaneIso();return;}
+  if(audTab==='bugbounty'){pane.innerHTML=audPaneBounty();audBindBounty();return;}
+  if(audTab==='biaspack'){pane.innerHTML=audPaneBiasComp();audBindBiasComp();return;}
   if(audTab==='downloads'){
     var rows=DELIVERABLE_LOG.filter(function(d){return audMatch(d.ts+' '+d.user+' '+d.deliverable+' '+d.deliverableId+' '+d.ip+' '+d.token);});
     pane.innerHTML=audPanel('Deliverable download log',rows.length,'<th>Timestamp</th><th>User</th><th>Deliverable</th><th>Deliverable ID</th><th>IP</th><th>Watermark token</th>',
@@ -3245,6 +3251,217 @@ function openAccessReviewSignoff(){
       }
     });
   });
+}
+
+/* ══════════════════════════════════════════════════════
+   COMPLIANCE v3 (§5.3.6, new at M3)
+   Layered onto the Audit & Compliance surface as four tabs:
+   SOC 2 Type II report distribution under NDA, ISO 27001 readiness
+   (gap + roadmap), the bug-bounty programme console, and the
+   comprehensive quarterly bias-review pack covering every AI agent.
+══════════════════════════════════════════════════════ */
+/* SOC 2 Type II report + the recipients it has been distributed to under NDA */
+var SOC2_REPORT={version:'SOC 2 Type II FY2026',period:'2025-07-01 to 2026-06-30',auditor:'Prescient Assurance',issued:'2026-07-08'};
+var SOC2_DISTRIBUTIONS=[
+  {id:'DIST-2031',org:'Fidelity Bank',contact:'a.okoro@fidelitybank.com',kind:'Client',nda:'signed',granted:'2026-07-12',expiry:'2027-07-12',access:'active'},
+  {id:'DIST-2030',org:'Africa Finance Corporation',contact:'k.mensah@afcorp.org',kind:'Client',nda:'signed',granted:'2026-07-11',expiry:'2027-07-11',access:'active'},
+  {id:'DIST-2029',org:'Stanbic IBTC',contact:'procurement@stanbic.com',kind:'Prospect',nda:'pending',granted:'—',expiry:'—',access:'held'},
+  {id:'DIST-2027',org:'Ecobank',contact:'f.sarr@ecobank.com',kind:'Client',nda:'signed',granted:'2026-06-20',expiry:'2027-06-20',access:'revoked'}
+];
+/* ISO 27001 Annex A readiness by control domain + a dated roadmap */
+var ISO_DOMAINS=[
+  {code:'A.5',name:'Organizational controls',total:37,done:31,status:'in_progress'},
+  {code:'A.6',name:'People controls',total:8,done:8,status:'implemented'},
+  {code:'A.7',name:'Physical controls',total:14,done:11,status:'in_progress'},
+  {code:'A.8',name:'Technological controls',total:34,done:24,status:'gap'}
+];
+var ISO_ROADMAP=[
+  {milestone:'Statement of Applicability finalised',target:'2026-08-31',status:'in_progress'},
+  {milestone:'Internal audit (stage 1 readiness)',target:'2026-10-15',status:'planned'},
+  {milestone:'Risk treatment plan closure',target:'2026-11-30',status:'planned'},
+  {milestone:'Stage 2 certification audit',target:'2027-01-20',status:'planned'}
+];
+/* bug-bounty programme: researcher submissions, triage, payout tracking */
+var BOUNTY_SUBMISSIONS=[
+  {id:'BB-2088',researcher:'r.krishnan',title:'Reflected XSS in report filter param',severity:'high',status:'triage',reward:0,submitted:'2026-07-28'},
+  {id:'BB-2085',researcher:'nullbyte',title:'IDOR on deliverable download token',severity:'critical',status:'accepted',reward:4000,submitted:'2026-07-24'},
+  {id:'BB-2082',researcher:'a.silva',title:'Rate-limit bypass on auth endpoint',severity:'medium',status:'fixed',reward:1200,submitted:'2026-07-18'},
+  {id:'BB-2079',researcher:'h4wk',title:'Verbose error leaks stack trace',severity:'low',status:'paid',reward:400,submitted:'2026-07-10'},
+  {id:'BB-2075',researcher:'nullbyte',title:'Duplicate of BB-2071 CSRF report',severity:'medium',status:'duplicate',reward:0,submitted:'2026-07-02'}
+];
+/* comprehensive quarterly bias-review packs (Compliance-side, covers every agent x fairness dimension) */
+var BIAS_COMP_PACKS=[
+  {id:'BIAS-COMP-2026Q2',quarter:'Q2 2026',generated:'2026-04-10',by:'Compliance Lead',agents:5,dims:4,status:'delivered'}
+];
+var BIAS_FAIRNESS_DIMS=['Region (NG/WA/EA/SA/CA)','Carrier tier (flag/major/regional/startup)','Verdict class (Deploy/Watch/DND)','Ownership (state/private/foreign)'];
+function hydrateComplianceV3(){loadState();if(STATE.soc2Dist)SOC2_DISTRIBUTIONS=STATE.soc2Dist;if(STATE.isoDomains)ISO_DOMAINS=STATE.isoDomains;if(STATE.bounty)BOUNTY_SUBMISSIONS=STATE.bounty;if(STATE.biasComp)BIAS_COMP_PACKS=STATE.biasComp;}
+function persistComplianceV3(){loadState();STATE.soc2Dist=SOC2_DISTRIBUTIONS;STATE.isoDomains=ISO_DOMAINS;STATE.bounty=BOUNTY_SUBMISSIONS;STATE.biasComp=BIAS_COMP_PACKS;saveState();}
+function isoGapCount(){return ISO_DOMAINS.filter(function(d){return d.status==='gap';}).length;}
+function bountyOpenCount(){return BOUNTY_SUBMISSIONS.filter(function(b){return b.status==='triage';}).length;}
+function bountyById(id){var r=null;BOUNTY_SUBMISSIONS.forEach(function(b){if(b.id===id)r=b;});return r;}
+function distById(id){var r=null;SOC2_DISTRIBUTIONS.forEach(function(d){if(d.id===id)r=d;});return r;}
+function ndaChip(s){var m={signed:['green','NDA signed'],pending:['watch','NDA pending']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function distAccessChip(s){var m={active:['green','Active'],held:['watch','Held'],revoked:['red','Revoked'],expired:['muted','Expired']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function isoStatusChip(s){var m={implemented:['green','Implemented'],in_progress:['watch','In progress'],gap:['red','Gap'],planned:['blue','Planned']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function bountySevChip(s){var m={critical:['red','Critical'],high:['red','High'],medium:['watch','Medium'],low:['muted','Low']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function bountyStatusChip(s){var m={triage:['watch','In triage'],accepted:['blue','Accepted'],fixed:['blue','Fixed'],paid:['green','Paid'],duplicate:['muted','Duplicate'],rejected:['red','Rejected']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+
+/* §5.3.6 · SOC 2 Type II report distribution under NDA */
+function audPaneSoc2Dist(){
+  var active=SOC2_DISTRIBUTIONS.filter(function(d){return d.access==='active';}).length;
+  var pending=SOC2_DISTRIBUTIONS.filter(function(d){return d.nda==='pending';}).length;
+  var rpt='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Current report</h3><span class="meta">'+esc(SOC2_REPORT.version)+'</span></div><div class="pb">'+
+    '<div class="mini3"><div class="m3"><span class="ml">Period</span><span class="mv" style="font-size:13px">'+esc(SOC2_REPORT.period)+'</span></div><div class="m3"><span class="ml">Auditor</span><span class="mv" style="font-size:13px">'+esc(SOC2_REPORT.auditor)+'</span></div><div class="m3"><span class="ml">Issued</span><span class="mv" style="font-size:14px">'+esc(SOC2_REPORT.issued)+'</span></div></div>'+
+    '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><p style="color:var(--t2)">The report is confidential. It is released only to vetted recipients under a signed NDA, and every grant is audited.</p></div>'+
+    '<button class="btn primary" id="distGrant" style="margin-top:14px">Distribute report</button>'+
+  '</div></div>';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Distribution register</h3><span class="meta">'+active+' active · '+pending+' NDA pending</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Grant</th><th>Recipient</th><th>Type</th><th>NDA</th><th>Granted</th><th>Expiry</th><th>Access</th><th></th></tr></thead><tbody>'+
+  SOC2_DISTRIBUTIONS.map(function(d){return '<tr>'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(d.id)+'</td>'+
+    '<td class="c-name">'+esc(d.org)+'<span class="sub">'+esc(d.contact)+'</span></td>'+
+    '<td><span class="ichip '+(d.kind==='Client'?'blue':'muted')+'">'+esc(d.kind)+'</span></td>'+
+    '<td>'+ndaChip(d.nda)+'</td>'+
+    '<td class="c-mono">'+esc(d.granted)+'</td>'+
+    '<td class="c-mono">'+esc(d.expiry)+'</td>'+
+    '<td>'+distAccessChip(d.access)+'</td>'+
+    '<td>'+(d.access==='active'?'<button class="btn sm distRevoke" data-id="'+d.id+'">Revoke</button>':(d.nda==='pending'?'<button class="btn sm primary distActivate" data-id="'+d.id+'">Mark NDA signed</button>':''))+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return rpt+tbl;
+}
+function audBindSoc2Dist(){
+  if(el('distGrant'))el('distGrant').addEventListener('click',distOpenGrant);
+  [].forEach.call(el('audPane').querySelectorAll('.distRevoke'),function(b){b.addEventListener('click',function(){distRevoke(b.getAttribute('data-id'));});});
+  [].forEach.call(el('audPane').querySelectorAll('.distActivate'),function(b){b.addEventListener('click',function(){distActivate(b.getAttribute('data-id'));});});
+}
+function distOpenGrant(){
+  mdOpen({title:'Distribute SOC 2 report',
+    body:''+
+      '<div class="msummary"><div class="ml">Report</div><div class="mv">'+esc(SOC2_REPORT.version)+'</div></div>'+
+      '<div class="mfield"><label>Recipient organisation</label><input id="dgOrg" placeholder="Organisation name"/></div>'+
+      '<div class="mfield"><label>Recipient contact</label><input id="dgContact" placeholder="name@org.com"/></div>'+
+      '<div class="mfield"><label>Recipient type</label><select id="dgKind"><option>Client</option><option>Prospect</option></select></div>'+
+      '<div class="mfield"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="dgNda" style="width:auto"/> NDA has been signed and is on file</label><div class="helper">Without a signed NDA the grant is created as Held; the report is not released until the NDA is confirmed.</div></div>',
+    foot:'<button class="btn sm" id="dgCancel">Cancel</button><button class="btn sm primary" id="dgGo">Grant access</button>',
+    onMount:function(){
+      el('dgCancel').addEventListener('click',mdClose);
+      el('dgGo').addEventListener('click',function(){
+        var org=(el('dgOrg').value||'').trim();if(org.length<2){toast('Organisation required','Enter the recipient organisation.');return;}
+        var contact=(el('dgContact').value||'').trim();if(contact.indexOf('@')<0){toast('Contact required','Enter a valid recipient email.');return;}
+        var nda=el('dgNda').checked;
+        requireReauth('Distribute SOC 2 report','This releases the confidential SOC 2 Type II report to '+org+'.',function(){
+          var d=new Date();var id='DIST-'+Math.floor(2000+Math.random()*8000);
+          var granted=nda?nowStamp().slice(0,10):'—';var expiry=nda?(d.getUTCFullYear()+1)+nowStamp().slice(4,10):'—';
+          SOC2_DISTRIBUTIONS=[{id:id,org:org,contact:contact,kind:el('dgKind').value,nda:nda?'signed':'pending',granted:granted,expiry:expiry,access:nda?'active':'held'}].concat(SOC2_DISTRIBUTIONS);persistComplianceV3();
+          logAudit({carrier:org,crit:'SOC 2 report distributed',fr:'—',to:(nda?'released · NDA signed':'held · NDA pending'),status:nda?'Released':'Held',note:id});
+          mdClose();renderAudit();toast('Report grant created',org+' · '+(nda?'released':'held for NDA'));
+        });
+      });
+    }
+  });
+}
+function distRevoke(id){var d=distById(id);if(!d)return;requireReauth('Revoke report access','This revokes '+d.org+' access to the SOC 2 report.',function(){d.access='revoked';persistComplianceV3();logAudit({carrier:d.org,crit:'SOC 2 report access revoked',fr:d.id+' · active',to:'revoked',status:'Revoked',note:d.id});renderAudit();toast('Access revoked',d.org);});}
+function distActivate(id){var d=distById(id);if(!d)return;d.nda='signed';d.access='active';d.granted=nowStamp().slice(0,10);var y=new Date();d.expiry=(y.getUTCFullYear()+1)+nowStamp().slice(4,10);persistComplianceV3();logAudit({carrier:d.org,crit:'SOC 2 NDA confirmed',fr:d.id+' · pending',to:'released · NDA signed',status:'Released',note:d.id});renderAudit();toast('NDA confirmed',d.org+' · report released');}
+
+/* §5.3.6 · ISO 27001 readiness — gap and roadmap dashboard */
+function audPaneIso(){
+  var totCtl=ISO_DOMAINS.reduce(function(s,d){return s+d.total;},0);
+  var doneCtl=ISO_DOMAINS.reduce(function(s,d){return s+d.done;},0);
+  var pct=Math.round(doneCtl/totCtl*100);
+  var head='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>ISO 27001 readiness</h3><span class="meta">'+doneCtl+' / '+totCtl+' Annex A controls</span></div><div class="pb">'+
+    '<div class="mini3"><div class="m3"><span class="ml">Overall readiness</span><span class="mv" style="color:'+(pct>=80?'var(--deploy)':'var(--watch)')+'">'+pct+'%</span></div><div class="m3"><span class="ml">Gap domains</span><span class="mv"'+(isoGapCount()?' style="color:var(--dnd)"':'')+'>'+isoGapCount()+'</span></div><div class="m3"><span class="ml">Target certification</span><span class="mv" style="font-size:14px">2027-01-20</span></div></div>'+
+  '</div></div>';
+  var domains='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Control domains</h3><span class="meta">Annex A</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Domain</th><th>Controls</th><th>Coverage</th><th>Status</th></tr></thead><tbody>'+
+  ISO_DOMAINS.map(function(d){var p=Math.round(d.done/d.total*100);return '<tr>'+
+    '<td class="c-name">'+d.code+' <span class="sub">'+esc(d.name)+'</span></td>'+
+    '<td class="c-num">'+d.done+' / '+d.total+'</td>'+
+    '<td style="min-width:160px"><div class="brow"><div class="btrack"><div class="bfill" style="width:'+p+'%;background:'+(d.status==='gap'?'var(--dnd)':(d.status==='implemented'?'var(--deploy)':'var(--watch)'))+'"></div></div><div class="bv">'+p+'%</div></div></td>'+
+    '<td>'+isoStatusChip(d.status)+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  var roadmap='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Certification roadmap</h3><span class="meta">'+ISO_ROADMAP.length+' milestones</span></div><div class="pb flush">'+
+  ISO_ROADMAP.map(function(r){return '<div class="lrow"><div class="body"><h4>'+esc(r.milestone)+'</h4><div class="metaln"><span>Target <b>'+esc(r.target)+'</b></span></div></div><div class="side">'+isoStatusChip(r.status)+'</div></div>';}).join('')+
+  '</div></div>';
+  return head+domains+roadmap;
+}
+/* §5.3.6 · bug bounty programme console — submissions, triage, payouts */
+function audPaneBounty(){
+  var paid=BOUNTY_SUBMISSIONS.filter(function(b){return b.status==='paid';}).reduce(function(s,b){return s+b.reward;},0);
+  var owed=BOUNTY_SUBMISSIONS.filter(function(b){return (b.status==='accepted'||b.status==='fixed')&&b.reward>0;}).reduce(function(s,b){return s+b.reward;},0);
+  var order={triage:0,accepted:1,fixed:2,paid:3,duplicate:4,rejected:5};
+  var head='<div class="summary" style="margin-bottom:24px">'+
+    '<div class="cell"><div class="lbl">In triage</div><div class="num'+(bountyOpenCount()?' due':'')+'">'+bountyOpenCount()+'</div><div class="cap">Awaiting assessment</div></div>'+
+    '<div class="cell"><div class="lbl">Rewards paid</div><div class="num">'+fmtUsdFull(paid)+'</div><div class="cap">Programme to date</div></div>'+
+    '<div class="cell"><div class="lbl">Payouts owed</div><div class="num'+(owed?' alert':'')+'">'+fmtUsdFull(owed)+'</div><div class="cap">Accepted, not yet paid</div></div>'+
+    '<div class="cell"><div class="lbl">Submissions</div><div class="num">'+BOUNTY_SUBMISSIONS.length+'</div><div class="cap">All-time</div></div>'+
+  '</div>';
+  var tbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Researcher submissions</h3><span class="meta">'+bountyOpenCount()+' in triage</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Report</th><th>Researcher</th><th>Title</th><th>Severity</th><th class="num">Reward</th><th>Status</th><th></th></tr></thead><tbody>'+
+  BOUNTY_SUBMISSIONS.slice().sort(function(a,b){return (order[a.status]-order[b.status])||(b.submitted||'').localeCompare(a.submitted||'');}).map(function(b){return '<tr>'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(b.id)+'<span class="sub">'+esc(b.submitted)+'</span></td>'+
+    '<td class="c-sec">'+esc(b.researcher)+'</td>'+
+    '<td class="c-name" style="font-weight:400;max-width:260px">'+esc(b.title)+'</td>'+
+    '<td>'+bountySevChip(b.severity)+'</td>'+
+    '<td class="c-num">'+(b.reward>0?fmtUsdFull(b.reward):'—')+'</td>'+
+    '<td>'+bountyStatusChip(b.status)+'</td>'+
+    '<td>'+(b.status==='triage'?'<button class="btn sm primary bbTriage" data-id="'+b.id+'">Triage</button>':((b.status==='accepted'||b.status==='fixed')&&b.reward>0?'<button class="btn sm primary bbPay" data-id="'+b.id+'">Mark paid</button>':''))+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+tbl;
+}
+function audBindBounty(){
+  [].forEach.call(el('audPane').querySelectorAll('.bbTriage'),function(b){b.addEventListener('click',function(){bountyOpenTriage(b.getAttribute('data-id'));});});
+  [].forEach.call(el('audPane').querySelectorAll('.bbPay'),function(b){b.addEventListener('click',function(){bountyPay(b.getAttribute('data-id'));});});
+}
+function bountyOpenTriage(id){
+  var b=bountyById(id);if(!b)return;
+  mdOpen({title:'Triage '+b.id,
+    body:''+
+      '<div class="msummary"><div class="ml">Report</div><div class="mv">'+esc(b.title)+'</div></div>'+
+      '<div class="mfield"><label>Severity</label><select id="btSev"><option value="critical"'+(b.severity==='critical'?' selected':'')+'>Critical</option><option value="high"'+(b.severity==='high'?' selected':'')+'>High</option><option value="medium"'+(b.severity==='medium'?' selected':'')+'>Medium</option><option value="low"'+(b.severity==='low'?' selected':'')+'>Low</option></select></div>'+
+      '<div class="mfield"><label>Outcome</label><select id="btOut"><option value="accepted">Accept (valid)</option><option value="duplicate">Duplicate</option><option value="rejected">Reject (not a vuln)</option></select></div>'+
+      '<div class="mfield"><label>Reward ($, if accepted)</label><input id="btReward" class="mono" value="'+({critical:4000,high:2000,medium:1000,low:400}[b.severity]||0)+'"/><div class="helper">Suggested by severity band. Set 0 for duplicate or rejected.</div></div>',
+    foot:'<button class="btn sm" id="btCancel">Cancel</button><button class="btn sm primary" id="btGo">Record triage</button>',
+    onMount:function(){
+      el('btCancel').addEventListener('click',mdClose);
+      el('btGo').addEventListener('click',function(){
+        var out=el('btOut').value;var sev=el('btSev').value;var reward=out==='accepted'?(parseInt(el('btReward').value,10)||0):0;
+        b.severity=sev;b.status=out;b.reward=reward;persistComplianceV3();
+        logAudit({carrier:'Bug bounty',crit:'Bounty submission triaged',fr:b.id+' · triage',to:out+' · '+sev+(reward?' · '+fmtUsdFull(reward):''),status:out.charAt(0).toUpperCase()+out.slice(1),note:b.id});
+        mdClose();renderAudit();toast('Submission triaged',b.id+' · '+out);
+      });
+    }
+  });
+}
+function bountyPay(id){var b=bountyById(id);if(!b)return;requireReauth('Record bounty payout','This records a '+fmtUsdFull(b.reward)+' payout to '+b.researcher+' for '+b.id+'.',function(){b.status='paid';persistComplianceV3();logAudit({carrier:'Bug bounty',crit:'Bounty payout recorded',fr:b.id+' · '+fmtUsdFull(b.reward),to:'paid',status:'Paid',note:b.id});renderAudit();toast('Payout recorded',b.id+' · '+fmtUsdFull(b.reward));});}
+
+/* §5.3.6 · comprehensive bias-review pack — every agent x fairness dimension, quarterly for SC */
+function audPaneBiasComp(){
+  var d=new Date();var q='Q'+(Math.floor(d.getUTCMonth()/3)+1)+' '+d.getUTCFullYear();
+  var exists=BIAS_COMP_PACKS.some(function(p){return p.quarter===q;});
+  var head='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Current quarter</h3><span class="meta">'+q+'</span></div><div class="pb">'+
+    '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p style="color:var(--t2)">The comprehensive pack covers <b style="color:var(--info)">every AI agent</b> ('+AGENTS.length+') across '+BIAS_FAIRNESS_DIMS.length+' fairness dimensions, for the Scoring Committee. Broader than the per-agent pack in the AI Agent Console.</p></div>'+
+    '<div class="d-tags" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px">'+BIAS_FAIRNESS_DIMS.map(function(x){return '<span class="ichip muted">'+esc(x)+'</span>';}).join('')+'</div>'+
+    '<button class="btn primary" id="biasCompGen" style="margin-top:14px"'+(exists?' disabled':'')+'>'+(exists?q+' pack already generated':'Generate '+q+' comprehensive pack')+'</button>'+
+  '</div></div>';
+  var hist='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Pack history</h3><span class="meta">'+BIAS_COMP_PACKS.length+'</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Pack</th><th>Quarter</th><th>Generated</th><th>By</th><th class="num">Agents</th><th class="num">Dimensions</th><th>Status</th></tr></thead><tbody>'+
+  BIAS_COMP_PACKS.map(function(p){return '<tr><td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(p.id)+'</td><td class="c-sec">'+esc(p.quarter)+'</td><td class="c-mono">'+esc(p.generated)+'</td><td class="c-sec">'+esc(p.by)+'</td><td class="c-num">'+p.agents+'</td><td class="c-num">'+p.dims+'</td><td><span class="ichip green">'+esc(p.status.charAt(0).toUpperCase()+p.status.slice(1))+'</span></td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return head+hist;
+}
+function audBindBiasComp(){if(el('biasCompGen'))el('biasCompGen').addEventListener('click',genBiasCompPack);}
+function genBiasCompPack(){
+  var d=new Date();var q='Q'+(Math.floor(d.getUTCMonth()/3)+1)+' '+d.getUTCFullYear();
+  var headers=['Agent','Owner','Model'].concat(BIAS_FAIRNESS_DIMS.map(function(x){return x+' delta';}));
+  var rows=AGENTS.map(function(a){return [a.name,a.owner,a.model].concat(BIAS_FAIRNESS_DIMS.map(function(){return ((Math.random()*0.06-0.03)).toFixed(3);}));});
+  var id='BIAS-COMP-'+d.getUTCFullYear()+'Q'+(Math.floor(d.getUTCMonth()/3)+1);
+  downloadCsv('andara-bias-comprehensive-'+id+'.csv',headers,rows);
+  BIAS_COMP_PACKS=[{id:id,quarter:q,generated:nowStamp().slice(0,10),by:profileName(),agents:AGENTS.length,dims:BIAS_FAIRNESS_DIMS.length,status:'delivered'}].concat(BIAS_COMP_PACKS);persistComplianceV3();
+  logAudit({carrier:'Compliance',crit:'Comprehensive bias pack generated',fr:'—',to:q+' · '+AGENTS.length+' agents · '+BIAS_FAIRNESS_DIMS.length+' dimensions',status:'Generated',note:id});
+  renderAudit();toast('Comprehensive bias pack generated',id+' · sent to Scoring Committee');
 }
 
 /* ── §3.3.8 System Health ── */
