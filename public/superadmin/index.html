@@ -3472,15 +3472,20 @@ function renderAgents(){
   var totCost=AGENTS.reduce(function(s,a){return s+a.inv30*a.cost;},0);
   var avgAccept=Math.round(AGENTS.reduce(function(s,a){return s+a.accept;},0)/AGENTS.length*100);
   var driftAlerts=AGENTS.filter(function(a){return a.drift!=='ok';}).length;
-  var tabs=[['inventory','Inventory',AGENTS.length],['invocations','Invocations',''],['acceptance','Acceptance',''],['hallucinations','Hallucinations',halluOpenCount()||''],['drift','Drift',driftAlerts||''],['bias','Bias pack','']];
+  hydrateAgentsV2();
+  var onStack=AGENTS.filter(function(a){return agStack(a.id)==='proprietary';}).length;
+  var ftReady=LLM_TRAINING_RUNS.filter(function(r){return r.readiness==='ready';}).length;
+  var abRunning=LLM_AB_TESTS.filter(function(r){return r.status==='running';}).length;
+  var tabs=[['inventory','Inventory',AGENTS.length],['invocations','Invocations',''],['acceptance','Acceptance',''],['hallucinations','Hallucinations',halluOpenCount()||''],['drift','Drift',driftAlerts||''],['bias','Bias pack',''],
+    ['stack','LLM stack',''],['abtest','A/B',abRunning||''],['taskquality','Task quality',''],['finetune','Fine-tune',ftReady||''],['selfeval','Self-eval','']];
   var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §4.3.8</div><h1>AI Agent Console</h1></div>'+
-    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Observability and governance for every production AI agent, model and prompt pins, cost, quality and drift.</span></div></div>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §4.3.8 · §5.3.5 · v2</div><h1>AI Agent Console</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Observability and governance for every AI agent, plus the proprietary Andara LLM stack: GPU pools, A/B promotion, per-task quality, fine-tune pipeline and self-evaluation.</span></div></div>'+
   '<div class="summary">'+
-    '<div class="cell"><div class="lbl">Production agents</div><div class="num">'+AGENTS.length+'</div><div class="cap">'+AGENTS.filter(function(a){return a.status==='canary';}).length+' in canary</div></div>'+
+    '<div class="cell"><div class="lbl">Production agents</div><div class="num">'+AGENTS.length+'</div><div class="cap">'+onStack+' on proprietary stack</div></div>'+
     '<div class="cell"><div class="lbl">Invocations, 30d</div><div class="num">'+(totInv>=1000?(totInv/1000).toFixed(1)+'K':totInv)+'</div><div class="cap">'+fmtUsdFull(Math.round(totCost))+' spend</div></div>'+
     '<div class="cell"><div class="lbl">Avg acceptance</div><div class="num'+(avgAccept>=85?' ok':' due')+'">'+avgAccept+'%</div><div class="cap">Human-accepted</div></div>'+
-    '<div class="cell"><div class="lbl">Open hallucinations</div><div class="num'+(halluOpenCount()?' alert':'')+'">'+halluOpenCount()+'</div><div class="cap">'+driftAlerts+' drift alerts</div></div>'+
+    '<div class="cell"><div class="lbl">Open hallucinations</div><div class="num'+(halluOpenCount()?' alert':'')+'">'+halluOpenCount()+'</div><div class="cap">'+driftAlerts+' drift · '+abRunning+' A/B running</div></div>'+
   '</div>'+
   '<div class="fb" id="agTabs">'+tabs.map(function(t){return '<button class="fp'+(agTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
   '<div id="agPane"></div>';
@@ -3496,6 +3501,11 @@ function agRenderPane(){
   if(agTab==='hallucinations'){pane.innerHTML=agPaneHallu();agBindHallu();return;}
   if(agTab==='drift'){pane.innerHTML=agPaneDrift();return;}
   if(agTab==='bias'){pane.innerHTML=agPaneBias();agBindBias();return;}
+  if(agTab==='stack'){pane.innerHTML=agPaneStack();return;}
+  if(agTab==='abtest'){pane.innerHTML=agPaneAb();agBindAb();return;}
+  if(agTab==='taskquality'){pane.innerHTML=agPaneTaskQuality();return;}
+  if(agTab==='finetune'){pane.innerHTML=agPaneFinetune();agBindFinetune();return;}
+  if(agTab==='selfeval'){pane.innerHTML=agPaneSelfEval();return;}
   // inventory
   pane.innerHTML='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Agent inventory</h3><span class="meta">'+AGENTS.length+' agents</span></div>'+
   '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th>Owner</th><th>Model pin</th><th>Prompt pin</th><th>Status</th><th></th></tr></thead><tbody>'+
@@ -3635,6 +3645,184 @@ function genBiasPack(){
   BIAS_PACKS=[{id:id,quarter:q,generated:nowStamp().slice(0,10),by:profileName(),agents:AGENTS.length,status:'delivered'}].concat(BIAS_PACKS);persistAgents();
   logAudit({carrier:'AI Agents',crit:'Bias review pack generated',fr:'—',to:q+' · '+AGENTS.length+' agents',status:'Generated',note:id});
   renderAgents();toast('Bias pack generated',id+' · sent to Scoring Committee');
+}
+
+/* ══════════════════════════════════════════════════════
+   AI AGENT CONSOLE v2 (§5.3.5, new at M3)
+   The proprietary Andara LLM stack layered onto the M2 agent
+   console: GPU-pool health, A/B promotion of candidate fine-tunes,
+   per-task quality vs baseline, the fine-tune pipeline with eval
+   gates, and the self-evaluation harness.
+══════════════════════════════════════════════════════ */
+/* which stack each agent runs on. andara-* fine-tunes are the proprietary stack;
+   the remainder are still on vendor foundation models pending migration (exit gate). */
+var LLM_STACK={'ag-monitor':'vendor','ag-draft':'vendor','ag-ocr':'proprietary','ag-anom':'proprietary','ag-air':'vendor'};
+function agStack(id){return LLM_STACK[id]||'vendor';}
+function agStackChip(id){return agStack(id)==='proprietary'?'<span class="ichip blue">Proprietary</span>':'<span class="ichip muted">Vendor</span>';}
+/* GPU pools serving the proprietary models */
+var LLM_POOLS=[
+  {id:'pool-h100-a',name:'H100 Pool A',type:'NVIDIA H100',gpus:8,util:0.72,inflight:34,queue:3,p50:180,p95:420,pin:'andara-ocr-v2',region:'eu-frankfurt'},
+  {id:'pool-h100-b',name:'H100 Pool B',type:'NVIDIA H100',gpus:8,util:0.58,inflight:22,queue:0,p50:210,p95:510,pin:'andara-anom-v1',region:'eu-frankfurt'},
+  {id:'pool-a100-a',name:'A100 Pool A',type:'NVIDIA A100',gpus:16,util:0.44,inflight:48,queue:0,p50:95,p95:240,pin:'andara-embed-v3',region:'af-lagos'}
+];
+/* A/B: candidate fine-tune vs incumbent, evaluated before promotion */
+var LLM_AB_TESTS=[
+  {id:'AB-2026-07',agent:'ag-anom',candidate:'andara-anom-v1',incumbent:'claude-sonnet-4.5',status:'running',samples:1400,target:2000,
+   metrics:{quality:{cand:0.88,base:0.86,unit:'',better:'up'},latency:{cand:210,base:1600,unit:'ms',better:'down'},cost:{cand:0.002,base:0.01,unit:'$',better:'down'},acceptance:{cand:0.80,base:0.79,unit:'',better:'up'}},
+   recommendation:'Hold. Quality parity with a large latency and cost win; needs 2,000 samples before promotion.'},
+  {id:'AB-2026-06',agent:'ag-ocr',candidate:'andara-ocr-v2',incumbent:'andara-ocr-v1',status:'promoted',samples:3200,target:3000,
+   metrics:{quality:{cand:0.96,base:0.93,unit:'',better:'up'},latency:{cand:180,base:260,unit:'ms',better:'down'},cost:{cand:0.003,base:0.004,unit:'$',better:'down'},acceptance:{cand:0.96,base:0.95,unit:'',better:'up'}},
+   recommendation:'Promoted. Quality +3pt with a latency win; regression gate clean.'}
+];
+/* per-agent, per-task quality vs baseline, 6-week trend */
+var LLM_TASKS=[
+  {agent:'ag-draft',task:'Verdict narrative',quality:0.87,baseline:0.85,trend:[83,84,85,86,86,87]},
+  {agent:'ag-draft',task:'Risk paragraph',quality:0.82,baseline:0.84,trend:[85,84,83,83,82,82]},
+  {agent:'ag-ocr',task:'Field extraction',quality:0.96,baseline:0.93,trend:[93,94,95,95,96,96]},
+  {agent:'ag-ocr',task:'Table parse',quality:0.91,baseline:0.90,trend:[89,90,90,91,91,91]},
+  {agent:'ag-monitor',task:'Signal triage',quality:0.90,baseline:0.88,trend:[87,88,89,90,90,90]},
+  {agent:'ag-anom',task:'Severity classification',quality:0.79,baseline:0.82,trend:[82,81,80,79,79,79]},
+  {agent:'ag-air',task:'Section drafting',quality:0.88,baseline:0.87,trend:[86,86,87,87,88,88]}
+];
+/* fine-tune pipeline: training runs with eval-gate status and promotion readiness */
+var LLM_TRAINING_RUNS=[
+  {id:'FT-2026-0714',base:'andara-base-7b',dataset:'Scoring narratives v4 (12.4k)',status:'evaluating',gates:{safety:'pass',quality:'pass',regression:'running'},readiness:'pending',started:'2026-07-14'},
+  {id:'FT-2026-0702',base:'andara-base-7b',dataset:'Anomaly labels v3 (8.1k)',status:'passed',gates:{safety:'pass',quality:'pass',regression:'pass'},readiness:'ready',started:'2026-07-02'},
+  {id:'FT-2026-0620',base:'andara-ocr-base',dataset:'FleetWatch scans v5 (22k)',status:'passed',gates:{safety:'pass',quality:'pass',regression:'pass'},readiness:'promoted',started:'2026-06-20'},
+  {id:'FT-2026-0605',base:'andara-base-7b',dataset:'Editorial drafts v2 (4.3k)',status:'failed',gates:{safety:'pass',quality:'fail',regression:'skip'},readiness:'blocked',started:'2026-06-05'}
+];
+/* self-evaluation harness: per-agent confidence, citation density, claim support */
+var LLM_SELFEVAL=[
+  {agent:'ag-draft',confidence:0.86,citationDensity:2.4,claimSupport:0.91,flagged:2},
+  {agent:'ag-monitor',confidence:0.90,citationDensity:1.8,claimSupport:0.94,flagged:1},
+  {agent:'ag-ocr',confidence:0.97,citationDensity:0,claimSupport:0.99,flagged:0},
+  {agent:'ag-anom',confidence:0.79,citationDensity:1.2,claimSupport:0.85,flagged:3},
+  {agent:'ag-air',confidence:0.88,citationDensity:3.1,claimSupport:0.90,flagged:1}
+];
+function hydrateAgentsV2(){loadState();if(STATE.llmAb)LLM_AB_TESTS=STATE.llmAb;if(STATE.llmRuns)LLM_TRAINING_RUNS=STATE.llmRuns;}
+function persistAgentsV2(){loadState();STATE.llmAb=LLM_AB_TESTS;STATE.llmRuns=LLM_TRAINING_RUNS;saveState();}
+function abById(id){var r=null;LLM_AB_TESTS.forEach(function(a){if(a.id===id)r=a;});return r;}
+function ftById(id){var r=null;LLM_TRAINING_RUNS.forEach(function(f){if(f.id===id)r=f;});return r;}
+function utilColor(u){return u>=0.85?'var(--dnd)':(u>=0.7?'var(--watch)':'var(--deploy)');}
+function gateChip(g){var m={pass:['green','Pass'],fail:['red','Fail'],running:['watch','Running'],skip:['muted','Skipped']};var x=m[g]||['muted',g];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function readinessChip(r){var m={ready:['green','Promotion ready'],pending:['watch','Evaluating'],promoted:['blue','Promoted'],blocked:['red','Blocked']};var x=m[r]||['muted',r];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function abStatusChip(s){var m={running:['watch','Running'],complete:['blue','Complete'],promoted:['green','Promoted']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+
+/* §5.3.5 · proprietary LLM stack health — GPU pools, latency, model pins */
+function agPaneStack(){
+  var onStack=AGENTS.filter(function(a){return agStack(a.id)==='proprietary';}).length;
+  var note='<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)"><b style="color:var(--info)">'+onStack+' of '+AGENTS.length+' agents</b> run on the proprietary Andara LLM stack. Migrating the remaining vendor-model agents is the Milestone 3 exit gate for core data generation.</p></div>';
+  var pools='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>GPU pool utilisation</h3><span class="meta">'+LLM_POOLS.length+' pools · '+LLM_POOLS.reduce(function(s,p){return s+p.gpus;},0)+' GPUs</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Pool</th><th>Hardware</th><th class="num">GPUs</th><th>Utilisation</th><th class="num">In-flight</th><th class="num">Queue</th><th class="num">p50</th><th class="num">p95</th><th>Model pin</th></tr></thead><tbody>'+
+  LLM_POOLS.map(function(p){var pct=Math.round(p.util*100);return '<tr>'+
+    '<td class="c-name">'+esc(p.name)+'<span class="sub">'+esc(p.region)+'</span></td>'+
+    '<td class="c-sec">'+esc(p.type)+'</td>'+
+    '<td class="c-num">'+p.gpus+'</td>'+
+    '<td style="min-width:150px"><div class="brow"><div class="btrack"><div class="bfill" style="width:'+pct+'%;background:'+utilColor(p.util)+'"></div></div><div class="bv">'+pct+'%</div></div></td>'+
+    '<td class="c-num">'+p.inflight+'</td>'+
+    '<td class="c-num"'+(p.queue>0?' style="color:var(--watch)"':'')+'>'+p.queue+'</td>'+
+    '<td class="c-num">'+p.p50+'ms</td>'+
+    '<td class="c-num"'+(p.p95>500?' style="color:var(--watch)"':'')+'>'+p.p95+'ms</td>'+
+    '<td class="c-mono" style="color:var(--t1)">'+esc(p.pin)+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  var agentsTbl='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Agent model pins &amp; stack</h3><span class="meta">'+AGENTS.length+' agents</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th>Model pin</th><th>Stack</th><th class="num">Latency p95</th><th>Status</th></tr></thead><tbody>'+
+  AGENTS.map(function(a){return '<tr>'+
+    '<td class="c-name">'+esc(a.name)+'</td>'+
+    '<td class="c-mono" style="color:var(--t1)">'+esc(a.model)+'</td>'+
+    '<td>'+agStackChip(a.id)+'</td>'+
+    '<td class="c-num">'+a.p95+'s</td>'+
+    '<td>'+agStatusChip(a.status)+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return note+pools+agentsTbl;
+}
+/* §5.3.5 · A/B comparison — candidate fine-tunes vs incumbent, promote gate */
+function agPaneAb(){
+  var note='<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p style="color:var(--t2)">Candidate fine-tunes are evaluated head-to-head against the incumbent model before any promotion. Promotion re-pins the agent and is re-auth gated.</p></div>';
+  var cards=LLM_AB_TESTS.map(function(t){
+    var metricRows=Object.keys(t.metrics).map(function(k){var m=t.metrics[k];var fmt=function(v){return m.unit==='$'?'$'+v.toFixed(3):(m.unit==='ms'?v+'ms':(v<=1?Math.round(v*100)+'%':v));};
+      var better=(m.better==='up'&&m.cand>m.base)||(m.better==='down'&&m.cand<m.base);var same=m.cand===m.base;
+      var col=same?'var(--t3)':(better?'var(--deploy)':'var(--dnd)');
+      return '<tr><td class="c-name" style="text-transform:capitalize">'+esc(k)+'</td><td class="c-num" style="color:'+col+';font-weight:600">'+fmt(m.cand)+'</td><td class="c-num" style="color:var(--t4)">'+fmt(m.base)+'</td><td class="c-num" style="color:'+col+'">'+(same?'=':(better?'win':'regress'))+'</td></tr>';}).join('');
+    var canPromote=t.status==='running'||t.status==='complete';
+    return '<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>'+esc(agName(t.agent))+'</h3><span class="meta">'+esc(t.id)+' · '+abStatusChip(t.status)+'</span></div><div class="pb">'+
+      '<div class="mini3" style="margin-bottom:12px"><div class="m3"><span class="ml">Candidate</span><span class="mv" style="font-size:13px">'+esc(t.candidate)+'</span></div><div class="m3"><span class="ml">Incumbent</span><span class="mv" style="font-size:13px">'+esc(t.incumbent)+'</span></div><div class="m3"><span class="ml">Samples</span><span class="mv">'+t.samples.toLocaleString('en-US')+' / '+t.target.toLocaleString('en-US')+'</span></div></div>'+
+      '<div class="tblwrap"><table class="tbl"><thead><tr><th>Metric</th><th class="num">Candidate</th><th class="num">Incumbent</th><th class="num">Verdict</th></tr></thead><tbody>'+metricRows+'</tbody></table></div>'+
+      '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">'+esc(t.recommendation)+'</p></div>'+
+      (canPromote?'<button class="btn primary abPromote" data-id="'+t.id+'" style="margin-top:14px">Promote '+esc(t.candidate)+'</button>':'<div style="margin-top:14px">'+abStatusChip(t.status)+' <span class="c-mono" style="color:var(--t4);font-size:12px">'+esc(t.candidate)+' is live</span></div>')+
+    '</div></div>';
+  }).join('');
+  return note+cards;
+}
+function agBindAb(){[].forEach.call(el('agPane').querySelectorAll('.abPromote'),function(b){b.addEventListener('click',function(){abPromote(b.getAttribute('data-id'));});});}
+function abPromote(id){
+  var t=abById(id);if(!t)return;var a=agentById(t.agent);
+  requireReauth('Promote candidate model','This promotes '+t.candidate+' to production for '+(a?a.name:t.agent)+', re-pinning the live model.',function(){
+    t.status='promoted';
+    if(a){var prev=a.model;a.model=t.candidate;if(a.models.indexOf(t.candidate)<0)a.models.unshift(t.candidate);persistAgents();
+      logAudit({carrier:'AI Agents',crit:'Candidate model promoted (A/B)',fr:(a.name)+' · '+prev,to:t.candidate,status:'Promoted',note:t.id});}
+    persistAgentsV2();
+    mdClose();renderAgents();toast('Model promoted',t.candidate+' now live');
+  });
+}
+/* §5.3.5 · per-task quality vs baseline, trended */
+function agPaneTaskQuality(){
+  var below=LLM_TASKS.filter(function(t){return t.quality<t.baseline;}).length;
+  var head=below?'<div class="warn-note" style="margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>'+below+' task'+(below>1?'s':'')+' below baseline.</b> Review the regressing tasks; a fine-tune or prompt revision may be needed.</p></div>':'';
+  return head+'<div class="panel"><div class="ph"><span class="bullet"></span><h3>Per-task quality vs baseline</h3><span class="meta">'+LLM_TASKS.length+' agent-task pairs · 6-week trend</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th>Task</th><th class="num">Quality</th><th class="num">Baseline</th><th class="num">Delta</th><th>Trend</th></tr></thead><tbody>'+
+  LLM_TASKS.slice().sort(function(a,b){return (a.quality-a.baseline)-(b.quality-b.baseline);}).map(function(t){var d=Math.round((t.quality-t.baseline)*100);return '<tr>'+
+    '<td class="c-name">'+esc(agName(t.agent))+'</td>'+
+    '<td class="c-sec">'+esc(t.task)+'</td>'+
+    '<td class="c-num" style="font-weight:600;color:'+(t.quality>=t.baseline?'var(--deploy)':'var(--dnd)')+'">'+Math.round(t.quality*100)+'%</td>'+
+    '<td class="c-num" style="color:var(--t4)">'+Math.round(t.baseline*100)+'%</td>'+
+    '<td class="c-num" style="color:'+(d>=0?'var(--deploy)':'var(--dnd)')+'">'+(d>=0?'+':'')+d+'pt</td>'+
+    '<td>'+sparkline(t.trend,110,26)+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+/* §5.3.5 · fine-tune pipeline — training runs, eval gates, promotion readiness */
+function agPaneFinetune(){
+  var ready=LLM_TRAINING_RUNS.filter(function(r){return r.readiness==='ready';});
+  var head=ready.length?'<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p style="color:var(--t2)"><b style="color:var(--info)">'+ready.length+' run'+(ready.length>1?'s':'')+' passed all eval gates</b> and are promotion-ready. Promotion is re-auth gated and audited.</p></div>':'';
+  return head+'<div class="panel"><div class="ph"><span class="bullet"></span><h3>Fine-tune pipeline</h3><span class="meta">'+LLM_TRAINING_RUNS.length+' runs</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Run</th><th>Base model</th><th>Dataset</th><th>Safety</th><th>Quality</th><th>Regression</th><th>Readiness</th><th></th></tr></thead><tbody>'+
+  LLM_TRAINING_RUNS.map(function(r){return '<tr>'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(r.id)+'<span class="sub">'+esc(r.started)+'</span></td>'+
+    '<td class="c-mono">'+esc(r.base)+'</td>'+
+    '<td class="c-sec">'+esc(r.dataset)+'</td>'+
+    '<td>'+gateChip(r.gates.safety)+'</td>'+
+    '<td>'+gateChip(r.gates.quality)+'</td>'+
+    '<td>'+gateChip(r.gates.regression)+'</td>'+
+    '<td>'+readinessChip(r.readiness)+'</td>'+
+    '<td>'+(r.readiness==='ready'?'<button class="btn sm primary ftPromote" data-id="'+r.id+'">Promote</button>':'')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+}
+function agBindFinetune(){[].forEach.call(el('agPane').querySelectorAll('.ftPromote'),function(b){b.addEventListener('click',function(){ftPromote(b.getAttribute('data-id'));});});}
+function ftPromote(id){
+  var r=ftById(id);if(!r)return;
+  requireReauth('Promote fine-tune','This promotes '+r.id+' ('+r.base+') into the model registry as a deployable candidate.',function(){
+    r.readiness='promoted';persistAgentsV2();
+    logAudit({carrier:'AI Agents',crit:'Fine-tune promoted',fr:r.id+' · ready',to:'promoted · '+r.base,status:'Promoted',note:r.id});
+    renderAgents();toast('Fine-tune promoted',r.id);
+  });
+}
+/* §5.3.5 · self-evaluation harness — confidence, citation density, claim support */
+function agPaneSelfEval(){
+  var note='<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">Per-output self-evaluation signals emitted by each agent: confidence, citation density (citations per claim) and claim-support score (share of claims backed by retrieved evidence). Low support or low citation density raises a review flag.</p></div>';
+  return note+'<div class="panel"><div class="ph"><span class="bullet"></span><h3>Self-evaluation harness</h3><span class="meta">'+LLM_SELFEVAL.length+' agents</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Agent</th><th class="num">Confidence</th><th class="num">Citation density</th><th class="num">Claim support</th><th class="num">Flagged outputs</th></tr></thead><tbody>'+
+  LLM_SELFEVAL.slice().sort(function(a,b){return a.claimSupport-b.claimSupport;}).map(function(s){return '<tr>'+
+    '<td class="c-name">'+esc(agName(s.agent))+'</td>'+
+    '<td class="c-num" style="font-weight:600;color:'+(s.confidence>=0.85?'var(--deploy)':(s.confidence>=0.75?'var(--watch)':'var(--dnd)'))+'">'+Math.round(s.confidence*100)+'%</td>'+
+    '<td class="c-num">'+(s.citationDensity>0?s.citationDensity.toFixed(1)+' / claim':'<span style="color:var(--t4)">n/a</span>')+'</td>'+
+    '<td class="c-num" style="color:'+(s.claimSupport>=0.9?'var(--deploy)':(s.claimSupport>=0.8?'var(--watch)':'var(--dnd)'))+'">'+Math.round(s.claimSupport*100)+'%</td>'+
+    '<td class="c-num"'+(s.flagged>0?' style="color:var(--watch)"':'')+'>'+s.flagged+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
 }
 
 /* ══════════════════════════════════════════════════════
