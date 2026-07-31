@@ -662,6 +662,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
       <a class="snav" data-v="windex"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l3-4 3 3 4-6"/><circle cx="20" cy="7" r="1.4"/></svg></span><span class="lbl">Watch Index</span><span class="cnt" id="navWindex"></span></a>
       <a class="snav" data-v="bizjet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12l-8-1-3-8h-2l1 8-4 1-2-3H2l2 4-2 4h2l2-3 4 1-1 8h2l3-8 8-1z"/></svg></span><span class="lbl">Bizjet Vertical</span><span class="cnt" id="navBizjet"></span></a>
       <a class="snav" data-v="cdn"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2.4"/><circle cx="19" cy="6" r="2.4"/><circle cx="12" cy="18" r="2.4"/><path d="M7 7.6 10.4 16M17 7.6 13.6 16"/></svg></span><span class="lbl">Deployment Network</span><span class="cnt" id="navCdn"></span></a>
+      <a class="snav" data-v="region"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg></span><span class="lbl">Multi-region</span><span class="cnt" id="navRegion"></span></a>
     </div>
     <div class="sb-foot">Andara Super Admin<br>PRD §3.3 M1 · §4.3 M2 · §5.3 M3<br><span id="footBuild"></span></div>
   </nav>
@@ -686,6 +687,7 @@ document.getElementById('pw').addEventListener('keydown',function(e){if(e.key===
     <section id="vw-windex" class="view" style="display:none"></section>
     <section id="vw-bizjet" class="view" style="display:none"></section>
     <section id="vw-cdn" class="view" style="display:none"></section>
+    <section id="vw-region" class="view" style="display:none"></section>
   </main>
 </div>
 
@@ -2024,6 +2026,7 @@ function updateProductNavCounts(){
   if(typeof hydrateWindex==='function'){hydrateWindex();setNav('navWindex',windexAlertCount(),true);}
   if(typeof hydrateBizjet==='function'){hydrateBizjet();setNav('navBizjet',bizjetAlertCount(),false);}
   if(typeof hydrateCdn==='function'){hydrateCdn();setNav('navCdn',cdnAlertCount(),false);}
+  if(typeof hydrateRegion==='function'){hydrateRegion();setNav('navRegion',regionAlertCount(),true);}
 }
 
 /* ── FleetWatch: aircraft under surveillance across every client (§3.3.4) ── */
@@ -4996,6 +4999,162 @@ function cdnOpenAddProv(){
   });
 }
 
+/* ══════════════════════════════════════════════════════
+   MULTI-REGION OPERATIONS (§5.3.7, new at M3)
+   Failover console (promote the secondary region, observe failover
+   state), region-level health board (per-region service health +
+   replication lag), and the per-client data-residency posture with
+   audit. Residency is CONFIGURED per client in CM v2 (§4.3.1); this
+   surface is the operations roll-up and audit view, not a duplicate.
+══════════════════════════════════════════════════════ */
+var REGIONS=[
+  {id:'af-lagos',city:'Lagos',country:'Nigeria',role:'primary',status:'green',replLagS:0,throughput:1240},
+  {id:'eu-frankfurt',city:'Frankfurt',country:'EU',role:'secondary',status:'green',replLagS:4,throughput:0}
+];
+var REGION_STATE={active:'af-lagos',mode:'normal',rto:'15 min',rpo:'5 min',lastDrill:'2026-06-14',lastDrillResult:'pass'};
+var FAILOVER_LOG=[
+  {ts:'2026-06-14 02:00',event:'Scheduled failover drill: promote Frankfurt',result:'pass',by:'Ops Lead',note:'RTO 11 min, RPO 3 min, tested under load'},
+  {ts:'2026-03-09 02:00',event:'Scheduled failover drill: promote Frankfurt',result:'pass',by:'Ops Lead',note:'RTO 14 min, RPO 4 min'}
+];
+/* map a residency region name (CM v2 free text) onto a live deployment region */
+function residencyToRegion(name){if(/nigeria|lagos|west|central|africa/i.test(name)&&!/eu|frankfurt/i.test(name))return 'af-lagos';if(/eu|frankfurt/i.test(name))return 'eu-frankfurt';return 'af-lagos';}
+function hydrateRegion(){loadState();if(STATE.regions)REGIONS=STATE.regions;if(STATE.regionState)REGION_STATE=Object.assign({},REGION_STATE,STATE.regionState);if(STATE.failoverLog)FAILOVER_LOG=STATE.failoverLog;}
+function persistRegion(){loadState();STATE.regions=REGIONS;STATE.regionState=REGION_STATE;STATE.failoverLog=FAILOVER_LOG;saveState();}
+function regionById(id){var r=null;REGIONS.forEach(function(x){if(x.id===id)r=x;});return r;}
+function regionStatusChip(s){var m={green:['green','Healthy'],amber:['watch','Degraded'],red:['red','Down']};var x=m[s]||['muted',s];return '<span class="ichip '+x[0]+'">'+x[1]+'</span>';}
+function replChip(lag){if(lag===0)return '<span class="ichip muted">Source</span>';var c=lag<10?'green':(lag<30?'watch':'red');return '<span class="ichip '+c+'">'+lag+'s behind</span>';}
+function regionAlertCount(){var n=REGIONS.filter(function(r){return r.status!=='green';}).length;if(REGION_STATE.mode!=='normal')n+=1;return n;}
+function activeRegion(){return regionById(REGION_STATE.active)||REGIONS[0];}
+function standbyRegion(){var a=REGION_STATE.active;var r=null;REGIONS.forEach(function(x){if(x.id!==a)r=x;});return r;}
+
+var regionTab='failover';
+function renderRegion(){
+  hydrateRegion();
+  var degraded=REGIONS.filter(function(r){return r.status!=='green';}).length;
+  var maxLag=REGIONS.reduce(function(m,r){return Math.max(m,r.replLagS);},0);
+  var act=activeRegion();
+  var tabs=[['failover','Failover',REGION_STATE.mode!=='normal'?'!':''],['health','Health board',degraded||''],['residency','Data residency','']];
+  var body=''+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §5.3.7 · M3</div><h1>Multi-region operations</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Failover console, per-region service health and replication lag, and the per-client data-residency posture with audit.</span></div></div>'+
+  '<div class="summary">'+
+    '<div class="cell"><div class="lbl">Active region</div><div class="num" style="font-size:22px">'+esc(act.city)+'</div><div class="cap">'+esc(act.country)+' · '+esc(act.role==='primary'?'primary':'promoted')+'</div></div>'+
+    '<div class="cell"><div class="lbl">Failover mode</div><div class="num'+(REGION_STATE.mode!=='normal'?' alert':' ok')+'" style="font-size:22px">'+(REGION_STATE.mode==='normal'?'Normal':(REGION_STATE.mode==='failed-over'?'Failed over':'Failing over'))+'</div><div class="cap">RTO '+esc(REGION_STATE.rto)+' · RPO '+esc(REGION_STATE.rpo)+'</div></div>'+
+    '<div class="cell"><div class="lbl">Regions</div><div class="num'+(degraded?' due':'')+'">'+REGIONS.length+'</div><div class="cap">'+degraded+' degraded</div></div>'+
+    '<div class="cell"><div class="lbl">Max replication lag</div><div class="num'+(maxLag>=30?' alert':'')+'">'+maxLag+'s</div><div class="cap">Secondary behind primary</div></div>'+
+  '</div>'+
+  '<div class="fb" id="regionTabs">'+tabs.map(function(t){return '<button class="fp'+(regionTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+(t[2]!==''?' <span class="fpn">'+t[2]+'</span>':'')+'</button>';}).join('')+'</div>'+
+  '<div id="regionPane"></div>';
+  el('vw-region').innerHTML=body;
+  [].forEach.call(el('regionTabs').children,function(b){b.addEventListener('click',function(){regionTab=b.getAttribute('data-t');renderRegion();});});
+  regionRenderPane();
+  setNav('navRegion',regionAlertCount(),true);
+}
+function regionRenderPane(){
+  var pane=el('regionPane');
+  if(regionTab==='health'){pane.innerHTML=regionPaneHealth();return;}
+  if(regionTab==='residency'){pane.innerHTML=regionPaneResidency();return;}
+  pane.innerHTML=regionPaneFailover();regionBindFailover();
+}
+/* §5.3.7 · failover console — promote secondary, observe state */
+function regionPaneFailover(){
+  var act=activeRegion();var stb=standbyRegion();
+  var modeNote=REGION_STATE.mode==='failed-over'?
+    '<div class="warn-note" style="margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Failed over.</b> '+esc(act.city)+' is serving as the promoted region. Fail back to the primary once it is healthy.</p></div>':
+    '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p style="color:var(--t2)"><b style="color:var(--info)">Normal operation.</b> '+esc(act.city)+' is primary-active and '+esc(stb?stb.city:'—')+' is a warm standby, replicating continuously.</p></div>';
+  var cards='<div class="d-grid" style="margin-bottom:24px">'+
+    [act,stb].filter(Boolean).map(function(r){var isActive=r.id===REGION_STATE.active;return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>'+esc(r.city)+'</h3><span class="meta">'+esc(r.country)+'</span></div><div class="pb">'+
+      '<div class="kv"><span class="k">Role</span><span class="v">'+(isActive?'<span class="ichip green">Active</span>':'<span class="ichip watch">Standby</span>')+'</span></div>'+
+      '<div class="kv"><span class="k">Service health</span><span class="v">'+regionStatusChip(r.status)+'</span></div>'+
+      '<div class="kv"><span class="k">Replication</span><span class="v">'+replChip(r.replLagS)+'</span></div>'+
+      '<div class="kv"><span class="k">Throughput</span><span class="v">'+(r.throughput>0?r.throughput+' rps':'standby')+'</span></div>'+
+    '</div></div>';}).join('')+
+  '</div>';
+  var ctrl='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Failover control</h3><span class="meta">RTO '+esc(REGION_STATE.rto)+' · RPO '+esc(REGION_STATE.rpo)+'</span></div><div class="pb">'+
+    '<div class="mini3" style="margin-bottom:14px"><div class="m3"><span class="ml">Mode</span><span class="mv" style="font-size:14px">'+(REGION_STATE.mode==='normal'?'Normal':'Failed over')+'</span></div><div class="m3"><span class="ml">Last drill</span><span class="mv" style="font-size:14px">'+esc(REGION_STATE.lastDrill)+'</span></div><div class="m3"><span class="ml">Drill result</span><span class="mv">'+(REGION_STATE.lastDrillResult==='pass'?'<span class="ichip green">Pass</span>':'<span class="ichip red">Fail</span>')+'</span></div></div>'+
+    (REGION_STATE.mode==='normal'?
+      '<button class="btn primary" id="regPromote">Promote '+esc(stb?stb.city:'secondary')+'</button>':
+      '<button class="btn primary" id="regFailback">Fail back to '+esc(REGIONS.filter(function(r){return r.role==='primary';})[0].city)+'</button>')+
+  '</div></div>';
+  var log='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Failover event log</h3><span class="meta">'+FAILOVER_LOG.length+' events</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Timestamp</th><th>Event</th><th>Result</th><th>By</th><th>Note</th></tr></thead><tbody>'+
+  FAILOVER_LOG.map(function(f){return '<tr><td class="c-mono">'+esc(f.ts)+'</td><td class="c-name" style="font-weight:400">'+esc(f.event)+'</td><td>'+(f.result==='pass'?'<span class="ichip green">Pass</span>':(f.result==='fail'?'<span class="ichip red">Fail</span>':'<span class="ichip blue">'+esc(f.result)+'</span>'))+'</td><td class="c-sec">'+esc(f.by)+'</td><td class="c-sec" style="max-width:300px">'+esc(f.note)+'</td></tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return modeNote+cards+ctrl+log;
+}
+function regionBindFailover(){
+  if(el('regPromote'))el('regPromote').addEventListener('click',regionPromote);
+  if(el('regFailback'))el('regFailback').addEventListener('click',regionFailback);
+}
+function regionPromote(){
+  var stb=standbyRegion();if(!stb)return;
+  requireReauth('Promote secondary region','This fails over live traffic to '+stb.city+' ('+stb.country+'). Institutional surfaces will be served from the promoted region.',function(){
+    var prev=activeRegion().city;REGION_STATE.active=stb.id;REGION_STATE.mode='failed-over';
+    FAILOVER_LOG=[{ts:nowStamp().slice(0,16),event:'Manual failover: promoted '+stb.city,result:'promoted',by:profileName(),note:'Live traffic moved from '+prev+' to '+stb.city}].concat(FAILOVER_LOG);
+    persistRegion();
+    logAudit({carrier:'Multi-region',crit:'Region failover promoted',fr:prev+' · normal',to:stb.city+' · failed-over',status:'Promoted',note:stb.id});
+    renderRegion();toast('Failover promoted',stb.city+' is now active');
+  });
+}
+function regionFailback(){
+  var primary=REGIONS.filter(function(r){return r.role==='primary';})[0];if(!primary)return;
+  requireReauth('Fail back to primary','This returns live traffic to the primary region '+primary.city+'.',function(){
+    var prev=activeRegion().city;REGION_STATE.active=primary.id;REGION_STATE.mode='normal';
+    FAILOVER_LOG=[{ts:nowStamp().slice(0,16),event:'Fail back: restored '+primary.city+' as primary',result:'restored',by:profileName(),note:'Live traffic returned from '+prev+' to '+primary.city}].concat(FAILOVER_LOG);
+    persistRegion();
+    logAudit({carrier:'Multi-region',crit:'Region failback',fr:prev+' · failed-over',to:primary.city+' · normal',status:'Restored',note:primary.id});
+    renderRegion();toast('Failed back',primary.city+' restored as primary');
+  });
+}
+/* §5.3.7 · region-level health board — per-region service health + replication lag */
+function regionPaneHealth(){
+  var regionsTbl='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Region health</h3><span class="meta">'+REGIONS.length+' regions</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Region</th><th>Role</th><th>Status</th><th>Replication lag</th><th class="num">Throughput</th></tr></thead><tbody>'+
+  REGIONS.map(function(r){var isActive=r.id===REGION_STATE.active;return '<tr>'+
+    '<td class="c-name">'+esc(r.city)+'<span class="sub">'+esc(r.country)+' · '+esc(r.id)+'</span></td>'+
+    '<td>'+(isActive?'<span class="ichip green">Active</span>':'<span class="ichip watch">Standby</span>')+'</td>'+
+    '<td>'+regionStatusChip(r.status)+'</td>'+
+    '<td>'+replChip(r.replLagS)+'</td>'+
+    '<td class="c-num">'+(r.throughput>0?r.throughput+' rps':'standby')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  var svc=(typeof SERVICES!=='undefined')?SERVICES:[];
+  var matrix='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Per-service replication</h3><span class="meta">'+svc.length+' services · primary &rarr; secondary</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Service</th><th>'+esc(REGIONS[0].city)+' (primary)</th><th>'+esc((standbyRegion()||REGIONS[1]||{city:'secondary'}).city)+' (replica)</th><th>Replication</th></tr></thead><tbody>'+
+  svc.map(function(s){var stbLag=(standbyRegion()||{replLagS:4}).replLagS;return '<tr>'+
+    '<td class="c-name">'+esc(s.name)+'</td>'+
+    '<td>'+regionStatusChip(s.status==='red'?'red':(s.status==='amber'?'amber':'green'))+'</td>'+
+    '<td><span class="ichip blue">Replicating</span></td>'+
+    '<td>'+replChip(stbLag)+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  return regionsTbl+matrix;
+}
+/* §5.3.7 · per-client data-residency posture + audit (configured in CM v2 §4.3.1) */
+function regionPaneResidency(){
+  var clients=CLIENTS.filter(function(c){return c.status!=='offboarded';});
+  var restricted=clients.filter(function(c){return clientResidency(c).dataClass!=='Standard';}).length;
+  var note='<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:24px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><p style="color:var(--t2)">Per-client residency posture. Data is stored and served from each client’s primary region per its residency requirement. Residency is configured on the client record (Client Management v2, §4.3.1); this is the operations posture and audit view.</p></div>';
+  var tbl='<div class="panel" style="margin-bottom:24px"><div class="ph"><span class="bullet"></span><h3>Residency posture</h3><span class="meta">'+clients.length+' clients · '+restricted+' restricted-class</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Client</th><th>Data class</th><th>Primary region</th><th>Failover region</th><th>Served from</th><th>Posture</th></tr></thead><tbody>'+
+  clients.map(function(c){var r=clientResidency(c);var dep=residencyToRegion(r.primary);var depRegion=regionById(dep);var served=depRegion?depRegion.city:r.primary;var ok=REGION_STATE.mode==='normal'||REGION_STATE.active===dep;return '<tr>'+
+    '<td class="c-name">'+esc(c.name)+'<span class="sub">'+esc(c.kind)+' · '+esc(c.region)+'</span></td>'+
+    '<td><span class="ichip '+(r.dataClass==='Standard'?'muted':(r.dataClass==='Highly restricted'?'red':'watch'))+'">'+esc(r.dataClass)+'</span></td>'+
+    '<td class="c-sec">'+esc(r.primary)+'</td>'+
+    '<td class="c-sec">'+esc(r.failover)+'</td>'+
+    '<td class="c-mono">'+esc(served)+'</td>'+
+    '<td>'+(ok?'<span class="ichip green">In residency</span>':'<span class="ichip watch">On failover region</span>')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  var resAudit=AUDIT.filter(function(l){return /residency|data region|routing|failover|failback|region/i.test((l.crit||'')+' '+(l.to||''));});
+  var log='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Residency &amp; region audit</h3><span class="meta">'+resAudit.length+' events</span></div>'+
+  (resAudit.length?'<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Target</th><th>Change</th></tr></thead><tbody>'+
+    resAudit.slice(0,20).map(function(l){return '<tr><td class="c-mono">'+esc(l.ts)+'</td><td class="c-sec">'+esc(l.user)+'</td><td class="c-name" style="font-weight:400">'+esc(l.crit)+'</td><td class="c-sec">'+esc(l.carrier||'—')+'</td><td class="c-mono" style="font-size:12px">'+esc(l.fr||'—')+' &rarr; '+esc(l.to||'—')+'</td></tr>';}).join('')+
+  '</tbody></table></div></div>':'<div class="pb"><div class="empty">No residency or region changes recorded yet. Routing changes (CM v2) and failovers are written here.</div></div>')+
+  '</div>';
+  return note+tbl+log;
+}
+
 /* ══════════════════ PLACEHOLDER AREAS (built in later increments) ══════════════════ */
 function stubPane(target,eyebrow,title,heading,desc,feats,ico){
   el(target).innerHTML=''+
@@ -5030,7 +5189,8 @@ var VIEW_RENDER={
   eapi:renderEapi,
   windex:renderWindex,
   bizjet:renderBizjet,
-  cdn:renderCdn
+  cdn:renderCdn,
+  region:renderRegion
 };
 
 /* ══════════════════ ROUTING / SHELL ══════════════════ */
