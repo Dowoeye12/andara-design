@@ -273,6 +273,11 @@ input,select,textarea{font-family:inherit;color:inherit}
 .rv-mfield input:focus,.rv-mfield textarea:focus{border-color:var(--amber)}
 .rv-mfield textarea{min-height:90px;resize:vertical;line-height:1.5}
 .rv-mfield .help{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.02em}
+.rv-mfield select{width:100%;background:var(--bg);border:1px solid var(--line2);color:var(--t1);font-family:var(--sans);font-size:14px;padding:10px 12px;border-radius:6px;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a93a3' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+.rv-mfield select:focus{border-color:var(--amber)}
+.rv-anom.formal{border-left:3px solid var(--deploy)}
+.rv-anom-meta{font-family:var(--mono);font-size:10px;color:var(--t4);letter-spacing:.03em;margin-top:2px;line-height:1.5}
+.rv-anom-note{font-family:var(--sans);font-size:12.5px;color:var(--t2);line-height:1.5;margin-top:2px;font-style:italic}
 .rv-amend-list{display:flex;flex-direction:column;gap:14px}
 .rv-amend-item label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
 .rv-amend-item input{width:100%;background:var(--bg);border:1px solid var(--line2);color:var(--t1);font-family:var(--sans);font-size:14px;padding:9px 12px;border-radius:6px;outline:none}
@@ -410,11 +415,11 @@ document.addEventListener('click',function(e){
         <div class="feat live"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg></div><div class="body"><b>Pending visits queue</b><span>Submitted visits awaiting senior analyst review.</span></div><span class="tag ichip deploy">Live</span></div>
         <div class="feat live"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="body"><b>Visit review surface</b><span>Per visit drill-down, structured form, photos, scans, extracted fields, draft anomalies.</span></div><span class="tag ichip deploy">Live</span></div>
         <div class="feat live"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div><div class="body"><b>Accept / amend / return</b><span>Approve and close, amend extracted fields, or return to the agent with notes.</span></div><span class="tag ichip deploy">Live</span></div>
-        <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="body"><b>Anomaly classification</b><span>Promote a flagged observation to a formal anomaly with severity.</span></div><span class="tag ichip muted">Next</span></div>
+        <div class="feat live"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div class="body"><b>Anomaly classification</b><span>Promote a flagged observation to a formal anomaly with severity.</span></div><span class="tag ichip deploy">Live</span></div>
       </div>
     </div>
 
-    <div class="foot">Andara FleetWatch Supervisor Review · Internal, Restricted<br>Features shipped: <span>Pending visits queue</span> · <span>Visit review surface</span> · <span>Accept / amend / return</span> · PRD §3.4.4</div>
+    <div class="foot">Andara FleetWatch Supervisor Review · Internal, Restricted<br>Features shipped: <span>Pending visits queue</span> · <span>Visit review surface</span> · <span>Accept / amend / return</span> · <span>Anomaly classification</span> · PRD §3.4.4 complete</div>
   </div>
 
   <!-- REVIEW SURFACE (§3.4.4 #2), rendered by renderReview() -->
@@ -459,7 +464,9 @@ function sevClass(s){
   if(ok.indexOf(s)>=0)return 'ok';
   return 'warn'; /* advisory, minor gaps/deviations, discrepancy, medium, etc. */
 }
-function sevChipCls(s){s=(s||'').toLowerCase();return s==='high'?'dnd':(s==='low'?'info':'watch');}
+function sevChipCls(s){s=(s||'').toLowerCase();return (s==='critical'||s==='high')?'dnd':(s==='low'?'info':'watch');}
+function anomDraftCount(v){return (v.anomalies||[]).filter(function(a){return !a.formal;}).length;}
+function anomFormalCount(v){return (v.anomalies||[]).filter(function(a){return a.formal;}).length;}
 
 /* ══════════════════════════════════════════
    SEEDED SUBMITTED VISITS (PRD §3.4.4 #1)
@@ -576,6 +583,10 @@ function rvRestore(){
       var e=(v.extracted||[]).find(function(x){return x.k===k;});
       if(e){e.v=rec.amendments[k].to;e.amended={from:rec.amendments[k].from};}
     });
+    if(rec.anomalies)Object.keys(rec.anomalies).forEach(function(aid){
+      var a=(v.anomalies||[]).find(function(x){return x.id===aid;});var r=rec.anomalies[aid];
+      if(a){a.formal=r.formal;a.sev=r.sev;a.classification=r.classification;a.note=r.note;a.by=r.by;a.ts=r.ts;}
+    });
   });
 }
 function visitsFor(filter){
@@ -597,7 +608,7 @@ var _clockSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 /* ── stat strip + queue (§3.4.4 #1, filter-aware for #3) ── */
 function renderQueue(){
   var pend=pendingVisits();
-  var anomCount=pend.reduce(function(a,v){return a+(v.anomalies||[]).length;},0);
+  var anomCount=pend.reduce(function(a,v){return a+anomDraftCount(v);},0);
   var oldest=pend.length?waitLabel(pend[0].submittedTs).lbl:'—';
   el('statStrip').innerHTML=''
     +statCell('Pending review',pend.length,'visits awaiting sign-off')
@@ -613,14 +624,15 @@ function renderQueue(){
   el('queueList').innerHTML=list.map(qRow).join('');
 }
 function qRow(v){
-  var s=v.status||'pending', na=(v.anomalies||[]).length, sideTop, sideChip;
+  var s=v.status||'pending', nd=anomDraftCount(v), nf=anomFormalCount(v), sideTop, sideChip;
   if(s==='pending'){var w=waitLabel(v.submittedTs);sideTop=fmtWhen(v.submittedTs);sideChip='<span class="ichip '+w.cls+'">'+w.lbl+'</span>';}
   else if(s==='accepted'){sideTop=v.decision?fmtWhen(v.decision.ts):'';sideChip='<span class="ichip deploy">Accepted</span>';}
   else {sideTop=v.decision?fmtWhen(v.decision.ts):'';sideChip='<span class="ichip watch">Returned</span>';}
+  var anomChip=nd?'<span class="ichip watch">'+nd+' draft anomal'+(nd===1?'y':'ies')+'</span>':(nf?'<span class="ichip deploy">'+nf+' formal</span>':'');
   return '<div class="q-row" onclick="openReview(\''+v.id+'\')">'
     +'<div class="q-ico">'+_acSvg+'</div>'
     +'<div class="q-main">'
-      +'<div class="q-hd"><b>'+v.reg+'</b><span class="ichip">'+esc(v.vtype)+'</span>'+(na?'<span class="ichip watch">'+na+' draft anomal'+(na===1?'y':'ies')+'</span>':'')+'</div>'
+      +'<div class="q-hd"><b>'+v.reg+'</b><span class="ichip">'+esc(v.vtype)+'</span>'+anomChip+'</div>'
       +'<div class="q-sub">'+esc(v.ac)+' · MSN '+esc(v.msn)+' · '+esc(v.op)+'</div>'
       +'<div class="q-meta">'+_pinSvg+'<span>'+esc(v.loc)+'</span><span style="opacity:.5">·</span><span>'+esc(v.agent)+'</span></div>'
     +'</div>'
@@ -704,12 +716,23 @@ function renderReview(v){
   });
   h+='</div></div>';
 
-  /* draft anomalies */
-  h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Draft anomalies</h3><span class="meta">'+na+' flagged</span></div><div>';
+  /* anomalies (§3.4.4 #2 draft view + #4 classification) */
+  var nf=anomFormalCount(v), nd=anomDraftCount(v);
+  var anomMeta=na?(nf?nd+' draft · '+nf+' formal':na+' flagged'):'0';
+  h+='<div class="panel"><div class="ph"><span class="bullet"></span><h3>Anomalies</h3><span class="meta">'+anomMeta+'</span></div><div>';
   if(na){
     (v.anomalies||[]).forEach(function(a){
-      h+='<div class="rv-anom"><div class="rv-anom-body"><h4>'+esc(a.title)+'</h4><p>'+esc(a.body)+'</p>'
-        +'<div class="rv-anom-tags"><span class="ichip '+sevChipCls(a.sev)+'">'+esc(a.sev)+'</span><span class="ichip muted">'+esc(a.source)+'</span><span class="ichip">Draft</span></div></div></div>';
+      if(a.formal){
+        h+='<div class="rv-anom formal"><div class="rv-anom-body"><h4>'+esc(a.title)+'</h4><p>'+esc(a.body)+'</p>'
+          +'<div class="rv-anom-tags"><span class="ichip '+sevChipCls(a.sev)+'">'+esc(a.sev)+'</span><span class="ichip amber">'+esc(a.classification||'Classified')+'</span><span class="ichip muted">'+esc(a.source)+'</span><span class="ichip deploy">Formal</span></div>'
+          +(a.note?'<div class="rv-anom-note">'+esc(a.note)+'</div>':'')
+          +'<div class="rv-anom-meta">Classified by '+esc(a.by||_reviewer)+(a.ts?' · '+fmtWhen(a.ts):'')+'</div>'
+          +'</div><div class="rv-anom-side"><button class="btn sm rv-anom-classify" data-a="'+esc(a.id)+'">Reclassify</button></div></div>';
+      }else{
+        h+='<div class="rv-anom"><div class="rv-anom-body"><h4>'+esc(a.title)+'</h4><p>'+esc(a.body)+'</p>'
+          +'<div class="rv-anom-tags"><span class="ichip '+sevChipCls(a.sev)+'">'+esc(a.sev)+'</span><span class="ichip muted">'+esc(a.source)+'</span><span class="ichip">Draft</span></div></div>'
+          +'<div class="rv-anom-side"><button class="btn sm primary rv-anom-classify" data-a="'+esc(a.id)+'">Classify</button></div></div>';
+      }
     });
   }else h+='<div class="pb"><div class="rv-hint">No anomalies flagged on this visit.</div></div>';
   h+='</div></div>';
@@ -718,7 +741,7 @@ function renderReview(v){
   var s=v.status||'pending';
   if(s==='pending'){
     h+='<div class="panel"><div class="pb" style="gap:12px">'
-      +'<div class="rv-hint">Review the submission above, then accept and close it, amend a mis-read field, or return it to the agent with notes. Formal anomaly classification is §3.4.4 #4 (next).</div>'
+      +'<div class="rv-hint">Review the submission above, classify any flagged observation into a formal anomaly, then accept and close it, amend a mis-read field, or return it to the agent with notes.</div>'
       +'<div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn primary" id="rvAccept">Accept &amp; close</button><button class="btn" id="rvAmend">Amend fields</button><button class="btn" id="rvReturn">Return to agent</button></div>'
       +'</div></div>';
   }else{
@@ -738,6 +761,7 @@ function renderReview(v){
   var ba=el('rvAccept');if(ba)ba.addEventListener('click',function(){rvOpenAccept(v);});
   var bm=el('rvAmend');if(bm)bm.addEventListener('click',function(){rvOpenAmend(v);});
   var br=el('rvReturn');if(br)br.addEventListener('click',function(){rvOpenReturn(v);});
+  [].forEach.call(el('vw-review').querySelectorAll('.rv-anom-classify'),function(b){b.addEventListener('click',function(){rvOpenClassify(v,b.getAttribute('data-a'));});});
 }
 
 /* ── decision modal + toast (§3.4.4 #3) ── */
@@ -802,6 +826,34 @@ function rvOpenAmend(v){
       });
       rvSave(st);rvmClose();
       if(n){toast(n+' field'+(n===1?'':'s')+' amended.');renderReview(v);}else toast('No changes made.');
+    }
+  });
+}
+/* ── anomaly classification (§3.4.4 #4): promote a flagged observation to a formal anomaly ── */
+var RV_ANOM_CATS=['Airworthiness','Maintenance & workmanship','Records & documentation','Regulatory compliance','Operational safety'];
+function anomById(v,id){return (v.anomalies||[]).find(function(a){return a.id===id;});}
+function rvOpenClassify(v,aid){
+  var a=anomById(v,aid);if(!a)return;
+  var already=!!a.formal;
+  var sevOpts=['Critical','High','Medium','Low'].map(function(s){return '<option'+(a.sev===s?' selected':'')+'>'+s+'</option>';}).join('');
+  var catDefault=a.classification||RV_ANOM_CATS[1];
+  var catOpts=RV_ANOM_CATS.map(function(c){return '<option'+(catDefault===c?' selected':'')+'>'+c+'</option>';}).join('');
+  rvmOpen({
+    title:already?'Reclassify anomaly':'Classify anomaly',
+    body:'<div class="rv-msum">Promote the flagged observation on <b>'+esc(v.reg)+'</b> to a formal anomaly. It carries a confirmed severity and category into the report.<br><br><b>'+esc(a.title)+'</b><br>'+esc(a.body)+'</div>'
+      +'<div class="rv-mfield"><label>Severity</label><select id="rvClsSev">'+sevOpts+'</select></div>'
+      +'<div class="rv-mfield"><label>Classification</label><select id="rvClsCat">'+catOpts+'</select></div>'
+      +'<div class="rv-mfield"><label>Rationale (optional)</label><textarea id="rvClsNote" placeholder="Why this severity and category…">'+esc(a.note||'')+'</textarea></div>',
+    confirmLabel:already?'Save classification':'Promote to formal', focus:'rvClsSev',
+    onConfirm:function(){
+      a.sev=el('rvClsSev').value;
+      a.classification=el('rvClsCat').value;
+      a.note=(el('rvClsNote').value||'').trim();
+      a.formal=true;a.by=_reviewer;a.ts=Date.now();
+      var st=rvLoad();var rec=st[v.id]=st[v.id]||{};rec.anomalies=rec.anomalies||{};
+      rec.anomalies[a.id]={formal:true,sev:a.sev,classification:a.classification,note:a.note,by:a.by,ts:a.ts};
+      rvSave(st);
+      rvmClose();toast('Anomaly classified: '+a.sev+' · '+a.classification+'.');renderReview(v);
     }
   });
 }
