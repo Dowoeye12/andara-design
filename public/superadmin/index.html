@@ -2494,7 +2494,7 @@ function invStatusChip(s){var m={paid:['green','Paid'],issued:['blue','Issued'],
 function reconChip(r){var m={Reconciled:['green','Reconciled'],Pending:['muted','Pending'],Failed:['red','Failed']};var x=m[r]||['muted',r];return '<span class="ichip '+x[0]+'">'+esc(r)+'</span>';}
 function methodChip(mth){return '<span class="ichip muted">'+esc(mth)+'</span>';}
 function daysOverdue(inv){return Math.max(0,-daysUntil(inv.due));}
-function dunStageIdx(d){if(d>=90)return 4;if(d>=60)return 3;if(d>=30)return 2;if(d>=15)return 1;return 0;}
+function dunStageIdx(d){if(d>=44)return 2;if(d>=37)return 1;return 0;}
 
 /* ── Billing v2 (§4.3.4): multi-entity, multi-currency, recognition, forecast ── */
 var BILL_ENTITIES=['BAC Intelligence LLC','Andara Systems Ltd'];
@@ -2623,12 +2623,12 @@ function billInvoices(){
 }
 function billDunning(){
   var overdue=INVOICES.filter(function(i){return i.status==='overdue';}).sort(function(a,b){return daysOverdue(b)-daysOverdue(a);});
-  var stages=[['Day 1','First reminder'],['Day 15','Second reminder'],['Day 30','Escalate to CS lead'],['Day 60','Final notice'],['Day 90','Suspend access']];
-  var head='<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><p>Automated dunning ladder per failed payment: Day 1, 15, 30, 60, 90. The current step for each overdue invoice is highlighted; Day 90 triggers access suspension (§3.3.2).</p></div>';
+  var stages=[['Day 30','First reminder'],['Day 37','Second reminder · escalate to CS lead'],['Day 44','Cut off · suspend access']];
+  var head='<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><p>Automated dunning ladder per overdue invoice: a first reminder one month after the due date (Day 30), a second reminder a week later escalated to the CS lead (Day 37), then account cut-off if there is still no response (Day 44). The current step for each overdue invoice is highlighted; cut-off triggers access suspension (§3.3.2).</p></div>';
   if(!overdue.length)return head+'<div class="panel"><div class="empty">No invoices are overdue. Dunning is clear.</div></div>';
   return head+'<div class="panel"><div class="ph"><span class="bullet"></span><h3>Overdue in dunning</h3><span class="meta">'+overdue.length+'</span></div><div class="pb">'+
     overdue.map(function(i){var c=clientById(i.clientId)||{name:'—'};var d=daysOverdue(i);var cur=dunStageIdx(d);
-      var ladder=stages.map(function(s,idx){var cls=idx<cur?'done':(idx===cur?(idx===4?'cur stop':'cur'):'');return '<div class="pl-stage '+cls+'"><div class="pn">'+s[0]+'</div><div class="pt" style="font-size:12.5px">'+s[1]+'</div><div class="pd">'+(idx<cur?'Sent':(idx===cur?'Current':'Pending'))+'</div></div>';}).join('');
+      var ladder=stages.map(function(s,idx){var last=idx===stages.length-1;var cls=idx<cur?'done':(idx===cur?(last?'cur stop':'cur'):'');return '<div class="pl-stage '+cls+'"><div class="pn">'+s[0]+'</div><div class="pt" style="font-size:12.5px">'+s[1]+'</div><div class="pd">'+(idx<cur?'Sent':(idx===cur?'Current':'Pending'))+'</div></div>';}).join('');
       return '<div class="dun-card"><div class="dun-hd"><div class="dh-l"><h4>'+esc(c.name)+'</h4><p>'+esc(i.id)+' · issued '+esc(i.issued)+' · due '+esc(i.due)+' · '+esc(i.method)+'</p></div>'+
         '<div class="dh-r"><div class="dh-amt">'+fmtUsdFull(i.amount)+'</div><span class="ichip red">'+d+'d overdue</span></div></div>'+
         '<div class="pl">'+ladder+'</div></div>';}).join('')+
