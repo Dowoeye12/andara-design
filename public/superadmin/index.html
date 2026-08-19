@@ -106,17 +106,19 @@ a{color:inherit;text-decoration:none}
 .lerr{margin-top:10px;color:var(--dnd);font-family:var(--mono);font-size:10px;letter-spacing:.06em;display:none}
 .lnote{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;color:var(--t3);letter-spacing:.06em;line-height:1.85}
 .lnote b{color:var(--t2);font-weight:600}.lnote span{color:var(--amber)}
-/* FIDO2 security-key stage (§3.3.1, email + hardware key mandatory) */
-#fidoStage{display:none}
-.fido-key{display:flex;flex-direction:column;align-items:center;gap:16px;padding:14px 0 6px}
-.fido-ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--amber-line);background:var(--amber-soft);color:var(--amber);position:relative}
-.fido-ring::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid var(--amber-line);opacity:.5;animation:fidopulse 1.8s ease-out infinite}
+/* Email OTP stage (§3.3.1, email + one-time code mandatory) */
+#otpStage{display:none}
+.otp-key{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0 4px}
+.otp-ring{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--amber-line);background:var(--amber-soft);color:var(--amber);position:relative}
+.otp-ring::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid var(--amber-line);opacity:.5;animation:fidopulse 1.8s ease-out infinite}
 @keyframes fidopulse{0%{transform:scale(.9);opacity:.55}70%{transform:scale(1.18);opacity:0}100%{opacity:0}}
-.fido-ring svg{width:44px;height:44px}
-.fido-cap{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.06em;text-align:center;line-height:1.7}
-.fido-cap b{color:var(--t1);font-weight:600}
-.fido-back{margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);text-align:center;cursor:pointer}
-.fido-back:hover{color:var(--amber)}
+.otp-ring svg{width:40px;height:40px}
+.otp-input{width:100%;text-align:center;font-family:var(--mono);font-size:26px;letter-spacing:.5em;padding:12px 0 12px .5em;font-weight:600;color:var(--display)}
+.otp-cap{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em;text-align:center;line-height:1.7}
+.otp-cap b{color:var(--t1);font-weight:600}
+.otp-resend{font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--amber);cursor:pointer}
+.otp-back{margin-top:14px;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);text-align:center;cursor:pointer}
+.otp-back:hover{color:var(--amber)}
 
 /* ══════════════════════════════════════════ SHELL ══════════════════════════════════════════ */
 #app{display:none;grid-template-columns:248px 1fr;grid-template-rows:var(--tb-h) 1fr;grid-template-areas:"tb tb" "sb mn";height:100vh;background:var(--bg)}
@@ -530,14 +532,14 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
         <div class="lmr"><span>Surface</span><strong>Super Admin Console</strong></div>
         <div class="lmr"><span>PRD</span><strong>§3.3, Master Build v1.6</strong></div>
         <div class="lmr"><span>Access</span><strong>super_admin role only</strong></div>
-        <div class="lmr"><span>Auth</span><strong>Email + FIDO2 hardware key</strong></div>
+        <div class="lmr"><span>Auth</span><strong>Email + one-time code (OTP)</strong></div>
       </div>
     </div>
     <div class="lr">
       <!-- Stage 1: credentials -->
       <div id="credStage">
         <h2>Restricted sign-in</h2>
-        <p>Andara owners only. Email plus a registered FIDO2 hardware key are mandatory. There is no password-only access.</p>
+        <p>Andara owners only. Email plus a one-time code sent to your inbox are mandatory. There is no password-only access.</p>
         <div class="fld"><label>Andara email</label><input id="em" type="email" placeholder="name@andara.com" autocomplete="username"/></div>
         <div class="fld"><label>Access key</label>
           <div class="pw-wrap">
@@ -548,25 +550,28 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
             </button>
           </div>
         </div>
-        <button type="button" class="lbtn" id="lbtn" onclick="_credContinue();return false;">Continue to security key →</button>
+        <button type="button" class="lbtn" id="lbtn" onclick="_credContinue();return false;">Send verification code →</button>
         <div id="lerr" class="lerr">Access key not recognised.</div>
         <div class="lnote">
           <div><b>Demo owner</b>, <span>admin@andara.com</span></div>
           <div><b>Access key</b>, <span>andara2026</span></div>
         </div>
       </div>
-      <!-- Stage 2: simulated FIDO2 hardware key -->
-      <div id="fidoStage">
-        <h2>Security key</h2>
-        <p>Present your registered FIDO2 hardware key to complete sign-in.</p>
-        <div class="fido-key">
-          <div class="fido-ring">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a4 4 0 1 0-3.9 5H14l1.5 1.5L17 12l1.5 1.5L20 12l-2-2h-3.1A4 4 0 0 0 15 7Z"/><circle cx="9" cy="9" r="1"/></svg>
+      <!-- Stage 2: email one-time code (OTP) -->
+      <div id="otpStage">
+        <h2>Email verification</h2>
+        <p>We sent a 6-digit code to <b id="otpEmail">your Andara email</b>. Enter it to complete sign-in.</p>
+        <div class="otp-key">
+          <div class="otp-ring">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="m2 7 10 6 10-6"/></svg>
           </div>
-          <div class="fido-cap">Registered key <b id="fidoKeyId">YubiKey 5C · AND-SK-01</b><br>Touch the key to authenticate.</div>
         </div>
-        <button type="button" class="lbtn" id="fidoBtn" onclick="_fidoTap();return false;">Touch security key</button>
-        <div class="fido-back" onclick="_fidoBack()">← Back to credentials</div>
+        <div class="fld"><label>Verification code</label><input id="otp" class="otp-input" type="text" inputmode="numeric" maxlength="6" placeholder="••••••" autocomplete="one-time-code"/></div>
+        <button type="button" class="lbtn" id="otpBtn" onclick="_otpVerify();return false;">Verify &amp; sign in</button>
+        <div id="lerr2" class="lerr">Code not recognised.</div>
+        <div class="otp-cap">Didn't get it? <span class="otp-resend" onclick="_otpResend()">Resend code</span></div>
+        <div class="lnote"><div><b>Demo code</b>, <span id="otpDemo">------</span></div><div style="color:var(--t4)">No real email is sent in the demo.</div></div>
+        <div class="otp-back" onclick="_otpBack()">← Back to credentials</div>
       </div>
     </div>
   </div>
@@ -581,7 +586,14 @@ function _saAuthEvent(action,email,status,note){
     arr.unshift({ts:ts,user:email||'',crit:action,src:'Auth',status:status,note:note||'',ip:''});
     if(arr.length>200)arr.length=200;localStorage.setItem(key,JSON.stringify(arr));}catch(_){}
 }
-var _pendingEmail='';
+var _pendingEmail='',_otpCode='';
+function _genOtp(){return String(Math.floor(100000+Math.random()*900000));}
+function _sendOtp(em){
+  _otpCode=_genOtp();
+  var d=document.getElementById('otpDemo');if(d)d.textContent=_otpCode;
+  var oe=document.getElementById('otpEmail');if(oe)oe.textContent=em;
+  _saAuthEvent('OTP sent',em,'Pending code','One-time code emailed for sign-in');
+}
 function _credContinue(){
   var em=(document.getElementById('em').value||'').trim();
   var pw=(document.getElementById('pw').value||'').trim();
@@ -589,31 +601,41 @@ function _credContinue(){
   if(!em||!pw){err.textContent='Both fields required.';err.style.display='block';_saAuthEvent('Login attempt',em||'','Rejected · missing fields','Email and access key required');return;}
   if(pw!=='andara2026'){err.textContent='Access key not recognised.';err.style.display='block';_saAuthEvent('Login attempt',em,'Rejected · bad key','Access key not recognised');return;}
   err.style.display='none';_pendingEmail=em;
-  _saAuthEvent('Access key verified',em,'Pending key','Awaiting FIDO2 hardware key');
+  _sendOtp(em);
   document.getElementById('credStage').style.display='none';
-  document.getElementById('fidoStage').style.display='block';
+  document.getElementById('otpStage').style.display='block';
+  var oi=document.getElementById('otp');if(oi){oi.value='';setTimeout(function(){oi.focus();},40);}
 }
-function _fidoBack(){
-  document.getElementById('fidoStage').style.display='none';
+function _otpBack(){
+  document.getElementById('otpStage').style.display='none';
   document.getElementById('credStage').style.display='block';
+  var e2=document.getElementById('lerr2');if(e2)e2.style.display='none';
 }
-function _fidoTap(){
-  var btn=document.getElementById('fidoBtn');btn.disabled=true;btn.textContent='Verifying key ...';
+function _otpResend(){_sendOtp(_pendingEmail);var e2=document.getElementById('lerr2');if(e2)e2.style.display='none';var oi=document.getElementById('otp');if(oi){oi.value='';oi.focus();}}
+function _otpVerify(){
+  var em=_pendingEmail;
+  var code=(document.getElementById('otp').value||'').trim();
+  var e2=document.getElementById('lerr2');
+  if(code!==_otpCode){if(e2){e2.textContent='Code not recognised.';e2.style.display='block';}_saAuthEvent('OTP verification',em,'Rejected · bad code','Email one-time code did not match');return;}
+  if(e2)e2.style.display='none';
+  var btn=document.getElementById('otpBtn');btn.disabled=true;btn.textContent='Verifying ...';
   setTimeout(function(){
-    var em=_pendingEmail;
     try{localStorage.setItem('andara.sa.auth',JSON.stringify({email:em,ts:Date.now()}));}catch(_){}
-    _saAuthEvent('Login',em,'Authenticated','Email + FIDO2 hardware key');
+    _saAuthEvent('Login',em,'Authenticated','Email + one-time code (OTP)');
     document.getElementById('login').style.display='none';
     document.getElementById('app').style.display='grid';
-    btn.disabled=false;btn.textContent='Touch security key';
+    btn.disabled=false;btn.textContent='Verify & sign in';
     // reset to stage 1 for next time
-    document.getElementById('fidoStage').style.display='none';
+    document.getElementById('otpStage').style.display='none';
     document.getElementById('credStage').style.display='block';
+    _otpCode='';
     if(typeof enterConsole==='function'){try{enterConsole(em);}catch(e){console.error('[login] enterConsole threw:',e);}}
-  },720);
+  },560);
 }
 document.getElementById('em').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();document.getElementById('pw').focus();}});
 document.getElementById('pw').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();_credContinue();}});
+document.getElementById('otp').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();_otpVerify();}});
+document.getElementById('otp').addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'').slice(0,6);});
 </script>
 
 <!-- ══════════════════════════════ APP ══════════════════════════════ -->
@@ -1221,20 +1243,25 @@ window.addEventListener('keydown',function(e){if(e.key==='Escape'&&el('mdBack').
 
 /* ── re-auth gate for sensitive actions (§3.3.1 re-auth on sensitive actions) ── */
 function requireReauth(title,intent,proceed){
+  var em=saEmail();
+  var code=String(Math.floor(100000+Math.random()*900000));
+  _saAuthEvent('OTP sent',em,'Pending code','One-time code emailed to confirm: '+intent);
   mdOpen({
     title:title,
     body:''+
-      '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><p><b>Sensitive action.</b> '+esc(intent)+' Re-enter your access key to confirm identity.</p></div>'+
-      '<div class="mfield"><label>Access key</label><input id="reauthKey" type="password" class="mono" placeholder="•••••••••" autocomplete="off"/><div class="helper">Re-authentication is required and logged for every sensitive control (§3.3.1).</div></div>',
+      '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="m4 7 8 5 8-5"/></svg><p><b>Sensitive action.</b> '+esc(intent)+' Enter the 6-digit code emailed to <b>'+esc(em)+'</b> to confirm.</p></div>'+
+      '<div class="mfield"><label>Email verification code</label><input id="reauthKey" type="text" inputmode="numeric" maxlength="6" class="mono" placeholder="••••••" autocomplete="one-time-code" style="letter-spacing:.4em;font-size:18px;text-align:center"/><div class="helper">A one-time code was sent to your Andara email. Demo code, <b id="reauthDemo">'+code+'</b> · <span style="color:var(--amber);cursor:pointer" id="reauthResend">Resend</span>. Re-authentication is required and logged for every sensitive control (§3.3.1).</div></div>',
     foot:'<button class="btn sm" id="reauthCancel">Cancel</button><button class="btn sm primary" id="reauthOk">Confirm identity</button>',
     onMount:function(){
       var inp=el('reauthKey');inp.focus();
+      inp.addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'').slice(0,6);});
       var go=function(){
-        if((inp.value||'').trim()!=='andara2026'){inp.style.borderColor='var(--dnd)';toast('Re-authentication failed','Access key not recognised.');_saAuthEvent('Re-auth',saEmail(),'Rejected · bad key',intent);return;}
-        _saAuthEvent('Re-auth',saEmail(),'Confirmed',intent);proceed();
+        if((inp.value||'').trim()!==code){inp.style.borderColor='var(--dnd)';toast('Re-authentication failed','Verification code did not match.');_saAuthEvent('Re-auth',em,'Rejected · bad code',intent);return;}
+        _saAuthEvent('Re-auth',em,'Confirmed · email OTP',intent);proceed();
       };
       el('reauthOk').addEventListener('click',go);
       el('reauthCancel').addEventListener('click',mdClose);
+      el('reauthResend').addEventListener('click',function(){code=String(Math.floor(100000+Math.random()*900000));el('reauthDemo').textContent=code;inp.value='';inp.style.borderColor='';inp.focus();_saAuthEvent('OTP sent',em,'Pending code','Code resent to confirm: '+intent);});
       inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
     }
   });
@@ -2975,13 +3002,13 @@ var DELIVERABLE_LOG=[
   {ts:'2026-06-15 11:40',user:'admin@andara.com',deliverable:'Audit export',deliverableId:'AND-AX-0042',ip:'102.89.34.1',token:'tok-audit9'}
 ];
 var AUTH_SEED=[
-  {ts:'2026-07-23 06:41',user:'dikko@andara.com',crit:'Login',src:'Auth',status:'Authenticated',note:'Email + FIDO2 hardware key',ip:'102.89.34.1'},
-  {ts:'2026-07-22 15:12',user:'amara.eze@andara.com',crit:'Login',src:'Auth',status:'Authenticated',note:'Email + FIDO2',ip:'102.89.34.18'},
+  {ts:'2026-07-23 06:41',user:'dikko@andara.com',crit:'Login',src:'Auth',status:'Authenticated',note:'Email + one-time code (OTP)',ip:'102.89.34.1'},
+  {ts:'2026-07-22 15:12',user:'amara.eze@andara.com',crit:'Login',src:'Auth',status:'Authenticated',note:'Email + one-time code (OTP)',ip:'102.89.34.18'},
   {ts:'2026-07-22 09:05',user:'unknown@andara.com',crit:'Login attempt',src:'Auth',status:'Rejected · bad key',note:'Access key not recognised',ip:'45.221.9.7'},
-  {ts:'2026-07-21 11:48',user:'ngozi.okafor@andara.com',crit:'MFA enrolment',src:'Auth',status:'Pending',note:'Security key enrolment sent',ip:'102.89.34.19'},
+  {ts:'2026-07-21 11:48',user:'ngozi.okafor@andara.com',crit:'MFA enrolment',src:'Auth',status:'Pending',note:'Email OTP enrolment sent',ip:'102.89.34.19'},
   {ts:'2026-07-20 08:22',user:'grace.adeyemi@andara.com',crit:'Password reset',src:'Auth',status:'Completed',note:'Self-service reset',ip:'102.89.34.24'},
   {ts:'2026-07-19 17:03',user:'field.agent@andara.com',crit:'Login',src:'Auth',status:'Authenticated',note:'Offline-cached credential',ip:'102.89.40.2'},
-  {ts:'2026-07-15 22:14',user:'lara.cohen@andara.com',crit:'Login attempt',src:'Auth',status:'Rejected · MFA',note:'No security key registered',ip:'102.89.34.20'}
+  {ts:'2026-07-15 22:14',user:'lara.cohen@andara.com',crit:'Login attempt',src:'Auth',status:'Rejected · OTP',note:'One-time code not verified',ip:'102.89.34.20'}
 ];
 function audAuthEvents(){var arr=AUTH_SEED.slice();try{var live=JSON.parse(localStorage.getItem('andara.sa.audit.auth.v1')||'[]');arr=live.concat(arr);}catch(_){}
   return arr.sort(function(a,b){return (b.ts||'').localeCompare(a.ts||'');});}
@@ -5258,6 +5285,7 @@ function doSignOut(idle){
   if(idleTimer)clearInterval(idleTimer);
   _saAuthEvent('Sign out',email,idle?'Idle timeout':'Signed out',idle?'Session expired after 60 min idle':'Console session ended');
   el('app').style.display='none';el('login').style.display='flex';el('pw').value='';
+  var os=el('otpStage'),cs=el('credStage');if(os)os.style.display='none';if(cs)cs.style.display='block';var oi=el('otp');if(oi)oi.value='';
   if(idle)toast('Session expired','Signed out after 60 minutes idle. Sign in again.');
 }
 el('signOut').addEventListener('click',function(){doSignOut(false);});
@@ -5272,7 +5300,7 @@ document.addEventListener('click',function(e){
   if(on)on.style.display=showing?'':'none';if(off)off.style.display=showing?'none':'';
 });
 
-/* restore session (skips FIDO stage, already authenticated) */
+/* restore session (skips OTP stage, already authenticated) */
 (function tryRestoreSession(){
   try{var raw=localStorage.getItem('andara.sa.auth');if(!raw)return;var a=JSON.parse(raw);if(!a||!a.email)return;
     _saAuthEvent('Session restore',a.email,'Authenticated','Restored from local session token');
