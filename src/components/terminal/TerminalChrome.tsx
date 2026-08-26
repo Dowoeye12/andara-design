@@ -69,6 +69,9 @@ export const TERMINAL_CSS = `
 .fw-nav-links a.active{color:var(--fw-amber);border-color:var(--fw-border-bright);background:var(--fw-panel)}
 .fw-cta,a.fw-cta{font-family:var(--fw-fm);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#000;background:var(--fw-amber);padding:11px 18px;display:inline-flex;align-items:center;gap:9px;transition:.2s;font-weight:600;border:0;cursor:pointer}
 .fw-cta:hover,a.fw-cta:hover{background:#fff;color:#000}
+.fw-login,a.fw-login{font-family:var(--fw-fm);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--fw-text);background:transparent;padding:10px 16px;display:inline-flex;align-items:center;gap:8px;transition:.2s;font-weight:600;border:1px solid var(--fw-border-bright);cursor:pointer}
+.fw-login:hover,a.fw-login:hover{border-color:var(--fw-amber);color:var(--fw-amber)}
+.fw-nav-actions{display:flex;align-items:center;gap:16px}
 .fw-burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:0}
 .fw-burger span{width:22px;height:2px;background:var(--fw-amber);display:block}
 
@@ -246,7 +249,7 @@ export const TERMINAL_CSS = `
   .fw-score-tabs{grid-template-columns:repeat(5,1fr)}
 }
 @media(max-width:760px){
-  .fw-nav-links,.fw-cta{display:none}
+  .fw-nav-links,.fw-cta,.fw-login{display:none}
   .fw-burger{display:flex}
   .fw-sec-head{grid-template-columns:1fr;gap:16px}
   .fw-sec-head .desc{justify-self:start}
@@ -325,9 +328,14 @@ export const Nav = ({ ctaHref = "#briefing" }: { ctaHref?: string }) => {
             </Link>
           ))}
         </nav>
-        <a href={ctaHref} className="fw-cta">
-          Request Briefing
-        </a>
+        <div className="fw-nav-actions">
+          <a href="https://app.andarasystems.com/" className="fw-login">
+            Login
+          </a>
+          <a href={ctaHref} className="fw-cta">
+            Request Briefing
+          </a>
+        </div>
         <button className="fw-burger" aria-label="Menu">
           <span />
           <span />
