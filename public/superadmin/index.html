@@ -515,6 +515,30 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
   .phead .desc{display:none}
   .user .who{display:none}
 }
+/* ── Analyst Workspace (scoring-file editor) ── */
+.ws-back{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);background:var(--bg3);border:1px solid var(--line2);border-radius:6px;padding:7px 12px;cursor:pointer;margin-bottom:16px}
+.ws-back:hover{color:var(--amber);border-color:var(--amber-line)}
+.ws-sfhd{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.ws-sfhd .nm{font-family:var(--sans);font-size:22px;font-weight:600;color:var(--display)}
+.ws-sfhd .sub{display:flex;align-items:center;gap:10px;margin-top:6px;font-family:var(--mono);font-size:12px;color:var(--t3)}
+.ws-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:24px}
+.ws-dim{border:1px solid var(--line);border-radius:10px;background:var(--bg2);padding:14px;display:flex;flex-direction:column;gap:8px}
+.ws-dim-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.ws-dim-code{font-family:var(--mono);font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--amber)}
+.ws-dim-w{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--t4)}
+.ws-dim-name{font-family:var(--sans);font-size:12.5px;color:var(--t2);line-height:1.4;min-height:34px}
+.ws-dim-row{display:flex;align-items:center;gap:10px}
+.ws-dim-input{width:66px;background:var(--bg);border:1px solid var(--line2);color:var(--t1);font-family:var(--mono);font-size:16px;font-weight:600;text-align:center;padding:7px 4px;border-radius:6px;outline:none}
+.ws-dim-input:focus{border-color:var(--amber)}
+.ws-dim-input:disabled{opacity:.6;cursor:not-allowed}
+.ws-dim-bar{flex:1;height:8px;border-radius:4px;background:var(--bg3);border:1px solid var(--line);overflow:hidden}
+.ws-dim-fill{height:100%;transition:width .12s,background .12s}
+.ws-prev{border:1px solid var(--line2);border-radius:10px;background:var(--bg3);padding:18px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:24px}
+.ws-prev-num{font-family:var(--mono);font-size:44px;font-weight:700;line-height:1;color:var(--display)}
+.ws-prev-b{display:flex;flex-direction:column;gap:6px}
+.ws-prev-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
+.ws-prev-sub{font-family:var(--mono);font-size:12px;color:var(--t4)}
+.ws-prev-r{margin-left:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
 </style>
 </head>
 <body>
@@ -669,6 +693,7 @@ document.getElementById('otp').addEventListener('input',function(){this.value=th
       <div class="sglabel">Products</div>
       <a class="snav" data-v="fleetwatch"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a1.5 1.5 0 0 0-2-2L14 9 5.8 7.2a.5.5 0 0 0-.5.8l3.4 3.4-1.9 3.1-2.3-.3a.5.5 0 0 0-.5.7l1.5 2.5 2.5 1.5a.5.5 0 0 0 .7-.5l-.3-2.3 3.1-1.9 3.4 3.4a.5.5 0 0 0 .8-.5Z"/></svg></span><span class="lbl">FleetWatch</span><span class="cnt" id="navFleet"></span></a>
       <a class="snav" data-v="arbiter"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 7l7-3 7 3"/><path d="M5 7l-2 5a3 3 0 0 0 6 0Z"/><path d="M19 7l-2 5a3 3 0 0 0 6 0Z"/></svg></span><span class="lbl">Arbiter</span><span class="cnt" id="navArb"></span></a>
+      <a class="snav" data-v="workspace"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v14H4z"/><path d="M4 9h16"/><path d="M8 13h5M8 16h8"/></svg></span><span class="lbl">Analyst Workspace</span><span class="cnt" id="navWs"></span></a>
       <a class="snav" data-v="air"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h13l3 3v13H4Z"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></span><span class="lbl">AIR</span><span class="cnt" id="navAir"></span></a>
     </div>
     <div class="sgroup">
@@ -700,6 +725,7 @@ document.getElementById('otp').addEventListener('input',function(){this.value=th
     <section id="vw-billing" class="view" style="display:none"></section>
     <section id="vw-fleetwatch" class="view" style="display:none"></section>
     <section id="vw-arbiter" class="view" style="display:none"></section>
+    <section id="vw-workspace" class="view" style="display:none"></section>
     <section id="vw-air" class="view" style="display:none"></section>
     <section id="vw-methodology" class="view" style="display:none"></section>
     <section id="vw-audit" class="view" style="display:none"></section>
@@ -2045,6 +2071,7 @@ function updateProductNavCounts(){
   if(typeof hydrateFw==='function')hydrateFw();
   setNav('navFleet',FW_FLEET.filter(function(a){return a.alert==='aog';}).length,true);
   setNav('navArb',SCORING_FILES.filter(function(s){return s.state==='submitted';}).length,false);
+  if(typeof hydrateWs==='function'){hydrateWs();setNav('navWs',SCORING_FILES.filter(function(s){return s.state==='draft'||s.state==='returned';}).length,false);}
   setNav('navAir',AIR_ISSUES.filter(function(i){return i.state!=='delivered';}).length,false);
   if(typeof hydrateInvoices==='function'){hydrateInvoices();setNav('navBilling',INVOICES.filter(function(i){return i.status==='overdue';}).length,true);}
   if(typeof INCIDENTS!=='undefined')setNav('navHealth',INCIDENTS.filter(function(i){return i.status!=='resolved';}).length,true);
@@ -4073,6 +4100,117 @@ function agPaneSelfEval(){
 }
 
 /* ══════════════════════════════════════════════════════
+   ANALYST WORKSPACE — scoring-file editor (§3.4.1)
+   Migrated into the Super Admin from the Credit Intelligence
+   terminal. The interactive scoring surface: open a file, score the
+   five dimensions, see the live composite + hard floor + verdict,
+   and submit to the Scoring Committee.
+══════════════════════════════════════════════════════ */
+var wsState={mode:'queue',sfId:null,filter:'all'};
+function hydrateWs(){loadState();if(STATE.wsEdits){SCORING_FILES.forEach(function(f){var e=STATE.wsEdits[f.id];if(e){if(e.dims)f.dims=e.dims;if(e.state)f.state=e.state;if(e.composite!=null)f.composite=e.composite;if(e.verdict!=null)f.verdict=e.verdict;if(e.updated)f.updated=e.updated;if(e.note!=null)f.note=e.note;}});}}
+function persistWs(){loadState();STATE.wsEdits=STATE.wsEdits||{};SCORING_FILES.forEach(function(f){if(f.dims||f._touched){STATE.wsEdits[f.id]={dims:f.dims,state:f.state,composite:f.composite,verdict:f.verdict,updated:f.updated,note:f.note};}});saveState();}
+function sfById(id){var r=null;SCORING_FILES.forEach(function(f){if(f.id===id)r=f;});return r;}
+function wsEditable(f){return f.state==='draft'||f.state==='returned';}
+function wsDimsFor(f){if(!f.dims){var base=f.composite>0?f.composite:50;f.dims={};DIMS.forEach(function(d){f.dims[d.code]=base;});}return f.dims;}
+function wsRawComposite(dims){var mc=methConfig(),W=mc.weights,s=0;DIMS.forEach(function(d){s+=(dims[d.code]||0)*(W[d.code]||0);});return Math.round(s/100);}
+function wsHardFloorTrip(dims){var mc=methConfig(),hf=mc.hardFloor;return hf.dims.some(function(c){return (dims[c]||0)<hf.threshold;});}
+function wsEffective(dims){var mc=methConfig(),raw=wsRawComposite(dims);return wsHardFloorTrip(dims)?Math.min(raw,mc.hardFloor.cap):raw;}
+function wsVerdictOf(eff){var mc=methConfig(),t=mc.thresholds;return eff>=t.deploy?'deploy':(eff>=t.watch?'watch':'dnd');}
+
+function renderWorkspace(){
+  hydrateWs();
+  if(wsState.mode==='editor'&&wsState.sfId){var f=sfById(wsState.sfId);if(f){wsEditor(f);return;}}
+  wsQueue();
+}
+function wsQueue(){
+  var files=SCORING_FILES;
+  var editable=files.filter(wsEditable).length;
+  var submitted=files.filter(function(f){return f.state==='submitted';}).length;
+  var approved=files.filter(function(f){return f.state==='approved'||f.state==='shipped';}).length;
+  var chips=[['all','All'],['draft','Draft'],['returned','Returned'],['submitted','Submitted'],['approved','Approved'],['shipped','Shipped'],['rejected','Rejected']];
+  var list=files.filter(function(f){return wsState.filter==='all'?true:f.state===wsState.filter;}).slice().sort(function(a,b){return (b.updated||'').localeCompare(a.updated||'');});
+  var body=''+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.1 · Scoring Workspace</div><h1>Analyst Workspace</h1></div>'+
+    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Build and score credit files across the five weighted dimensions, watch the live composite and hard floor, and submit to the Scoring Committee.</span></div></div>'+
+  '<div class="summary">'+
+    '<div class="cell"><div class="lbl">Scoring files</div><div class="num">'+files.length+'</div><div class="cap">Across the portfolio</div></div>'+
+    '<div class="cell"><div class="lbl">Open to edit</div><div class="num'+(editable?' due':'')+'">'+editable+'</div><div class="cap">Draft or returned</div></div>'+
+    '<div class="cell"><div class="lbl">With committee</div><div class="num">'+submitted+'</div><div class="cap">Submitted, awaiting decision</div></div>'+
+    '<div class="cell"><div class="lbl">Approved</div><div class="num">'+approved+'</div><div class="cap">Approved or shipped</div></div>'+
+  '</div>'+
+  '<div class="fb" id="wsFilter">'+chips.map(function(c){var n=c[0]==='all'?files.length:files.filter(function(f){return f.state===c[0];}).length;return '<button class="fp'+(wsState.filter===c[0]?' active':'')+'" data-f="'+c[0]+'">'+c[1]+(n?' <span class="fpn">'+n+'</span>':'')+'</button>';}).join('')+'</div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>My scoring files</h3><span class="meta">'+list.length+'</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Scoring file</th><th>Carrier</th><th>Analyst</th><th class="num">Composite</th><th>Verdict</th><th>State</th><th>Updated</th><th></th></tr></thead><tbody>'+
+  list.map(function(f){return '<tr class="rowclick" data-id="'+esc(f.id)+'">'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(f.id)+'</td>'+
+    '<td class="c-name">'+esc(f.carrier)+'</td>'+
+    '<td class="c-sec">'+esc(analystName(f.analyst))+'</td>'+
+    '<td class="c-num">'+compositeCell(f.composite)+'</td>'+
+    '<td>'+verdictChip(f.verdict)+'</td>'+
+    '<td>'+sfStateChip(f.state)+'</td>'+
+    '<td class="c-mono">'+esc(f.updated||'—')+'</td>'+
+    '<td class="c-go">'+(wsEditable(f)?'<span class="ichip amber">Edit</span>':'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>')+'</td>'+
+  '</tr>';}).join('')+
+  '</tbody></table></div></div></div>';
+  el('vw-workspace').innerHTML=body;
+  [].forEach.call(el('wsFilter').children,function(b){b.addEventListener('click',function(){wsState.filter=b.getAttribute('data-f');renderWorkspace();});});
+  [].forEach.call(el('vw-workspace').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsOpen(tr.getAttribute('data-id'));});});
+  setNav('navWs',SCORING_FILES.filter(function(s){return s.state==='draft'||s.state==='returned';}).length,false);
+}
+function wsOpen(id){wsState.mode='editor';wsState.sfId=id;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;}
+function wsBackToQueue(){wsState.mode='queue';wsState.sfId=null;renderWorkspace();}
+function wsEditor(f){
+  var dims=wsDimsFor(f);var editable=wsEditable(f);
+  var raw=wsRawComposite(dims),trip=wsHardFloorTrip(dims),eff=wsEffective(dims),v=wsVerdictOf(eff);
+  var mc=methConfig();
+  var cards=DIMS.map(function(d){var val=dims[d.code]||0;var col=val>=75?'var(--deploy)':(val>=50?'var(--watch)':'var(--dnd)');return ''+
+    '<div class="ws-dim"><div class="ws-dim-top"><span class="ws-dim-code">'+d.code+'</span><span class="ws-dim-w">weight '+(mc.weights[d.code]||0)+'</span></div>'+
+    '<div class="ws-dim-name">'+esc(d.name)+'</div>'+
+    '<div class="ws-dim-row"><input class="ws-dim-input wsDim" data-code="'+d.code+'" type="number" min="0" max="100" value="'+val+'"'+(editable?'':' disabled')+'/>'+
+    '<div class="ws-dim-bar"><div class="ws-dim-fill" data-fill="'+d.code+'" style="width:'+val+'%;background:'+col+'"></div></div></div></div>';
+  }).join('');
+  var hfBanner=trip?'<div class="warn-note" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Hard floor tripped.</b> '+mc.hardFloor.dims.join(' or ')+' is below '+mc.hardFloor.threshold+', so the composite is capped at '+mc.hardFloor.cap+' and Deploy is blocked.</p></div>':'';
+  var actions=editable
+    ? '<button class="btn primary" id="wsSubmit">Submit to Scoring Committee</button>'
+    : '<span class="ichip muted">Read-only · '+sfStateChip(f.state).replace(/<[^>]+>/g,'')+'</span>';
+  var body=''+
+  '<button class="ws-back" id="wsBack">&larr; Back to queue</button>'+
+  '<div class="ws-sfhd"><div><div class="nm">'+esc(f.carrier)+'</div><div class="sub"><span>'+esc(f.id)+'</span>'+sfStateChip(f.state)+'<span>Analyst '+esc(analystName(f.analyst))+'</span></div></div>'+
+    '<div>'+actions+'</div></div>'+
+  (editable?'':'<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">This file is '+f.state+' and is read-only. Only draft or returned files can be edited.</p></div>')+
+  hfBanner+
+  '<div class="ws-prev"><div class="ws-prev-num" id="wsComposite">'+eff+'</div><div class="ws-prev-b"><span class="ws-prev-lbl">Composite</span><span class="ws-prev-sub" id="wsRaw">'+(trip?'raw '+raw+' · capped at '+mc.hardFloor.cap:'weighted average of five dimensions')+'</span></div><div class="ws-prev-r"><span id="wsVerdict">'+verdictChip(v)+'</span><span class="ws-prev-sub">Deploy &ge;'+mc.thresholds.deploy+' · Watch '+mc.thresholds.watch+'–'+(mc.thresholds.deploy-1)+' · DND &lt;'+mc.thresholds.watch+'</span></div></div>'+
+  '<div class="ws-grid">'+cards+'</div>';
+  el('vw-workspace').innerHTML=body;
+  el('wsBack').addEventListener('click',wsBackToQueue);
+  if(editable){
+    [].forEach.call(el('vw-workspace').querySelectorAll('.wsDim'),function(inp){inp.addEventListener('input',function(){wsOnDimInput(f,inp);});});
+    if(el('wsSubmit'))el('wsSubmit').addEventListener('click',function(){wsSubmit(f);});
+  }
+}
+function wsOnDimInput(f,inp){
+  var code=inp.getAttribute('data-code');var v=parseInt(inp.value,10);if(isNaN(v))v=0;v=Math.max(0,Math.min(100,v));
+  f.dims[code]=v;f._touched=true;
+  var fill=el('vw-workspace').querySelector('[data-fill="'+code+'"]');
+  if(fill){var col=v>=75?'var(--deploy)':(v>=50?'var(--watch)':'var(--dnd)');fill.style.width=v+'%';fill.style.background=col;}
+  var raw=wsRawComposite(f.dims),trip=wsHardFloorTrip(f.dims),eff=wsEffective(f.dims),ver=wsVerdictOf(eff),mc=methConfig();
+  el('wsComposite').textContent=eff;
+  el('wsRaw').textContent=trip?('raw '+raw+' · capped at '+mc.hardFloor.cap):'weighted average of five dimensions';
+  el('wsVerdict').innerHTML=verdictChip(ver);
+  persistWs();
+}
+function wsSubmit(f){
+  if(!wsEditable(f))return;
+  var eff=wsEffective(f.dims),ver=wsVerdictOf(eff);
+  requireReauth('Submit scoring file to committee','This submits '+f.id+' ('+f.carrier+') to the Scoring Committee at composite '+eff+' ('+wsVerdictOf(eff)+').',function(){
+    f.state='submitted';f.composite=eff;f.verdict=ver;f.updated=nowStamp().slice(0,10);f._touched=true;persistWs();
+    logAudit({carrier:f.carrier,crit:'Scoring file submitted',fr:f.id+' · draft',to:'submitted · composite '+eff+' · '+ver,status:'Submitted',note:f.id});
+    if(typeof updateProductNavCounts==='function')updateProductNavCounts();
+    toast('Submitted to committee',f.id+' · composite '+eff);wsBackToQueue();
+  });
+}
+
+/* ══════════════════════════════════════════════════════
    ENTERPRISE API MANAGEMENT (§5.3.1, new at M3)
    Open Platform. Per-tenant quota, endpoint access control,
    consumption analytics + abuse detection, webhook delivery
@@ -5208,6 +5346,7 @@ var VIEW_RENDER={
   billing:renderBilling,
   fleetwatch:renderFleetwatch,
   arbiter:renderArbiter,
+  workspace:renderWorkspace,
   air:renderAir,
   methodology:renderMethodology,
   audit:renderAudit,
@@ -5226,6 +5365,7 @@ function hideAllViews(){[].forEach.call(document.querySelectorAll('.mn .view'),f
 function setActiveNav(v){[].forEach.call(document.querySelectorAll('.sb .snav[data-v]'),function(n){n.classList.toggle('active',n.getAttribute('data-v')===v);});}
 function showView(v){
   hideAllViews();
+  if(v==='workspace'&&typeof wsState!=='undefined')wsState.mode='queue';
   var realView=v==='clientdetail'?'clientdetail':v;
   var t=el('vw-'+realView);if(t)t.style.display='flex';
   _curView=v;
