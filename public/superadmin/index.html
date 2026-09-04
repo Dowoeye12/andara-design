@@ -4107,7 +4107,9 @@ function agPaneSelfEval(){
    and submit to the Scoring Committee.
 ══════════════════════════════════════════════════════ */
 var wsState={mode:'queue',sfId:null,filter:'all'};
-function hydrateWs(){loadState();if(STATE.wsEdits){SCORING_FILES.forEach(function(f){var e=STATE.wsEdits[f.id];if(e){if(e.dims)f.dims=e.dims;if(e.state)f.state=e.state;if(e.composite!=null)f.composite=e.composite;if(e.verdict!=null)f.verdict=e.verdict;if(e.updated)f.updated=e.updated;if(e.note!=null)f.note=e.note;}});}}
+function hydrateWs(){loadState();
+  if(STATE.wsNew){STATE.wsNew.forEach(function(nf){if(!sfById(nf.id))SCORING_FILES.unshift(JSON.parse(JSON.stringify(nf)));});}
+  if(STATE.wsEdits){SCORING_FILES.forEach(function(f){var e=STATE.wsEdits[f.id];if(e){if(e.dims)f.dims=e.dims;if(e.state)f.state=e.state;if(e.composite!=null)f.composite=e.composite;if(e.verdict!=null)f.verdict=e.verdict;if(e.updated)f.updated=e.updated;if(e.note!=null)f.note=e.note;}});}}
 function persistWs(){loadState();STATE.wsEdits=STATE.wsEdits||{};SCORING_FILES.forEach(function(f){if(f.dims||f._touched){STATE.wsEdits[f.id]={dims:f.dims,state:f.state,composite:f.composite,verdict:f.verdict,updated:f.updated,note:f.note};}});saveState();}
 function sfById(id){var r=null;SCORING_FILES.forEach(function(f){if(f.id===id)r=f;});return r;}
 function wsEditable(f){return f.state==='draft'||f.state==='returned';}
@@ -4131,7 +4133,7 @@ function wsQueue(){
   var list=files.filter(function(f){return wsState.filter==='all'?true:f.state===wsState.filter;}).slice().sort(function(a,b){return (b.updated||'').localeCompare(a.updated||'');});
   var body=''+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.1 · Scoring Workspace</div><h1>Analyst Workspace</h1></div>'+
-    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Build and score credit files across the five weighted dimensions, watch the live composite and hard floor, and submit to the Scoring Committee.</span></div></div>'+
+    '<div class="phead-actions"><button class="btn primary" id="wsNew"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New scoring file</button></div></div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Scoring files</div><div class="num">'+files.length+'</div><div class="cap">Across the portfolio</div></div>'+
     '<div class="cell"><div class="lbl">Open to edit</div><div class="num'+(editable?' due':'')+'">'+editable+'</div><div class="cap">Draft or returned</div></div>'+
@@ -4155,7 +4157,35 @@ function wsQueue(){
   el('vw-workspace').innerHTML=body;
   [].forEach.call(el('wsFilter').children,function(b){b.addEventListener('click',function(){wsState.filter=b.getAttribute('data-f');renderWorkspace();});});
   [].forEach.call(el('vw-workspace').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsOpen(tr.getAttribute('data-id'));});});
+  if(el('wsNew'))el('wsNew').addEventListener('click',wsNewFile);
   setNav('navWs',SCORING_FILES.filter(function(s){return s.state==='draft'||s.state==='returned';}).length,false);
+}
+function wsNewFile(){
+  mdOpen({title:'New scoring file',
+    body:''+
+      '<div class="mfield"><label>Carrier</label><input id="wsnCarrier" placeholder="Carrier name (e.g. Air Peace)" autocomplete="off"/><div class="helper">Creates a new draft scoring file for this carrier and opens it, ready for you to input the five dimension scores.</div></div>',
+    foot:'<button class="btn sm" id="wsnCancel">Cancel</button><button class="btn sm primary" id="wsnGo">Create &amp; open</button>',
+    onMount:function(){
+      var inp=el('wsnCarrier');inp.focus();
+      var go=function(){
+        var carrier=(inp.value||'').trim();if(carrier.length<2){toast('Carrier required','Enter the carrier name.');return;}
+        var d=new Date();var ym=''+d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0');
+        var ab=(carrier.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase())||'NEW';
+        var seq=String(SCORING_FILES.filter(function(f){return f.id.indexOf('SF-'+ym)===0;}).length+1).padStart(2,'0');
+        var id='SF-'+ym+'-'+ab+'-'+seq;
+        var an=(typeof profileName==='function'?profileName():'Analyst');
+        var nf={id:id,carrier:carrier,analyst:an,state:'draft',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10)};
+        SCORING_FILES.unshift(nf);
+        loadState();STATE.wsNew=STATE.wsNew||[];STATE.wsNew.unshift(nf);saveState();
+        logAudit({carrier:carrier,crit:'Scoring file created',fr:'—',to:id+' · draft',status:'Created',note:id});
+        if(typeof updateProductNavCounts==='function')updateProductNavCounts();
+        mdClose();toast('Scoring file created',id+' · input the scores');wsOpen(id);
+      };
+      el('wsnGo').addEventListener('click',go);
+      el('wsnCancel').addEventListener('click',mdClose);
+      inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
+    }
+  });
 }
 function wsOpen(id){wsState.mode='editor';wsState.sfId=id;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;}
 function wsBackToQueue(){wsState.mode='queue';wsState.sfId=null;renderWorkspace();}
