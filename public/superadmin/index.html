@@ -548,6 +548,8 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .ws-vault input{margin:0;width:auto}
 .ws-vault .lbl{font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:600}
 .ws-vault .rc{font-family:var(--mono);font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:3px;padding:2px 6px}
+.ws-file{display:flex;align-items:center;gap:12px;height:42px}
+.ws-file-name{font-family:var(--mono);font-size:12px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
 @media(max-width:720px){.ws-evgrid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -4193,47 +4195,54 @@ function wsEvidenceForm(){
       '<div class="mfield"><label>Source classification</label><select id="evClass">'+wsEvOpts(WS_EV_CLASS,'public')+'</select></div>'+
       '<div class="mfield"><label>Mapped scoring criterion</label><select id="evCrit">'+critOpts+'</select></div>'+
       '<div class="mfield"><label>Confidence level</label><select id="evConf">'+wsEvOpts(WS_EV_CONF,'high')+'</select></div>'+
+      '<div class="mfield"><label>Classification</label><select id="evCat"><option value="commercial">Commercial</option><option value="operational">Operational</option></select></div>'+
       '<div class="mfield"><label>Jurisdiction</label><select id="evJur">'+wsEvOpts(WS_EV_JUR,'')+'</select></div>'+
-      '<div class="mfield"><label>Classification</label><label class="ws-vault"><input type="checkbox" id="evVault"/><span class="lbl">Counterparty vault</span><span class="rc">Restricted</span></label></div>'+
+      '<div class="mfield"><label>Restriction</label><label class="ws-vault"><input type="checkbox" id="evVault"/><span class="lbl">Counterparty vault</span><span class="rc">Restricted</span></label></div>'+
+      '<div class="mfield"><label>Evidence file</label><div class="ws-file"><input type="file" id="evFile" style="display:none"/><button type="button" class="btn sm" id="evFileBtn">Add file</button><span class="ws-file-name" id="evFileName">No file selected</span></div></div>'+
     '</div>'+
     '<div class="mfield ws-evfull"><label>Headline</label><input type="text" id="evHead" placeholder="e.g. ASKY executes B787-9 purchase agreement with [Lessor]" autocomplete="off"/></div>'+
     '<div class="mfield ws-evfull"><label>Source citation</label><input type="text" id="evSrc" placeholder="https://… or ANAC-Togo Bulletin 2026/05/xxx" autocomplete="off"/></div>'+
     '<div class="mfield ws-evfull"><label>Analyst observation</label><textarea id="evObs" style="min-height:110px" placeholder="What the source says. What it means for the score. What confidence the analyst attaches. What should be triangulated against this."></textarea></div>'+
-    '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px"><button class="btn primary" id="wsEvSubmit">Submit to methodology engine</button><button class="btn" id="wsEvDraft">Save draft</button></div>'+
+    '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px"><button class="btn primary" id="wsEvSubmit">Submit to scoring committee</button><button class="btn" id="wsEvDraft">Save draft</button></div>'+
   '</div></div>';
   el('vw-workspace').innerHTML=body;
   el('wsEvBack').addEventListener('click',wsBackToQueue);
   el('wsEvSubmit').addEventListener('click',function(){wsSubmitEvidence(false);});
   el('wsEvDraft').addEventListener('click',function(){wsSubmitEvidence(true);});
+  el('evFileBtn').addEventListener('click',function(){el('evFile').click();});
+  el('evFile').addEventListener('change',function(){var fi=this.files&&this.files[0];el('evFileName').textContent=fi?(fi.name+' · '+wsFmtSize(fi.size)):'No file selected';el('evFileBtn').textContent=fi?'Change file':'Add file';});
 }
+function wsFmtSize(b){if(b>=1048576)return (b/1048576).toFixed(1)+' MB';if(b>=1024)return Math.round(b/1024)+' KB';return b+' B';}
 function wsEvCollect(){
-  return {carrier:el('evC').value,cls:el('evClass').value,crit:el('evCrit').value,conf:el('evConf').value,jur:el('evJur').value,vault:!!el('evVault').checked,
-    headline:(el('evHead').value||'').trim(),source:(el('evSrc').value||'').trim(),obs:(el('evObs').value||'').trim()};
+  var fi=el('evFile')&&el('evFile').files?el('evFile').files[0]:null;
+  return {carrier:el('evC').value,cls:el('evClass').value,crit:el('evCrit').value,conf:el('evConf').value,cat:el('evCat').value,jur:el('evJur').value,vault:!!el('evVault').checked,
+    headline:(el('evHead').value||'').trim(),source:(el('evSrc').value||'').trim(),obs:(el('evObs').value||'').trim(),
+    file:fi?{name:fi.name,size:fi.size,type:fi.type}:null};
 }
 function wsSubmitEvidence(isDraft){
   var e=wsEvCollect();
   if(!e.carrier){toast('Carrier required','Select the affected carrier.');return;}
   if(!isDraft){
     if(e.headline.length<10){toast('Headline required','Add a headline (10+ chars).');return;}
-    if(e.source.length<5){toast('Source required','Add a source citation.');return;}
+    if(e.source.length<5&&!e.file){toast('Source required','Add a source citation or attach an evidence file.');return;}
     if(e.obs.length<20){toast('Observation required','Add your observation (20+ chars).');return;}
   }
   var an=(typeof profileName==='function'?profileName():'Analyst');
   var rec=Object.assign({id:'EV-'+Math.random().toString(36).slice(2,8).toUpperCase(),ts:nowStamp(),analyst:an,status:isDraft?'draft':'submitted'},e);
   loadState();STATE.wsEvidence=STATE.wsEvidence||[];STATE.wsEvidence.unshift(rec);saveState();
   if(isDraft){toast('Draft saved',e.carrier+' · '+e.crit.toUpperCase());return;}
-  // ensure a scoring file exists for the carrier (methodology engine will recompute it)
-  var f=null;SCORING_FILES.forEach(function(x){if(x.carrier===e.carrier&&(x.state==='draft'||x.state==='returned'))f=x;});
+  // ensure a scoring file exists for the carrier, then submit it to the Scoring Committee
+  var f=null;SCORING_FILES.forEach(function(x){if(x.carrier===e.carrier&&(x.state==='draft'||x.state==='returned'||x.state==='submitted')&&!f)f=x;});
   if(!f){
     var d=new Date();var ym=''+d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0');
     var ab=(e.carrier.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase())||'NEW';
     var seq=String(SCORING_FILES.filter(function(x){return x.id.indexOf('SF-'+ym)===0;}).length+1).padStart(2,'0');
-    f={id:'SF-'+ym+'-'+ab+'-'+seq,carrier:e.carrier,analyst:an,state:'draft',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10)};
+    f={id:'SF-'+ym+'-'+ab+'-'+seq,carrier:e.carrier,analyst:an,state:'submitted',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10)};
     SCORING_FILES.unshift(f);loadState();STATE.wsNew=STATE.wsNew||[];STATE.wsNew.unshift(f);saveState();
-  }else{f.updated=nowStamp().slice(0,10);f._touched=true;persistWs();}
-  logAudit({carrier:e.carrier,crit:'Evidence submitted to methodology engine',fr:e.crit.toUpperCase()+' · '+e.cls,to:'queued for recompute · '+e.conf+' confidence',status:'Submitted',note:f.id});
+  }else{f.state='submitted';f.updated=nowStamp().slice(0,10);f._touched=true;persistWs();}
+  logAudit({carrier:e.carrier,crit:'Evidence submitted to Scoring Committee',fr:e.crit.toUpperCase()+' · '+(e.cat==='commercial'?'Commercial':'Operational')+(e.file?' · file attached':''),to:'submitted · '+e.conf+' confidence',status:'Submitted',note:f.id});
   if(typeof updateProductNavCounts==='function')updateProductNavCounts();
-  toast('Submitted to methodology engine',e.carrier+' · '+e.crit.toUpperCase()+' evidence queued');
+  toast('Submitted to Scoring Committee',e.carrier+' · '+e.crit.toUpperCase()+' evidence');
   wsBackToQueue();
 }
 function wsOpen(id){wsState.mode='editor';wsState.sfId=id;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;}
