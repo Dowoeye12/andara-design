@@ -4134,6 +4134,8 @@ function wsVerdictOf(eff){var mc=methConfig(),t=mc.thresholds;return eff>=t.depl
 function renderWorkspace(){
   hydrateWs();
   if(wsState.mode==='evidence'){wsEvidenceForm();return;}
+  if(wsState.mode==='requests'){wsRequests();return;}
+  if(wsState.mode==='request'&&wsState.sfId){var rf=sfById(wsState.sfId);if(rf){wsRequestDetail(rf);return;}}
   if(wsState.mode==='editor'&&wsState.sfId){var f=sfById(wsState.sfId);if(f){wsEditor(f);return;}}
   wsQueue();
 }
@@ -4147,7 +4149,7 @@ function wsQueue(){
   var list=files.filter(function(f){return wsState.filter==='all'?true:f.state===wsState.filter;}).slice().sort(function(a,b){return (b.updated||'').localeCompare(a.updated||'');});
   var body=''+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.1 · Scoring Workspace</div><h1>Analyst Workspace</h1><p class="ws-sub">Submit new evidence to the Andara database. Scores update only through the approved methodology engine, never manually.</p></div>'+
-    '<div class="phead-actions"><button class="btn primary" id="wsNew"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New scoring file</button></div></div>'+
+    '<div class="phead-actions" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="wsReq">View all requests'+(submitted?' <span class="fpn">'+submitted+'</span>':'')+'</button><button class="btn primary" id="wsNew"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New scoring file</button></div></div>'+
   '<div class="ws-gov"><b>Scoring governance · '+esc(methConfig().version)+' / v1.0-WA / v1.0-EA</b>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Scoring files</div><div class="num">'+files.length+'</div><div class="cap">Across the portfolio</div></div>'+
@@ -4173,6 +4175,7 @@ function wsQueue(){
   [].forEach.call(el('wsFilter').children,function(b){b.addEventListener('click',function(){wsState.filter=b.getAttribute('data-f');renderWorkspace();});});
   [].forEach.call(el('vw-workspace').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsOpen(tr.getAttribute('data-id'));});});
   if(el('wsNew'))el('wsNew').addEventListener('click',function(){wsState.mode='evidence';wsState.evCarrier='';renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});
+  if(el('wsReq'))el('wsReq').addEventListener('click',function(){wsState.mode='requests';renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});
   setNav('navWs',SCORING_FILES.filter(function(s){return s.state==='draft'||s.state==='returned';}).length,false);
 }
 /* Evidence submission — the analyst's actual input. Scores are computed by the
@@ -4244,6 +4247,89 @@ function wsSubmitEvidence(isDraft){
   if(typeof updateProductNavCounts==='function')updateProductNavCounts();
   toast('Submitted to Scoring Committee',e.carrier+' · '+e.crit.toUpperCase()+' evidence');
   wsBackToQueue();
+}
+
+/* ── Scoring-committee requests: view submitted evidence, approve or return (§3.4.2) ── */
+function wsEvidenceFor(carrier){loadState();return (STATE.wsEvidence||[]).filter(function(e){return e.carrier===carrier&&e.status==='submitted';});}
+function wsLatestEvCat(carrier){var evs=wsEvidenceFor(carrier);return evs.length?evs[0].cat:null;}
+function wsDecisionFor(id){loadState();return (STATE.wsDecisions||{})[id]||null;}
+function wsRequests(){
+  var order={submitted:0,returned:1,approved:2,rejected:3};
+  var rows=SCORING_FILES.filter(function(f){return f.state==='submitted'||f.state==='returned'||f.state==='approved'||f.state==='rejected';}).slice().sort(function(a,b){return (order[a.state]-order[b.state])||(b.updated||'').localeCompare(a.updated||'');});
+  var pending=SCORING_FILES.filter(function(f){return f.state==='submitted';}).length;
+  var body=''+
+  '<button class="ws-back" id="wsReqBack">&larr; Back to workspace</button>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.2 · Scoring Committee</div><h1>Scoring requests</h1><p class="ws-sub">Evidence submissions awaiting the Scoring Committee. Open a request to approve it, or return it to the analyst with a reason.</p></div></div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Requests</h3><span class="meta">'+pending+' pending review</span></div>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Scoring file</th><th>Carrier</th><th>Analyst</th><th>Classification</th><th>Submitted</th><th>Status</th><th></th></tr></thead><tbody>'+
+  (rows.length?rows.map(function(f){var cat=wsLatestEvCat(f.carrier);return '<tr class="rowclick" data-id="'+esc(f.id)+'">'+
+    '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(f.id)+'</td>'+
+    '<td class="c-name">'+esc(f.carrier)+'</td>'+
+    '<td class="c-sec">'+esc(analystName(f.analyst))+'</td>'+
+    '<td>'+(cat?'<span class="ichip '+(cat==='commercial'?'blue':'muted')+'">'+(cat==='commercial'?'Commercial':'Operational')+'</span>':'<span class="c-mono" style="color:var(--t4)">—</span>')+'</td>'+
+    '<td class="c-mono">'+esc(f.updated||'—')+'</td>'+
+    '<td>'+sfStateChip(f.state)+'</td>'+
+    '<td class="c-go">'+(f.state==='submitted'?'<span class="ichip amber">Review</span>':'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>')+'</td>'+
+  '</tr>';}).join(''):'<tr><td colspan="7"><div class="empty">No requests yet. Submitted evidence appears here for committee review.</div></td></tr>')+
+  '</tbody></table></div></div></div>';
+  el('vw-workspace').innerHTML=body;
+  el('wsReqBack').addEventListener('click',wsBackToQueue);
+  [].forEach.call(el('vw-workspace').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsState.mode='request';wsState.sfId=tr.getAttribute('data-id');renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});});
+}
+function wsRequestDetail(f){
+  var evs=wsEvidenceFor(f.carrier);var dec=wsDecisionFor(f.id);
+  var evList=evs.length?evs.map(function(e){return '<div class="lrow"><div class="body"><h4>'+esc(e.headline||'(no headline)')+'</h4>'+
+    '<div class="metaln" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"><span class="ichip '+(e.cat==='commercial'?'blue':'muted')+'">'+(e.cat==='commercial'?'Commercial':'Operational')+'</span><span class="ichip muted">'+esc((e.crit||'').toUpperCase())+'</span><span>'+esc(e.conf||'')+' confidence</span>'+(e.file?'<span class="ichip muted">File: '+esc(e.file.name)+'</span>':'')+'</div>'+
+    (e.obs?'<div class="metaln"><span>'+esc(e.obs)+'</span></div>':'')+
+    (e.source?'<div class="metaln"><span>Source: '+esc(e.source)+'</span></div>':'')+'</div><div class="side"><span class="c-mono" style="font-size:11px;color:var(--t4)">'+esc((e.ts||'').slice(0,16))+'</span></div></div>';}).join(''):'<div class="pb"><div style="font-family:var(--mono);font-size:12px;color:var(--t4)">No evidence records captured for this carrier.</div></div>';
+  var footer;
+  if(f.state==='submitted'){
+    footer='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px"><button class="btn primary" id="wsApprove">Approve</button><button class="btn danger" id="wsReject">Reject / return</button></div>';
+  }else{
+    var cls=f.state==='approved'?'green':(f.state==='rejected'?'red':'watch');
+    footer='<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)"><b>'+(dec?esc(dec.decision):sfStateChip(f.state).replace(/<[^>]+>/g,''))+'</b>'+(dec&&dec.by?' by '+esc(dec.by):'')+(dec&&dec.ts?' · '+esc(dec.ts):'')+(dec&&dec.reason?'<br>Reason: '+esc(dec.reason):'')+'</p></div>';
+  }
+  var body=''+
+  '<button class="ws-back" id="wsReqBack2">&larr; Back to requests</button>'+
+  '<div class="ws-sfhd"><div><div class="nm">'+esc(f.carrier)+'</div><div class="sub"><span>'+esc(f.id)+'</span>'+sfStateChip(f.state)+'<span>Analyst '+esc(analystName(f.analyst))+'</span><span>Submitted '+esc(f.updated||'—')+'</span></div></div></div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Submitted evidence</h3><span class="meta">'+evs.length+' record'+(evs.length===1?'':'s')+'</span></div><div class="pb flush">'+evList+'</div></div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Committee decision</h3></div><div class="pb">'+footer+'</div></div>';
+  el('vw-workspace').innerHTML=body;
+  el('wsReqBack2').addEventListener('click',function(){wsState.mode='requests';renderWorkspace();});
+  if(f.state==='submitted'){
+    el('wsApprove').addEventListener('click',function(){wsApproveRequest(f);});
+    el('wsReject').addEventListener('click',function(){wsRejectRequest(f);});
+  }
+}
+function wsSaveDecision(f,decision,reason){
+  loadState();STATE.wsDecisions=STATE.wsDecisions||{};STATE.wsDecisions[f.id]={decision:decision,by:(typeof profileName==='function'?profileName():'Committee'),ts:nowStamp().slice(0,16),reason:reason||''};saveState();
+  f.updated=nowStamp().slice(0,10);f._touched=true;persistWs();
+  if(typeof updateProductNavCounts==='function')updateProductNavCounts();
+}
+function wsApproveRequest(f){
+  f.state='approved';wsSaveDecision(f,'Approved','');
+  logAudit({carrier:f.carrier,crit:'Committee decision',fr:f.id+' · submitted',to:'approved',status:'Approved',note:f.id});
+  toast('Request approved',f.carrier);
+  wsState.mode='requests';renderWorkspace();
+}
+function wsRejectRequest(f){
+  mdOpen({title:'Return to analyst',
+    body:''+
+      '<div class="msummary"><div class="ml">Request</div><div class="mv">'+esc(f.carrier)+' · '+esc(f.id)+'</div></div>'+
+      '<div class="mfield"><label>Reason for return</label><textarea id="wsRejReason" placeholder="Explain why this is being returned to the analyst, e.g. evidence insufficient, source not verifiable, wrong criterion."></textarea><div class="helper">Required. The analyst sees this reason and can re-submit.</div></div>',
+    foot:'<button class="btn sm" id="wsRejCancel">Cancel</button><button class="btn sm danger" id="wsRejGo">Return to analyst</button>',
+    onMount:function(){
+      var inp=el('wsRejReason');inp.focus();
+      el('wsRejCancel').addEventListener('click',mdClose);
+      el('wsRejGo').addEventListener('click',function(){
+        var reason=(inp.value||'').trim();if(reason.length<15){toast('Reason required','State why it is being returned (15+ chars).');return;}
+        f.state='returned';wsSaveDecision(f,'Returned',reason);
+        logAudit({carrier:f.carrier,crit:'Committee decision',fr:f.id+' · submitted',to:'returned to analyst',status:'Returned',note:reason});
+        mdClose();toast('Returned to analyst',f.carrier);
+        wsState.mode='requests';renderWorkspace();
+      });
+    }
+  });
 }
 function wsOpen(id){wsState.mode='editor';wsState.sfId=id;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;}
 function wsBackToQueue(){wsState.mode='queue';wsState.sfId=null;renderWorkspace();}
