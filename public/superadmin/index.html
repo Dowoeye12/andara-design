@@ -4250,7 +4250,21 @@ function wsSubmitEvidence(isDraft){
 }
 
 /* ── Scoring-committee requests: view submitted evidence, approve or return (§3.4.2) ── */
-function wsEvidenceFor(carrier){loadState();return (STATE.wsEvidence||[]).filter(function(e){return e.carrier===carrier&&e.status==='submitted';});}
+/* seeded evidence for the carriers already submitted in SCORING_FILES (those did not come
+   through the new evidence form, so they have no STATE.wsEvidence records without this). */
+var SEED_WS_EVIDENCE=[
+  {carrier:'Air Peace',cat:'commercial',crit:'pps',conf:'high',headline:'Air Peace clears Q2 lessor arrears, confirmed by two lenders',source:'Lender confirmation letters, Jun 2026',obs:'Two independent lenders confirm full settlement of Q2 arrears; strengthens payment-priority evidence, triangulate against tech-log utilisation.',status:'submitted',ts:'2026-07-20 09:12',analyst:'Tunde Bakare',file:{name:'AirPeace_lender_confirmations.pdf',size:512000,type:'application/pdf'}},
+  {carrier:'ASKY Airlines',cat:'operational',crit:'aps',conf:'medium',headline:'ASKY completes A320 C-check cycle, dispatch reliability up',source:'ASKY operations bulletin 2026/07',obs:'Operational reliability improved after the maintenance cycle; supports airline-performance evidence, triangulate against dispatch data.',status:'submitted',ts:'2026-07-21 11:40',analyst:'Amara Eze',file:null},
+  {carrier:'DHL Aviation South Africa',cat:'commercial',crit:'svs',conf:'high',headline:'DHL expands Johannesburg hub, adds two 767 freighters',source:'DHL press release + fleet registry filing, Jul 2026',obs:'Network expansion raises strategic value; confirmed by an independent registry filing.',status:'submitted',ts:'2026-07-19 08:30',analyst:'Amara Eze',file:{name:'DHL_hub_expansion.pdf',size:842000,type:'application/pdf'}},
+  {carrier:'Max Air',cat:'operational',crit:'rcs',conf:'low',headline:'Single secondary report of deferred maintenance backlog',source:'Trade press, unverified',obs:'Only one secondary source; risk-containment signal not yet corroborated, needs a second independent source before it can move the score.',status:'submitted',ts:'2026-07-17 10:05',analyst:'Ngozi Okafor',file:null},
+  {carrier:'Ibom Air',cat:'commercial',crit:'svs',conf:'high',headline:'Ibom Air adds two A220s, expands domestic network',source:'NCAA route approval + lessor announcement',obs:'Fleet and network growth; strategic-value evidence corroborated by regulator filing.',status:'submitted',ts:'2026-07-16 09:00',analyst:'Ngozi Okafor',file:null},
+  {carrier:'RwandAir',cat:'commercial',crit:'pps',conf:'high',headline:'RwandAir refinances A330 on improved terms',source:'Lender term sheet, Jun 2026',obs:'Refinancing at better terms supports payment-priority; confirmed by the term sheet.',status:'submitted',ts:'2026-07-15 14:20',analyst:'Amara Eze',file:{name:'RwandAir_termsheet.pdf',size:391000,type:'application/pdf'}},
+  {carrier:'Azman Air',cat:'operational',crit:'rcs',conf:'high',headline:'Regulator flags airworthiness documentation gaps',source:'NCAA audit summary, May 2026',obs:'Material risk-containment concern; documentation gaps corroborated by the regulator audit.',status:'submitted',ts:'2026-05-30 08:40',analyst:'Tunde Bakare',file:null}
+];
+function wsEvidenceFor(carrier){loadState();
+  var live=(STATE.wsEvidence||[]).filter(function(e){return e.carrier===carrier&&e.status==='submitted';});
+  var seed=SEED_WS_EVIDENCE.filter(function(e){return e.carrier===carrier;});
+  return live.concat(seed);}
 function wsLatestEvCat(carrier){var evs=wsEvidenceFor(carrier);return evs.length?evs[0].cat:null;}
 function wsDecisionFor(id){loadState();return (STATE.wsDecisions||{})[id]||null;}
 function wsRequests(){
