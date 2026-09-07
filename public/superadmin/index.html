@@ -539,6 +539,16 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .ws-prev-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3)}
 .ws-prev-sub{font-family:var(--mono);font-size:12px;color:var(--t4)}
 .ws-prev-r{margin-left:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.ws-gov{font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:8px;padding:12px 16px;margin-bottom:24px}
+.ws-gov b{color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:2px;font-size:11px}
+.ws-sub{font-family:var(--sans);font-size:14px;color:var(--t2);line-height:1.5;margin:6px 0 0;max-width:660px}
+.ws-evgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;margin-bottom:16px}
+.ws-evgrid .mfield,.ws-evfull{margin-bottom:16px}
+.ws-vault{display:flex;align-items:center;gap:10px;padding:0 12px;height:42px;background:var(--bg3);border:1px solid var(--line2);border-radius:6px;cursor:pointer}
+.ws-vault input{margin:0;width:auto}
+.ws-vault .lbl{font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:600}
+.ws-vault .rc{font-family:var(--mono);font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:3px;padding:2px 6px}
+@media(max-width:720px){.ws-evgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -4121,9 +4131,11 @@ function wsVerdictOf(eff){var mc=methConfig(),t=mc.thresholds;return eff>=t.depl
 
 function renderWorkspace(){
   hydrateWs();
+  if(wsState.mode==='evidence'){wsEvidenceForm();return;}
   if(wsState.mode==='editor'&&wsState.sfId){var f=sfById(wsState.sfId);if(f){wsEditor(f);return;}}
   wsQueue();
 }
+function wsCarriers(){var seen={},out=[];SCORING_FILES.forEach(function(f){if(!seen[f.carrier]){seen[f.carrier]=1;out.push(f.carrier);}});return out.sort();}
 function wsQueue(){
   var files=SCORING_FILES;
   var editable=files.filter(wsEditable).length;
@@ -4132,8 +4144,9 @@ function wsQueue(){
   var chips=[['all','All'],['draft','Draft'],['returned','Returned'],['submitted','Submitted'],['approved','Approved'],['shipped','Shipped'],['rejected','Rejected']];
   var list=files.filter(function(f){return wsState.filter==='all'?true:f.state===wsState.filter;}).slice().sort(function(a,b){return (b.updated||'').localeCompare(a.updated||'');});
   var body=''+
-  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.1 · Scoring Workspace</div><h1>Analyst Workspace</h1></div>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.1 · Scoring Workspace</div><h1>Analyst Workspace</h1><p class="ws-sub">Submit new evidence to the Andara database. Scores update only through the approved methodology engine, never manually.</p></div>'+
     '<div class="phead-actions"><button class="btn primary" id="wsNew"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New scoring file</button></div></div>'+
+  '<div class="ws-gov"><b>Scoring governance · '+esc(methConfig().version)+' / v1.0-WA / v1.0-EA</b>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Scoring files</div><div class="num">'+files.length+'</div><div class="cap">Across the portfolio</div></div>'+
     '<div class="cell"><div class="lbl">Open to edit</div><div class="num'+(editable?' due':'')+'">'+editable+'</div><div class="cap">Draft or returned</div></div>'+
@@ -4157,35 +4170,71 @@ function wsQueue(){
   el('vw-workspace').innerHTML=body;
   [].forEach.call(el('wsFilter').children,function(b){b.addEventListener('click',function(){wsState.filter=b.getAttribute('data-f');renderWorkspace();});});
   [].forEach.call(el('vw-workspace').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsOpen(tr.getAttribute('data-id'));});});
-  if(el('wsNew'))el('wsNew').addEventListener('click',wsNewFile);
+  if(el('wsNew'))el('wsNew').addEventListener('click',function(){wsState.mode='evidence';wsState.evCarrier='';renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});
   setNav('navWs',SCORING_FILES.filter(function(s){return s.state==='draft'||s.state==='returned';}).length,false);
 }
-function wsNewFile(){
-  mdOpen({title:'New scoring file',
-    body:''+
-      '<div class="mfield"><label>Carrier</label><input id="wsnCarrier" placeholder="Carrier name (e.g. Air Peace)" autocomplete="off"/><div class="helper">Creates a new draft scoring file for this carrier and opens it, ready for you to input the five dimension scores.</div></div>',
-    foot:'<button class="btn sm" id="wsnCancel">Cancel</button><button class="btn sm primary" id="wsnGo">Create &amp; open</button>',
-    onMount:function(){
-      var inp=el('wsnCarrier');inp.focus();
-      var go=function(){
-        var carrier=(inp.value||'').trim();if(carrier.length<2){toast('Carrier required','Enter the carrier name.');return;}
-        var d=new Date();var ym=''+d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0');
-        var ab=(carrier.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase())||'NEW';
-        var seq=String(SCORING_FILES.filter(function(f){return f.id.indexOf('SF-'+ym)===0;}).length+1).padStart(2,'0');
-        var id='SF-'+ym+'-'+ab+'-'+seq;
-        var an=(typeof profileName==='function'?profileName():'Analyst');
-        var nf={id:id,carrier:carrier,analyst:an,state:'draft',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10)};
-        SCORING_FILES.unshift(nf);
-        loadState();STATE.wsNew=STATE.wsNew||[];STATE.wsNew.unshift(nf);saveState();
-        logAudit({carrier:carrier,crit:'Scoring file created',fr:'—',to:id+' · draft',status:'Created',note:id});
-        if(typeof updateProductNavCounts==='function')updateProductNavCounts();
-        mdClose();toast('Scoring file created',id+' · input the scores');wsOpen(id);
-      };
-      el('wsnGo').addEventListener('click',go);
-      el('wsnCancel').addEventListener('click',mdClose);
-      inp.addEventListener('keydown',function(e){if(e.key==='Enter')go();});
-    }
-  });
+/* Evidence submission — the analyst's actual input. Scores are computed by the
+   methodology engine from evidence; analysts never type a score (§3.4.1 governance). */
+var WS_EV_CLASS=[['public','Public-domain'],['private','Private Andara intelligence'],['regulatory','Regulatory filing'],['financial','Financial / lender'],['legal','Legal / court'],['ops','Operational'],['macro','Macroeconomic']];
+var WS_EV_CONF=[['high','High · two+ sources'],['medium','Medium · one reputable trade source'],['low','Low · single secondary']];
+var WS_EV_JUR=[['','— Auto from carrier —'],['NG','Nigeria · NGN'],['TG','Togo · XOF'],['GH','Ghana · GHS'],['CI','Côte d\'Ivoire · XOF'],['KE','Kenya · KES'],['ET','Ethiopia · ETB'],['ZA','South Africa · ZAR'],['EG','Egypt · EGP'],['AO','Angola · AOA']];
+function wsEvOpts(list,sel){return list.map(function(o){return '<option value="'+esc(o[0])+'"'+(o[0]===sel?' selected':'')+'>'+esc(o[1])+'</option>';}).join('');}
+function wsEvidenceForm(){
+  var pre=wsState.evCarrier||'';
+  var carrierOpts='<option value="">— Select —</option>'+wsCarriers().map(function(c){return '<option'+(c===pre?' selected':'')+'>'+esc(c)+'</option>';}).join('');
+  var critOpts=DIMS.map(function(d){return '<option value="'+d.code.toLowerCase()+'">'+d.code+' — '+esc(d.name.replace(/ Score$/,''))+'</option>';}).join('');
+  var body=''+
+  '<button class="ws-back" id="wsEvBack">&larr; Back to queue</button>'+
+  '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.1 · Analyst Workspace</div><h1>New evidence submission</h1><p class="ws-sub">Submit new evidence to the Andara database. Scores update only through the approved methodology engine, never manually.</p></div></div>'+
+  '<div class="ws-gov"><b>Scoring governance · '+esc(methConfig().version)+' / v1.0-WA / v1.0-EA</b>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>'+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>New evidence submission</h3><span class="meta">Audited · attributable</span></div><div class="pb">'+
+    '<div class="ws-evgrid">'+
+      '<div class="mfield"><label>Affected carrier</label><select id="evC">'+carrierOpts+'</select></div>'+
+      '<div class="mfield"><label>Source classification</label><select id="evClass">'+wsEvOpts(WS_EV_CLASS,'public')+'</select></div>'+
+      '<div class="mfield"><label>Mapped scoring criterion</label><select id="evCrit">'+critOpts+'</select></div>'+
+      '<div class="mfield"><label>Confidence level</label><select id="evConf">'+wsEvOpts(WS_EV_CONF,'high')+'</select></div>'+
+      '<div class="mfield"><label>Jurisdiction</label><select id="evJur">'+wsEvOpts(WS_EV_JUR,'')+'</select></div>'+
+      '<div class="mfield"><label>Classification</label><label class="ws-vault"><input type="checkbox" id="evVault"/><span class="lbl">Counterparty vault</span><span class="rc">Restricted</span></label></div>'+
+    '</div>'+
+    '<div class="mfield ws-evfull"><label>Headline</label><input type="text" id="evHead" placeholder="e.g. ASKY executes B787-9 purchase agreement with [Lessor]" autocomplete="off"/></div>'+
+    '<div class="mfield ws-evfull"><label>Source citation</label><input type="text" id="evSrc" placeholder="https://… or ANAC-Togo Bulletin 2026/05/xxx" autocomplete="off"/></div>'+
+    '<div class="mfield ws-evfull"><label>Analyst observation</label><textarea id="evObs" style="min-height:110px" placeholder="What the source says. What it means for the score. What confidence the analyst attaches. What should be triangulated against this."></textarea></div>'+
+    '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px"><button class="btn primary" id="wsEvSubmit">Submit to methodology engine</button><button class="btn" id="wsEvDraft">Save draft</button></div>'+
+  '</div></div>';
+  el('vw-workspace').innerHTML=body;
+  el('wsEvBack').addEventListener('click',wsBackToQueue);
+  el('wsEvSubmit').addEventListener('click',function(){wsSubmitEvidence(false);});
+  el('wsEvDraft').addEventListener('click',function(){wsSubmitEvidence(true);});
+}
+function wsEvCollect(){
+  return {carrier:el('evC').value,cls:el('evClass').value,crit:el('evCrit').value,conf:el('evConf').value,jur:el('evJur').value,vault:!!el('evVault').checked,
+    headline:(el('evHead').value||'').trim(),source:(el('evSrc').value||'').trim(),obs:(el('evObs').value||'').trim()};
+}
+function wsSubmitEvidence(isDraft){
+  var e=wsEvCollect();
+  if(!e.carrier){toast('Carrier required','Select the affected carrier.');return;}
+  if(!isDraft){
+    if(e.headline.length<10){toast('Headline required','Add a headline (10+ chars).');return;}
+    if(e.source.length<5){toast('Source required','Add a source citation.');return;}
+    if(e.obs.length<20){toast('Observation required','Add your observation (20+ chars).');return;}
+  }
+  var an=(typeof profileName==='function'?profileName():'Analyst');
+  var rec=Object.assign({id:'EV-'+Math.random().toString(36).slice(2,8).toUpperCase(),ts:nowStamp(),analyst:an,status:isDraft?'draft':'submitted'},e);
+  loadState();STATE.wsEvidence=STATE.wsEvidence||[];STATE.wsEvidence.unshift(rec);saveState();
+  if(isDraft){toast('Draft saved',e.carrier+' · '+e.crit.toUpperCase());return;}
+  // ensure a scoring file exists for the carrier (methodology engine will recompute it)
+  var f=null;SCORING_FILES.forEach(function(x){if(x.carrier===e.carrier&&(x.state==='draft'||x.state==='returned'))f=x;});
+  if(!f){
+    var d=new Date();var ym=''+d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0');
+    var ab=(e.carrier.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase())||'NEW';
+    var seq=String(SCORING_FILES.filter(function(x){return x.id.indexOf('SF-'+ym)===0;}).length+1).padStart(2,'0');
+    f={id:'SF-'+ym+'-'+ab+'-'+seq,carrier:e.carrier,analyst:an,state:'draft',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10)};
+    SCORING_FILES.unshift(f);loadState();STATE.wsNew=STATE.wsNew||[];STATE.wsNew.unshift(f);saveState();
+  }else{f.updated=nowStamp().slice(0,10);f._touched=true;persistWs();}
+  logAudit({carrier:e.carrier,crit:'Evidence submitted to methodology engine',fr:e.crit.toUpperCase()+' · '+e.cls,to:'queued for recompute · '+e.conf+' confidence',status:'Submitted',note:f.id});
+  if(typeof updateProductNavCounts==='function')updateProductNavCounts();
+  toast('Submitted to methodology engine',e.carrier+' · '+e.crit.toUpperCase()+' evidence queued');
+  wsBackToQueue();
 }
 function wsOpen(id){wsState.mode='editor';wsState.sfId=id;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;}
 function wsBackToQueue(){wsState.mode='queue';wsState.sfId=null;renderWorkspace();}
@@ -4193,30 +4242,27 @@ function wsEditor(f){
   var dims=wsDimsFor(f);var editable=wsEditable(f);
   var raw=wsRawComposite(dims),trip=wsHardFloorTrip(dims),eff=wsEffective(dims),v=wsVerdictOf(eff);
   var mc=methConfig();
+  /* scores are computed outputs — always read-only; analysts change them only by submitting evidence */
   var cards=DIMS.map(function(d){var val=dims[d.code]||0;var col=val>=75?'var(--deploy)':(val>=50?'var(--watch)':'var(--dnd)');return ''+
     '<div class="ws-dim"><div class="ws-dim-top"><span class="ws-dim-code">'+d.code+'</span><span class="ws-dim-w">weight '+(mc.weights[d.code]||0)+'</span></div>'+
     '<div class="ws-dim-name">'+esc(d.name)+'</div>'+
-    '<div class="ws-dim-row"><input class="ws-dim-input wsDim" data-code="'+d.code+'" type="number" min="0" max="100" value="'+val+'"'+(editable?'':' disabled')+'/>'+
-    '<div class="ws-dim-bar"><div class="ws-dim-fill" data-fill="'+d.code+'" style="width:'+val+'%;background:'+col+'"></div></div></div></div>';
+    '<div class="ws-dim-row"><input class="ws-dim-input" type="number" value="'+val+'" disabled/>'+
+    '<div class="ws-dim-bar"><div class="ws-dim-fill" style="width:'+val+'%;background:'+col+'"></div></div></div></div>';
   }).join('');
   var hfBanner=trip?'<div class="warn-note" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Hard floor tripped.</b> '+mc.hardFloor.dims.join(' or ')+' is below '+mc.hardFloor.threshold+', so the composite is capped at '+mc.hardFloor.cap+' and Deploy is blocked.</p></div>':'';
-  var actions=editable
-    ? '<button class="btn primary" id="wsSubmit">Submit to Scoring Committee</button>'
-    : '<span class="ichip muted">Read-only · '+sfStateChip(f.state).replace(/<[^>]+>/g,'')+'</span>';
+  var actions='<button class="btn primary" id="wsAddEv">Submit evidence</button>'+(editable?'<button class="btn" id="wsSubmit">Submit to Scoring Committee</button>':'');
   var body=''+
   '<button class="ws-back" id="wsBack">&larr; Back to queue</button>'+
   '<div class="ws-sfhd"><div><div class="nm">'+esc(f.carrier)+'</div><div class="sub"><span>'+esc(f.id)+'</span>'+sfStateChip(f.state)+'<span>Analyst '+esc(analystName(f.analyst))+'</span></div></div>'+
-    '<div>'+actions+'</div></div>'+
-  (editable?'':'<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">This file is '+f.state+' and is read-only. Only draft or returned files can be edited.</p></div>')+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap">'+actions+'</div></div>'+
+  '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">These five scores are <b>calculated by the methodology engine</b> from submitted evidence, they are not typed in here. To move a score, submit evidence mapped to that criterion.</p></div>'+
   hfBanner+
-  '<div class="ws-prev"><div class="ws-prev-num" id="wsComposite">'+eff+'</div><div class="ws-prev-b"><span class="ws-prev-lbl">Composite</span><span class="ws-prev-sub" id="wsRaw">'+(trip?'raw '+raw+' · capped at '+mc.hardFloor.cap:'weighted average of five dimensions')+'</span></div><div class="ws-prev-r"><span id="wsVerdict">'+verdictChip(v)+'</span><span class="ws-prev-sub">Deploy &ge;'+mc.thresholds.deploy+' · Watch '+mc.thresholds.watch+'–'+(mc.thresholds.deploy-1)+' · DND &lt;'+mc.thresholds.watch+'</span></div></div>'+
+  '<div class="ws-prev"><div class="ws-prev-num">'+eff+'</div><div class="ws-prev-b"><span class="ws-prev-lbl">Composite</span><span class="ws-prev-sub">'+(trip?'raw '+raw+' · capped at '+mc.hardFloor.cap:'weighted average of five dimensions')+'</span></div><div class="ws-prev-r"><span>'+verdictChip(v)+'</span><span class="ws-prev-sub">Deploy &ge;'+mc.thresholds.deploy+' · Watch '+mc.thresholds.watch+'–'+(mc.thresholds.deploy-1)+' · DND &lt;'+mc.thresholds.watch+'</span></div></div>'+
   '<div class="ws-grid">'+cards+'</div>';
   el('vw-workspace').innerHTML=body;
   el('wsBack').addEventListener('click',wsBackToQueue);
-  if(editable){
-    [].forEach.call(el('vw-workspace').querySelectorAll('.wsDim'),function(inp){inp.addEventListener('input',function(){wsOnDimInput(f,inp);});});
-    if(el('wsSubmit'))el('wsSubmit').addEventListener('click',function(){wsSubmit(f);});
-  }
+  el('wsAddEv').addEventListener('click',function(){wsState.mode='evidence';wsState.evCarrier=f.carrier;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});
+  if(editable&&el('wsSubmit'))el('wsSubmit').addEventListener('click',function(){wsSubmit(f);});
 }
 function wsOnDimInput(f,inp){
   var code=inp.getAttribute('data-code');var v=parseInt(inp.value,10);if(isNaN(v))v=0;v=Math.max(0,Math.min(100,v));
