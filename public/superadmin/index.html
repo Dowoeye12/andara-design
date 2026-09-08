@@ -556,6 +556,7 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .perm-row:last-child{border-bottom:none}
 .perm-lbl{font-family:var(--sans);font-size:13px;color:var(--t1);flex:1}
 .perm-code{font-family:var(--mono);font-size:10px;color:var(--t4)}
+.perm-chiprow{display:flex;flex-wrap:wrap;gap:8px}
 .onb-addrow{display:flex;gap:8px;align-items:center}
 .onb-addrow input{flex:1;min-width:0}
 .onb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -1603,6 +1604,8 @@ var ROLE_PERMS={
   client_user:[]
 };
 function rolePerms(code){return (ROLE_PERMS[code]||[]).slice();}
+function permLabel(code){var p=null;PERMISSIONS.forEach(function(x){if(x.code===code)p=x;});return p?p.label:code;}
+function userPerms(u){return Array.isArray(u.permissions)?u.permissions:rolePerms(u.role);}
 
 var USERS=[
   {id:'u-dikko',name:'Dikko Abubakar',email:'dikko@andara.com',role:'super_admin',mfa:'Enrolled',lastLogin:'2026-07-23 06:41',status:'active',reviewDue:false},
@@ -2022,6 +2025,10 @@ function openUserModal(id){
         '<div class="kv"><span class="k">Last login</span><span class="v mono">'+esc(u.lastLogin)+'</span></div>'+
         (u.reviewDue?'<div class="kv"><span class="k">Access review</span><span class="v">Pending this quarter</span></div>':'')+
       '</div></div>'+
+      (function(){var perms=userPerms(u);var explicit=Array.isArray(u.permissions);return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Granted permissions</h3><span class="meta">'+perms.length+(explicit?'':' · role default')+'</span></div><div class="pb">'+
+        (perms.length?'<div class="perm-chiprow">'+perms.map(function(c){return '<span class="ichip blue" title="'+esc(c)+'">'+esc(permLabel(c))+'</span>';}).join('')+'</div>':'<div style="font-family:var(--mono);font-size:12px;color:var(--t4)">No permissions granted.</div>')+
+        (explicit?'':'<div class="helper" style="margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--t4)">Inherited from the '+esc(rm.name)+' role default; no per-user grants set.</div>')+
+      '</div></div>';})()+
       compNote+
       '<div class="d-actions" style="justify-content:flex-start">'+actions+'</div>',
     foot:'<button class="btn sm" id="umDone">Close</button>',
@@ -4349,7 +4356,7 @@ function wsEvidenceForm(){
       '<div class="mfield"><label>Source classification</label><select id="evClass">'+wsEvOpts(WS_EV_CLASS,'public')+'</select></div>'+
       '<div class="mfield"><label>Mapped scoring criterion</label><select id="evCrit">'+critOpts+'</select></div>'+
       '<div class="mfield"><label>Confidence level</label><select id="evConf">'+wsEvOpts(WS_EV_CONF,'high')+'</select></div>'+
-      '<div class="mfield"><label>Classification</label><select id="evCat"><option value="commercial">Commercial</option><option value="operational">Operational</option></select></div>'+
+      '<div class="mfield"><label>Classification</label><select id="evCat"><option value="commercial">Commercial</option><option value="operational">Operational</option><option value="financial">Financial</option></select></div>'+
       '<div class="mfield"><label>Jurisdiction</label><select id="evJur">'+wsEvOpts(WS_EV_JUR,'')+'</select></div>'+
       '<div class="mfield"><label>Restriction</label><label class="ws-vault"><input type="checkbox" id="evVault"/><span class="lbl">Counterparty vault</span><span class="rc">Restricted</span></label></div>'+
       '<div class="mfield"><label>Evidence file</label><div class="ws-file"><input type="file" id="evFile" style="display:none"/><button type="button" class="btn sm" id="evFileBtn">Add file</button><span class="ws-file-name" id="evFileName">No file selected</span></div></div>'+
@@ -4394,7 +4401,7 @@ function wsSubmitEvidence(isDraft){
     f={id:'SF-'+ym+'-'+ab+'-'+seq,carrier:e.carrier,analyst:an,state:'submitted',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10)};
     SCORING_FILES.unshift(f);loadState();STATE.wsNew=STATE.wsNew||[];STATE.wsNew.unshift(f);saveState();
   }else{f.state='submitted';f.updated=nowStamp().slice(0,10);f._touched=true;persistWs();}
-  logAudit({carrier:e.carrier,crit:'Evidence submitted to Scoring Committee',fr:e.crit.toUpperCase()+' · '+(e.cat==='commercial'?'Commercial':'Operational')+(e.file?' · file attached':''),to:'submitted · '+e.conf+' confidence',status:'Submitted',note:f.id});
+  logAudit({carrier:e.carrier,crit:'Evidence submitted to Scoring Committee',fr:e.crit.toUpperCase()+' · '+catLabel(e.cat)+(e.file?' · file attached':''),to:'submitted · '+e.conf+' confidence',status:'Submitted',note:f.id});
   if(typeof updateProductNavCounts==='function')updateProductNavCounts();
   toast('Submitted to Scoring Committee',e.carrier+' · '+e.crit.toUpperCase()+' evidence');
   wsBackToQueue();
@@ -4418,6 +4425,14 @@ function wsEvidenceFor(carrier){loadState();
   return live.concat(seed);}
 function wsLatestEvCat(carrier){var evs=wsEvidenceFor(carrier);return evs.length?evs[0].cat:null;}
 function wsDecisionFor(id){loadState();return (STATE.wsDecisions||{})[id]||null;}
+function catLabel(c){return c==='commercial'?'Commercial':(c==='financial'?'Financial':'Operational');}
+function catChip(c){var cls=c==='commercial'?'blue':(c==='financial'?'amber':'muted');return '<span class="ichip '+cls+'">'+catLabel(c)+'</span>';}
+function wsEvidenceListHtml(evs){
+  return evs.length?evs.map(function(e){return '<div class="lrow"><div class="body"><h4>'+esc(e.headline||'(no headline)')+'</h4>'+
+    '<div class="metaln" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">'+catChip(e.cat)+'<span class="ichip muted">'+esc((e.crit||'').toUpperCase())+'</span><span>'+esc(e.conf||'')+' confidence</span>'+(e.file?'<span class="ichip muted">File: '+esc(e.file.name)+'</span>':'')+'</div>'+
+    (e.obs?'<div class="metaln"><span>'+esc(e.obs)+'</span></div>':'')+
+    (e.source?'<div class="metaln"><span>Source: '+esc(e.source)+'</span></div>':'')+'</div><div class="side"><span class="c-mono" style="font-size:11px;color:var(--t4)">'+esc((e.ts||'').slice(0,16))+'</span></div></div>';}).join(''):'<div class="pb"><div style="font-family:var(--mono);font-size:12px;color:var(--t4)">No evidence submitted for this carrier yet. Use Submit evidence to add the first record.</div></div>';
+}
 function wsRequests(){
   hydrateWs();
   var order={submitted:0,returned:1,approved:2,rejected:3};
@@ -4432,7 +4447,7 @@ function wsRequests(){
     '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(f.id)+'</td>'+
     '<td class="c-name">'+esc(f.carrier)+'</td>'+
     '<td class="c-sec">'+esc(analystName(f.analyst))+'</td>'+
-    '<td>'+(cat?'<span class="ichip '+(cat==='commercial'?'blue':'muted')+'">'+(cat==='commercial'?'Commercial':'Operational')+'</span>':'<span class="c-mono" style="color:var(--t4)">—</span>')+'</td>'+
+    '<td>'+(cat?catChip(cat):'<span class="c-mono" style="color:var(--t4)">—</span>')+'</td>'+
     '<td class="c-mono">'+esc(f.updated||'—')+'</td>'+
     '<td>'+sfStateChip(f.state)+'</td>'+
     '<td class="c-go">'+(f.state==='submitted'?'<span class="ichip amber">Review</span>':'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>')+'</td>'+
@@ -4445,10 +4460,7 @@ function wsRequests(){
 function wsRequestDetail(f){
   if(!f)return;
   var evs=wsEvidenceFor(f.carrier);var dec=wsDecisionFor(f.id);
-  var evList=evs.length?evs.map(function(e){return '<div class="lrow"><div class="body"><h4>'+esc(e.headline||'(no headline)')+'</h4>'+
-    '<div class="metaln" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"><span class="ichip '+(e.cat==='commercial'?'blue':'muted')+'">'+(e.cat==='commercial'?'Commercial':'Operational')+'</span><span class="ichip muted">'+esc((e.crit||'').toUpperCase())+'</span><span>'+esc(e.conf||'')+' confidence</span>'+(e.file?'<span class="ichip muted">File: '+esc(e.file.name)+'</span>':'')+'</div>'+
-    (e.obs?'<div class="metaln"><span>'+esc(e.obs)+'</span></div>':'')+
-    (e.source?'<div class="metaln"><span>Source: '+esc(e.source)+'</span></div>':'')+'</div><div class="side"><span class="c-mono" style="font-size:11px;color:var(--t4)">'+esc((e.ts||'').slice(0,16))+'</span></div></div>';}).join(''):'<div class="pb"><div style="font-family:var(--mono);font-size:12px;color:var(--t4)">No evidence records captured for this carrier.</div></div>';
+  var evList=wsEvidenceListHtml(evs);
   var footer;
   if(f.state==='submitted'){
     footer='<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px"><button class="btn primary" id="wsApprove">Approve</button><button class="btn danger" id="wsReject">Reject / return</button></div>';
@@ -4501,45 +4513,24 @@ function wsRejectRequest(f){
 function wsOpen(id){wsState.mode='editor';wsState.sfId=id;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;}
 function wsBackToQueue(){wsState.mode='queue';wsState.sfId=null;renderWorkspace();}
 function wsEditor(f){
-  var dims=wsDimsFor(f);var editable=wsEditable(f);
-  var raw=wsRawComposite(dims),trip=wsHardFloorTrip(dims),eff=wsEffective(dims),v=wsVerdictOf(eff);
-  var mc=methConfig();
-  /* scores are computed outputs — always read-only; analysts change them only by submitting evidence */
-  var cards=DIMS.map(function(d){var val=dims[d.code]||0;var col=val>=75?'var(--deploy)':(val>=50?'var(--watch)':'var(--dnd)');return ''+
-    '<div class="ws-dim"><div class="ws-dim-top"><span class="ws-dim-code">'+d.code+'</span><span class="ws-dim-w">weight '+(mc.weights[d.code]||0)+'</span></div>'+
-    '<div class="ws-dim-name">'+esc(d.name)+'</div>'+
-    '<div class="ws-dim-row"><input class="ws-dim-input" type="number" value="'+val+'" disabled/>'+
-    '<div class="ws-dim-bar"><div class="ws-dim-fill" style="width:'+val+'%;background:'+col+'"></div></div></div></div>';
-  }).join('');
-  var hfBanner=trip?'<div class="warn-note" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 2.4 18a2 2 0 0 0 1.7 3h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg><p><b>Hard floor tripped.</b> '+mc.hardFloor.dims.join(' or ')+' is below '+mc.hardFloor.threshold+', so the composite is capped at '+mc.hardFloor.cap+' and Deploy is blocked.</p></div>':'';
+  var editable=wsEditable(f);var evs=wsEvidenceFor(f.carrier);var dec=wsDecisionFor(f.id);
   var actions='<button class="btn primary" id="wsAddEv">Submit evidence</button>'+(editable?'<button class="btn" id="wsSubmit">Submit to Scoring Committee</button>':'');
+  var decNote=(f.state==='returned'&&dec&&dec.reason)?'<div class="warn-note" style="margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 5 5v2"/></svg><p><b>Returned by the Scoring Committee.</b> '+esc(dec.reason)+'</p></div>':'';
   var body=''+
   '<button class="ws-back" id="wsBack">&larr; Back to queue</button>'+
   '<div class="ws-sfhd"><div><div class="nm">'+esc(f.carrier)+'</div><div class="sub"><span>'+esc(f.id)+'</span>'+sfStateChip(f.state)+'<span>Analyst '+esc(analystName(f.analyst))+'</span></div></div>'+
     '<div style="display:flex;gap:10px;flex-wrap:wrap">'+actions+'</div></div>'+
-  '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">These five scores are <b>calculated by the methodology engine</b> from submitted evidence, they are not typed in here. To move a score, submit evidence mapped to that criterion.</p></div>'+
-  hfBanner+
-  '<div class="ws-prev"><div class="ws-prev-num">'+eff+'</div><div class="ws-prev-b"><span class="ws-prev-lbl">Composite</span><span class="ws-prev-sub">'+(trip?'raw '+raw+' · capped at '+mc.hardFloor.cap:'weighted average of five dimensions')+'</span></div><div class="ws-prev-r"><span>'+verdictChip(v)+'</span><span class="ws-prev-sub">Deploy &ge;'+mc.thresholds.deploy+' · Watch '+mc.thresholds.watch+'–'+(mc.thresholds.deploy-1)+' · DND &lt;'+mc.thresholds.watch+'</span></div></div>'+
-  '<div class="ws-grid">'+cards+'</div>';
+  '<div class="notice reauth-note" style="background:var(--info-soft);border-color:var(--info-line);margin-bottom:16px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p style="color:var(--t2)">Analysts submit evidence; the methodology engine computes the score. Use <b>Submit evidence</b> to add a record'+(editable?', then <b>Submit to Scoring Committee</b> when the file is ready.':'.')+'</p></div>'+
+  decNote+
+  '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Submitted evidence</h3><span class="meta">'+evs.length+' record'+(evs.length===1?'':'s')+'</span></div><div class="pb flush">'+wsEvidenceListHtml(evs)+'</div></div>';
   el('vw-workspace').innerHTML=body;
   el('wsBack').addEventListener('click',wsBackToQueue);
   el('wsAddEv').addEventListener('click',function(){wsState.mode='evidence';wsState.evCarrier=f.carrier;renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});
   if(editable&&el('wsSubmit'))el('wsSubmit').addEventListener('click',function(){wsSubmit(f);});
 }
-function wsOnDimInput(f,inp){
-  var code=inp.getAttribute('data-code');var v=parseInt(inp.value,10);if(isNaN(v))v=0;v=Math.max(0,Math.min(100,v));
-  f.dims[code]=v;f._touched=true;
-  var fill=el('vw-workspace').querySelector('[data-fill="'+code+'"]');
-  if(fill){var col=v>=75?'var(--deploy)':(v>=50?'var(--watch)':'var(--dnd)');fill.style.width=v+'%';fill.style.background=col;}
-  var raw=wsRawComposite(f.dims),trip=wsHardFloorTrip(f.dims),eff=wsEffective(f.dims),ver=wsVerdictOf(eff),mc=methConfig();
-  el('wsComposite').textContent=eff;
-  el('wsRaw').textContent=trip?('raw '+raw+' · capped at '+mc.hardFloor.cap):'weighted average of five dimensions';
-  el('wsVerdict').innerHTML=verdictChip(ver);
-  persistWs();
-}
 function wsSubmit(f){
   if(!wsEditable(f))return;
-  var eff=wsEffective(f.dims),ver=wsVerdictOf(eff);
+  var dims=wsDimsFor(f);var eff=wsEffective(dims),ver=wsVerdictOf(eff);
   requireReauth('Submit scoring file to committee','This submits '+f.id+' ('+f.carrier+') to the Scoring Committee at composite '+eff+' ('+wsVerdictOf(eff)+').',function(){
     f.state='submitted';f.composite=eff;f.verdict=ver;f.updated=nowStamp().slice(0,10);f._touched=true;persistWs();
     logAudit({carrier:f.carrier,crit:'Scoring file submitted',fr:f.id+' · draft',to:'submitted · composite '+eff+' · '+ver,status:'Submitted',note:f.id});
