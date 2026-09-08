@@ -2401,10 +2401,14 @@ function renderArbiter(){
     '<div class="cell"><div class="lbl">Approved</div><div class="num ok">'+byState('approved')+'</div><div class="cap">Ready to ship</div></div>'+
     '<div class="cell"><div class="lbl">Shipped</div><div class="num">'+byState('shipped')+'</div><div class="cap">Delivered to clients</div></div>'+
   '</div>'+
-  '<div class="fb" id="arbTabs">'+tabs.map(function(t){return '<button class="fp'+(arbTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+' <span class="fpn">'+t[2]+'</span></button>';}).join('')+'</div>'+
+  '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:24px">'+
+    '<div class="fb" id="arbTabs" style="margin-bottom:0">'+tabs.map(function(t){return '<button class="fp'+(arbTab===t[0]?' active':'')+'" data-t="'+t[0]+'">'+t[1]+' <span class="fpn">'+t[2]+'</span></button>';}).join('')+'</div>'+
+    '<button class="btn" id="arbViewReq">View all requests'+(queue.length?' <span class="fpn">'+queue.length+'</span>':'')+'</button>'+
+  '</div>'+
   '<div id="arbPane"></div>';
   el('vw-arbiter').innerHTML=body;
   [].forEach.call(el('arbTabs').children,function(b){b.addEventListener('click',function(){arbTab=b.getAttribute('data-t');renderArbiter();});});
+  if(el('arbViewReq'))el('arbViewReq').addEventListener('click',function(){wsRequests();var mn=el('mn');if(mn)mn.scrollTop=0;});
   arbRenderPane(queue);
   setNav('navArb',queue.length,false);
 }
@@ -4234,8 +4238,6 @@ function wsVerdictOf(eff){var mc=methConfig(),t=mc.thresholds;return eff>=t.depl
 function renderWorkspace(){
   hydrateWs();
   if(wsState.mode==='evidence'){wsEvidenceForm();return;}
-  if(wsState.mode==='requests'){wsRequests();return;}
-  if(wsState.mode==='request'&&wsState.sfId){var rf=sfById(wsState.sfId);if(rf){wsRequestDetail(rf);return;}}
   if(wsState.mode==='editor'&&wsState.sfId){var f=sfById(wsState.sfId);if(f){wsEditor(f);return;}}
   wsQueue();
 }
@@ -4249,7 +4251,7 @@ function wsQueue(){
   var list=files.filter(function(f){return wsState.filter==='all'?true:f.state===wsState.filter;}).slice().sort(function(a,b){return (b.updated||'').localeCompare(a.updated||'');});
   var body=''+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.1 · Scoring Workspace</div><h1>Analyst Workspace</h1><p class="ws-sub">Submit new evidence to the Andara database. Scores update only through the approved methodology engine, never manually.</p></div>'+
-    '<div class="phead-actions" style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="wsReq">View all requests'+(submitted?' <span class="fpn">'+submitted+'</span>':'')+'</button><button class="btn primary" id="wsNew"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New scoring file</button></div></div>'+
+    '<div class="phead-actions"><button class="btn primary" id="wsNew"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New scoring file</button></div></div>'+
   '<div class="ws-gov"><b>Scoring governance · '+esc(methConfig().version)+' / v1.0-WA / v1.0-EA</b>Scores are calculated outputs, not analyst opinions. You cannot manually change a score, override the methodology, suppress score movement, or force outcomes.</div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Scoring files</div><div class="num">'+files.length+'</div><div class="cap">Across the portfolio</div></div>'+
@@ -4274,7 +4276,6 @@ function wsQueue(){
   [].forEach.call(el('wsFilter').children,function(b){b.addEventListener('click',function(){wsState.filter=b.getAttribute('data-f');renderWorkspace();});});
   [].forEach.call(el('vw-workspace').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsOpen(tr.getAttribute('data-id'));});});
   if(el('wsNew'))el('wsNew').addEventListener('click',function(){wsState.mode='evidence';wsState.evCarrier='';renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});
-  if(el('wsReq'))el('wsReq').addEventListener('click',function(){wsState.mode='requests';renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});
   setNav('navWs',SCORING_FILES.filter(function(s){return s.state==='draft'||s.state==='returned';}).length,false);
 }
 /* Evidence submission — the analyst's actual input. Scores are computed by the
@@ -4367,11 +4368,12 @@ function wsEvidenceFor(carrier){loadState();
 function wsLatestEvCat(carrier){var evs=wsEvidenceFor(carrier);return evs.length?evs[0].cat:null;}
 function wsDecisionFor(id){loadState();return (STATE.wsDecisions||{})[id]||null;}
 function wsRequests(){
+  hydrateWs();
   var order={submitted:0,returned:1,approved:2,rejected:3};
   var rows=SCORING_FILES.filter(function(f){return f.state==='submitted'||f.state==='returned'||f.state==='approved'||f.state==='rejected';}).slice().sort(function(a,b){return (order[a.state]-order[b.state])||(b.updated||'').localeCompare(a.updated||'');});
   var pending=SCORING_FILES.filter(function(f){return f.state==='submitted';}).length;
   var body=''+
-  '<button class="ws-back" id="wsReqBack">&larr; Back to workspace</button>'+
+  '<button class="ws-back" id="wsReqBack">&larr; Back to Arbiter</button>'+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.4.2 · Scoring Committee</div><h1>Scoring requests</h1><p class="ws-sub">Evidence submissions awaiting the Scoring Committee. Open a request to approve it, or return it to the analyst with a reason.</p></div></div>'+
   '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Requests</h3><span class="meta">'+pending+' pending review</span></div>'+
   '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Scoring file</th><th>Carrier</th><th>Analyst</th><th>Classification</th><th>Submitted</th><th>Status</th><th></th></tr></thead><tbody>'+
@@ -4385,11 +4387,12 @@ function wsRequests(){
     '<td class="c-go">'+(f.state==='submitted'?'<span class="ichip amber">Review</span>':'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>')+'</td>'+
   '</tr>';}).join(''):'<tr><td colspan="7"><div class="empty">No requests yet. Submitted evidence appears here for committee review.</div></td></tr>')+
   '</tbody></table></div></div></div>';
-  el('vw-workspace').innerHTML=body;
-  el('wsReqBack').addEventListener('click',wsBackToQueue);
-  [].forEach.call(el('vw-workspace').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsState.mode='request';wsState.sfId=tr.getAttribute('data-id');renderWorkspace();var mn=el('mn');if(mn)mn.scrollTop=0;});});
+  el('vw-arbiter').innerHTML=body;
+  el('wsReqBack').addEventListener('click',renderArbiter);
+  [].forEach.call(el('vw-arbiter').querySelectorAll('tr.rowclick'),function(tr){tr.addEventListener('click',function(){wsRequestDetail(sfById(tr.getAttribute('data-id')));var mn=el('mn');if(mn)mn.scrollTop=0;});});
 }
 function wsRequestDetail(f){
+  if(!f)return;
   var evs=wsEvidenceFor(f.carrier);var dec=wsDecisionFor(f.id);
   var evList=evs.length?evs.map(function(e){return '<div class="lrow"><div class="body"><h4>'+esc(e.headline||'(no headline)')+'</h4>'+
     '<div class="metaln" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px"><span class="ichip '+(e.cat==='commercial'?'blue':'muted')+'">'+(e.cat==='commercial'?'Commercial':'Operational')+'</span><span class="ichip muted">'+esc((e.crit||'').toUpperCase())+'</span><span>'+esc(e.conf||'')+' confidence</span>'+(e.file?'<span class="ichip muted">File: '+esc(e.file.name)+'</span>':'')+'</div>'+
@@ -4407,8 +4410,8 @@ function wsRequestDetail(f){
   '<div class="ws-sfhd"><div><div class="nm">'+esc(f.carrier)+'</div><div class="sub"><span>'+esc(f.id)+'</span>'+sfStateChip(f.state)+'<span>Analyst '+esc(analystName(f.analyst))+'</span><span>Submitted '+esc(f.updated||'—')+'</span></div></div></div>'+
   '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Submitted evidence</h3><span class="meta">'+evs.length+' record'+(evs.length===1?'':'s')+'</span></div><div class="pb flush">'+evList+'</div></div>'+
   '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Committee decision</h3></div><div class="pb">'+footer+'</div></div>';
-  el('vw-workspace').innerHTML=body;
-  el('wsReqBack2').addEventListener('click',function(){wsState.mode='requests';renderWorkspace();});
+  el('vw-arbiter').innerHTML=body;
+  el('wsReqBack2').addEventListener('click',wsRequests);
   if(f.state==='submitted'){
     el('wsApprove').addEventListener('click',function(){wsApproveRequest(f);});
     el('wsReject').addEventListener('click',function(){wsRejectRequest(f);});
@@ -4423,7 +4426,7 @@ function wsApproveRequest(f){
   f.state='approved';wsSaveDecision(f,'Approved','');
   logAudit({carrier:f.carrier,crit:'Committee decision',fr:f.id+' · submitted',to:'approved',status:'Approved',note:f.id});
   toast('Request approved',f.carrier);
-  wsState.mode='requests';renderWorkspace();
+  wsRequests();
 }
 function wsRejectRequest(f){
   mdOpen({title:'Return to analyst',
@@ -4439,7 +4442,7 @@ function wsRejectRequest(f){
         f.state='returned';wsSaveDecision(f,'Returned',reason);
         logAudit({carrier:f.carrier,crit:'Committee decision',fr:f.id+' · submitted',to:'returned to analyst',status:'Returned',note:reason});
         mdClose();toast('Returned to analyst',f.carrier);
-        wsState.mode='requests';renderWorkspace();
+        wsRequests();
       });
     }
   });
