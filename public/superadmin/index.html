@@ -548,6 +548,14 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .ws-vault input{margin:0;width:auto}
 .ws-vault .lbl{font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:600}
 .ws-vault .rc{font-family:var(--mono);font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:3px;padding:2px 6px}
+.onb-addrow{display:flex;gap:8px;align-items:center}
+.onb-addrow input{flex:1;min-width:0}
+.onb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.onb-chip{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 4px 0 12px;border-radius:6px;background:var(--bg3);border:1px solid var(--line2);font-family:var(--sans);font-size:13px;color:var(--t1)}
+.onb-chip-sub{font-family:var(--mono);font-size:11px;color:var(--t4)}
+.onb-x{width:22px;height:22px;display:grid;place-items:center;border:none;background:transparent;color:var(--t4);cursor:pointer;font-size:11px;border-radius:4px}
+.onb-x:hover{color:var(--dnd);background:var(--dnd-soft)}
+.onb-empty{font-family:var(--mono);font-size:12px;color:var(--t4)}
 .ws-file{display:flex;align-items:center;gap:12px;height:42px}
 .ws-file-name{font-family:var(--mono);font-size:12px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
 @media(max-width:720px){.ws-evgrid{grid-template-columns:1fr}}
@@ -1308,7 +1316,7 @@ function requireReauth(title,intent,proceed){
 /* ── Onboard new client wizard ── */
 var onb={};
 function openOnboard(){
-  onb={step:0,name:'',kind:'Bank',tier:'Standard',region:'Nigeria',products:[],contactName:'',contactTitle:'',contactEmail:'',contactPhone:'',contractValue:'',term:'',sso:'None'};
+  onb={step:0,name:'',kind:'Bank',tier:'Standard',region:'Nigeria',products:[],contactName:'',contactTitle:'',contactEmail:'',contactPhone:'',contractValue:'',term:'',sso:'None',carriers:[],aircraft:[],airTier:'Standard'};
   mdOpen({
     title:'Onboard institutional client',wide:true,
     steps:onbSteps(),
@@ -1318,7 +1326,7 @@ function openOnboard(){
   });
 }
 function onbSteps(){
-  var labels=['Entity','Tier & products','Contract','Review'];
+  var labels=['Entity','Tier & products','Contract','Scope','Review'];
   return '<div class="wsteps">'+labels.map(function(l,i){return '<div class="wstep '+(i<onb.step?'done':(i===onb.step?'cur':''))+'"><div class="wbar"></div><div class="wl">'+l+'</div></div>';}).join('')+'</div>';
 }
 function onbBody(){
@@ -1355,6 +1363,24 @@ function onbBody(){
       '</div>'+
       '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><p>A contract ID is generated automatically on provisioning and registered in Billing &amp; Finance (§3.3.5).</p></div>'+
     '</div>';
+  if(s===3){
+    var hasArb=onb.products.indexOf('Arbiter')>=0,hasFw=onb.products.indexOf('FleetWatch')>=0,hasAir=onb.products.indexOf('AIR')>=0;
+    if(!hasArb&&!hasFw&&!hasAir)return '<div class="wpane show"><div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p>No Arbiter, FleetWatch or AIR product was selected on the previous step, so there is no subscription scope to configure. Continue to review.</p></div></div>';
+    var out='<div class="wpane show">';
+    if(hasArb)out+=''+
+      '<div class="mfield"><label>Arbiter carriers (Credit Intelligence coverage)</label>'+
+        '<div class="onb-addrow"><input id="onbCarrierInput" placeholder="e.g. Air Peace" autocomplete="off"/><button type="button" class="btn sm" id="onbAddCarrier">Add carrier</button></div>'+
+        '<div class="onb-chips" id="onbCarrierList"></div>'+
+        '<div class="helper">Airlines this client can see Credit Intelligence scores for. Add each carrier by name.</div></div>';
+    if(hasFw)out+=''+
+      '<div class="mfield"><label>FleetWatch aircraft (surveillance)</label>'+
+        '<div class="onb-addrow"><input id="onbAcReg" class="mono" placeholder="Registration, e.g. 5N-BQM" autocomplete="off"/><input id="onbAcType" placeholder="Type (optional), e.g. B737-800" autocomplete="off"/><button type="button" class="btn sm" id="onbAddAircraft">Add aircraft</button></div>'+
+        '<div class="onb-chips" id="onbAircraftList"></div>'+
+        '<div class="helper">Specific aircraft (tail numbers) under FleetWatch surveillance for this client.</div></div>';
+    if(hasAir)out+=''+
+      '<div class="mfield"><label>AIR subscription tier</label><select id="onbAirTier"><option'+sel(onb.airTier,'Standard')+'>Standard</option><option'+sel(onb.airTier,'Enterprise')+'>Enterprise</option></select><div class="helper">Andara Intelligence Report access level for this client.</div></div>';
+    return out+'</div>';
+  }
   // review
   return ''+
     '<div class="wpane show">'+
@@ -1368,12 +1394,16 @@ function onbBody(){
         '<div class="msummary"><div class="ml">Term</div><div class="mv">'+esc(onb.term||'—')+'</div></div>'+
       '</div>'+
       '<div class="msummary"><div class="ml">Primary contact</div><div class="mv">'+esc(onb.contactName||'—')+(onb.contactEmail?' · '+esc(onb.contactEmail):'')+'</div></div>'+
+      '<div class="mrow">'+
+        '<div class="msummary"><div class="ml">Arbiter carriers</div><div class="mv">'+(onb.carriers.length?onb.carriers.length+' · '+esc(onb.carriers.slice(0,3).join(', '))+(onb.carriers.length>3?' …':''):'—')+'</div></div>'+
+        '<div class="msummary"><div class="ml">FleetWatch aircraft</div><div class="mv">'+(onb.aircraft.length?onb.aircraft.length+' · '+esc(onb.aircraft.slice(0,3).map(function(a){return a.reg;}).join(', '))+(onb.aircraft.length>3?' …':''):'—')+'</div></div>'+
+      '</div>'+
       '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg><p>Provisioning creates the client record, generates a contract ID, and writes an audit entry. The client starts <b>active</b> with zero seats until users are provisioned in User Management.</p></div>'+
     '</div>';
 }
 function onbFoot(){
   var back=onb.step>0?'<button class="btn sm" id="onbBack">Back</button>':'<span class="spread"></span>';
-  var next=onb.step<3?'<button class="btn sm primary" id="onbNext">Continue</button>':'<button class="btn sm primary" id="onbProvision">Provision client</button>';
+  var next=onb.step<4?'<button class="btn sm primary" id="onbNext">Continue</button>':'<button class="btn sm primary" id="onbProvision">Provision client</button>';
   return (onb.step>0?back:'<span class="spread"></span>')+next;
 }
 function chip(label,on,check){return '<button type="button" class="mchip'+(on?' on':'')+'" data-val="'+esc(label)+'">'+(check?'<span class="ck">✓</span>':'')+esc(label)+'</button>';}
@@ -1385,7 +1415,15 @@ function onbCollect(){
     onb.contactEmail=(el('onbCEmail').value||'').trim();onb.contactPhone=(el('onbCPhone').value||'').trim();}
   if(s===1){onb.sso=el('onbSso').value;}
   if(s===2){onb.contractValue=(el('onbValue').value||'').replace(/[^0-9]/g,'');onb.term=(el('onbTerm').value||'').trim();}
+  if(s===3){if(el('onbAirTier'))onb.airTier=el('onbAirTier').value;}
 }
+function onbRenderScopeLists(){
+  if(el('onbCarrierList'))el('onbCarrierList').innerHTML=onb.carriers.length?onb.carriers.map(function(c,i){return '<span class="onb-chip">'+esc(c)+'<button type="button" class="onb-x" data-t="carrier" data-i="'+i+'" aria-label="Remove">✕</button></span>';}).join(''):'<span class="onb-empty">No carriers added yet.</span>';
+  if(el('onbAircraftList'))el('onbAircraftList').innerHTML=onb.aircraft.length?onb.aircraft.map(function(a,i){return '<span class="onb-chip">'+esc(a.reg)+(a.type?' <span class="onb-chip-sub">'+esc(a.type)+'</span>':'')+'<button type="button" class="onb-x" data-t="aircraft" data-i="'+i+'" aria-label="Remove">✕</button></span>';}).join(''):'<span class="onb-empty">No aircraft added yet.</span>';
+  [].forEach.call(el('mdBody').querySelectorAll('.onb-x'),function(b){b.addEventListener('click',function(){var t=b.getAttribute('data-t'),i=+b.getAttribute('data-i');if(t==='carrier')onb.carriers.splice(i,1);else onb.aircraft.splice(i,1);onbRenderScopeLists();});});
+}
+function onbAddCarrier(){var v=(el('onbCarrierInput').value||'').trim();if(!v){el('onbCarrierInput').focus();return;}if(onb.carriers.map(function(x){return x.toLowerCase();}).indexOf(v.toLowerCase())<0)onb.carriers.push(v);el('onbCarrierInput').value='';el('onbCarrierInput').focus();onbRenderScopeLists();}
+function onbAddAircraft(){var reg=(el('onbAcReg').value||'').trim();if(!reg){el('onbAcReg').focus();return;}var type=el('onbAcType')?(el('onbAcType').value||'').trim():'';if(!onb.aircraft.some(function(a){return a.reg.toLowerCase()===reg.toLowerCase();}))onb.aircraft.push({reg:reg,type:type});el('onbAcReg').value='';if(el('onbAcType'))el('onbAcType').value='';el('onbAcReg').focus();onbRenderScopeLists();}
 function onbRerender(){el('mdSteps').innerHTML=onbSteps();el('mdBody').innerHTML=onbBody();el('mdFoot').innerHTML=onbFoot();onbBind();}
 function onbBind(){
   if(el('onbBack'))el('onbBack').addEventListener('click',function(){onbCollect();onb.step--;onbRerender();});
@@ -1396,6 +1434,12 @@ function onbBind(){
   });
   if(el('onbTier'))[].forEach.call(el('onbTier').children,function(b){b.addEventListener('click',function(){onb.tier=b.getAttribute('data-val');[].forEach.call(el('onbTier').children,function(x){x.classList.toggle('on',x===b);});});});
   if(el('onbProds'))[].forEach.call(el('onbProds').children,function(b){b.addEventListener('click',function(){var v=b.getAttribute('data-val'),i=onb.products.indexOf(v);if(i>=0)onb.products.splice(i,1);else onb.products.push(v);b.classList.toggle('on');});});
+  if(el('onbAddCarrier'))el('onbAddCarrier').addEventListener('click',onbAddCarrier);
+  if(el('onbCarrierInput'))el('onbCarrierInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();onbAddCarrier();}});
+  if(el('onbAddAircraft'))el('onbAddAircraft').addEventListener('click',onbAddAircraft);
+  if(el('onbAcReg'))el('onbAcReg').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();onbAddAircraft();}});
+  if(el('onbAcType'))el('onbAcType').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();onbAddAircraft();}});
+  if(el('onbCarrierList')||el('onbAircraftList'))onbRenderScopeLists();
   if(el('onbProvision'))el('onbProvision').addEventListener('click',onbProvision);
 }
 function onbProvision(){
@@ -1408,10 +1452,10 @@ function onbProvision(){
     contact:{name:onb.contactName||'—',title:onb.contactTitle||'—',email:onb.contactEmail||'—',phone:onb.contactPhone||'—'},
     contractId:cid,contractValueUsd:parseInt(onb.contractValue,10)||0,signed:nowStamp().slice(0,10),term:onb.term||'—',
     users:0,deliverables:0,
-    scope:{arbiterCarriers:0,fleetwatchAircraft:0,airTier:onb.products.indexOf('AIR')>=0?'Standard':'None'},
+    scope:{arbiterCarriers:onb.carriers.length,fleetwatchAircraft:onb.aircraft.length,airTier:onb.products.indexOf('AIR')>=0?(onb.airTier||'Standard'):'None',carriers:onb.carriers.slice(),aircraft:onb.aircraft.slice()},
     access:[{ts:nowStamp(),user:saEmail(),event:'Client onboarded via Super Admin'}]};
   CLIENTS.unshift(c);persistClient(c);
-  logAudit({carrier:c.name,crit:'Client onboarded',fr:'—',to:c.tier+' · '+(c.products.join('/')||'no products'),status:'Provisioned',note:cid});
+  logAudit({carrier:c.name,crit:'Client onboarded',fr:'—',to:c.tier+' · '+(c.products.join('/')||'no products')+' · '+onb.carriers.length+' carriers · '+onb.aircraft.length+' aircraft',status:'Provisioned',note:cid});
   mdClose();renderClients();
   toast('Client provisioned',c.name+' · '+cid+' · active');
 }
