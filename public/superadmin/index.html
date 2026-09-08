@@ -1606,6 +1606,12 @@ var ROLE_PERMS={
 function rolePerms(code){return (ROLE_PERMS[code]||[]).slice();}
 function permLabel(code){var p=null;PERMISSIONS.forEach(function(x){if(x.code===code)p=x;});return p?p.label:code;}
 function userPerms(u){return Array.isArray(u.permissions)?u.permissions:rolePerms(u.role);}
+function permTogglesHtml(selected){
+  var groups={};PERMISSIONS.forEach(function(p){(groups[p.group]=groups[p.group]||[]).push(p);});
+  return Object.keys(groups).map(function(g){return '<div class="perm-group"><div class="perm-g-h">'+esc(g)+'</div>'+
+    groups[g].map(function(p){var on=selected.indexOf(p.code)>=0;return '<div class="perm-row" data-code="'+esc(p.code)+'"><span class="tgl'+(on?' on':'')+'"></span><span class="perm-lbl">'+esc(p.label)+'</span><span class="perm-code">'+esc(p.code)+'</span></div>';}).join('')+
+  '</div>';}).join('');
+}
 
 var USERS=[
   {id:'u-dikko',name:'Dikko Abubakar',email:'dikko@andara.com',role:'super_admin',mfa:'Enrolled',lastLogin:'2026-07-23 06:41',status:'active',reviewDue:false},
@@ -2028,18 +2034,38 @@ function openUserModal(id){
       (function(){var perms=userPerms(u);var explicit=Array.isArray(u.permissions);return '<div class="panel"><div class="ph"><span class="bullet"></span><h3>Granted permissions</h3><span class="meta">'+perms.length+(explicit?'':' · role default')+'</span></div><div class="pb">'+
         (perms.length?'<div class="perm-chiprow">'+perms.map(function(c){return '<span class="ichip blue" title="'+esc(c)+'">'+esc(permLabel(c))+'</span>';}).join('')+'</div>':'<div style="font-family:var(--mono);font-size:12px;color:var(--t4)">No permissions granted.</div>')+
         (explicit?'':'<div class="helper" style="margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--t4)">Inherited from the '+esc(rm.name)+' role default; no per-user grants set.</div>')+
+        (u.status!=='terminated'?'<button class="btn sm" id="umEditPerms" style="margin-top:12px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Edit permissions</button>':'')+
       '</div></div>';})()+
       compNote+
       '<div class="d-actions" style="justify-content:flex-start">'+actions+'</div>',
     foot:'<button class="btn sm" id="umDone">Close</button>',
     onMount:function(){
       el('umDone').addEventListener('click',mdClose);
+      if(el('umEditPerms'))el('umEditPerms').addEventListener('click',function(){openEditPerms(id);});
       if(el('umChangeRole'))el('umChangeRole').addEventListener('click',function(){openChangeRole(id);});
       if(el('umElevate'))el('umElevate').addEventListener('click',function(){openElevate(id);});
       if(el('umMfa'))el('umMfa').addEventListener('click',function(){umResetMfa(id);});
       if(el('umSuspend'))el('umSuspend').addEventListener('click',function(){umSuspend(id);});
       if(el('umReactivate'))el('umReactivate').addEventListener('click',function(){umReactivate(id);});
       if(el('umTerminate'))el('umTerminate').addEventListener('click',function(){umTerminate(id);});
+    }
+  });
+}
+function openEditPerms(id){
+  var f=userById(id);if(!f)return;var u=f.u;var working=userPerms(u).slice();
+  mdOpen({title:'Edit permissions, '+u.name,wide:true,
+    body:'<div class="perm-note">Grant or revoke individual permissions for <b style="color:var(--t2)">'+esc(u.name)+'</b> ('+esc(roleMeta(u.role).name)+'). Changes are saved to the user and audited.</div>'+
+      '<div id="epPanel">'+permTogglesHtml(working)+'</div>',
+    foot:'<button class="btn sm" id="epCancel">Cancel</button><button class="btn sm primary" id="epSave">Save permissions <span class="fpn" id="epCount">'+working.length+'</span></button>',
+    onMount:function(){
+      el('epCancel').addEventListener('click',function(){openUserModal(id);});
+      [].forEach.call(el('epPanel').querySelectorAll('.perm-row'),function(row){row.addEventListener('click',function(){var code=row.getAttribute('data-code');var i=working.indexOf(code);if(i>=0)working.splice(i,1);else working.push(code);row.querySelector('.tgl').classList.toggle('on');if(el('epCount'))el('epCount').textContent=working.length;});});
+      el('epSave').addEventListener('click',function(){
+        var before=userPerms(u).length;
+        u.permissions=working.slice();persistUser(u,f.kind);
+        logAudit({carrier:'—',crit:'User permissions updated',fr:u.email+' · '+before,to:working.length+' permissions',status:'Updated',note:u.email});
+        toast('Permissions updated',u.name+' · '+working.length+' permissions');openUserModal(id);
+      });
     }
   });
 }
@@ -2134,11 +2160,7 @@ function provBody(){
     '<div class="mfield"><div class="mchips" id="prMfa">'+'<button type="button" class="mchip'+(prov.mfa?' on':'')+'" data-mfa="1"><span class="ck">✓</span>Trigger FIDO2 enrolment invite on creation</button>'+'</div></div>';
 }
 function provPermsHtml(){
-  var groups={};PERMISSIONS.forEach(function(p){(groups[p.group]=groups[p.group]||[]).push(p);});
-  return '<div class="perm-note">Permissions default from the selected role. Grant or revoke individual permissions for this user.</div>'+
-  Object.keys(groups).map(function(g){return '<div class="perm-group"><div class="perm-g-h">'+esc(g)+'</div>'+
-    groups[g].map(function(p){var on=prov.permissions.indexOf(p.code)>=0;return '<div class="perm-row" data-code="'+esc(p.code)+'"><span class="tgl'+(on?' on':'')+'"></span><span class="perm-lbl">'+esc(p.label)+'</span><span class="perm-code">'+esc(p.code)+'</span></div>';}).join('')+
-  '</div>';}).join('');
+  return '<div class="perm-note">Permissions default from the selected role. Grant or revoke individual permissions for this user.</div>'+permTogglesHtml(prov.permissions);
 }
 function provFoot(){return '<button class="btn sm" id="prCancel">Cancel</button><button class="btn sm primary" id="prGo">Provision user</button>';}
 function provCollect(){
@@ -2352,6 +2374,67 @@ function openAssignAgent(id){
   });
 }
 
+/* ── Add carrier(s) to the scoring universe: manual entry or CSV bulk import ── */
+function arbCreateCarrier(name,region){
+  name=(name||'').trim();if(!name)return null;
+  if(SCORING_FILES.some(function(f){return f.carrier.toLowerCase()===name.toLowerCase();}))return null;
+  var d=new Date();var ym=''+d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0');
+  var ab=name.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase()||'NEW';
+  var seq=String(SCORING_FILES.filter(function(x){return x.id.indexOf('SF-'+ym)===0;}).length+1).padStart(2,'0');
+  var f={id:'SF-'+ym+'-'+ab+'-'+seq+'-'+Math.random().toString(36).slice(2,4),carrier:name,analyst:(typeof profileName==='function'?profileName():'Analyst'),state:'draft',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10),region:(region||'').trim()};
+  SCORING_FILES.unshift(f);loadState();STATE.wsNew=STATE.wsNew||[];STATE.wsNew.unshift(f);saveState();
+  return f;
+}
+function arbParseCsv(text){
+  var lines=(text||'').split(/\r?\n/).map(function(l){return l.trim();}).filter(function(l){return l;});
+  var out=[];
+  lines.forEach(function(l,i){var parts=l.split(',').map(function(p){return p.trim();});var name=parts[0],region=parts[1]||'';if(!name)return;if(i===0&&/^(name|carrier)$/i.test(name))return;out.push({name:name,region:region});});
+  return out;
+}
+var arbCarrierMode='manual';
+function openAddCarrier(){arbCarrierMode='manual';mdOpen({title:'Add carrier',wide:true,body:arbCarrierBody(),foot:arbCarrierFoot(),onMount:arbCarrierBind});}
+function arbCarrierBody(){
+  var regionOpts=['Nigeria','West Africa','East Africa','Southern Africa','Central Africa'].map(function(r){return '<option>'+r+'</option>';}).join('');
+  var modeChips='<div class="mchips" id="acMode" style="margin-bottom:16px"><button type="button" class="mchip'+(arbCarrierMode==='manual'?' on':'')+'" data-m="manual">Manual entry</button><button type="button" class="mchip'+(arbCarrierMode==='csv'?' on':'')+'" data-m="csv">CSV import</button></div>';
+  if(arbCarrierMode==='manual')return modeChips+
+    '<div class="mrow"><div class="mfield"><label>Carrier name</label><input id="acName" placeholder="e.g. Green Africa" autocomplete="off"/></div>'+
+      '<div class="mfield"><label>Region</label><select id="acRegion">'+regionOpts+'</select></div></div>'+
+    '<div class="helper" style="font-family:var(--mono);font-size:11px;color:var(--t4)">Registers the carrier and opens a draft scoring file for it (then available in the Analyst Workspace).</div>';
+  return modeChips+
+    '<div class="mfield"><label>Paste CSV</label><textarea id="acCsv" style="min-height:130px;font-family:var(--mono);font-size:13px" placeholder="name, region&#10;Green Africa, Nigeria&#10;Kenya Airways, East Africa"></textarea>'+
+      '<div class="helper" style="font-family:var(--mono);font-size:11px;color:var(--t4)">One carrier per line: <b>name, region</b>. Header row optional. Or load a file: <span style="color:var(--amber);cursor:pointer" id="acFileBtn">choose CSV file</span><input type="file" id="acFile" accept=".csv,text/csv" style="display:none"/></div></div>'+
+    '<div id="acPreview"></div>';
+}
+function arbCarrierFoot(){return arbCarrierMode==='manual'?'<button class="btn sm" id="acCancel">Cancel</button><button class="btn sm primary" id="acAdd">Add carrier</button>':'<button class="btn sm" id="acCancel">Cancel</button><button class="btn sm primary" id="acImport">Import carriers</button>';}
+function arbCarrierRerender(){el('mdBody').innerHTML=arbCarrierBody();el('mdFoot').innerHTML=arbCarrierFoot();arbCarrierBind();}
+function arbRenderCarrierPreview(){
+  if(!el('acPreview'))return;
+  var rows=arbParseCsv(el('acCsv')?el('acCsv').value:'');
+  if(!rows.length){el('acPreview').innerHTML='';return;}
+  el('acPreview').innerHTML='<div class="perm-note" style="margin-top:14px">'+rows.length+' carrier'+(rows.length===1?'':'s')+' to import:</div><div class="onb-chips">'+rows.map(function(r){var exists=SCORING_FILES.some(function(f){return f.carrier.toLowerCase()===r.name.toLowerCase();});return '<span class="onb-chip">'+esc(r.name)+(r.region?' <span class="onb-chip-sub">'+esc(r.region)+'</span>':'')+(exists?' <span class="ichip muted">exists</span>':'')+'</span>';}).join('')+'</div>';
+}
+function arbCarrierBind(){
+  el('acCancel').addEventListener('click',mdClose);
+  [].forEach.call(el('acMode').children,function(b){b.addEventListener('click',function(){var m=b.getAttribute('data-m');if(m===arbCarrierMode)return;arbCarrierMode=m;arbCarrierRerender();});});
+  if(el('acAdd'))el('acAdd').addEventListener('click',function(){
+    var name=(el('acName').value||'').trim();if(name.length<2){toast('Carrier required','Enter the carrier name.');return;}
+    if(SCORING_FILES.some(function(f){return f.carrier.toLowerCase()===name.toLowerCase();})){toast('Already registered',name+' already has a scoring file.');return;}
+    var f=arbCreateCarrier(name,el('acRegion').value);
+    logAudit({carrier:name,crit:'Carrier registered',fr:'—',to:'draft scoring file '+f.id+' · '+el('acRegion').value,status:'Registered',note:f.id});
+    if(typeof updateProductNavCounts==='function')updateProductNavCounts();mdClose();renderArbiter();toast('Carrier added',name);
+  });
+  if(el('acFileBtn'))el('acFileBtn').addEventListener('click',function(){el('acFile').click();});
+  if(el('acFile'))el('acFile').addEventListener('change',function(){var fi=this.files&&this.files[0];if(!fi)return;var rd=new FileReader();rd.onload=function(){el('acCsv').value=rd.result;arbRenderCarrierPreview();};rd.readAsText(fi);});
+  if(el('acCsv'))el('acCsv').addEventListener('input',arbRenderCarrierPreview);
+  if(el('acImport'))el('acImport').addEventListener('click',function(){
+    var rows=arbParseCsv(el('acCsv').value);if(!rows.length){toast('Nothing to import','Paste at least one carrier line.');return;}
+    var added=0,skipped=0;
+    rows.forEach(function(row){var f=arbCreateCarrier(row.name,row.region);if(f){added++;logAudit({carrier:row.name,crit:'Carrier registered',fr:'—',to:'draft scoring file '+f.id+(row.region?' · '+row.region:''),status:'Registered',note:'CSV import'});}else skipped++;});
+    if(typeof updateProductNavCounts==='function')updateProductNavCounts();mdClose();renderArbiter();toast('Carriers imported',added+' added'+(skipped?' · '+skipped+' already existed':''));
+  });
+  arbRenderCarrierPreview();
+}
+
 /* ── Create a FleetWatch visit: pick an available client + available aircraft ── */
 function fwAvailableAircraft(clientId){
   var out=[];
@@ -2452,7 +2535,7 @@ function renderArbiter(){
   var tabs=[['files','Scoring files',files.length],['queue','Committee queue',queue.length],['throughput','Throughput',SC_DECISIONS.length],['refresh','Refresh queue',refreshN]];
   var body=''+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.4</div><h1>Arbiter, scoring files</h1></div>'+
-    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Operational oversight of every scoring file and the Scoring Committee queue. Decisioning happens in the internal workspace.</span></div></div>'+
+    '<div class="phead-actions"><button class="btn primary" id="arbAddCarrier"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Add carrier</button></div></div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">In draft</div><div class="num">'+byState('draft')+'</div><div class="cap">Being scored</div></div>'+
     '<div class="cell"><div class="lbl">Pending committee</div><div class="num'+(queue.length?' due':'')+'">'+queue.length+'</div><div class="cap">Submitted for review</div></div>'+
@@ -2467,6 +2550,7 @@ function renderArbiter(){
   el('vw-arbiter').innerHTML=body;
   [].forEach.call(el('arbTabs').children,function(b){b.addEventListener('click',function(){arbTab=b.getAttribute('data-t');renderArbiter();});});
   if(el('arbViewReq'))el('arbViewReq').addEventListener('click',function(){wsRequests();var mn=el('mn');if(mn)mn.scrollTop=0;});
+  if(el('arbAddCarrier'))el('arbAddCarrier').addEventListener('click',openAddCarrier);
   arbRenderPane(queue);
   setNav('navArb',queue.length,false);
 }
