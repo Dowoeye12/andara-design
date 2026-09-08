@@ -548,6 +548,14 @@ table.tbl td.c-ck,table.tbl th.c-ck{width:38px;text-align:center;padding-left:12
 .ws-vault input{margin:0;width:auto}
 .ws-vault .lbl{font-family:var(--sans);font-size:13px;color:var(--t1);font-weight:600}
 .ws-vault .rc{font-family:var(--mono);font-size:9px;letter-spacing:.10em;text-transform:uppercase;color:var(--amber);background:var(--amber-soft);border:1px solid var(--amber-line);border-radius:3px;padding:2px 6px}
+.perm-note{font-family:var(--mono);font-size:11px;color:var(--t4);line-height:1.5;margin-bottom:14px}
+.perm-group{margin-bottom:14px}
+.perm-group:last-child{margin-bottom:0}
+.perm-g-h{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.perm-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.perm-row:last-child{border-bottom:none}
+.perm-lbl{font-family:var(--sans);font-size:13px;color:var(--t1);flex:1}
+.perm-code{font-family:var(--mono);font-size:10px;color:var(--t4)}
 .onb-addrow{display:flex;gap:8px;align-items:center}
 .onb-addrow input{flex:1;min-width:0}
 .onb-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
@@ -1564,6 +1572,37 @@ var ROLES=[
 function roleMeta(code){var r=null;ROLES.forEach(function(x){if(x.code===code)r=x;});return r||{code:code,name:code,scope:'',side:'Andara',cls:''};}
 var ANDARA_ROLES=ROLES.filter(function(r){return r.side==='Andara';});
 var CLIENT_ROLES=ROLES.filter(function(r){return r.side==='Client';});
+/* grantable permissions + per-role defaults, used by the provision-user modal */
+var PERMISSIONS=[
+  {code:'client.view',label:'View clients',group:'Business'},
+  {code:'client.manage',label:'Manage clients',group:'Business'},
+  {code:'user.manage',label:'Manage users',group:'Business'},
+  {code:'billing.view',label:'View billing',group:'Business'},
+  {code:'billing.manage',label:'Manage billing & invoices',group:'Business'},
+  {code:'scoring.workspace',label:'Analyst workspace, submit evidence',group:'Scoring'},
+  {code:'scoring.committee',label:'Scoring Committee decisions',group:'Scoring'},
+  {code:'methodology.change',label:'Propose methodology changes',group:'Scoring'},
+  {code:'fleetwatch.view',label:'FleetWatch oversight',group:'Products'},
+  {code:'fleetwatch.capture',label:'FleetWatch field capture',group:'Products'},
+  {code:'air.publish',label:'AIR editorial & publishing',group:'Products'},
+  {code:'audit.view',label:'Audit & compliance log',group:'Governance'},
+  {code:'agents.manage',label:'AI agent console',group:'Governance'},
+  {code:'platform.admin',label:'Full control plane',group:'Governance'}
+];
+var ROLE_PERMS={
+  super_admin:PERMISSIONS.map(function(p){return p.code;}),
+  senior_analyst:['scoring.workspace','scoring.committee','audit.view'],
+  analyst:['scoring.workspace'],
+  committee_member:['scoring.committee','audit.view'],
+  field_agent:['fleetwatch.capture'],
+  editor:['air.publish'],
+  cs_lead:['client.view','fleetwatch.view'],
+  bd_lead:['client.view'],
+  finance:['billing.view','billing.manage'],
+  client_admin:['client.view'],
+  client_user:[]
+};
+function rolePerms(code){return (ROLE_PERMS[code]||[]).slice();}
 
 var USERS=[
   {id:'u-dikko',name:'Dikko Abubakar',email:'dikko@andara.com',role:'super_admin',mfa:'Enrolled',lastLogin:'2026-07-23 06:41',status:'active',reviewDue:false},
@@ -2065,7 +2104,7 @@ function umTerminate(id){
 /* ── provision a new user ── */
 var prov={};
 function openProvision(){
-  prov={type:'Andara',name:'',email:'',role:'analyst',clientId:(CLIENTS[0]||{}).id||'',password:provGenPw(),mfa:true};
+  prov={type:'Andara',name:'',email:'',role:'analyst',clientId:(CLIENTS[0]||{}).id||'',password:provGenPw(),mfa:true,permissions:rolePerms('analyst'),permsOpen:false};
   mdOpen({title:'Provision user',wide:true,body:provBody(),foot:provFoot(),onMount:provBind});
 }
 function provGenPw(){return 'And-'+Math.random().toString(36).slice(2,6)+'-'+Math.random().toString(36).slice(2,6);}
@@ -2080,9 +2119,19 @@ function provBody(){
       '<div class="mfield"><label>Email</label><input id="prEmail" class="mono" placeholder="'+(isClient?'name@institution.com':'name@andara.com')+'" value="'+esc(prov.email)+'"/></div>'+
     '</div>'+
     (isClient?'<div class="mfield"><label>Client</label><select id="prClient">'+CLIENTS.filter(function(c){return c.status!=='offboarded';}).map(function(c){return '<option value="'+c.id+'"'+sel(prov.clientId,c.id)+'>'+esc(c.name)+'</option>';}).join('')+'</select></div>':'')+
-    '<div class="mfield"><label>Role</label><select id="prRole">'+roleOpts.map(function(r){return '<option value="'+r.code+'"'+sel(prov.role,r.code)+'>'+esc(r.name)+' ('+esc(r.code)+')</option>';}).join('')+'</select><div class="helper">'+esc(roleMeta(prov.role).scope)+'</div></div>'+
+    '<div class="mfield"><label>Role</label><select id="prRole">'+roleOpts.map(function(r){return '<option value="'+r.code+'"'+sel(prov.role,r.code)+'>'+esc(r.name)+' ('+esc(r.code)+')</option>';}).join('')+'</select><div class="helper">'+esc(roleMeta(prov.role).scope)+'</div>'+
+      '<button type="button" class="btn sm" id="prGrantPerms" style="margin-top:10px"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>'+(prov.permsOpen?'Hide permissions':'Grant permissions')+' <span class="fpn" id="prPermCount">'+prov.permissions.length+'</span></button>'+
+      (prov.permsOpen?'<div id="prPermsPanel" style="margin-top:12px">'+provPermsHtml()+'</div>':'')+
+    '</div>'+
     '<div class="mfield"><label>Initial access key</label><input id="prPw" class="mono" value="'+esc(prov.password)+'"/><div class="helper">Auto-generated. The user must change it and enrol a security key on first sign-in. <span style="color:var(--amber);cursor:pointer" id="prGen">Regenerate</span></div></div>'+
     '<div class="mfield"><div class="mchips" id="prMfa">'+'<button type="button" class="mchip'+(prov.mfa?' on':'')+'" data-mfa="1"><span class="ck">✓</span>Trigger FIDO2 enrolment invite on creation</button>'+'</div></div>';
+}
+function provPermsHtml(){
+  var groups={};PERMISSIONS.forEach(function(p){(groups[p.group]=groups[p.group]||[]).push(p);});
+  return '<div class="perm-note">Permissions default from the selected role. Grant or revoke individual permissions for this user.</div>'+
+  Object.keys(groups).map(function(g){return '<div class="perm-group"><div class="perm-g-h">'+esc(g)+'</div>'+
+    groups[g].map(function(p){var on=prov.permissions.indexOf(p.code)>=0;return '<div class="perm-row" data-code="'+esc(p.code)+'"><span class="tgl'+(on?' on':'')+'"></span><span class="perm-lbl">'+esc(p.label)+'</span><span class="perm-code">'+esc(p.code)+'</span></div>';}).join('')+
+  '</div>';}).join('');
 }
 function provFoot(){return '<button class="btn sm" id="prCancel">Cancel</button><button class="btn sm primary" id="prGo">Provision user</button>';}
 function provCollect(){
@@ -2095,9 +2144,11 @@ function provBind(){
   el('prCancel').addEventListener('click',mdClose);
   el('prGo').addEventListener('click',provSubmit);
   el('prGen').addEventListener('click',function(){provCollect();prov.password=provGenPw();el('prPw').value=prov.password;});
-  el('prRole').addEventListener('change',function(){provCollect();el('prRole').nextElementSibling.textContent=roleMeta(this.value).scope;});
-  [].forEach.call(el('prType').children,function(b,i){b.addEventListener('click',function(){var nt=i===0?'Andara':'Client';if(nt===prov.type)return;prov.type=nt;prov.role=(nt==='Client'?'client_user':'analyst');provRerender();});});
+  el('prRole').addEventListener('change',function(){provCollect();prov.permissions=rolePerms(prov.role);provRerender();});
+  [].forEach.call(el('prType').children,function(b,i){b.addEventListener('click',function(){var nt=i===0?'Andara':'Client';if(nt===prov.type)return;prov.type=nt;prov.role=(nt==='Client'?'client_user':'analyst');prov.permissions=rolePerms(prov.role);provRerender();});});
   [].forEach.call(el('prMfa').children,function(b){b.addEventListener('click',function(){prov.mfa=!prov.mfa;b.classList.toggle('on');});});
+  if(el('prGrantPerms'))el('prGrantPerms').addEventListener('click',function(){provCollect();prov.permsOpen=!prov.permsOpen;provRerender();});
+  if(el('prPermsPanel'))[].forEach.call(el('prPermsPanel').querySelectorAll('.perm-row'),function(row){row.addEventListener('click',function(){var code=row.getAttribute('data-code');var i=prov.permissions.indexOf(code);if(i>=0)prov.permissions.splice(i,1);else prov.permissions.push(code);row.querySelector('.tgl').classList.toggle('on');if(el('prPermCount'))el('prPermCount').textContent=prov.permissions.length;});});
 }
 function provSubmit(){
   provCollect();
@@ -2105,13 +2156,13 @@ function provSubmit(){
   if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(prov.email)){toast('Valid email required','Enter a valid email address.');return;}
   var isClient=prov.type==='Client';
   var id=(isClient?'cu-':'u-')+prov.email.split('@')[0].replace(/[^a-z0-9]+/gi,'').toLowerCase().slice(0,12)+'-'+Math.random().toString(36).slice(2,5);
-  var rec={id:id,name:prov.name,email:prov.email,role:prov.role,mfa:prov.mfa?'Pending':'None',lastLogin:'Never',status:prov.mfa?'invited':'active',reviewDue:false};
+  var rec={id:id,name:prov.name,email:prov.email,role:prov.role,mfa:prov.mfa?'Pending':'None',lastLogin:'Never',status:prov.mfa?'invited':'active',reviewDue:false,permissions:(prov.permissions||[]).slice()};
   if(isClient)rec.clientId=prov.clientId;
   if(isClient)CLIENT_USERS.unshift(rec);else USERS.unshift(rec);
   persistUser(rec,isClient?'client':'andara');
-  logAudit({carrier:isClient?((clientById(prov.clientId)||{}).name||'Client'):'—',crit:'User provisioned',fr:'—',to:prov.email+' · '+prov.role,status:'Provisioned',note:prov.mfa?'MFA enrolment invited':'No MFA'});
+  logAudit({carrier:isClient?((clientById(prov.clientId)||{}).name||'Client'):'—',crit:'User provisioned',fr:'—',to:prov.email+' · '+prov.role+' · '+(prov.permissions||[]).length+' permissions',status:'Provisioned',note:prov.mfa?'MFA enrolment invited':'No MFA'});
   mdClose();renderUsers();
-  toast('User provisioned',prov.name+' · '+prov.role+(prov.mfa?' · MFA invite sent':''));
+  toast('User provisioned',prov.name+' · '+prov.role+' · '+(prov.permissions||[]).length+' permissions');
 }
 
 /* ══════════════════════════════════════════════════════
