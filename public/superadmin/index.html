@@ -2152,8 +2152,10 @@ var FW_FLEET=[
   {id:'ac-tutsb',reg:'TU-TSB',msn:'4290',type:'Airbus A320-200',operator:'Air Cote d Ivoire',clientId:'cl-kestrel',region:'West Africa',tier:'Weekly',lastVisit:'2026-06-22',nextVisit:'2026-07-22',anomOpen:4,alert:'aog',agent:'u-aisha',visit:'in_progress'},
   {id:'ac-5vttb',reg:'5V-TTB',msn:'4602',type:'Dash 8-400',operator:'ASKY Airlines',clientId:'cl-kestrel',region:'West Africa',tier:'Weekly',lastVisit:'2026-07-06',nextVisit:'2026-08-05',anomOpen:0,alert:'none',agent:null,visit:'scheduled'}
 ];
-function hydrateFw(){loadState();(STATE.fwFleet||[]).forEach(function(sf){var i=-1;FW_FLEET.forEach(function(a,idx){if(a.id===sf.id)i=idx;});if(i>=0)FW_FLEET[i]=Object.assign({},FW_FLEET[i],sf);});}
-function persistFw(a){loadState();STATE.fwFleet=STATE.fwFleet||[];var d={id:a.id,agent:a.agent,visit:a.visit};var i=-1;STATE.fwFleet.forEach(function(x,idx){if(x.id===a.id)i=idx;});if(i>=0)STATE.fwFleet[i]=d;else STATE.fwFleet.push(d);saveState();}
+function hydrateFw(){loadState();
+  if(STATE.fwNew)STATE.fwNew.forEach(function(nf){if(!fwById(nf.id))FW_FLEET.unshift(JSON.parse(JSON.stringify(nf)));});
+  (STATE.fwFleet||[]).forEach(function(sf){var i=-1;FW_FLEET.forEach(function(a,idx){if(a.id===sf.id)i=idx;});if(i>=0)FW_FLEET[i]=Object.assign({},FW_FLEET[i],sf);});}
+function persistFw(a){loadState();STATE.fwFleet=STATE.fwFleet||[];var d={id:a.id,agent:a.agent,visit:a.visit,nextVisit:a.nextVisit,visitType:a.visitType};var i=-1;STATE.fwFleet.forEach(function(x,idx){if(x.id===a.id)i=idx;});if(i>=0)STATE.fwFleet[i]=d;else STATE.fwFleet.push(d);saveState();}
 function fwById(id){var r=null;FW_FLEET.forEach(function(a){if(a.id===id)r=a;});return r;}
 function fieldAgents(){return (typeof USERS!=='undefined'?USERS:[]).filter(function(u){return u.role==='field_agent'&&u.status!=='terminated';});}
 function agentName(id){if(!id)return null;var f=(typeof userById==='function')?userById(id):null;return f?f.u.name:id;}
@@ -2173,7 +2175,7 @@ function renderFleetwatch(){
   var tabs=[['portfolio','Portfolio',fleet.length],['pan','Pan-portfolio',fwClients.length]];
   var body=''+
   '<div class="phead"><div><div class="eyebrow">Super Admin · §3.3.4 / §4.3.3</div><h1>FleetWatch</h1></div>'+
-    '<div class="phead-actions"><span class="phead desc" style="text-align:right">Every aircraft under surveillance across every client, and the pan-portfolio aggregate view.</span></div></div>'+
+    '<div class="phead-actions"><button class="btn primary" id="fwCreateVisit"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Create visit</button></div></div>'+
   '<div class="summary">'+
     '<div class="cell"><div class="lbl">Aircraft under surveillance</div><div class="num">'+fleet.length+'</div><div class="cap">Across '+fwClients.length+' clients</div></div>'+
     '<div class="cell"><div class="lbl">Open anomalies</div><div class="num'+(openA?' due':'')+'">'+openA+'</div><div class="cap">Fleet-wide</div></div>'+
@@ -2184,6 +2186,7 @@ function renderFleetwatch(){
   '<div id="fwPane"></div>';
   el('vw-fleetwatch').innerHTML=body;
   [].forEach.call(el('fwTabs').children,function(b){b.addEventListener('click',function(){fwTab=b.getAttribute('data-t');renderFleetwatch();});});
+  if(el('fwCreateVisit'))el('fwCreateVisit').addEventListener('click',openCreateVisit);
   fwRenderPane();
   setNav('navFleet',aog,true);
 }
@@ -2286,6 +2289,59 @@ function openAssignAgent(id){
         logAudit({carrier:a.operator+' · '+a.reg,crit:'Field agent assignment',fr:beforeA+' · '+beforeS,to:(agentName(na)||'Unassigned')+' · '+ns,status:'Assigned'});
         mdClose();renderFleetwatch();
         toast('Visit updated',a.reg+' · '+(agentName(na)||'Unassigned')+' · '+ns);
+      });
+    }
+  });
+}
+
+/* ── Create a FleetWatch visit: pick an available client + available aircraft ── */
+function fwAvailableAircraft(clientId){
+  var out=[];
+  FW_FLEET.forEach(function(a){if(a.clientId===clientId)out.push({id:a.id,reg:a.reg,type:a.type,existing:true});});
+  var c=clientById(clientId);
+  if(c&&c.scope&&c.scope.aircraft)c.scope.aircraft.forEach(function(sa){var reg=(sa&&sa.reg)||'';if(reg&&!out.some(function(o){return o.reg.toLowerCase()===reg.toLowerCase();}))out.push({reg:reg,type:(sa.type||''),existing:false});});
+  return out;
+}
+function fwAircraftOptions(clientId){
+  var list=fwAvailableAircraft(clientId);
+  if(!list.length)return '<option value="">No aircraft in scope for this client</option>';
+  return list.map(function(a){var val=a.existing?a.id:('new:'+a.reg);return '<option value="'+esc(val)+'">'+esc(a.reg)+(a.type?' · '+esc(a.type):'')+(a.existing?'':' · new')+'</option>';}).join('');
+}
+function openCreateVisit(){
+  var fwClients=CLIENTS.filter(function(c){return c.products.indexOf('FleetWatch')>=0&&c.status!=='offboarded';});
+  if(!fwClients.length){toast('No FleetWatch clients','Onboard a client with the FleetWatch product first.');return;}
+  var agents=fieldAgents();
+  var def=new Date(Date.now()+7*86400000);var p=function(n){return String(n).padStart(2,'0');};
+  var defDate=def.getUTCFullYear()+'-'+p(def.getUTCMonth()+1)+'-'+p(def.getUTCDate());
+  var first=fwClients[0].id;
+  mdOpen({title:'Create FleetWatch visit',
+    body:''+
+      '<div class="mfield"><label>Client</label><select id="cvClient">'+fwClients.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('')+'</select><div class="helper">Institutional client under whose FleetWatch subscription this visit falls.</div></div>'+
+      '<div class="mfield"><label>Aircraft</label><select id="cvAircraft">'+fwAircraftOptions(first)+'</select><div class="helper">Available aircraft for the selected client. Aircraft added at onboarding are marked <b>new</b> and join the fleet on the first visit.</div></div>'+
+      '<div class="mrow">'+
+        '<div class="mfield"><label>Visit type</label><select id="cvType"><option>Records review</option><option>Ramp inspection</option><option>MRO observation</option></select></div>'+
+        '<div class="mfield"><label>Visit date</label><input id="cvDate" class="mono" value="'+defDate+'"/></div>'+
+      '</div>'+
+      '<div class="mfield"><label>Field agent (optional)</label><select id="cvAgent"><option value="">Unassigned</option>'+agents.map(function(u){return '<option value="'+u.id+'">'+esc(u.name)+'</option>';}).join('')+'</select><div class="helper">Assign now, or leave unassigned and assign later from the portfolio.</div></div>',
+    foot:'<button class="btn sm" id="cvCancel">Cancel</button><button class="btn sm primary" id="cvGo">Create visit</button>',
+    onMount:function(){
+      el('cvCancel').addEventListener('click',mdClose);
+      el('cvClient').addEventListener('change',function(){el('cvAircraft').innerHTML=fwAircraftOptions(this.value);});
+      el('cvGo').addEventListener('click',function(){
+        var clientId=el('cvClient').value,acVal=el('cvAircraft').value,type=el('cvType').value,date=(el('cvDate').value||'').trim(),agentId=el('cvAgent').value||null;
+        if(!acVal){toast('Aircraft required','This client has no aircraft in scope. Add aircraft at onboarding or in Client Management.');return;}
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){toast('Valid date required','Use YYYY-MM-DD.');return;}
+        var a;
+        if(acVal.indexOf('new:')===0){
+          var reg=acVal.slice(4);var c=clientById(clientId);var sa=((c.scope&&c.scope.aircraft)||[]).filter(function(x){return x.reg===reg;})[0];
+          a={id:'ac-'+reg.toLowerCase().replace(/[^a-z0-9]/g,'')+'-'+Math.random().toString(36).slice(2,4),reg:reg,msn:'—',type:(sa&&sa.type)||'—',operator:'—',clientId:clientId,region:c.region||'—',tier:'Weekly',lastVisit:'—',nextVisit:date,anomOpen:0,alert:'none',agent:agentId,visit:agentId?'assigned':'scheduled',visitType:type};
+          FW_FLEET.unshift(a);loadState();STATE.fwNew=STATE.fwNew||[];STATE.fwNew.unshift(a);saveState();
+        }else{
+          a=fwById(acVal);if(!a){toast('Aircraft not found','Reselect the aircraft.');return;}
+          a.nextVisit=date;a.agent=agentId;a.visit=agentId?'assigned':'scheduled';a.visitType=type;persistFw(a);
+        }
+        logAudit({carrier:(a.operator&&a.operator!=='—'?a.operator+' · ':'')+a.reg,crit:'FleetWatch visit created',fr:'—',to:type+' · '+date+' · '+(agentName(agentId)||'unassigned'),status:'Scheduled',note:a.reg});
+        mdClose();fwState.client=clientId;renderFleetwatch();toast('Visit created',a.reg+' · '+type+' · '+date);
       });
     }
   });
