@@ -4159,12 +4159,11 @@ function wsQueue(){
   '</div>'+
   '<div class="fb" id="wsFilter">'+chips.map(function(c){var n=c[0]==='all'?files.length:files.filter(function(f){return f.state===c[0];}).length;return '<button class="fp'+(wsState.filter===c[0]?' active':'')+'" data-f="'+c[0]+'">'+c[1]+(n?' <span class="fpn">'+n+'</span>':'')+'</button>';}).join('')+'</div>'+
   '<div class="panel"><div class="ph"><span class="bullet"></span><h3>My scoring files</h3><span class="meta">'+list.length+'</span></div>'+
-  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Scoring file</th><th>Carrier</th><th>Analyst</th><th class="num">Composite</th><th>Verdict</th><th>State</th><th>Updated</th><th></th></tr></thead><tbody>'+
+  '<div class="pb flush"><div class="tblwrap"><table class="tbl"><thead><tr><th>Scoring file</th><th>Carrier</th><th>Analyst</th><th>Verdict</th><th>State</th><th>Updated</th><th></th></tr></thead><tbody>'+
   list.map(function(f){return '<tr class="rowclick" data-id="'+esc(f.id)+'">'+
     '<td class="c-mono" style="color:var(--t1);font-weight:600">'+esc(f.id)+'</td>'+
     '<td class="c-name">'+esc(f.carrier)+'</td>'+
     '<td class="c-sec">'+esc(analystName(f.analyst))+'</td>'+
-    '<td class="c-num">'+compositeCell(f.composite)+'</td>'+
     '<td>'+verdictChip(f.verdict)+'</td>'+
     '<td>'+sfStateChip(f.state)+'</td>'+
     '<td class="c-mono">'+esc(f.updated||'—')+'</td>'+
