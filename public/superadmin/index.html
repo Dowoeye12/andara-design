@@ -1373,15 +1373,12 @@ function onbBody(){
       '<div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg><p>A contract ID is generated automatically on provisioning and registered in Billing &amp; Finance (§3.3.5).</p></div>'+
     '</div>';
   if(s===3){
-    var hasArb=onb.products.indexOf('Arbiter')>=0,hasFw=onb.products.indexOf('FleetWatch')>=0,hasAir=onb.products.indexOf('AIR')>=0;
-    if(!hasArb&&!hasFw&&!hasAir)return '<div class="wpane show"><div class="reauth-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg><p>No Arbiter, FleetWatch or AIR product was selected on the previous step, so there is no subscription scope to configure. Continue to review.</p></div></div>';
-    var out='<div class="wpane show">';
-    if(hasArb)out+=''+
+    var hasAir=onb.products.indexOf('AIR')>=0;
+    var out='<div class="wpane show">'+
       '<div class="mfield"><label>Arbiter carriers (Credit Intelligence coverage)</label>'+
         '<div class="onb-addrow"><input id="onbCarrierInput" placeholder="e.g. Air Peace" autocomplete="off"/><button type="button" class="btn sm" id="onbAddCarrier">Add carrier</button></div>'+
         '<div class="onb-chips" id="onbCarrierList"></div>'+
-        '<div class="helper">Airlines this client can see Credit Intelligence scores for. Add each carrier by name.</div></div>';
-    if(hasFw)out+=''+
+        '<div class="helper">Airlines this client can see Credit Intelligence scores for. Add each carrier by name.</div></div>'+
       '<div class="mfield"><label>FleetWatch aircraft (surveillance)</label>'+
         '<div class="onb-addrow"><input id="onbAcReg" class="mono" placeholder="Registration, e.g. 5N-BQM" autocomplete="off"/><input id="onbAcType" placeholder="Type (optional), e.g. B737-800" autocomplete="off"/><button type="button" class="btn sm" id="onbAddAircraft">Add aircraft</button></div>'+
         '<div class="onb-chips" id="onbAircraftList"></div>'+
