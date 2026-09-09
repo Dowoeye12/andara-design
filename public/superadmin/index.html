@@ -2372,15 +2372,22 @@ function openAssignAgent(id){
 }
 
 /* ── Add carrier(s) to the scoring universe: manual entry or CSV bulk import ── */
-function arbCreateCarrier(name,region){
+function arbCreateCarrier(name,region,clientId){
   name=(name||'').trim();if(!name)return null;
   if(SCORING_FILES.some(function(f){return f.carrier.toLowerCase()===name.toLowerCase();}))return null;
   var d=new Date();var ym=''+d.getUTCFullYear()+String(d.getUTCMonth()+1).padStart(2,'0');
   var ab=name.replace(/[^A-Za-z]/g,'').slice(0,3).toUpperCase()||'NEW';
   var seq=String(SCORING_FILES.filter(function(x){return x.id.indexOf('SF-'+ym)===0;}).length+1).padStart(2,'0');
-  var f={id:'SF-'+ym+'-'+ab+'-'+seq+'-'+Math.random().toString(36).slice(2,4),carrier:name,analyst:(typeof profileName==='function'?profileName():'Analyst'),state:'draft',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10),region:(region||'').trim()};
+  var f={id:'SF-'+ym+'-'+ab+'-'+seq+'-'+Math.random().toString(36).slice(2,4),carrier:name,analyst:(typeof profileName==='function'?profileName():'Analyst'),state:'draft',composite:0,verdict:'',validUntil:'',updated:nowStamp().slice(0,10),region:(region||'').trim(),clientId:clientId||''};
   SCORING_FILES.unshift(f);loadState();STATE.wsNew=STATE.wsNew||[];STATE.wsNew.unshift(f);saveState();
   return f;
+}
+function fwAddAircraftRec(o){
+  var reg=(o.reg||'').trim();if(!reg||typeof FW_FLEET==='undefined')return null;
+  if(FW_FLEET.some(function(a){return a.reg.toLowerCase()===reg.toLowerCase();}))return null;
+  var rec={id:'ac-'+reg.toLowerCase().replace(/[^a-z0-9]/g,'')+'-'+Math.random().toString(36).slice(2,4),reg:reg,msn:'—',type:o.type||'—',operator:o.operator||'—',clientId:o.clientId||'',region:o.region||'',tier:'Weekly',lastVisit:'—',nextVisit:'—',anomOpen:0,alert:'none',agent:null,visit:'scheduled'};
+  FW_FLEET.unshift(rec);loadState();STATE.fwNew=STATE.fwNew||[];STATE.fwNew.unshift(rec);saveState();
+  return rec;
 }
 function arbParseCsv(text){
   var lines=(text||'').split(/\r?\n/).map(function(l){return l.trim();}).filter(function(l){return l;});
@@ -2389,13 +2396,23 @@ function arbParseCsv(text){
   return out;
 }
 var arbCarrierMode='manual';
-function openAddCarrier(){arbCarrierMode='manual';mdOpen({title:'Add carrier',wide:true,body:arbCarrierBody(),foot:arbCarrierFoot(),onMount:arbCarrierBind});}
+var acAircraft=[];
+function openAddCarrier(){arbCarrierMode='manual';acAircraft=[];mdOpen({title:'Add carrier',wide:true,body:arbCarrierBody(),foot:arbCarrierFoot(),onMount:arbCarrierBind});}
+function arbClientOptions(){
+  var cs=CLIENTS.filter(function(c){return c.status!=='offboarded';});
+  return '<option value="">Not linked to a client</option>'+cs.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');
+}
 function arbCarrierBody(){
   var regionOpts=['Nigeria','West Africa','East Africa','Southern Africa','Central Africa'].map(function(r){return '<option>'+r+'</option>';}).join('');
   var modeChips='<div class="mchips" id="acMode" style="margin-bottom:16px"><button type="button" class="mchip'+(arbCarrierMode==='manual'?' on':'')+'" data-m="manual">Manual entry</button><button type="button" class="mchip'+(arbCarrierMode==='csv'?' on':'')+'" data-m="csv">CSV import</button></div>';
   if(arbCarrierMode==='manual')return modeChips+
     '<div class="mrow"><div class="mfield"><label>Carrier name</label><input id="acName" placeholder="e.g. Green Africa" autocomplete="off"/></div>'+
       '<div class="mfield"><label>Region</label><select id="acRegion">'+regionOpts+'</select></div></div>'+
+    '<div class="mfield"><label>Client</label><select id="acClient">'+arbClientOptions()+'</select><div class="helper" style="font-family:var(--mono);font-size:11px;color:var(--t4)">Institutional client this carrier is being scored for. Optional.</div></div>'+
+    '<div class="mfield"><label>Aircraft under this carrier</label>'+
+      '<div class="onb-addrow"><input id="acAcReg" class="mono" placeholder="Registration, e.g. 5N-BQM" autocomplete="off"/><input id="acAcType" placeholder="Type (optional), e.g. B737-800" autocomplete="off"/><button type="button" class="btn sm" id="acAddAircraft">Add aircraft</button></div>'+
+      '<div class="onb-chips" id="acAircraftList"></div>'+
+      '<div class="helper" style="font-family:var(--mono);font-size:11px;color:var(--t4)">Registers aircraft into the FleetWatch fleet under this carrier. Optional.</div></div>'+
     '<div class="helper" style="font-family:var(--mono);font-size:11px;color:var(--t4)">Registers the carrier and opens a draft scoring file for it (then available in the Analyst Workspace).</div>';
   return modeChips+
     '<div class="mfield"><label>Paste CSV</label><textarea id="acCsv" style="min-height:130px;font-family:var(--mono);font-size:13px" placeholder="name, region&#10;Green Africa, Nigeria&#10;Kenya Airways, East Africa"></textarea>'+
@@ -2410,15 +2427,34 @@ function arbRenderCarrierPreview(){
   if(!rows.length){el('acPreview').innerHTML='';return;}
   el('acPreview').innerHTML='<div class="perm-note" style="margin-top:14px">'+rows.length+' carrier'+(rows.length===1?'':'s')+' to import:</div><div class="onb-chips">'+rows.map(function(r){var exists=SCORING_FILES.some(function(f){return f.carrier.toLowerCase()===r.name.toLowerCase();});return '<span class="onb-chip">'+esc(r.name)+(r.region?' <span class="onb-chip-sub">'+esc(r.region)+'</span>':'')+(exists?' <span class="ichip muted">exists</span>':'')+'</span>';}).join('')+'</div>';
 }
+function acRenderAircraftList(){
+  if(!el('acAircraftList'))return;
+  el('acAircraftList').innerHTML=acAircraft.length?acAircraft.map(function(a,i){return '<span class="onb-chip">'+esc(a.reg)+(a.type?' <span class="onb-chip-sub">'+esc(a.type)+'</span>':'')+'<button type="button" class="onb-x" data-i="'+i+'" aria-label="Remove">✕</button></span>';}).join(''):'<span class="onb-empty">No aircraft added yet.</span>';
+  [].forEach.call(el('acAircraftList').querySelectorAll('.onb-x'),function(b){b.addEventListener('click',function(){acAircraft.splice(+b.getAttribute('data-i'),1);acRenderAircraftList();});});
+}
+function acAddAircraft(){
+  var reg=(el('acAcReg').value||'').trim();if(!reg){el('acAcReg').focus();return;}
+  var type=el('acAcType')?(el('acAcType').value||'').trim():'';
+  if(!acAircraft.some(function(a){return a.reg.toLowerCase()===reg.toLowerCase();}))acAircraft.push({reg:reg,type:type});
+  el('acAcReg').value='';if(el('acAcType'))el('acAcType').value='';el('acAcReg').focus();acRenderAircraftList();
+}
 function arbCarrierBind(){
   el('acCancel').addEventListener('click',mdClose);
   [].forEach.call(el('acMode').children,function(b){b.addEventListener('click',function(){var m=b.getAttribute('data-m');if(m===arbCarrierMode)return;arbCarrierMode=m;arbCarrierRerender();});});
+  if(el('acAddAircraft'))el('acAddAircraft').addEventListener('click',acAddAircraft);
+  if(el('acAcReg'))el('acAcReg').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();acAddAircraft();}});
+  if(el('acAcType'))el('acAcType').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();acAddAircraft();}});
+  if(el('acAircraftList'))acRenderAircraftList();
   if(el('acAdd'))el('acAdd').addEventListener('click',function(){
     var name=(el('acName').value||'').trim();if(name.length<2){toast('Carrier required','Enter the carrier name.');return;}
     if(SCORING_FILES.some(function(f){return f.carrier.toLowerCase()===name.toLowerCase();})){toast('Already registered',name+' already has a scoring file.');return;}
-    var f=arbCreateCarrier(name,el('acRegion').value);
-    logAudit({carrier:name,crit:'Carrier registered',fr:'—',to:'draft scoring file '+f.id+' · '+el('acRegion').value,status:'Registered',note:f.id});
-    if(typeof updateProductNavCounts==='function')updateProductNavCounts();mdClose();renderArbiter();toast('Carrier added',name);
+    var region=el('acRegion').value,clientId=el('acClient')?el('acClient').value:'';
+    var f=arbCreateCarrier(name,region,clientId);
+    var acAdded=0;
+    acAircraft.forEach(function(ac){if(fwAddAircraftRec({reg:ac.reg,type:ac.type,operator:name,clientId:clientId,region:region}))acAdded++;});
+    var cn=clientId&&clientById(clientId)?clientById(clientId).name:'';
+    logAudit({carrier:name,crit:'Carrier registered',fr:'—',to:'draft scoring file '+f.id+' · '+region+(cn?' · '+cn:'')+(acAdded?' · '+acAdded+' aircraft':''),status:'Registered',note:f.id});
+    if(typeof updateProductNavCounts==='function')updateProductNavCounts();mdClose();renderArbiter();toast('Carrier added',name+(acAdded?' · '+acAdded+' aircraft':''));
   });
   if(el('acFileBtn'))el('acFileBtn').addEventListener('click',function(){el('acFile').click();});
   if(el('acFile'))el('acFile').addEventListener('change',function(){var fi=this.files&&this.files[0];if(!fi)return;var rd=new FileReader();rd.onload=function(){el('acCsv').value=rd.result;arbRenderCarrierPreview();};rd.readAsText(fi);});
